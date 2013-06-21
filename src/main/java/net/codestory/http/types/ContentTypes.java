@@ -14,6 +14,9 @@ public class ContentTypes {
       case ".css":
       case ".less":
         return "text/css";
+      case ".js":
+      case ".coffee":
+        return "application/javascript";
       case ".zip":
         return "application/zip";
       case ".gif":

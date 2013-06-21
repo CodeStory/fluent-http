@@ -4,11 +4,10 @@ import java.io.*;
 import java.nio.charset.*;
 import java.nio.file.*;
 
-import javax.script.*;
-import jdk.nashorn.api.scripting.*;
 import net.codestory.http.types.*;
 
-import com.github.sommeri.less4j.*;
+import org.jcoffeescript.*;
+
 import com.github.sommeri.less4j.core.*;
 import com.google.gson.*;
 import com.sun.net.httpserver.*;
@@ -79,15 +78,30 @@ public class Payload {
 
   private static byte[] forPath(Path path) throws IOException {
     if (path.toString().endsWith(".less")) {
-      try {
-        String css = new ThreadUnsafeLessCompiler().compile(path.toFile()).getCss();
-        return forString(css);
-      } catch (Less4jException e) {
-        throw new IOException("Unable to compile less file", e);
-      }
+      return forString(compileLess(path));
     }
-
+    if (path.toString().endsWith(".coffee")) {
+      return forString(compileCoffee(path));
+    }
     return Files.readAllBytes(path);
+  }
+
+  private static String compileCoffee(Path path) throws IOException {
+    try {
+      String coffee = new String(Files.readAllBytes(path));
+
+      return new JCoffeeScriptCompiler().compile(coffee);
+    } catch (Exception e) {
+      throw new IOException("Unable to compile less file", e);
+    }
+  }
+
+  private static String compileLess(Path path) throws IOException {
+    try {
+      return new ThreadUnsafeLessCompiler().compile(path.toFile()).getCss();
+    } catch (Exception e) {
+      throw new IOException("Unable to compile less file", e);
+    }
   }
 
   private static byte[] forString(String value) {

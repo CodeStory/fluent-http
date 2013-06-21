@@ -18,6 +18,8 @@ public class ContentTypesTest {
     assertThat(contentTypes.get("image.jpeg")).isEqualTo("image/jpeg");
     assertThat(contentTypes.get("image.jpg")).isEqualTo("image/jpeg");
     assertThat(contentTypes.get("image.png")).isEqualTo("image/png");
+    assertThat(contentTypes.get("script.js")).isEqualTo("application/javascript");
+    assertThat(contentTypes.get("script.coffee")).isEqualTo("application/javascript");
     assertThat(contentTypes.get("unknown")).isEqualTo("text/plain");
   }
 }
