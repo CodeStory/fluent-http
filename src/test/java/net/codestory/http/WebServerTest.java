@@ -1,12 +1,16 @@
 package net.codestory.http;
 
 import static com.jayway.restassured.RestAssured.*;
+import static org.fest.assertions.Assertions.*;
 import static org.hamcrest.Matchers.*;
 
+import java.io.*;
+import java.net.*;
 import java.nio.charset.*;
 
 import net.codestory.http.misc.*;
 
+import org.fest.assertions.*;
 import org.junit.*;
 
 import com.jayway.restassured.specification.*;
@@ -45,6 +49,25 @@ public class WebServerTest {
     expect().body(equalTo("HI LOUD")).when().get("/say/HI/how/LOUD");
   }
 
+  @Test
+  public void static_content() {
+    server.routes().serve("web");
+
+    String html = expect().contentType("text/html").when().get("/index.html").getBody().asString();
+    assertThat(html).contains("Hello From a File");
+
+    String css = expect().contentType("text/css").when().get("/assets/style.css").getBody().asString();
+    assertThat(css).contains("* {}");
+  }
+
+  @Test
+  public void dont_serve_private_file() {
+    server.routes().serve("web");
+
+    expect().statusCode(404).when().get("/../private.txt");
+
+    assertThat(getClass().getClassLoader().getResource("private.txt")).isNotNull();
+  }
 
   private ResponseSpecification expect() {
     return given().port(server.port()).expect();

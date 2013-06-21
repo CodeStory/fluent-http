@@ -2,6 +2,9 @@ package net.codestory.http;
 
 import java.io.*;
 import java.nio.charset.*;
+import java.nio.file.*;
+
+import net.codestory.http.types.*;
 
 import com.google.gson.*;
 import com.sun.net.httpserver.*;
@@ -44,6 +47,24 @@ public class Payload {
 
     if (content instanceof String) {
       return new Payload("text/html", forString((String) content));
+    }
+
+    if (content instanceof Path) {
+      Path path = (Path) content;
+      try {
+        return new Payload(new ContentTypes().get(path.toString()), Files.readAllBytes(path));
+      } catch (IOException e) {
+        return new Payload("text/plain", "BUG");
+      }
+    }
+
+    if (content instanceof File) {
+      File file = (File) content;
+      try {
+        return new Payload(new ContentTypes().get(file.getName()), Files.readAllBytes(file.toPath()));
+      } catch (IOException e) {
+        return new Payload("text/plain", "BUG");
+      }
     }
 
     return new Payload("application/json", forString(new Gson().toJson(content)));

@@ -3,23 +3,13 @@ package net.codestory.http.routes;
 import java.io.*;
 import java.util.*;
 
-import net.codestory.http.*;
-
 import com.sun.net.httpserver.*;
 
 public class Routes {
-  private final List<RouteWrapper> routes = new ArrayList<>();
+  private final List<RouteHolder> routes = new ArrayList<>();
 
-  public boolean apply(HttpExchange exchange) throws IOException {
-    String uri = exchange.getRequestURI().toString();
-
-    for (RouteWrapper route : routes) {
-      if (route.apply(uri, exchange)) {
-        return true;
-      }
-    }
-
-    return false;
+  public void serve(String fromUrl) {
+    routes.add(new StaticRoute(fromUrl));
   }
 
   public void get(String uriPattern, Route route) {
@@ -38,21 +28,16 @@ public class Routes {
     routes.add(new RouteWrapper(uriPattern, route));
   }
 
-  private static class RouteWrapper {
-    final UriParser uriParser;
-    final AnyRoute route;
+  // TODO : protect
+  public boolean apply(HttpExchange exchange) throws IOException {
+    String uri = exchange.getRequestURI().toString();
 
-    RouteWrapper(String uriPattern, AnyRoute route) {
-      this.uriParser = new UriParser(uriPattern);
-      this.route = route;
-    }
-
-    public boolean apply(String uri, HttpExchange exchange) throws IOException {
-      if (uriParser.matches(uri)) {
-        new Payload(route.body(uriParser.params(uri))).writeTo(exchange);
+    for (RouteHolder route : routes) {
+      if (route.apply(uri, exchange)) {
         return true;
       }
-      return false;
     }
+
+    return false;
   }
 }
