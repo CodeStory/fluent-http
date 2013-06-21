@@ -22,10 +22,10 @@ public class WebServerTest {
 
   @Test
   public void content_types() {
-    server.get("/index", () -> "Hello");
-    server.get("/raw", () -> "RAW DATA".getBytes(StandardCharsets.UTF_8));
-    server.get("/json", () -> new Person("NAME", 42));
-    server.get("/text", () -> new Payload("text/plain", "TEXT"));
+    server.routes().get("/index", () -> "Hello");
+    server.routes().get("/raw", () -> "RAW DATA".getBytes(StandardCharsets.UTF_8));
+    server.routes().get("/json", () -> new Person("NAME", 42));
+    server.routes().get("/text", () -> new Payload("text/plain", "TEXT"));
 
     expect().body(equalTo("Hello")).contentType("text/html").when().get("/index");
     expect().body(equalTo("RAW DATA")).contentType("application/octet-stream").when().get("/raw");
@@ -35,9 +35,9 @@ public class WebServerTest {
 
   @Test
   public void request_params() {
-    server.get("/hello/:name", (name) -> "Hello " + name);
-    server.get("/other/:name", (name) -> "Other " + name);
-    server.get("/say/:what/how/:loud", (what, loud) -> what + " " + loud);
+    server.routes().get("/hello/:name", (name) -> "Hello " + name);
+    server.routes().get("/other/:name", (name) -> "Other " + name);
+    server.routes().get("/say/:what/how/:loud", (what, loud) -> what + " " + loud);
 
     expect().body(equalTo("Hello Dave")).when().get("/hello/Dave");
     expect().body(equalTo("Hello Bob")).when().get("/hello/Bob");
