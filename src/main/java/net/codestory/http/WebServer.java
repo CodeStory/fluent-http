@@ -8,16 +8,12 @@ import com.sun.net.httpserver.*;
 
 public class WebServer implements HttpHandler {
   private final HttpServer server;
-  private final Map<String, Route> routes;
-  private final Map<String, OneParamRoute> oneParamRoutes;
-  private final Map<String, TwoParamsRoute> twoParamsRoute;
+  private final List<RouteWrapper> routes;
 
   public WebServer() {
     try {
       server = HttpServer.create();
-      routes = new HashMap<>();
-      oneParamRoutes = new HashMap<>();
-      twoParamsRoute = new HashMap<>();
+      routes = new ArrayList<>();
     } catch (IOException e) {
       throw new IllegalStateException("Unable to create http server", e);
     }
@@ -25,38 +21,11 @@ public class WebServer implements HttpHandler {
 
   @Override
   public void handle(HttpExchange exchange) throws IOException {
+    String uri = exchange.getRequestURI().toString();
+
     try {
-      String uri = exchange.getRequestURI().toString();
-
-      Route route = routes.get(uri);
-      if (route != null) {
-        new Payload(route.body()).writeTo(exchange);
-        return;
-      }
-
-      for (Map.Entry<String, OneParamRoute> routeEntry : oneParamRoutes.entrySet()) {
-        String uriPattern = routeEntry.getKey();
-        OneParamRoute oneParamRoute = routeEntry.getValue();
-
-        UriParser uriParser = new UriParser(uriPattern); // TODO : do it once per route
-
-        if (uriParser.matches(uri)) {
-          String param = uriParser.params(uri)[0];
-          new Payload(oneParamRoute.body(param)).writeTo(exchange);
-          return;
-        }
-      }
-
-      for (Map.Entry<String, TwoParamsRoute> routeEntry : twoParamsRoute.entrySet()) {
-        String uriPattern = routeEntry.getKey();
-        TwoParamsRoute oneParamRoute = routeEntry.getValue();
-
-        UriParser uriParser = new UriParser(uriPattern); // TODO : do it once per route
-
-        if (uriParser.matches(uri)) {
-          String param1 = uriParser.params(uri)[0];
-          String param2 = uriParser.params(uri)[1];
-          new Payload(oneParamRoute.body(param1, param2)).writeTo(exchange);
+      for (RouteWrapper route : routes) {
+        if (route.apply(uri, exchange)) {
           return;
         }
       }
@@ -67,16 +36,16 @@ public class WebServer implements HttpHandler {
     }
   }
 
-  public void get(String path, Route route) {
-    routes.put(path, route);
+  public void get(String uriPattern, Route route) {
+    routes.add(new RouteWrapper(uriPattern, route, null, null));
   }
 
-  public void get(String path, OneParamRoute route) {
-    oneParamRoutes.put(path, route);
+  public void get(String uriPattern, OneParamRoute route) {
+    routes.add(new RouteWrapper(uriPattern, null, route, null));
   }
 
-  public void get(String path, TwoParamsRoute route) {
-    twoParamsRoute.put(path, route);
+  public void get(String uriPattern, TwoParamsRoute route) {
+    routes.add(new RouteWrapper(uriPattern, null, null, route));
   }
 
   public void start(int port) throws IOException {
@@ -103,5 +72,47 @@ public class WebServer implements HttpHandler {
 
   public static interface TwoParamsRoute {
     Object body(String param1, String param2);
+  }
+
+  private static class RouteWrapper {
+    private final UriParser uriParser;
+    private final Route route;
+    private final OneParamRoute oneParamRoute;
+    private final TwoParamsRoute twoParamsRoute;
+
+    private RouteWrapper(String uriPattern, Route route, OneParamRoute oneParamRoute, TwoParamsRoute twoParamsRoute) {
+      this.uriParser = new UriParser(uriPattern);
+      this.route = route;
+      this.oneParamRoute = oneParamRoute;
+      this.twoParamsRoute = twoParamsRoute;
+    }
+
+    public boolean apply(String uri, HttpExchange exchange) throws IOException {
+      if (route != null) {
+        if (uriParser.matches(uri)) {
+          new Payload(route.body()).writeTo(exchange);
+          return true;
+        }
+      }
+
+      if (oneParamRoute != null) {
+        if (uriParser.matches(uri)) {
+          String param = uriParser.params(uri)[0];
+          new Payload(oneParamRoute.body(param)).writeTo(exchange);
+          return true;
+        }
+      }
+
+      if (twoParamsRoute != null) {
+        if (uriParser.matches(uri)) {
+          String param1 = uriParser.params(uri)[0];
+          String param2 = uriParser.params(uri)[1];
+          new Payload(twoParamsRoute.body(param1, param2)).writeTo(exchange);
+          return true;
+        }
+      }
+
+      return false;
+    }
   }
 }
