@@ -4,8 +4,12 @@ import java.io.*;
 import java.nio.charset.*;
 import java.nio.file.*;
 
+import javax.script.*;
+import jdk.nashorn.api.scripting.*;
 import net.codestory.http.types.*;
 
+import com.github.sommeri.less4j.*;
+import com.github.sommeri.less4j.core.*;
 import com.google.gson.*;
 import com.sun.net.httpserver.*;
 
@@ -34,29 +38,23 @@ public class Payload {
     if (contentType != null) {
       return contentType;
     }
-
     if (content instanceof Payload) {
       return ((Payload) content).getContentType();
     }
-
     if (content instanceof File) {
       File file = (File) content;
       return new ContentTypes().get(file.getName());
     }
-
     if (content instanceof Path) {
       Path path = (Path) content;
       return new ContentTypes().get(path.toString());
     }
-
     if (content instanceof byte[]) {
       return "application/octet-stream";
     }
-
     if (content instanceof String) {
       return "text/html";
     }
-
     return "application/json";
   }
 
@@ -64,24 +62,32 @@ public class Payload {
     if (content instanceof Payload) {
       return ((Payload) content).getData();
     }
-
     if (content instanceof File) {
-      return Files.readAllBytes(((File) content).toPath());
+      return forPath(((File) content).toPath());
     }
-
     if (content instanceof Path) {
-      return Files.readAllBytes((Path) content);
+      return forPath((Path) content);
     }
-
     if (content instanceof byte[]) {
       return (byte[]) content;
     }
-
     if (content instanceof String) {
       return forString((String) content);
     }
-
     return forString(new Gson().toJson(content));
+  }
+
+  private static byte[] forPath(Path path) throws IOException {
+    if (path.toString().endsWith(".less")) {
+      try {
+        String css = new ThreadUnsafeLessCompiler().compile(path.toFile()).getCss();
+        return forString(css);
+      } catch (Less4jException e) {
+        throw new IOException("Unable to compile less file", e);
+      }
+    }
+
+    return Files.readAllBytes(path);
   }
 
   private static byte[] forString(String value) {

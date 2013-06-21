@@ -12,13 +12,13 @@ public class ContentTypes {
       case ".html":
         return "text/html";
       case ".css":
+      case ".less":
         return "text/css";
       case ".zip":
         return "application/zip";
       case ".gif":
         return "image/gif";
       case ".jpeg":
-        return "image/jpeg";
       case ".jpg":
         return "image/jpeg";
       case ".png":

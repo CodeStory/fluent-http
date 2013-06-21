@@ -51,6 +51,7 @@ public class WebServerTest {
 
     expect().content(containsString("Hello From a File")).contentType("text/html").when().get("/index.html");
     expect().content(equalTo("* {}")).contentType("text/css").when().get("/assets/style.css");
+    expect().content(containsString("body h1 {\n  color: red;\n}")).contentType("text/css").when().get("/assets/style.less");
     expect().statusCode(404).when().get("/../private.txt");
   }
 

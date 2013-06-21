@@ -11,6 +11,7 @@ public class ContentTypesTest {
   public void find_content_type_from_extension() {
     assertThat(contentTypes.get("index.html")).isEqualTo("text/html");
     assertThat(contentTypes.get("style.css")).isEqualTo("text/css");
+    assertThat(contentTypes.get("style.less")).isEqualTo("text/css");
     assertThat(contentTypes.get("text.txt")).isEqualTo("text/plain");
     assertThat(contentTypes.get("text.zip")).isEqualTo("application/zip");
     assertThat(contentTypes.get("image.gif")).isEqualTo("image/gif");
