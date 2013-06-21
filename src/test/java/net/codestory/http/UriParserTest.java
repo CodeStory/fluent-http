@@ -22,6 +22,7 @@ public class UriParserTest {
     assertThat(new UriParser("/hello/:name").params("/hello/Bob")).containsOnly("Bob");
     assertThat(new UriParser("/hello/:name").params("/hello/Dave")).containsOnly("Dave");
     assertThat(new UriParser("/hello/:name/aged/:age").params("/hello/Dave/aged/42")).containsOnly("Dave", "42");
+    assertThat(new UriParser("/hello/:name/aged/:age").params("/hello//aged/")).containsOnly("", "");
     assertThat(new UriParser("/").params("/")).isEmpty();
   }
 }

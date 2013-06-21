@@ -45,6 +45,6 @@ public class UriParser {
   }
 
   static String[] parts(String uri) {
-    return uri.split("[/]");
+    return uri.split("/", -1);
   }
 }
