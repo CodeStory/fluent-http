@@ -16,38 +16,21 @@ public class WebServerTest {
   public WebServerRule server = new WebServerRule();
 
   @Test
-  public void page_not_found() {
+  public void not_found() {
     expect().statusCode(404).when().get("/");
   }
 
   @Test
-  public void support_html() {
-    server.get("/url1", () -> "Hello 1");
-    server.get("/url2", () -> "Hello 2");
+  public void content_types() {
+    server.get("/index", () -> "Hello");
+    server.get("/raw", () -> "RAW DATA".getBytes(StandardCharsets.UTF_8));
+    server.get("/json", () -> new Person("NAME", 42));
+    server.get("/text", () -> new Payload("text/plain", "TEXT"));
 
-    expect().body(equalTo("Hello 1")).when().contentType("text/html").get("/url1");
-    expect().body(equalTo("Hello 2")).when().contentType("text/html").get("/url2");
-  }
-
-  @Test
-  public void support_raw_data() {
-    server.get("/raw", () -> "Hello 1".getBytes(StandardCharsets.UTF_8));
-
-    expect().body(equalTo("Hello 1")).when().contentType("application/octet-stream").get("/raw");
-  }
-
-  @Test
-  public void support_json() {
-    server.get("/api", () -> new Person("NAME", 42));
-
-    expect().body(equalTo("{\"name\":\"NAME\",\"age\":42}")).contentType("application/json").when().get("/api");
-  }
-
-  @Test
-  public void support_custom_content_type() {
-    server.get("/", () -> new Payload("text/plain", "Hello"));
-
-    expect().body(equalTo("Hello")).contentType("text/plain").when().get("/");
+    expect().body(equalTo("Hello")).contentType("text/html").when().get("/index");
+    expect().body(equalTo("RAW DATA")).contentType("application/octet-stream").when().get("/raw");
+    expect().body("name", equalTo("NAME")).body("age", equalTo(42)).contentType("application/json").when().get("/json");
+    expect().body(equalTo("TEXT")).contentType("text/plain").when().get("/text");
   }
 
   private ResponseSpecification expect() {
