@@ -9,11 +9,13 @@ import com.sun.net.httpserver.*;
 public class WebServer implements HttpHandler {
   private final HttpServer server;
   private final Map<String, Route> routes;
+  private final Map<String, OneParamRoute> oneParamRoutes;
 
   public WebServer() {
     try {
       server = HttpServer.create();
       routes = new HashMap<>();
+      oneParamRoutes = new HashMap<>();
     } catch (IOException e) {
       throw new IllegalStateException("Unable to create http server", e);
     }
@@ -21,21 +23,33 @@ public class WebServer implements HttpHandler {
 
   @Override
   public void handle(HttpExchange exchange) throws IOException {
-    String uri = exchange.getRequestURI().toString();
+    try {
+      String uri = exchange.getRequestURI().toString();
 
-    Route route = routes.get(uri);
-    if (route != null) {
-      Payload payload = new Payload(route.body());
-      payload.writeTo(exchange);
-    } else {
+      Route route = routes.get(uri);
+      if (route != null) {
+        new Payload(route.body()).writeTo(exchange);
+        return;
+      }
+
+      OneParamRoute oneParamRoute = oneParamRoutes.get("/hello/${name}");
+      if (oneParamRoute != null) {
+        new Payload(oneParamRoute.body("Dave")).writeTo(exchange);
+        return;
+      }
+
       exchange.sendResponseHeaders(404, 0);
+    } finally {
+      exchange.close();
     }
-
-    exchange.close();
   }
 
   public void get(String path, Route route) {
     routes.put(path, route);
+  }
+
+  public void get(String path, OneParamRoute route) {
+    oneParamRoutes.put(path, route);
   }
 
   public void start(int port) throws IOException {
@@ -54,5 +68,9 @@ public class WebServer implements HttpHandler {
 
   public static interface Route<Object> {
     public Object body();
+  }
+
+  public static interface OneParamRoute<Object> {
+    public Object body(String param);
   }
 }

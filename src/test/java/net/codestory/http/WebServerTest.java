@@ -33,6 +33,14 @@ public class WebServerTest {
     expect().body(equalTo("TEXT")).contentType("text/plain").when().get("/text");
   }
 
+  @Test
+  public void request_params() {
+    server.get("/hello/${name}", (name) -> "Hello " + name);
+
+    expect().body(equalTo("Hello Dave")).when().get("/hello/Dave");
+  }
+
+
   private ResponseSpecification expect() {
     return given().port(server.port()).expect();
   }
