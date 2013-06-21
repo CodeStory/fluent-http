@@ -8,12 +8,16 @@ import java.util.*;
 import com.sun.net.httpserver.*;
 
 public class WebServer implements HttpHandler {
+  private final HttpServer server;
   private final Map<String, Route> routes;
-  private HttpServer server;
-  private int port;
 
   public WebServer() {
-    routes = new HashMap<>();
+    try {
+      server = HttpServer.create();
+      routes = new HashMap<>();
+    } catch (IOException e) {
+      throw new IllegalStateException("Unable to create http server", e);
+    }
   }
 
   @Override
@@ -40,15 +44,13 @@ public class WebServer implements HttpHandler {
   }
 
   public void start(int port) throws IOException {
-    this.port = port;
-
-    server = HttpServer.create(new InetSocketAddress(port), 0);
+    server.bind(new InetSocketAddress(port), 0);
     server.createContext("/", this);
     server.start();
   }
 
   public int port() {
-    return port;
+    return server.getAddress().getPort();
   }
 
   public void stop() {
