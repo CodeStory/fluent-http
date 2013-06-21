@@ -37,15 +37,15 @@ public class WebServer implements HttpHandler {
   }
 
   public void get(String uriPattern, Route route) {
-    routes.add(new RouteWrapper(uriPattern, route, null, null));
+    routes.add(new RouteWrapper(uriPattern, route));
   }
 
   public void get(String uriPattern, OneParamRoute route) {
-    routes.add(new RouteWrapper(uriPattern, null, route, null));
+    routes.add(new RouteWrapper(uriPattern, route));
   }
 
   public void get(String uriPattern, TwoParamsRoute route) {
-    routes.add(new RouteWrapper(uriPattern, null, null, route));
+    routes.add(new RouteWrapper(uriPattern, route));
   }
 
   public void start(int port) throws IOException {
@@ -62,57 +62,57 @@ public class WebServer implements HttpHandler {
     server.stop(0);
   }
 
-  public static interface Route {
+  public static interface AnyRoute {
+    Object body(String[] params);
+  }
+
+  public static interface Route extends AnyRoute {
     Object body();
+
+    @Override
+    default Object body(String[] params) {
+      return body();
+    }
   }
 
-  public static interface OneParamRoute {
+  public static interface OneParamRoute extends AnyRoute {
     Object body(String param);
+
+    @Override
+    default Object body(String[] params) {
+      return body(params[0]);
+    }
   }
 
-  public static interface TwoParamsRoute {
+  public static interface TwoParamsRoute extends AnyRoute {
     Object body(String param1, String param2);
+
+    @Override
+    default Object body(String[] params) {
+      return body(params[0], params[1]);
+    }
   }
 
   private static class RouteWrapper {
     private final UriParser uriParser;
-    private final Route route;
-    private final OneParamRoute oneParamRoute;
-    private final TwoParamsRoute twoParamsRoute;
+    private final AnyRoute route;
 
-    private RouteWrapper(String uriPattern, Route route, OneParamRoute oneParamRoute, TwoParamsRoute twoParamsRoute) {
+    private RouteWrapper(String uriPattern, AnyRoute route) {
       this.uriParser = new UriParser(uriPattern);
       this.route = route;
-      this.oneParamRoute = oneParamRoute;
-      this.twoParamsRoute = twoParamsRoute;
     }
 
     public boolean apply(String uri, HttpExchange exchange) throws IOException {
-      if (route != null) {
-        if (uriParser.matches(uri)) {
-          new Payload(route.body()).writeTo(exchange);
-          return true;
-        }
+      if (!uriParser.matches(uri)) {
+        return false;
       }
 
-      if (oneParamRoute != null) {
-        if (uriParser.matches(uri)) {
-          String param = uriParser.params(uri)[0];
-          new Payload(oneParamRoute.body(param)).writeTo(exchange);
-          return true;
-        }
-      }
+      String[] params = uriParser.params(uri);
+      Object body = route.body(params);
+      Payload payload = new Payload(body);
+      payload.writeTo(exchange);
 
-      if (twoParamsRoute != null) {
-        if (uriParser.matches(uri)) {
-          String param1 = uriParser.params(uri)[0];
-          String param2 = uriParser.params(uri)[1];
-          new Payload(twoParamsRoute.body(param1, param2)).writeTo(exchange);
-          return true;
-        }
-      }
-
-      return false;
+      return true;
     }
   }
 }
