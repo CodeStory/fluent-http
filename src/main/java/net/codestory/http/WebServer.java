@@ -27,7 +27,7 @@ public class WebServer implements HttpHandler {
 
     Route route = routes.get(uri);
     if (route != null) {
-      Payload payload = new ToBytes().convert(route.body());
+      Payload payload = new PayloadConverter().convert(route.body());
 
       byte[] data = payload.data;
       exchange.getResponseHeaders().add("Content-Type", payload.contentType);

@@ -5,12 +5,12 @@ import static org.fest.assertions.Assertions.*;
 
 import org.junit.*;
 
-public class ToBytesTest {
-  ToBytes toBytes = new ToBytes();
+public class PayloadConverterTest {
+  PayloadConverter payloadConverter = new PayloadConverter();
 
   @Test
   public void support_string() {
-    Payload payload = toBytes.convert("Hello");
+    Payload payload = payloadConverter.convert("Hello");
 
     assertThat(payload.data).isEqualTo("Hello".getBytes(UTF_8));
     assertThat(payload.contentType).isEqualTo("text/html");
@@ -20,7 +20,7 @@ public class ToBytesTest {
   public void support_byte_array() {
     byte[] bytes = "Hello".getBytes(UTF_8);
 
-    Payload payload = toBytes.convert(bytes);
+    Payload payload = payloadConverter.convert(bytes);
 
     assertThat(payload.data).isSameAs(bytes);
     assertThat(payload.contentType).isEqualTo("application/octet-stream");
@@ -28,7 +28,7 @@ public class ToBytesTest {
 
   @Test
   public void support_bean_to_json() {
-    Payload payload = toBytes.convert(new Person("NAME", 42));
+    Payload payload = payloadConverter.convert(new Person("NAME", 42));
 
     assertThat(payload.data).isEqualTo("{\"name\":\"NAME\",\"age\":42}".getBytes(UTF_8));
     assertThat(payload.contentType).isEqualTo("application/json");

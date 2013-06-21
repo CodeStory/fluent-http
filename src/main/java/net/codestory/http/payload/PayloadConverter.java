@@ -4,7 +4,7 @@ import java.nio.charset.*;
 
 import com.google.gson.*;
 
-public class ToBytes {
+public class PayloadConverter {
   public Payload convert(Object value) {
     if (value instanceof byte[]) {
       return payload("application/octet-stream", forByteArray((byte[]) value));
