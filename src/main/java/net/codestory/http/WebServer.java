@@ -2,8 +2,9 @@ package net.codestory.http;
 
 import java.io.*;
 import java.net.*;
-import java.nio.charset.*;
 import java.util.*;
+
+import net.codestory.http.payload.*;
 
 import com.sun.net.httpserver.*;
 
@@ -26,10 +27,10 @@ public class WebServer implements HttpHandler {
 
     Route route = routes.get(uri);
     if (route != null) {
-      String body = route.body();
+      Payload payload = new ToBytes().convert(route.body());
 
-      byte[] data = body.getBytes(StandardCharsets.UTF_8);
-      exchange.getResponseHeaders().add("Content-Type", "text/html");
+      byte[] data = payload.data;
+      exchange.getResponseHeaders().add("Content-Type", payload.contentType);
       exchange.sendResponseHeaders(200, data.length);
       exchange.getResponseBody().write(data);
     } else {
@@ -57,7 +58,7 @@ public class WebServer implements HttpHandler {
     server.stop(0);
   }
 
-  public static interface Route {
-    public String body();
+  public static interface Route<Object> {
+    public Object body();
   }
 }
