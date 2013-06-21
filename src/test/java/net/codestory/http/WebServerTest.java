@@ -35,9 +35,14 @@ public class WebServerTest {
 
   @Test
   public void request_params() {
-    server.get("/hello/${name}", (name) -> "Hello " + name);
+    server.get("/hello/:name", (name) -> "Hello " + name);
+    server.get("/other/:name", (name) -> "Other " + name);
+    server.get("/say/:what/how/:loud", (what, loud) -> what + " " + loud);
 
     expect().body(equalTo("Hello Dave")).when().get("/hello/Dave");
+    expect().body(equalTo("Hello Bob")).when().get("/hello/Bob");
+    expect().body(equalTo("Other Joe")).when().get("/other/Joe");
+    expect().body(equalTo("HI LOUD")).when().get("/say/HI/how/LOUD");
   }
 
 
