@@ -4,8 +4,6 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import net.codestory.http.payload.*;
-
 import com.sun.net.httpserver.*;
 
 public class WebServer implements HttpHandler {
@@ -27,12 +25,8 @@ public class WebServer implements HttpHandler {
 
     Route route = routes.get(uri);
     if (route != null) {
-      Payload payload = new PayloadConverter().convert(route.body());
-
-      byte[] data = payload.data;
-      exchange.getResponseHeaders().add("Content-Type", payload.contentType);
-      exchange.sendResponseHeaders(200, data.length);
-      exchange.getResponseBody().write(data);
+      Payload payload = new Payload(route.body());
+      payload.writeTo(exchange);
     } else {
       exchange.sendResponseHeaders(404, 0);
     }

@@ -43,6 +43,13 @@ public class WebServerTest {
     expect().body(equalTo("{\"name\":\"NAME\",\"age\":42}")).contentType("application/json").when().get("/api");
   }
 
+  @Test
+  public void support_custom_content_type() {
+    server.get("/", () -> new Payload("text/plain", "Hello"));
+
+    expect().body(equalTo("Hello")).contentType("text/plain").when().get("/");
+  }
+
   private ResponseSpecification expect() {
     return given().port(server.port()).expect();
   }
