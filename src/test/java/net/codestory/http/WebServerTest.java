@@ -4,13 +4,10 @@ import static com.jayway.restassured.RestAssured.*;
 import static org.fest.assertions.Assertions.*;
 import static org.hamcrest.Matchers.*;
 
-import java.io.*;
-import java.net.*;
 import java.nio.charset.*;
 
 import net.codestory.http.misc.*;
 
-import org.fest.assertions.*;
 import org.junit.*;
 
 import com.jayway.restassured.specification.*;

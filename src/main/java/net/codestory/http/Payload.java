@@ -10,64 +10,78 @@ import com.google.gson.*;
 import com.sun.net.httpserver.*;
 
 public class Payload {
-  final String contentType;
-  final byte[] data;
-
-  public Payload(String contentType, byte[] data) {
-    this.contentType = contentType;
-    this.data = data;
-  }
+  private final String contentType;
+  private final Object content;
 
   public Payload(Object content) {
-    Payload payloadFromContent = create(content);
-    this.contentType = payloadFromContent.contentType;
-    this.data = payloadFromContent.data;
+    this(null, content);
   }
 
   public Payload(String contentType, Object content) {
-    Payload payloadFromContent = create(content);
     this.contentType = contentType;
-    this.data = payloadFromContent.data;
+    this.content = content;
   }
 
   public void writeTo(HttpExchange exchange) throws IOException {
-    exchange.getResponseHeaders().add("Content-Type", contentType);
+    exchange.getResponseHeaders().add("Content-Type", getContentType());
+
+    byte[] data = getData();
     exchange.sendResponseHeaders(200, data.length);
     exchange.getResponseBody().write(data);
   }
 
-  private static Payload create(Object content) {
+  String getContentType() {
+    if (contentType != null) {
+      return contentType;
+    }
+
     if (content instanceof Payload) {
-      return (Payload) content;
-    }
-
-    if (content instanceof byte[]) {
-      return new Payload("application/octet-stream", (byte[]) content);
-    }
-
-    if (content instanceof String) {
-      return new Payload("text/html", forString((String) content));
-    }
-
-    if (content instanceof Path) {
-      Path path = (Path) content;
-      try {
-        return new Payload(new ContentTypes().get(path.toString()), Files.readAllBytes(path));
-      } catch (IOException e) {
-        return new Payload("text/plain", "BUG");
-      }
+      return ((Payload) content).getContentType();
     }
 
     if (content instanceof File) {
       File file = (File) content;
-      try {
-        return new Payload(new ContentTypes().get(file.getName()), Files.readAllBytes(file.toPath()));
-      } catch (IOException e) {
-        return new Payload("text/plain", "BUG");
-      }
+      return new ContentTypes().get(file.getName());
     }
 
-    return new Payload("application/json", forString(new Gson().toJson(content)));
+    if (content instanceof Path) {
+      Path path = (Path) content;
+      return new ContentTypes().get(path.toString());
+    }
+
+    if (content instanceof byte[]) {
+      return "application/octet-stream";
+    }
+
+    if (content instanceof String) {
+      return "text/html";
+    }
+
+    return "application/json";
+  }
+
+  byte[] getData() throws IOException {
+    if (content instanceof Payload) {
+      return ((Payload) content).getData();
+    }
+
+    if (content instanceof File) {
+      return Files.readAllBytes(((File) content).toPath());
+    }
+
+    if (content instanceof Path) {
+      return Files.readAllBytes((Path) content);
+    }
+
+    if (content instanceof byte[]) {
+      return (byte[]) content;
+    }
+
+    if (content instanceof String) {
+      return forString((String) content);
+    }
+
+    return forString(new Gson().toJson(content));
   }
 
   private static byte[] forString(String value) {
