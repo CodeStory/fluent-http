@@ -38,6 +38,7 @@ public class WebServerTest {
     server.routes().get("/hello/:name", (name) -> "Hello " + name);
     server.routes().get("/other/:name", (name) -> "Other " + name);
     server.routes().get("/say/:what/how/:loud", (what, loud) -> what + " " + loud);
+    server.routes().get("/:one/:two/:three", (one, two, three) -> one + two + three);
 
     expect().body(equalTo("Hello Dave")).when().get("/hello/Dave");
     expect().body(equalTo("Hello Bob")).when().get("/hello/Bob");

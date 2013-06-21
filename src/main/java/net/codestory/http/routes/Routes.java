@@ -24,6 +24,10 @@ public class Routes {
     add(uriPattern, route);
   }
 
+  public void get(String uriPattern, ThreeParamsRoute route) {
+    add(uriPattern, route);
+  }
+
   private void add(String uriPattern, AnyRoute route) {
     routes.add(new RouteWrapper(uriPattern, route));
   }
