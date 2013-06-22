@@ -1,16 +1,12 @@
 package net.codestory.http;
 
-import static java.util.Arrays.*;
-
 import java.io.*;
 import java.nio.charset.*;
 import java.nio.file.*;
 
+import net.codestory.http.compilers.*;
 import net.codestory.http.types.*;
 
-import org.jcoffeescript.*;
-
-import com.github.sommeri.less4j.core.*;
 import com.google.gson.*;
 import com.sun.net.httpserver.*;
 
@@ -80,30 +76,12 @@ public class Payload {
 
   private static byte[] forPath(Path path) throws IOException {
     if (path.toString().endsWith(".less")) {
-      return forString(compileLess(path));
+      return forString(new LessCompiler().compile(path));
     }
     if (path.toString().endsWith(".coffee")) {
-      return forString(compileCoffee(path));
+      return forString(new CoffeeScriptCompiler().compile(path));
     }
     return Files.readAllBytes(path);
-  }
-
-  private static String compileCoffee(Path path) throws IOException {
-    try {
-      String coffee = new String(Files.readAllBytes(path));
-
-      return new JCoffeeScriptCompiler(asList(Option.BARE)).compile(coffee);
-    } catch (Exception e) {
-      throw new IOException("Unable to compile less file", e);
-    }
-  }
-
-  private static String compileLess(Path path) throws IOException {
-    try {
-      return new ThreadUnsafeLessCompiler().compile(path.toFile()).getCss();
-    } catch (Exception e) {
-      throw new IOException("Unable to compile less file", e);
-    }
   }
 
   private static byte[] forString(String value) {
