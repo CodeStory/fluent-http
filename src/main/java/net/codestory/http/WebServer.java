@@ -7,7 +7,7 @@ import net.codestory.http.routes.*;
 
 import com.sun.net.httpserver.*;
 
-public class WebServer implements HttpHandler {
+public class WebServer {
   private final HttpServer server;
   private final Routes routes = new Routes();
 
@@ -23,20 +23,17 @@ public class WebServer implements HttpHandler {
     return routes;
   }
 
-  @Override
-  public void handle(HttpExchange exchange) throws IOException {
-    try {
-      if (!routes.apply(exchange)) {
-        exchange.sendResponseHeaders(404, 0);
-      }
-    } finally {
-      exchange.close();
-    }
-  }
-
   public void start(int port) throws IOException {
     server.bind(new InetSocketAddress(port), 0);
-    server.createContext("/", this);
+    server.createContext("/", exchange -> {
+      try {
+        if (!routes.apply(exchange)) {
+          exchange.sendResponseHeaders(404, 0);
+        }
+      } finally {
+        exchange.close();
+      }
+    });
     server.start();
   }
 
