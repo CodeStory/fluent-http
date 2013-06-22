@@ -1,5 +1,7 @@
 package net.codestory.http;
 
+import static java.util.Arrays.*;
+
 import java.io.*;
 import java.nio.charset.*;
 import java.nio.file.*;
@@ -90,7 +92,7 @@ public class Payload {
     try {
       String coffee = new String(Files.readAllBytes(path));
 
-      return new JCoffeeScriptCompiler().compile(coffee);
+      return new JCoffeeScriptCompiler(asList(Option.BARE)).compile(coffee);
     } catch (Exception e) {
       throw new IOException("Unable to compile less file", e);
     }
