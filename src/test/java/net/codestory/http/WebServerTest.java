@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.*;
 
 import java.nio.charset.*;
 
+import net.codestory.http.annotations.*;
 import net.codestory.http.misc.*;
 
 import org.junit.*;
@@ -56,6 +57,24 @@ public class WebServerTest {
     expect().content(containsString("* {}")).contentType("text/css").when().get("/assets/style.css");
     expect().content(containsString("body h1 {\n  color: red;\n}\n")).contentType("text/css").when().get("/assets/style.less");
     expect().statusCode(404).when().get("/../private.txt");
+  }
+
+  @Test
+  public void annotated_resources() {
+    server.routes().addResource(new Object() {
+      @Get("/hello")
+      public String say_hello() {
+        return "Hello World";
+      }
+
+      @Get("/bye/:whom")
+      public String say_bye_to_(String whom) {
+        return "Good Bye " + whom;
+      }
+    });
+
+    expect().content(containsString("Hello World")).contentType("text/html").when().get("/hello");
+    expect().content(containsString("Good Bye Bob")).contentType("text/html").when().get("/bye/Bob");
   }
 
   private ResponseSpecification expect() {

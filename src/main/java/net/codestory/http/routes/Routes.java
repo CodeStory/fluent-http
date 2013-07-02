@@ -3,6 +3,8 @@ package net.codestory.http.routes;
 public interface Routes {
   void serve(String fromUrl);
 
+  void addResource(Object resource);
+
   void get(String uriPattern, Route route);
 
   void get(String uriPattern, OneParamRoute route);

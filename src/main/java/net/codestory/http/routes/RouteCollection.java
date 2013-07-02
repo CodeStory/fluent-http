@@ -1,7 +1,10 @@
 package net.codestory.http.routes;
 
 import java.io.*;
+import java.lang.reflect.*;
 import java.util.*;
+
+import net.codestory.http.annotations.*;
 
 import com.sun.net.httpserver.*;
 
@@ -11,6 +14,16 @@ public class RouteCollection implements Routes {
   @Override
   public void serve(String fromUrl) {
     routes.add(new StaticRoute(fromUrl));
+  }
+
+  @Override
+  public void addResource(Object resource) {
+    for (Method method : resource.getClass().getDeclaredMethods()) {
+      Get annotation = method.getAnnotation(Get.class);
+      if (annotation != null) {
+        add(annotation.value(), new ReflectionRoute(resource, method));
+      }
+    }
   }
 
   @Override
