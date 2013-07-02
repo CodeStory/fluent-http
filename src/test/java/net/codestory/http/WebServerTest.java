@@ -71,10 +71,16 @@ public class WebServerTest {
       public String say_bye_to_(String whom) {
         return "Good Bye " + whom;
       }
+
+      @Get("/add/:left/:right")
+      public String say_bye_to_(int left, int right) {
+        return Integer.toString(left + right);
+      }
     });
 
     expect().content(containsString("Hello World")).contentType("text/html").when().get("/hello");
     expect().content(containsString("Good Bye Bob")).contentType("text/html").when().get("/bye/Bob");
+    expect().content(containsString("42")).contentType("text/html").when().get("/add/22/20");
   }
 
   private ResponseSpecification expect() {
