@@ -3,7 +3,7 @@ package net.codestory.http.routes;
 import org.junit.*;
 import org.junit.rules.*;
 
-public class RoutesTest {
+public class RouteCollectionTest {
   @Rule
   public ExpectedException thrown = ExpectedException.none();
 
@@ -12,6 +12,6 @@ public class RoutesTest {
     thrown.expect(IllegalArgumentException.class);
     thrown.expectMessage("Invalid path for static content");
 
-    new Routes().serve("UNKNOWN_PATH");
+    new RouteCollection().serve("UNKNOWN_PATH");
   }
 }

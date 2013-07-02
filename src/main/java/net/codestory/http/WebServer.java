@@ -9,7 +9,7 @@ import com.sun.net.httpserver.*;
 
 public class WebServer {
   private final HttpServer server;
-  private final Routes routes = new Routes();
+  private final RouteCollection routes = new RouteCollection();
 
   public WebServer() {
     try {
