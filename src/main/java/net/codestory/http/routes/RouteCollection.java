@@ -13,7 +13,7 @@ public class RouteCollection implements Routes {
 
   @Override
   public void serve(String fromUrl) {
-    routes.add(new StaticRoute(fromUrl));
+    routes.add(StaticRoute.forUrl(fromUrl));
   }
 
   @Override

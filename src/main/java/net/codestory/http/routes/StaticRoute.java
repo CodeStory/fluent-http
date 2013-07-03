@@ -1,7 +1,6 @@
 package net.codestory.http.routes;
 
 import java.io.*;
-import java.net.*;
 import java.nio.file.*;
 
 import net.codestory.http.*;
@@ -13,12 +12,19 @@ class StaticRoute implements RouteHolder {
 
   private final String root;
 
-  StaticRoute(String fromUrl) {
-    URL rootResource = getClass().getClassLoader().getResource(fromUrl);
-    if (rootResource == null) {
-      throw new IllegalArgumentException("Invalid path for static content");
+  StaticRoute(Path path) {
+    this.root = path.normalize().toString();
+  }
+
+  static StaticRoute forUrl(String url) {
+    if (url.startsWith("classpath:")) {
+      return new StaticClasspathRoute(url.substring(10));
     }
-    this.root = Paths.get(rootResource.getFile()).normalize().toString();
+    if (url.startsWith("file:")) {
+      return new StaticFileRoute(url.substring(5));
+    }
+
+    throw new IllegalArgumentException("Invalid path for static content. Should be prefixed by file: or classpath:");
   }
 
   @Override

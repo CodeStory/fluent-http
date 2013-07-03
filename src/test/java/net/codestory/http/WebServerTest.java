@@ -52,8 +52,8 @@ public class WebServerTest {
   }
 
   @Test
-  public void static_content() {
-    server.configure(routes -> routes.serve("web"));
+  public void static_content_from_classpath() {
+    server.configure(routes -> routes.serve("classpath:web"));
 
     expect().content(containsString("Hello From a File")).contentType("text/html").when().get("/index.html");
     expect().content(containsString("Hello From a File")).contentType("text/html").when().get("/");
@@ -65,6 +65,15 @@ public class WebServerTest {
     expect().content(containsString("body h1 {\n  color: red;\n}\n")).contentType("text/css").when().get("/assets/style.less");
     expect().statusCode(404).when().get("/../private.txt");
     expect().statusCode(404).when().get("/unknown");
+  }
+
+  @Test
+  public void static_content_from_directory() {
+    String filePath = getClass().getClassLoader().getResource("web").getFile();
+
+    server.configure(routes -> routes.serve("file:" + filePath));
+
+    expect().content(containsString("Hello From a File")).contentType("text/html").when().get("/index.html");
   }
 
   @Test
