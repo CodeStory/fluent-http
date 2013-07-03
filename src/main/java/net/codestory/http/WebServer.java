@@ -2,6 +2,7 @@ package net.codestory.http;
 
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 import net.codestory.http.routes.*;
 
@@ -19,12 +20,17 @@ public class WebServer {
     }
   }
 
-  public Routes routes() {
-    return routes;
+  public void configure(Configuration configuration) {
+    configuration.configure(routes);
   }
 
-  public void start(int port) throws IOException {
-    server.bind(new InetSocketAddress(port), 0);
+  public void start(int port) {
+    try {
+      server.bind(new InetSocketAddress(port), 0);
+    } catch (IOException e) {
+      throw new IllegalStateException("Unable to bind the web server on port " + port);
+    }
+
     server.createContext("/", exchange -> {
       try {
         if (!routes.apply(exchange)) {
@@ -34,7 +40,24 @@ public class WebServer {
         exchange.close();
       }
     });
+
     server.start();
+  }
+
+  public void startOnRandomPort() {
+    Random random = new Random();
+
+    for (int i = 0; i < 20; i++) {
+      try {
+        int port = 8183 + random.nextInt(1000);
+        start(port);
+        return;
+      } catch (Exception e) {
+        System.err.println("Unable to bind server: " + e);
+      }
+    }
+
+    throw new IllegalStateException("Unable to start server");
   }
 
   public int port() {
