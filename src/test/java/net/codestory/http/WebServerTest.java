@@ -3,6 +3,7 @@ package net.codestory.http;
 import static com.jayway.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
+import java.io.*;
 import java.nio.charset.*;
 
 import net.codestory.http.annotations.*;
@@ -98,6 +99,13 @@ public class WebServerTest {
     expect().content(containsString("Hello World")).contentType("text/html").when().get("/hello");
     expect().content(containsString("Good Bye Bob")).contentType("text/html").when().get("/bye/Bob");
     expect().content(containsString("42")).contentType("text/html").when().get("/add/22/20");
+  }
+
+  @Test
+  public void streams() {
+    server.configure(routes -> routes.get("/", () -> new Payload("text/html", new ByteArrayInputStream("Hello".getBytes()))));
+
+    expect().content(containsString("Hello")).contentType("text/html").when().get("/");
   }
 
   private ResponseSpecification expect() {

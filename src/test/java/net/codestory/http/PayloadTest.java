@@ -44,6 +44,14 @@ public class PayloadTest {
     assertThat(payload.getContentType()).isEqualTo("text/plain");
   }
 
+  @Test
+  public void support_stream() throws IOException {
+    Payload payload = new Payload("text/plain", new ByteArrayInputStream("Hello".getBytes()));
+
+    assertThat(payload.getData()).isEqualTo("Hello".getBytes(UTF_8));
+    assertThat(payload.getContentType()).isEqualTo("text/plain");
+  }
+
   static class Person {
     final String name;
     final int age;

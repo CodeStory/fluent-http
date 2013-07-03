@@ -49,6 +49,9 @@ public class Payload {
     if (content instanceof byte[]) {
       return "application/octet-stream";
     }
+    if (content instanceof InputStream) {
+      return "application/octet-stream";
+    }
     if (content instanceof String) {
       return "text/html";
     }
@@ -71,6 +74,9 @@ public class Payload {
     if (content instanceof String) {
       return forString((String) content);
     }
+    if (content instanceof InputStream) {
+      return forInputStream((InputStream) content);
+    }
     return forString(new Gson().toJson(content));
   }
 
@@ -86,5 +92,19 @@ public class Payload {
 
   private static byte[] forString(String value) {
     return value.getBytes(StandardCharsets.UTF_8);
+  }
+
+  // TODO: don't store in memory
+  private static byte[] forInputStream(InputStream stream) throws IOException {
+    int n;
+    byte[] data = new byte[4096];
+
+    try (ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+         BufferedInputStream input = new BufferedInputStream(stream)) {
+      while ((n = input.read(data, 0, data.length)) != -1) {
+        buffer.write(data, 0, n);
+      }
+      return buffer.toByteArray();
+    }
   }
 }
