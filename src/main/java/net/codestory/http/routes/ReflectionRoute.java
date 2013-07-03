@@ -32,14 +32,10 @@ class ReflectionRoute implements AnyRoute {
   }
 
   static Object convert(String param, Class<?> type) {
-    if (type == int.class) {
+    if ((type == int.class) || (type == Integer.class)) {
       return Integer.parseInt(param);
-    } else if (type == Integer.class) {
-      return Integer.valueOf(param);
-    } else if (type == boolean.class) {
+    } else if ((type == boolean.class) || (type == Boolean.class)) {
       return Boolean.parseBoolean(param);
-    } else if (type == Boolean.class) {
-      return Boolean.valueOf(param);
     }
 
     return param;
