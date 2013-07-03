@@ -51,7 +51,7 @@ public class RouteCollection implements Routes {
   }
 
   public boolean apply(HttpExchange exchange) throws IOException {
-    String uri = exchange.getRequestURI().toString();
+    String uri = exchange.getRequestURI().getRawPath();
 
     for (RouteHolder route : routes) {
       if (route.apply(uri, exchange)) {

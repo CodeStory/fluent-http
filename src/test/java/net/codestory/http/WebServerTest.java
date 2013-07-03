@@ -102,6 +102,13 @@ public class WebServerTest {
   }
 
   @Test
+  public void ignore_query_params() {
+    server.configure(routes -> routes.get("/index", () -> "Hello"));
+
+    expect().content(containsString("Hello")).contentType("text/html").when().get("/index?query=value");
+  }
+
+  @Test
   public void streams() {
     server.configure(routes -> routes.get("/", () -> new Payload("text/html", new ByteArrayInputStream("Hello".getBytes()))));
 
