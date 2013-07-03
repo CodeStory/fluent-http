@@ -9,11 +9,11 @@ import net.codestory.http.annotations.*;
 import com.sun.net.httpserver.*;
 
 public class RouteCollection implements Routes {
-  private final List<RouteHolder> routes = new ArrayList<>();
+  private final LinkedList<RouteHolder> routes = new LinkedList<>();
 
   @Override
   public void serve(String fromUrl) {
-    routes.add(StaticRoute.forUrl(fromUrl));
+    routes.addLast(StaticRoute.forUrl(fromUrl));
   }
 
   @Override
@@ -47,7 +47,7 @@ public class RouteCollection implements Routes {
   }
 
   private void add(String uriPattern, AnyRoute route) {
-    routes.add(new RouteWrapper(uriPattern, route));
+    routes.addFirst(new RouteWrapper(uriPattern, route));
   }
 
   public boolean apply(HttpExchange exchange) throws IOException {

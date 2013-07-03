@@ -115,6 +115,16 @@ public class WebServerTest {
     expect().content(containsString("Hello")).contentType("text/html").when().get("/");
   }
 
+  @Test
+  public void priority_to_route() {
+    server.configure(routes -> {
+      routes.serve("classpath:web");
+      routes.get("/", () -> "PRIORITY");
+    });
+
+    expect().content(containsString("PRIORITY")).when().get("/");
+  }
+
   private ResponseSpecification expect() {
     return given().port(server.port()).expect();
   }
