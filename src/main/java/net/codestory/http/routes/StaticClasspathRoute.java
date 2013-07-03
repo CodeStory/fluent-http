@@ -14,6 +14,6 @@ class StaticClasspathRoute extends StaticRoute {
       throw new IllegalArgumentException("Invalid classpath for static content: " + classpathUrl);
     }
 
-    return Paths.get(rootResource.getFile());
+    return Paths.get(rootResource.getFile()); // TODO: buggy
   }
 }
