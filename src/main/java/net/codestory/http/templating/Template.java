@@ -1,9 +1,9 @@
 package net.codestory.http.templating;
 
 import java.io.*;
-import java.nio.charset.*;
-import java.nio.file.*;
 import java.util.*;
+
+import com.github.mustachejava.*;
 
 public class Template {
   private final String url;
@@ -16,33 +16,51 @@ public class Template {
     return render(Collections.emptyMap());
   }
 
-  public String render(String key, String value) {
-    Map<String, String> keyValues = new HashMap<>();
+  public String render(String key, Object value) {
+    Map<String, Object> keyValues = new HashMap<>();
     keyValues.put(key, value);
     return render(keyValues);
   }
 
-  public String render(String key1, String value1, String key2, String value2) {
-    Map<String, String> keyValues = new HashMap<>();
+  public String render(String key1, String value1, String key2, Object value2) {
+    Map<String, Object> keyValues = new HashMap<>();
     keyValues.put(key1, value1);
     keyValues.put(key2, value2);
     return render(keyValues);
   }
 
-  public String render(Map<String, String> keyValues) {
-    String content = readContent(url);
-
-    for (Map.Entry<String, String> keyValue : keyValues.entrySet()) {
-      String key = keyValue.getKey();
-      String value = keyValue.getValue();
-
-      content = content.replace("[[" + key + "]]", value);
-    }
-
-    return content;
+  public String render(String key1, Object value1, String key2, Object value2, String key3, Object value3) {
+    Map<String, Object> keyValues = new HashMap<>();
+    keyValues.put(key1, value1);
+    keyValues.put(key2, value2);
+    keyValues.put(key3, value3);
+    return render(keyValues);
   }
 
-  private String readContent(String url) {
+  public String render(String key1, Object value1, String key2, Object value2, String key3, Object value3, String key4, Object value4) {
+    Map<String, Object> keyValues = new HashMap<>();
+    keyValues.put(key1, value1);
+    keyValues.put(key2, value2);
+    keyValues.put(key3, value3);
+    keyValues.put(key4, value4);
+    return render(keyValues);
+  }
+
+  public String render(Map<String, Object> keyValues) {
+    DefaultMustacheFactory mustacheFactory = new DefaultMustacheFactory();
+
+    try (Reader reader = read(url)) {
+      Mustache mustache = mustacheFactory.compile(reader, "", "[[", "]]");
+
+      Writer output = new StringWriter();
+      mustache.execute(output, keyValues).flush();
+      return output.toString();
+    } catch (IOException e) {
+      throw new IllegalStateException("Unable to render template", e);
+    }
+  }
+
+  private Reader read(String url) throws IOException {
     if (url.startsWith("classpath:")) {
       return readResource(url.substring(10));
     }
@@ -53,31 +71,15 @@ public class Template {
     throw new IllegalArgumentException("Invalid path for static content. Should be prefixed by file: or classpath:");
   }
 
-  private static String readResource(String url) {
+  private static Reader readResource(String url) {
     InputStream input = ClassLoader.getSystemResourceAsStream(url);
     if (input == null) {
       throw new IllegalArgumentException("Invalid url " + url);
     }
-
-    try (Reader in = new BufferedReader(new InputStreamReader(input))) {
-      StringBuilder buffer = new StringBuilder();
-
-      int c;
-      while ((c = in.read()) != -1) {
-        buffer.append((char) c);
-      }
-
-      return buffer.toString();
-    } catch (IOException e) {
-      throw new IllegalArgumentException("Unable to read " + url, e);
-    }
+    return new InputStreamReader(input);
   }
 
-  private static String readFile(String url) {
-    try {
-      return new String(Files.readAllBytes(Paths.get(url)), StandardCharsets.UTF_8);
-    } catch (IOException e) {
-      throw new IllegalArgumentException("Unable to read " + url, e);
-    }
+  private static Reader readFile(String url) throws IOException {
+    return new FileReader(url);
   }
 }

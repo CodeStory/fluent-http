@@ -8,6 +8,7 @@ import java.nio.charset.*;
 
 import net.codestory.http.annotations.*;
 import net.codestory.http.misc.*;
+import net.codestory.http.templating.*;
 
 import org.junit.*;
 
@@ -113,6 +114,13 @@ public class WebServerTest {
     server.configure(routes -> routes.get("/", () -> new Payload("text/html", new ByteArrayInputStream("Hello".getBytes()))));
 
     expect().content(containsString("Hello")).contentType("text/html").when().get("/");
+  }
+
+  @Test
+  public void templates() {
+    server.configure(routes -> routes.get("/hello/:name", (name) -> new Template("classpath:web/1variable.txt").render("name", name)));
+
+    expect().content(containsString("Hello Joe")).contentType("text/html").when().get("/hello/Joe");
   }
 
   @Test

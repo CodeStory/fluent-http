@@ -12,9 +12,9 @@ public class TemplateTest {
     assertThat(new Template("classpath:web/0variable.txt").render()).isEqualTo("0 variables");
     assertThat(new Template("classpath:web/1variable.txt").render("name", "Bob")).isEqualTo("Hello Bob");
     assertThat(new Template("classpath:web/2variables.txt").render("verb", "Hello", "name", "Bob")).isEqualTo("Hello Bob");
-    assertThat(new Template("classpath:web/2variables.txt").render(new HashMap<String, String>() {{
+    assertThat(new Template("classpath:web/2variables.txt").render(new HashMap<String, Object>() {{
       put("verb", "Hello");
-      put("name", "Bob");
-    }})).isEqualTo("Hello Bob");
+      put("name", 12);
+    }})).isEqualTo("Hello 12");
   }
 }
