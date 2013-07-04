@@ -133,6 +133,16 @@ public class WebServerTest {
     expect().content(containsString("PRIORITY")).when().get("/");
   }
 
+  @Test
+  public void redirect() {
+    server.configure(routes -> {
+      routes.get("/index", () -> Payload.seeOther("/login"));
+      routes.get("/login", () -> "LOGIN");
+    });
+
+    expect().content(containsString("LOGIN")).when().get("/index");
+  }
+
   private ResponseSpecification expect() {
     return given().port(server.port()).expect();
   }

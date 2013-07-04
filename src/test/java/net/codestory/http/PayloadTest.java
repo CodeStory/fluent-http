@@ -2,18 +2,20 @@ package net.codestory.http;
 
 import static java.nio.charset.StandardCharsets.*;
 import static org.fest.assertions.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import java.io.*;
 
-import net.codestory.http.*;
-
 import org.junit.*;
+
+import com.sun.net.httpserver.*;
 
 public class PayloadTest {
   @Test
   public void support_string() throws IOException {
     Payload payload = new Payload("Hello");
 
+    assertThat(payload.code()).isEqualTo(200);
     assertThat(payload.getData()).isEqualTo("Hello".getBytes(UTF_8));
     assertThat(payload.getContentType()).isEqualTo("text/html");
   }
@@ -50,6 +52,20 @@ public class PayloadTest {
 
     assertThat(payload.getData()).isEqualTo("Hello".getBytes(UTF_8));
     assertThat(payload.getContentType()).isEqualTo("text/plain");
+  }
+
+  @Test
+  public void support_redirect() throws IOException {
+    HttpExchange exchange = mock(HttpExchange.class);
+    Headers headers = mock(Headers.class);
+    when(exchange.getResponseHeaders()).thenReturn(headers);
+
+    Payload payload = Payload.seeOther("/url");
+    payload.writeTo(exchange);
+
+    verify(exchange).sendResponseHeaders(303, 0);
+    verify(headers).add("Location", "/url");
+    verifyNoMoreInteractions(ignoreStubs(exchange, headers));
   }
 
   static class Person {

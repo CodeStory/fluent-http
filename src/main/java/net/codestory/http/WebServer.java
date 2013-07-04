@@ -20,11 +20,12 @@ public class WebServer {
     }
   }
 
-  public void configure(Configuration configuration) {
+  public WebServer configure(Configuration configuration) {
     configuration.configure(routes);
+    return this;
   }
 
-  public void start(int port) {
+  public WebServer start(int port) {
     try {
       server.bind(new InetSocketAddress(port), 0);
     } catch (IOException e) {
@@ -42,16 +43,17 @@ public class WebServer {
     });
 
     server.start();
+    return this;
   }
 
-  public void startOnRandomPort() {
+  public WebServer startOnRandomPort() {
     Random random = new Random();
 
     for (int i = 0; i < 20; i++) {
       try {
         int port = 8183 + random.nextInt(1000);
         start(port);
-        return;
+        return this;
       } catch (Exception e) {
         System.err.println("Unable to bind server: " + e);
       }

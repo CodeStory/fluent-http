@@ -18,7 +18,7 @@ class RouteWrapper implements RouteHolder {
   @Override
   public boolean apply(String uri, HttpExchange exchange) throws IOException {
     if (uriParser.matches(uri)) {
-      new Payload(route.body(uriParser.params(uri))).writeTo(exchange);
+      Payload.wrap(route.body(uriParser.params(uri))).writeTo(exchange);
       return true;
     }
     return false;

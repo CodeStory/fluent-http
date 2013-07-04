@@ -1,8 +1,10 @@
 package net.codestory.http;
 
 import java.io.*;
+import java.math.*;
 import java.nio.charset.*;
 import java.nio.file.*;
+import java.util.*;
 
 import net.codestory.http.compilers.*;
 import net.codestory.http.types.*;
@@ -13,30 +15,60 @@ import com.sun.net.httpserver.*;
 public class Payload {
   private final String contentType;
   private final Object content;
+  private final int code;
+  private final Map<String, String> responseHeaders;
 
   public Payload(Object content) {
     this(null, content);
   }
 
   public Payload(String contentType, Object content) {
+    this(contentType, content, 200);
+  }
+
+  public Payload(String contentType, Object content, int code) {
     this.contentType = contentType;
     this.content = content;
+    this.code = code;
+    responseHeaders = new HashMap<>();
+  }
+
+  public static Payload wrap(Object payload) {
+    if (payload instanceof Payload) {
+      return (Payload) payload;
+    }
+    return new Payload(payload);
+  }
+
+  public static Payload seeOther(String url) {
+    Payload payload = new Payload(null, null, 303);
+    payload.responseHeaders.put("Location", url);
+    return payload;
+  }
+
+  public int code() {
+    return code;
   }
 
   public void writeTo(HttpExchange exchange) throws IOException {
-    exchange.getResponseHeaders().add("Content-Type", getContentType());
+    for (Map.Entry<String, String> keyValue : responseHeaders.entrySet()) {
+      exchange.getResponseHeaders().add(keyValue.getKey(), keyValue.getValue());
+    }
 
     byte[] data = getData();
-    exchange.sendResponseHeaders(200, data.length);
-    exchange.getResponseBody().write(data);
+    if (data != null) {
+      exchange.getResponseHeaders().add("Content-Type", getContentType());
+
+      exchange.sendResponseHeaders(code, data.length);
+      exchange.getResponseBody().write(data);
+    } else {
+      exchange.sendResponseHeaders(code, 0);
+    }
   }
 
   String getContentType() {
     if (contentType != null) {
       return contentType;
-    }
-    if (content instanceof Payload) {
-      return ((Payload) content).getContentType();
     }
     if (content instanceof File) {
       File file = (File) content;
@@ -59,8 +91,8 @@ public class Payload {
   }
 
   byte[] getData() throws IOException {
-    if (content instanceof Payload) {
-      return ((Payload) content).getData();
+    if (content == null) {
+      return null;
     }
     if (content instanceof File) {
       return forPath(((File) content).toPath());
