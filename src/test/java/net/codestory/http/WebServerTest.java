@@ -161,8 +161,8 @@ public class WebServerTest {
     server.configure(routes -> {
       routes.get("/", () -> "NOT FILTERED");
       routes.get("/other", () -> "OTHER");
-      routes.filter(exchange -> {
-        if ("/".equals(exchange.getRequestURI().getPath())) {
+      routes.filter((uri, exchange) -> {
+        if ("/".equals(uri)) {
           exchange.sendResponseHeaders(200, 8);
           exchange.getResponseBody().write("FILTERED".getBytes());
           return true;

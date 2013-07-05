@@ -82,7 +82,7 @@ public class RouteCollection implements Routes {
     String uri = exchange.getRequestURI().getRawPath();
 
     for (Filter filter : filters) {
-      if (filter.apply(exchange)) {
+      if (filter.apply(uri, exchange)) {
         return true;
       }
     }
