@@ -97,30 +97,43 @@ public class WebServerTest {
       }
     }));
 
-    expect().content(containsString("Hello World")).contentType("text/html").when().get("/hello");
-    expect().content(containsString("Good Bye Bob")).contentType("text/html").when().get("/bye/Bob");
-    expect().content(containsString("42")).contentType("text/html").when().get("/add/22/20");
+    expect().content(equalTo("Hello World")).when().get("/hello");
+    expect().content(equalTo("Good Bye Bob")).when().get("/bye/Bob");
+    expect().content(equalTo("42")).when().get("/add/22/20");
   }
+
+  @Test
+  public void annotated_resources_with_prefix() {
+    server.configure(routes -> routes.add("/say", new Object() {
+      @Get("/hello")
+      public String say_hello() {
+        return "Hello World";
+      }
+    }));
+
+    expect().content(equalTo("Hello World")).when().get("/say/hello");
+  }
+
 
   @Test
   public void ignore_query_params() {
     server.configure(routes -> routes.get("/index", () -> "Hello"));
 
-    expect().content(containsString("Hello")).contentType("text/html").when().get("/index?query=value");
+    expect().content(equalTo("Hello")).when().get("/index?query=value");
   }
 
   @Test
   public void streams() {
     server.configure(routes -> routes.get("/", () -> new Payload("text/html", new ByteArrayInputStream("Hello".getBytes()))));
 
-    expect().content(containsString("Hello")).contentType("text/html").when().get("/");
+    expect().content(equalTo("Hello")).contentType("text/html").when().get("/");
   }
 
   @Test
   public void templates() {
     server.configure(routes -> routes.get("/hello/:name", (name) -> new Template("classpath:web/1variable.txt").render("name", name)));
 
-    expect().content(containsString("Hello Joe")).contentType("text/html").when().get("/hello/Joe");
+    expect().content(equalTo("Hello Joe")).contentType("text/html").when().get("/hello/Joe");
   }
 
   @Test
@@ -130,7 +143,7 @@ public class WebServerTest {
       routes.get("/", () -> "PRIORITY");
     });
 
-    expect().content(containsString("PRIORITY")).when().get("/");
+    expect().content(equalTo("PRIORITY")).when().get("/");
   }
 
   @Test
@@ -140,7 +153,7 @@ public class WebServerTest {
       routes.get("/login", () -> "LOGIN");
     });
 
-    expect().content(containsString("LOGIN")).when().get("/index");
+    expect().content(equalTo("LOGIN")).when().get("/index");
   }
 
   private ResponseSpecification expect() {

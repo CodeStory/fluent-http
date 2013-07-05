@@ -5,6 +5,8 @@ public interface Routes {
 
   void add(Object resource);
 
+  void add(String urlPrefix, Object resource);
+
   void get(String uriPattern, Route route);
 
   void get(String uriPattern, OneParamRoute route);

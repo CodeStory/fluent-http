@@ -25,10 +25,15 @@ public class RouteCollection implements Routes {
 
   @Override
   public void add(Object resource) {
+    add("", resource);
+  }
+
+  @Override
+  public void add(String urlPrefix, Object resource) {
     for (Method method : resource.getClass().getDeclaredMethods()) {
       Get annotation = method.getAnnotation(Get.class);
       if (annotation != null) {
-        add(annotation.value(), new ReflectionRoute(resource, method));
+        add(urlPrefix + annotation.value(), new ReflectionRoute(resource, method));
       }
     }
   }
