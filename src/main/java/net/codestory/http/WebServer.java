@@ -28,22 +28,24 @@ public class WebServer {
   public WebServer start(int port) {
     try {
       server.bind(new InetSocketAddress(port), 0);
+      server.createContext("/", this::handleRequest);
+      server.start();
     } catch (IOException e) {
       throw new IllegalStateException("Unable to bind the web server on port " + port);
     }
-
-    server.createContext("/", exchange -> {
-      try {
-        if (!routes.apply(exchange)) {
-          exchange.sendResponseHeaders(404, 0);
-        }
-      } finally {
-        exchange.close();
-      }
-    });
-
-    server.start();
     return this;
+  }
+
+  protected void handleRequest(HttpExchange exchange) {
+    try {
+      if (!routes.apply(exchange)) {
+        exchange.sendResponseHeaders(404, 0);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    } finally {
+      exchange.close();
+    }
   }
 
   public WebServer startOnRandomPort() {
