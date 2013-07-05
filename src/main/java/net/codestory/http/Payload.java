@@ -1,12 +1,12 @@
 package net.codestory.http;
 
 import java.io.*;
-import java.math.*;
 import java.nio.charset.*;
 import java.nio.file.*;
 import java.util.*;
 
 import net.codestory.http.compilers.*;
+import net.codestory.http.io.*;
 import net.codestory.http.types.*;
 
 import com.google.gson.*;
@@ -126,17 +126,7 @@ public class Payload {
     return value.getBytes(StandardCharsets.UTF_8);
   }
 
-  // TODO: don't store in memory
   private static byte[] forInputStream(InputStream stream) throws IOException {
-    int n;
-    byte[] data = new byte[4096];
-
-    try (ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-         BufferedInputStream input = new BufferedInputStream(stream)) {
-      while ((n = input.read(data, 0, data.length)) != -1) {
-        buffer.write(data, 0, n);
-      }
-      return buffer.toByteArray();
-    }
+    return Bytes.readBytes(stream);
   }
 }
