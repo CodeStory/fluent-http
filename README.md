@@ -3,4 +3,4 @@
  + POST
  + Rule qui prend en param une configuration
  + Mecanisme d'injection ultra simple
- + Affichage des erreurs dans le navigateur en mode dev
+ + Pages 404.html, 500.html...
