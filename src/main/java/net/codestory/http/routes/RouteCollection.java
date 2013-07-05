@@ -4,12 +4,19 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
 
+import net.codestory.http.*;
 import net.codestory.http.annotations.*;
+import net.codestory.http.dev.*;
 
 import com.sun.net.httpserver.*;
 
 public class RouteCollection implements Routes {
+  private final DevMode devMode;
   private final LinkedList<RouteHolder> routes = new LinkedList<>();
+
+  public RouteCollection(DevMode devMode) {
+    this.devMode = devMode;
+  }
 
   @Override
   public void serve(String fromUrl) {
@@ -51,6 +58,8 @@ public class RouteCollection implements Routes {
   }
 
   public boolean apply(HttpExchange exchange) throws IOException {
+    hotReloadConfigurationInDevMode();
+
     String uri = exchange.getRequestURI().getRawPath();
 
     for (RouteHolder route : routes) {
@@ -60,5 +69,13 @@ public class RouteCollection implements Routes {
     }
 
     return false;
+  }
+
+  private void hotReloadConfigurationInDevMode() {
+    Configuration lastConfiguration = devMode.getLastConfiguration();
+    if (lastConfiguration != null) {
+      routes.clear();
+      lastConfiguration.configure(this);
+    }
   }
 }

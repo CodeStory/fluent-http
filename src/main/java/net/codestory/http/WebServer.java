@@ -7,6 +7,7 @@ import java.net.*;
 import java.nio.charset.*;
 import java.util.*;
 
+import net.codestory.http.dev.*;
 import net.codestory.http.io.*;
 import net.codestory.http.misc.*;
 import net.codestory.http.routes.*;
@@ -15,7 +16,8 @@ import com.sun.net.httpserver.*;
 
 public class WebServer {
   private final HttpServer server;
-  private final RouteCollection routes = new RouteCollection();
+  private final DevMode devMode = new DevMode();
+  private final RouteCollection routes = new RouteCollection(devMode);
 
   public WebServer() {
     try {
@@ -26,6 +28,7 @@ public class WebServer {
   }
 
   public WebServer configure(Configuration configuration) {
+    devMode.setLastConfiguration(configuration);
     configuration.configure(routes);
     return this;
   }
@@ -83,7 +86,7 @@ public class WebServer {
 
   protected void onError(HttpExchange exchange, Exception e) {
     String stackTrace = "";
-    if (!Boolean.parseBoolean(System.getProperty("PROD_MODE", "false"))) {
+    if (devMode.isDevMode()) {
       stackTrace = Exceptions.toString(e);
     }
 
