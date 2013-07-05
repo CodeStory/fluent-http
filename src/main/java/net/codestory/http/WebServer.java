@@ -67,13 +67,17 @@ public class WebServer {
 
   protected void onRequest(HttpExchange exchange) {
     try {
-      if (!routes.apply(exchange)) {
-        exchange.sendResponseHeaders(404, 0);
-      }
+      applyRoutes(exchange);
     } catch (Exception e) {
       onError(exchange, e);
     } finally {
       exchange.close();
+    }
+  }
+
+  protected void applyRoutes(HttpExchange exchange) throws IOException {
+    if (!routes.apply(exchange)) {
+      exchange.sendResponseHeaders(404, 0);
     }
   }
 
