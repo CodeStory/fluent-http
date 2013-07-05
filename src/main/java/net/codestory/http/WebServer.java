@@ -81,7 +81,7 @@ public class WebServer {
   }
 
   protected void onError(HttpExchange exchange, Exception e) {
-    if (devMode.isDevMode()) {
+    if (DevMode.isDevMode()) {
       new ErrorPage(500, e).writeTo(exchange);
     } else {
       new ErrorPage(500).writeTo(exchange);

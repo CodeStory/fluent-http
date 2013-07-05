@@ -8,4 +8,4 @@
  + Urls /index/ au lieu de /index ou /index.html
  + Supporter les coffee et less pré-générés
  + Templating YamlFrontMatter
- + 
+ +
