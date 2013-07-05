@@ -7,15 +7,19 @@ import java.util.*;
 import net.codestory.http.*;
 import net.codestory.http.annotations.*;
 import net.codestory.http.dev.*;
+import net.codestory.http.filters.Filter;
 
 import com.sun.net.httpserver.*;
 
 public class RouteCollection implements Routes {
   private final DevMode devMode;
-  private final LinkedList<RouteHolder> routes = new LinkedList<>();
+  private final LinkedList<RouteHolder> routes;
+  private final LinkedList<Filter> filters;
 
   public RouteCollection(DevMode devMode) {
     this.devMode = devMode;
+    routes = new LinkedList<>();
+    filters = new LinkedList<>();
   }
 
   @Override
@@ -63,6 +67,11 @@ public class RouteCollection implements Routes {
     add(uriPattern, route);
   }
 
+  @Override
+  public void filter(Filter filter) {
+    filters.addLast(filter);
+  }
+
   private void add(String uriPattern, AnyRoute route) {
     routes.addFirst(new RouteWrapper(uriPattern, route));
   }
@@ -71,6 +80,12 @@ public class RouteCollection implements Routes {
     hotReloadConfigurationInDevMode();
 
     String uri = exchange.getRequestURI().getRawPath();
+
+    for (Filter filter : filters) {
+      if (filter.apply(exchange)) {
+        return true;
+      }
+    }
 
     for (RouteHolder route : routes) {
       if (route.apply(uri, exchange)) {

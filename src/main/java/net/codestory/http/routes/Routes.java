@@ -1,7 +1,11 @@
 package net.codestory.http.routes;
 
+import net.codestory.http.filters.*;
+
 public interface Routes {
   void staticDir(String fileOrClassPathDir);
+
+  void filter(Filter filter);
 
   void add(Object resource);
 

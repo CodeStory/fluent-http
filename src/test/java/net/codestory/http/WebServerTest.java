@@ -156,6 +156,25 @@ public class WebServerTest {
     expect().content(equalTo("LOGIN")).when().get("/index");
   }
 
+  @Test
+  public void filter() {
+    server.configure(routes -> {
+      routes.get("/", () -> "NOT FILTERED");
+      routes.get("/other", () -> "OTHER");
+      routes.filter(exchange -> {
+        if ("/".equals(exchange.getRequestURI().getPath())) {
+          exchange.sendResponseHeaders(200, 8);
+          exchange.getResponseBody().write("FILTERED".getBytes());
+          return true;
+        }
+        return false;
+      });
+    });
+
+    expect().content(equalTo("FILTERED")).when().get("/");
+    expect().content(equalTo("OTHER")).when().get("/other");
+  }
+
   private ResponseSpecification expect() {
     return given().port(server.port()).expect();
   }
