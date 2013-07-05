@@ -1,9 +1,14 @@
 package net.codestory.http;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.*;
 import java.net.*;
+import java.nio.charset.*;
 import java.util.*;
 
+import net.codestory.http.io.*;
+import net.codestory.http.misc.*;
 import net.codestory.http.routes.*;
 
 import com.sun.net.httpserver.*;
@@ -25,29 +30,6 @@ public class WebServer {
     return this;
   }
 
-  public WebServer start(int port) {
-    try {
-      server.bind(new InetSocketAddress(port), 0);
-      server.createContext("/", this::handleRequest);
-      server.start();
-    } catch (IOException e) {
-      throw new IllegalStateException("Unable to bind the web server on port " + port);
-    }
-    return this;
-  }
-
-  protected void handleRequest(HttpExchange exchange) {
-    try {
-      if (!routes.apply(exchange)) {
-        exchange.sendResponseHeaders(404, 0);
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    } finally {
-      exchange.close();
-    }
-  }
-
   public WebServer startOnRandomPort() {
     Random random = new Random();
 
@@ -64,11 +46,52 @@ public class WebServer {
     throw new IllegalStateException("Unable to start server");
   }
 
+  public WebServer start(int port) {
+    try {
+      server.bind(new InetSocketAddress(port), 0);
+      server.createContext("/", this::onRequest);
+      server.start();
+    } catch (IOException e) {
+      throw new IllegalStateException("Unable to bind the web server on port " + port);
+    }
+    return this;
+  }
+
   public int port() {
     return server.getAddress().getPort();
   }
 
   public void stop() {
     server.stop(0);
+  }
+
+  protected void onRequest(HttpExchange exchange) {
+    try {
+      if (!routes.apply(exchange)) {
+        exchange.sendResponseHeaders(404, 0);
+      }
+    } catch (Exception e) {
+      onError(exchange, e);
+    } finally {
+      exchange.close();
+    }
+  }
+
+  protected void onError(HttpExchange exchange, Exception e) {
+    String stackTrace = "";
+    if (!Boolean.parseBoolean(System.getProperty("PROD_MODE", "false"))) {
+      stackTrace = Exceptions.toString(e);
+    }
+
+    try {
+      String errorPage = Resources.toString("error.html", UTF_8)
+          .replace("[[ERROR]]", stackTrace);
+
+      byte[] data = errorPage.getBytes(StandardCharsets.UTF_8);
+      exchange.sendResponseHeaders(500, data.length);
+      exchange.getResponseBody().write(data);
+    } catch (IOException ioe) {
+      ioe.printStackTrace();
+    }
   }
 }
