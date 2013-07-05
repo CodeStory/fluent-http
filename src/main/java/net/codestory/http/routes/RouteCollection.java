@@ -100,6 +100,7 @@ public class RouteCollection implements Routes {
     Configuration lastConfiguration = devMode.getLastConfiguration();
     if (lastConfiguration != null) {
       routes.clear();
+      filters.clear();
       lastConfiguration.configure(this);
     }
   }
