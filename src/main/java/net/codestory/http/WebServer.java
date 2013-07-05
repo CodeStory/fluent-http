@@ -1,15 +1,11 @@
 package net.codestory.http;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import java.io.*;
 import java.net.*;
-import java.nio.charset.*;
 import java.util.*;
 
 import net.codestory.http.dev.*;
-import net.codestory.http.io.*;
-import net.codestory.http.misc.*;
+import net.codestory.http.errors.*;
 import net.codestory.http.routes.*;
 
 import com.sun.net.httpserver.*;
@@ -80,25 +76,19 @@ public class WebServer {
 
   protected void applyRoutes(HttpExchange exchange) throws IOException {
     if (!routes.apply(exchange)) {
-      exchange.sendResponseHeaders(404, 0);
+      onPageNotFound(exchange);
     }
   }
 
   protected void onError(HttpExchange exchange, Exception e) {
-    String stackTrace = "";
     if (devMode.isDevMode()) {
-      stackTrace = Exceptions.toString(e);
+      new ErrorPage(500, e).writeTo(exchange);
+    } else {
+      new ErrorPage(500).writeTo(exchange);
     }
+  }
 
-    try {
-      String errorPage = Resources.toString("error.html", UTF_8)
-          .replace("[[ERROR]]", stackTrace);
-
-      byte[] data = errorPage.getBytes(StandardCharsets.UTF_8);
-      exchange.sendResponseHeaders(500, data.length);
-      exchange.getResponseBody().write(data);
-    } catch (IOException ioe) {
-      ioe.printStackTrace();
-    }
+  protected void onPageNotFound(HttpExchange exchange) throws IOException {
+    new ErrorPage(404).writeTo(exchange);
   }
 }
