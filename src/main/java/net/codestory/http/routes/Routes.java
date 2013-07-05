@@ -1,9 +1,9 @@
 package net.codestory.http.routes;
 
 public interface Routes {
-  void serve(String fromUrl);
+  void staticDir(String fileOrClassPathDir);
 
-  void addResource(Object resource);
+  void add(Object resource);
 
   void get(String uriPattern, Route route);
 

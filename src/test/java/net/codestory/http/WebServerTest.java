@@ -55,7 +55,7 @@ public class WebServerTest {
 
   @Test
   public void static_content_from_classpath() {
-    server.configure(routes -> routes.serve("classpath:web"));
+    server.configure(routes -> routes.staticDir("classpath:web"));
 
     expect().content(containsString("Hello From a File")).contentType("text/html").when().get("/index.html");
     expect().content(containsString("Hello From a File")).contentType("text/html").when().get("/");
@@ -73,14 +73,14 @@ public class WebServerTest {
   public void static_content_from_directory() {
     String filePath = getClass().getClassLoader().getResource("web").getFile();
 
-    server.configure(routes -> routes.serve("file:" + filePath));
+    server.configure(routes -> routes.staticDir("file:" + filePath));
 
     expect().content(containsString("Hello From a File")).contentType("text/html").when().get("/index.html");
   }
 
   @Test
   public void annotated_resources() {
-    server.configure(routes -> routes.addResource(new Object() {
+    server.configure(routes -> routes.add(new Object() {
       @Get("/hello")
       public String say_hello() {
         return "Hello World";
@@ -126,7 +126,7 @@ public class WebServerTest {
   @Test
   public void priority_to_route() {
     server.configure(routes -> {
-      routes.serve("classpath:web");
+      routes.staticDir("classpath:web");
       routes.get("/", () -> "PRIORITY");
     });
 

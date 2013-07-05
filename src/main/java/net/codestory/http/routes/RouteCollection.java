@@ -19,12 +19,12 @@ public class RouteCollection implements Routes {
   }
 
   @Override
-  public void serve(String fromUrl) {
-    routes.addLast(StaticRoute.forUrl(fromUrl));
+  public void staticDir(String fileOrClassPathDir) {
+    routes.addLast(StaticRoute.forUrl(fileOrClassPathDir));
   }
 
   @Override
-  public void addResource(Object resource) {
+  public void add(Object resource) {
     for (Method method : resource.getClass().getDeclaredMethods()) {
       Get annotation = method.getAnnotation(Get.class);
       if (annotation != null) {

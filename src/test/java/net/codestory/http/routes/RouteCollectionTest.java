@@ -14,6 +14,6 @@ public class RouteCollectionTest {
     thrown.expect(IllegalArgumentException.class);
     thrown.expectMessage("Invalid path for static content");
 
-    new RouteCollection(new DevMode()).serve("UNKNOWN_PATH");
+    new RouteCollection(new DevMode()).staticDir("UNKNOWN_PATH");
   }
 }
