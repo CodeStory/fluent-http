@@ -58,6 +58,11 @@ public class RouteCollection implements Routes {
     add(uriPattern, route);
   }
 
+  @Override
+  public void get(String uriPattern, FourParamsRoute route) {
+    add(uriPattern, route);
+  }
+
   private void add(String uriPattern, AnyRoute route) {
     routes.addFirst(new RouteWrapper(uriPattern, route));
   }

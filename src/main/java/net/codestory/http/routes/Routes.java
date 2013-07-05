@@ -14,4 +14,6 @@ public interface Routes {
   void get(String uriPattern, TwoParamsRoute route);
 
   void get(String uriPattern, ThreeParamsRoute route);
+
+  void get(String uriPattern, FourParamsRoute route);
 }
