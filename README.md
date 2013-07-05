@@ -7,4 +7,5 @@
  + Gestion des imports less qui doivent etre faits cote serveur pour fonctionner
  + Urls /index/ au lieu de /index ou /index.html
  + Supporter les coffee et less pré-générés
- +
+ + Templating YamlFrontMatter
+ + 
