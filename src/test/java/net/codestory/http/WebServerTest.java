@@ -86,7 +86,7 @@ public class WebServerTest {
 
   @Test
   public void static_content_from_directory() {
-    String filePath = getClass().getClassLoader().getResource("web").getFile();
+    String filePath = ClassLoader.getSystemResource("web").getFile();
 
     server.configure(routes -> routes.staticDir("file:" + filePath));
 

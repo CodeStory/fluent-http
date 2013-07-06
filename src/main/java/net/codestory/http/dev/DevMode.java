@@ -18,10 +18,12 @@ package net.codestory.http.dev;
 import net.codestory.http.*;
 
 public class DevMode {
+  private static final String PROD_MODE = "PROD_MODE";
+
   private Configuration lastConfiguration;
 
   public static boolean isDevMode() {
-    return !Boolean.parseBoolean(System.getProperty("PROD_MODE", "false"));
+    return !Boolean.parseBoolean(System.getProperty(PROD_MODE, "false"));
   }
 
   public void setLastConfiguration(Configuration configuration) {

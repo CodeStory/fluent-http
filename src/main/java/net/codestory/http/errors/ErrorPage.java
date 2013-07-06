@@ -25,20 +25,25 @@ import com.sun.net.httpserver.*;
 
 public class ErrorPage {
   private final int code;
-  private final Exception e;
+  private final Exception exception;
 
   public ErrorPage(int code) {
     this(code, null);
   }
 
-  public ErrorPage(int code, Exception e) {
+  public ErrorPage(int code, Exception exception) {
     this.code = code;
-    this.e = e;
+    this.exception = exception;
   }
 
+  // TODO: Should be a standard Payload
   public void writeTo(HttpExchange exchange) {
     try {
-      byte[] data = readToString().getBytes(UTF_8);
+      String html = readHtml();
+
+      String response = html.replace("[[ERROR]]", exceptionToString(exception));
+
+      byte[] data = response.getBytes(UTF_8);
 
       exchange.sendResponseHeaders(code, data.length);
       exchange.getResponseBody().write(data);
@@ -47,15 +52,11 @@ public class ErrorPage {
     }
   }
 
-  private String readToString() throws IOException {
-    String content;
+  private String readHtml() throws IOException {
     if (code == 404) {
-      content = Resources.toString("400.html", UTF_8);
-    }else {
-      content = Resources.toString("500.html", UTF_8);
+      return Resources.toString("400.html", UTF_8);
     }
-    
-    return content.replace("[[ERROR]]", exceptionToString(e));
+    return Resources.toString("500.html", UTF_8);
   }
 
   private static String exceptionToString(Exception error) {

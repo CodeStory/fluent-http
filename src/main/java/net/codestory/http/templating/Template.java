@@ -37,27 +37,27 @@ public class Template {
     return render(keyValues);
   }
 
-  public String render(String key1, String value1, String key2, Object value2) {
+  public String render(String k1, String v1, String k2, Object v2) {
     Map<String, Object> keyValues = new HashMap<>();
-    keyValues.put(key1, value1);
-    keyValues.put(key2, value2);
+    keyValues.put(k1, v1);
+    keyValues.put(k2, v2);
     return render(keyValues);
   }
 
-  public String render(String key1, Object value1, String key2, Object value2, String key3, Object value3) {
+  public String render(String k1, Object v1, String k2, Object v2, String k3, Object v3) {
     Map<String, Object> keyValues = new HashMap<>();
-    keyValues.put(key1, value1);
-    keyValues.put(key2, value2);
-    keyValues.put(key3, value3);
+    keyValues.put(k1, v1);
+    keyValues.put(k2, v2);
+    keyValues.put(k3, v3);
     return render(keyValues);
   }
 
-  public String render(String key1, Object value1, String key2, Object value2, String key3, Object value3, String key4, Object value4) {
+  public String render(String k1, Object v1, String k2, Object v2, String k3, Object v3, String k4, Object v4) {
     Map<String, Object> keyValues = new HashMap<>();
-    keyValues.put(key1, value1);
-    keyValues.put(key2, value2);
-    keyValues.put(key3, value3);
-    keyValues.put(key4, value4);
+    keyValues.put(k1, v1);
+    keyValues.put(k2, v2);
+    keyValues.put(k3, v3);
+    keyValues.put(k4, v4);
     return render(keyValues);
   }
 

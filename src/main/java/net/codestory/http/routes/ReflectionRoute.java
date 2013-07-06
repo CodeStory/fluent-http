@@ -29,31 +29,32 @@ class ReflectionRoute implements AnyRoute {
   }
 
   @Override
-  public Object body(String[] params) {
+  public Object body(String[] parameters) {
     try {
+      Object[] arguments = convert(parameters, parameterTypes);
+
       method.setAccessible(true);
-      return method.invoke(resource, convert(params, parameterTypes));
+      return method.invoke(resource, arguments);
     } catch (Exception e) {
-      throw new IllegalStateException("Unable to execute resource", e);
+      throw new IllegalStateException("Unable to apply resource", e);
     }
   }
 
-  private static Object[] convert(String[] params, Class<?>[] parameterTypes) {
-    Object[] converted = new Object[params.length];
-    for (int i = 0; i < params.length; i++) {
-      converted[i] = convert(params[i], parameterTypes[i]);
+  private static Object[] convert(String[] values, Class<?>[] types) {
+    Object[] converted = new Object[values.length];
+    for (int i = 0; i < values.length; i++) {
+      converted[i] = convert(values[i], types[i]);
     }
     return converted;
   }
 
-  static Object convert(String param, Class<?> type) {
+  static Object convert(String value, Class<?> type) {
     if ((type == int.class) || (type == Integer.class)) {
-      return Integer.parseInt(param);
+      return Integer.parseInt(value);
     } else if ((type == boolean.class) || (type == Boolean.class)) {
-      return Boolean.parseBoolean(param);
+      return Boolean.parseBoolean(value);
     }
-
-    return param;
+    return value;
   }
 }
 

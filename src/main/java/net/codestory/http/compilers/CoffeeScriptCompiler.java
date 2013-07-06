@@ -15,7 +15,9 @@
  */
 package net.codestory.http.compilers;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.*;
+import static org.jcoffeescript.Option.BARE;
 
 import java.io.*;
 import java.nio.charset.*;
@@ -26,11 +28,11 @@ import org.jcoffeescript.*;
 public class CoffeeScriptCompiler {
   public String compile(Path path) throws IOException {
     try {
-      String coffee = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+      String coffee = new String(Files.readAllBytes(path), UTF_8);
 
-      return new JCoffeeScriptCompiler(asList(Option.BARE)).compile(coffee);
+      return new JCoffeeScriptCompiler(asList(BARE)).compile(coffee);
     } catch (JCoffeeScriptCompileException e) {
-      throw new IOException("Unable to compile less file", e);
+      throw new IOException("Unable to compile coffee file " + path, e);
     }
   }
 }

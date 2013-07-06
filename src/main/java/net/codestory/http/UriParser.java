@@ -47,9 +47,7 @@ public class UriParser {
     }
 
     for (int i = 0; i < patternParts.length; i++) {
-      String patternPart = patternParts[i];
-
-      if (!patternPart.startsWith(":") && !patternPart.equals(uriParts[i])) {
+      if (!patternParts[i].startsWith(":") && !patternParts[i].equals(uriParts[i])) {
         return false;
       }
     }

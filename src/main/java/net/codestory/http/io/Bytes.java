@@ -27,14 +27,11 @@ public class Bytes {
   public static byte[] readBytes(InputStream from) throws IOException {
     try (ByteArrayOutputStream bytes = new ByteArrayOutputStream()) {
       byte[] buffer = new byte[BUF_SIZE];
-      while (true) {
-        int r = from.read(buffer);
-        if (r == -1) {
-          break;
-        }
-        bytes.write(buffer, 0, r);
-      }
 
+      int count;
+      while (-1 != (count = from.read(buffer))) {
+        bytes.write(buffer, 0, count);
+      }
       return bytes.toByteArray();
     }
   }

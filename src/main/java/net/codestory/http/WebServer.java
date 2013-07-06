@@ -39,8 +39,8 @@ public class WebServer {
   }
 
   public WebServer configure(Configuration configuration) {
-    devMode.setLastConfiguration(configuration);
     configuration.configure(routes);
+    devMode.setLastConfiguration(configuration);
     return this;
   }
 
@@ -103,7 +103,7 @@ public class WebServer {
     }
   }
 
-  protected void onPageNotFound(HttpExchange exchange) throws IOException {
+  protected void onPageNotFound(HttpExchange exchange) {
     new ErrorPage(404).writeTo(exchange);
   }
 }

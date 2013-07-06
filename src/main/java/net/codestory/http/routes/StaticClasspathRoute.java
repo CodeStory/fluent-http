@@ -24,7 +24,7 @@ class StaticClasspathRoute extends StaticRoute {
   }
 
   private static Path toPath(String classpathUrl) {
-    URL rootResource = ClassLoader.getSystemClassLoader().getResource(classpathUrl);
+    URL rootResource = ClassLoader.getSystemResource(classpathUrl);
     if (rootResource == null) {
       throw new IllegalArgumentException("Invalid classpath for static content: " + classpathUrl);
     }

@@ -33,8 +33,8 @@ public class RouteCollection implements Routes {
 
   public RouteCollection(DevMode devMode) {
     this.devMode = devMode;
-    routes = new LinkedList<>();
-    filters = new LinkedList<>();
+    this.routes = new LinkedList<>();
+    this.filters = new LinkedList<>();
   }
 
   @Override
@@ -113,10 +113,12 @@ public class RouteCollection implements Routes {
 
   private void hotReloadConfigurationInDevMode() {
     Configuration lastConfiguration = devMode.getLastConfiguration();
-    if (lastConfiguration != null) {
-      routes.clear();
-      filters.clear();
-      lastConfiguration.configure(this);
+    if (lastConfiguration == null) {
+      return;
     }
+
+    routes.clear();
+    filters.clear();
+    lastConfiguration.configure(this);
   }
 }

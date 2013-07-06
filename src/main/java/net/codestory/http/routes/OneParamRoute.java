@@ -16,10 +16,10 @@
 package net.codestory.http.routes;
 
 public interface OneParamRoute extends AnyRoute {
-  Object body(String param);
+  Object body(String parameters);
 
   @Override
-  default Object body(String[] params) {
-    return body(params[0]);
+  default Object body(String[] parameters) {
+    return body(parameters[0]);
   }
 }

@@ -45,14 +45,11 @@ public class Payload {
     this.contentType = contentType;
     this.content = content;
     this.code = code;
-    responseHeaders = new HashMap<>();
+    this.responseHeaders = new HashMap<>();
   }
 
   public static Payload wrap(Object payload) {
-    if (payload instanceof Payload) {
-      return (Payload) payload;
-    }
-    return new Payload(payload);
+    return (payload instanceof Payload) ? (Payload) payload : new Payload(payload);
   }
 
   public static Payload seeOther(String url) {

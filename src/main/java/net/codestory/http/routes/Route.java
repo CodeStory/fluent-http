@@ -19,7 +19,7 @@ public interface Route extends AnyRoute {
   Object body();
 
   @Override
-  default Object body(String[] params) {
+  default Object body(String[] parameters) {
     return body();
   }
 }

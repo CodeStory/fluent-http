@@ -20,6 +20,6 @@ import java.io.*;
 import com.sun.net.httpserver.*;
 
 public interface Filter {
-  boolean apply(String uri, HttpExchange e) throws IOException;
+  boolean apply(String uri, HttpExchange exchange) throws IOException;
 }
 

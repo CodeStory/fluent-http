@@ -16,10 +16,10 @@
 package net.codestory.http.routes;
 
 public interface TwoParamsRoute extends AnyRoute {
-  Object body(String param1, String param2);
+  Object body(String parameter1, String parameter2);
 
   @Override
-  default Object body(String[] params) {
-    return body(params[0], params[1]);
+  default Object body(String[] parameters) {
+    return body(parameters[0], parameters[1]);
   }
 }

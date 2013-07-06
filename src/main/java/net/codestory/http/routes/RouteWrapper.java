@@ -22,8 +22,8 @@ import net.codestory.http.*;
 import com.sun.net.httpserver.*;
 
 class RouteWrapper implements RouteHolder {
-  final UriParser uriParser;
-  final AnyRoute route;
+  private final UriParser uriParser;
+  private final AnyRoute route;
 
   RouteWrapper(String uriPattern, AnyRoute route) {
     this.uriParser = new UriParser(uriPattern);
@@ -33,7 +33,13 @@ class RouteWrapper implements RouteHolder {
   @Override
   public boolean apply(String uri, HttpExchange exchange) throws IOException {
     if (uriParser.matches(uri)) {
-      Payload.wrap(route.body(uriParser.params(uri))).writeTo(exchange);
+      String[] parameters = uriParser.params(uri);
+
+      Object body = route.body(parameters);
+
+      Payload payload = Payload.wrap(body);
+      payload.writeTo(exchange);
+
       return true;
     }
     return false;

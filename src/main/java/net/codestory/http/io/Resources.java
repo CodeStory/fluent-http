@@ -26,21 +26,18 @@ public class Resources {
   }
 
   public static String toString(String name, Charset charset) throws IOException {
-    try (InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream(name)) {
+    try (InputStream stream = ClassLoader.getSystemResourceAsStream(name)) {
       if (null == stream) {
         return "";
       }
 
       StringBuilder string = new StringBuilder();
+      char[] buffer = new char[BUF_SIZE];
 
-      try (Reader reader = new InputStreamReader(stream, charset)) {
-        while (true) {
-          char[] buffer = new char[BUF_SIZE];
-          int r = reader.read(buffer);
-          if (r == -1) {
-            break;
-          }
-          string.append(buffer, 0, r);
+      try (Reader from = new InputStreamReader(stream, charset)) {
+        int count;
+        while (-1 != (count = from.read(buffer))) {
+          string.append(buffer, 0, count);
         }
       }
 

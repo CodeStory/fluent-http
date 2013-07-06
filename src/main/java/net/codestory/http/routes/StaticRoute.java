@@ -54,11 +54,11 @@ class StaticRoute implements RouteHolder {
   }
 
   private boolean serve(Path file, HttpExchange exchange) throws IOException {
-    if (!file.normalize().startsWith(root) || !file.toFile().exists()) {
-      return false;
+    if (file.normalize().startsWith(root) && file.toFile().exists()) {
+      new Payload(file).writeTo(exchange);
+      return true;
     }
 
-    new Payload(file).writeTo(exchange);
-    return true;
+    return false;
   }
 }
