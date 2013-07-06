@@ -16,7 +16,11 @@
 package net.codestory.http.templating;
 
 import java.io.*;
+import java.nio.charset.*;
+import java.nio.file.*;
 import java.util.*;
+
+import net.codestory.http.io.*;
 
 import com.github.mustachejava.*;
 
@@ -64,37 +68,61 @@ public class Template {
   public String render(Map<String, Object> keyValues) {
     DefaultMustacheFactory mustacheFactory = new DefaultMustacheFactory();
 
-    try (Reader reader = read(url)) {
-      Mustache mustache = mustacheFactory.compile(reader, "", "[[", "]]");
+    try {
+      String templateContent = read(url);
+
+      ContentWithVariables parsedTemplate = new YamlFrontMatter().parse(templateContent);
+      String content = parsedTemplate.getContent();
+      Map<String, String> variables = parsedTemplate.getVariables();
+      Map<String, Object> allKeyValues = merge(keyValues, variables);
+
+      Mustache mustache = mustacheFactory.compile(new StringReader(content), "", "[[", "]]");
 
       Writer output = new StringWriter();
-      mustache.execute(output, keyValues).flush();
-      return output.toString();
+      mustache.execute(output, allKeyValues).flush();
+      String body = output.toString();
+
+      if (variables.containsKey("layout")) {
+        String layoutName = (String) allKeyValues.get("layout");
+
+        String layout = new Template(type(url) + layoutName).render(allKeyValues);
+        body = layout.replace("[[body]]", body);
+      }
+
+      return body;
     } catch (IOException e) {
       throw new IllegalStateException("Unable to render template", e);
     }
   }
 
-  private Reader read(String url) throws IOException {
+  private static Map<String, Object> merge(Map<String, Object> keyValues, Map<String, String> variables) {
+    Map<String, Object> merged = new HashMap<>();
+    merged.putAll(keyValues);
+    merged.putAll(variables);
+    merged.put("body", "[[body]]");
+    return merged;
+  }
+
+  private String read(String url) throws IOException {
     if (url.startsWith("classpath:")) {
-      return readResource(url.substring(10));
+      return Resources.toString(url.substring(10), StandardCharsets.UTF_8);
     }
     if (url.startsWith("file:")) {
-      return readFile(url.substring(5));
+      return new String(Files.readAllBytes(Paths.get(url.substring(5)))); // TEMP
     }
 
     throw new IllegalArgumentException("Invalid path for static content. Should be prefixed by file: or classpath:");
   }
 
-  private static Reader readResource(String url) {
-    InputStream input = ClassLoader.getSystemResourceAsStream(url);
-    if (input == null) {
-      throw new IllegalArgumentException("Invalid url " + url);
+  // TEMP
+  private String type(String url) throws IOException {
+    if (url.startsWith("classpath:")) {
+      return "classpath:";
     }
-    return new InputStreamReader(input);
-  }
+    if (url.startsWith("file:")) {
+      return "file:";
+    }
 
-  private static Reader readFile(String url) throws IOException {
-    return new FileReader(url);
+    throw new IllegalArgumentException("Invalid path for static content. Should be prefixed by file: or classpath:");
   }
 }

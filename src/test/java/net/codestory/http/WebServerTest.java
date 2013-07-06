@@ -148,7 +148,7 @@ public class WebServerTest {
   public void templates() {
     server.configure(routes -> routes.get("/hello/:name", (name) -> new Template("classpath:web/1variable.txt").render("name", name)));
 
-    expect().content(equalTo("Hello Joe")).contentType("text/html").when().get("/hello/Joe");
+    expect().content(equalTo("Hello Joe")).when().get("/hello/Joe");
   }
 
   @Test

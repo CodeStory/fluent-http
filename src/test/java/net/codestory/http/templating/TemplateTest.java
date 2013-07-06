@@ -32,4 +32,14 @@ public class TemplateTest {
       put("name", 12);
     }})).isEqualTo("Hello 12");
   }
+
+  @Test
+  public void yaml_front_matter() {
+    assertThat(new Template("classpath:web/indexYaml.html").render()).contains("Hello Yaml");
+  }
+
+  @Test
+  public void layout() {
+    assertThat(new Template("classpath:web/pageYaml.html").render()).contains("PREFIX_LAYOUT_PREFIX_TEXT_SUFFIX_SUFFIX_LAYOUT");
+  }
 }
