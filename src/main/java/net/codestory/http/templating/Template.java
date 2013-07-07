@@ -15,6 +15,8 @@
  */
 package net.codestory.http.templating;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.*;
 import java.nio.charset.*;
 import java.nio.file.*;
@@ -84,9 +86,9 @@ public class Template {
 
       if (variables.containsKey("layout")) {
         String layoutName = (String) allKeyValues.get("layout");
+        allKeyValues.put("body", body);
 
-        String layout = new Template(type(url) + layoutName).render(allKeyValues);
-        body = layout.replace("[[body]]", body);
+        return new Template(type(url) + layoutName).render(allKeyValues);
       }
 
       return body;
@@ -99,19 +101,32 @@ public class Template {
     Map<String, Object> merged = new HashMap<>();
     merged.putAll(keyValues);
     merged.putAll(variables);
-    merged.put("body", "[[body]]");
     return merged;
   }
 
   private String read(String url) throws IOException {
     if (url.startsWith("classpath:")) {
-      return Resources.toString(url.substring(10), StandardCharsets.UTF_8);
+      return readClasspath(url.substring(10));
     }
     if (url.startsWith("file:")) {
-      return new String(Files.readAllBytes(Paths.get(url.substring(5)))); // TEMP
+      return readFile(url.substring(5));
     }
 
     throw new IllegalArgumentException("Invalid path for static content. Should be prefixed by file: or classpath:");
+  }
+
+  private String readClasspath(String path) throws IOException {
+    if (ClassLoader.getSystemResourceAsStream(path) == null) {
+      throw new IllegalArgumentException("Invalid classpath path: " + path);
+    }
+    return Resources.toString(path, UTF_8);
+  }
+
+  private String readFile(String path) throws IOException {
+    if (!new File(path).exists()) {
+      throw new IllegalArgumentException("Invalid file path: " + path);
+    }
+    return new String(Files.readAllBytes(Paths.get(path)));
   }
 
   // TEMP
