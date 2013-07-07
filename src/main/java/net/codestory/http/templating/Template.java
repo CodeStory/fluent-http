@@ -86,9 +86,9 @@ public class Template {
 
       if (variables.containsKey("layout")) {
         String layoutName = (String) allKeyValues.get("layout");
-        allKeyValues.put("body", body);
+        allKeyValues.put("body", "[[body]]");
 
-        return new Template(type(url) + layoutName).render(allKeyValues);
+        return new Template(type(url) + layoutName).render(allKeyValues).replace("[[body]]", body);
       }
 
       return body;

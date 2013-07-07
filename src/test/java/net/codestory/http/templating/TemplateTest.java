@@ -40,6 +40,6 @@ public class TemplateTest {
 
   @Test
   public void layout() {
-    assertThat(new Template("classpath:web/pageYaml.html").render()).contains("PREFIX_LAYOUT_PREFIX_TEXT_SUFFIX_SUFFIX_LAYOUT");
+    assertThat(new Template("classpath:web/pageYaml.html").render()).contains("PREFIX_LAYOUT<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_LAYOUT");
   }
 }
