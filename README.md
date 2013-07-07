@@ -7,5 +7,7 @@
  + Gestion des imports less qui doivent etre faits cote serveur pour fonctionner
  + Urls /index/ au lieu de /index ou /index.html
  + Supporter les coffee et less pré-générés
- + Templating YamlFrontMatter
- +
+ + Supporter les templates pré-générés
+ + Auto-render static resources as templates without additional arguments
+ + Don't allow serving layouts alone ?
+ + 
