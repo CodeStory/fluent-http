@@ -24,6 +24,8 @@ public class ContentTypes {
 
     String ext = filename.substring(dotIndex);
     switch (ext) {
+      case ".txt":
+        return "text/plain";
       case ".html":
         return "text/html";
       case ".css":
@@ -43,6 +45,26 @@ public class ContentTypes {
         return "image/png";
       default:
         return "text/plain";
+    }
+  }
+
+  public boolean support_templating(String filename) {
+    int dotIndex = filename.lastIndexOf('.');
+    if (dotIndex == -1) {
+      return false;
+    }
+
+    String ext = filename.substring(dotIndex);
+    switch (ext) {
+      case ".txt":
+      case ".html":
+      case ".css":
+      case ".less":
+      case ".js":
+      case ".coffee":
+        return true;
+      default:
+        return false;
     }
   }
 }

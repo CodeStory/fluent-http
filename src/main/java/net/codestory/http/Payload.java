@@ -107,10 +107,10 @@ public class Payload {
       return null;
     }
     if (content instanceof File) {
-      return forString(forPath(((File) content).toPath()));
+      return forPath(((File) content).toPath());
     }
     if (content instanceof Path) {
-      return forString(forPath((Path) content));
+      return forPath((Path) content);
     }
     if (content instanceof byte[]) {
       return (byte[]) content;
@@ -132,16 +132,20 @@ public class Payload {
     return Bytes.readBytes(stream);
   }
 
-  private static String forPath(Path path) throws IOException {
+  private static byte[] forPath(Path path) throws IOException {
+    if (!new ContentTypes().support_templating(path.toString())) {
+      return Resources.readBytes(path);
+    }
+
     String content = new Template(path).render();
 
     if (path.toString().endsWith(".less")) {
-      return new LessCompiler().compile(content);
+      return forString(new LessCompiler().compile(content));
     }
     if (path.toString().endsWith(".coffee")) {
-      return new CoffeeScriptCompiler().compile(content);
+      return forString(new CoffeeScriptCompiler().compile(content));
     }
 
-    return content;
+    return forString(content);
   }
 }

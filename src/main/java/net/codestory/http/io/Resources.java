@@ -48,6 +48,13 @@ public class Resources {
     return readFile(path, charset);
   }
 
+  public static byte[] readBytes(Path path) throws IOException {
+    if ("classpath:".equals(type(path))) {
+      return readClasspathBytes(path.toString().substring(10));
+    }
+    return readFileBytes(path);
+  }
+
   private static String readClasspath(String path, Charset charset) throws IOException {
     URL url = ClassLoader.getSystemResource(path);
     if (url == null) {
@@ -61,15 +68,35 @@ public class Resources {
       }
     }
 
-    return Resources.read(url, charset);
+    return read(url, charset);
+  }
+
+  private static byte[] readClasspathBytes(String path) throws IOException {
+    URL url = ClassLoader.getSystemResource(path);
+    if (url == null) {
+      throw new IllegalArgumentException("Invalid file classpath: " + path);
+    }
+
+    if (url.getFile() != null) {
+      File file = new File(url.getFile());
+      if (file.exists()) {
+        return readFileBytes(file.toPath());
+      }
+    }
+
+    return readBytes(url);
   }
 
   private static String readFile(Path path, Charset charset) throws IOException {
+    return new String(readFileBytes(path), charset);
+  }
+
+  private static byte[] readFileBytes(Path path) throws IOException {
     if (!path.toFile().exists()) {
       throw new IllegalArgumentException("Invalid file path: " + path);
     }
 
-    return new String(Files.readAllBytes(path), charset);
+    return Files.readAllBytes(path);
   }
 
   private static String read(URL url, Charset charset) throws IOException {
@@ -85,6 +112,19 @@ public class Resources {
       }
 
       return string.toString();
+    }
+  }
+
+  private static byte[] readBytes(URL url) throws IOException {
+    try (BufferedInputStream from = new BufferedInputStream(url.openStream()); ByteArrayOutputStream bytes = new ByteArrayOutputStream()) {
+      byte[] buffer = new byte[BUF_SIZE];
+
+      int count;
+      while (-1 != (count = from.read(buffer))) {
+        bytes.write(buffer, 0, count);
+      }
+
+      return bytes.toByteArray();
     }
   }
 }

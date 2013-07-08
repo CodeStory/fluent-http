@@ -37,4 +37,20 @@ public class ContentTypesTest {
     assertThat(contentTypes.get("script.coffee")).isEqualTo("application/javascript");
     assertThat(contentTypes.get("unknown")).isEqualTo("text/plain");
   }
+
+  @Test
+  public void find_compatibily_with_templating() {
+    assertThat(contentTypes.support_templating("index.html")).isTrue();
+    assertThat(contentTypes.support_templating("style.css")).isTrue();
+    assertThat(contentTypes.support_templating("style.less")).isTrue();
+    assertThat(contentTypes.support_templating("text.txt")).isTrue();
+    assertThat(contentTypes.support_templating("text.zip")).isFalse();
+    assertThat(contentTypes.support_templating("image.gif")).isFalse();
+    assertThat(contentTypes.support_templating("image.jpeg")).isFalse();
+    assertThat(contentTypes.support_templating("image.jpg")).isFalse();
+    assertThat(contentTypes.support_templating("image.png")).isFalse();
+    assertThat(contentTypes.support_templating("script.js")).isTrue();
+    assertThat(contentTypes.support_templating("script.coffee")).isTrue();
+    assertThat(contentTypes.support_templating("unknown")).isFalse();
+  }
 }
