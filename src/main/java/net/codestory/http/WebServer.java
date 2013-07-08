@@ -65,6 +65,8 @@ public class WebServer {
       server.bind(new InetSocketAddress(port), 0);
       server.createContext("/", this::onRequest);
       server.start();
+
+      System.out.println("Server started on port " + port);
     } catch (IOException e) {
       throw new IllegalStateException("Unable to bind the web server on port " + port);
     }
@@ -113,5 +115,9 @@ public class WebServer {
 
   protected Payload errorPage(int code, Exception e) throws IOException {
     return new ErrorPage(code, e).payload();
+  }
+
+  public void reset() {
+    routes.reset();
   }
 }

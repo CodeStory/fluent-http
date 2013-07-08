@@ -96,6 +96,12 @@ public class RouteCollection implements Routes {
     filters.addLast(filter);
   }
 
+  public void reset() {
+    devMode.setLastConfiguration(null);
+    routes.clear();
+    filters.clear();
+  }
+
   private void add(String uriPattern, AnyRoute route) {
     routes.addFirst(new RouteWrapper(uriPattern, route));
   }

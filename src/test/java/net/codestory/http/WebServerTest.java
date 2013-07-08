@@ -30,8 +30,13 @@ import org.junit.*;
 import com.jayway.restassured.specification.*;
 
 public class WebServerTest {
-  @Rule
-  public WebServerRule server = new WebServerRule();
+  @ClassRule
+  public static WebServerRule server = new WebServerRule();
+
+  @Before
+  public void resetWebServer() {
+    server.reset();
+  }
 
   @Test
   public void not_found() {
