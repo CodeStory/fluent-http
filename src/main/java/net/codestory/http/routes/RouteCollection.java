@@ -109,6 +109,7 @@ public class RouteCollection implements Routes {
     hotReloadConfigurationInDevMode();
 
     String uri = URLDecoder.decode(exchange.getRequestURI().getRawPath(), "US-ASCII");
+    System.out.println(uri);
 
     for (Filter filter : filters) {
       if (filter.apply(uri, exchange)) {
@@ -131,6 +132,7 @@ public class RouteCollection implements Routes {
       return;
     }
 
+    System.out.println("Reloading configuration");
     routes.clear();
     filters.clear();
     lastConfiguration.configure(this);

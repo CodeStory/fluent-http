@@ -88,7 +88,7 @@ public class WebServer {
       try {
         onError(exchange, e);
       } catch (IOException ioe) {
-        e.printStackTrace(); // Cannot do much
+        System.out.println("Unable to respond to query " + e);
       }
     } finally {
       exchange.close();
