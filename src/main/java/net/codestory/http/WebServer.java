@@ -118,6 +118,7 @@ public class WebServer {
   }
 
   public void reset() {
+    devMode.setLastConfiguration(null);
     routes.reset();
   }
 }

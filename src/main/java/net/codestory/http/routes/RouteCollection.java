@@ -97,7 +97,6 @@ public class RouteCollection implements Routes {
   }
 
   public void reset() {
-    devMode.setLastConfiguration(null);
     routes.clear();
     filters.clear();
   }
