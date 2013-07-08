@@ -22,6 +22,7 @@ import java.util.*;
 
 import net.codestory.http.compilers.*;
 import net.codestory.http.io.*;
+import net.codestory.http.templating.*;
 import net.codestory.http.types.*;
 
 import com.google.gson.*;
@@ -133,14 +134,15 @@ public class Payload {
   }
 
   private static String forPath(Path path) throws IOException {
+    String content = new Template(path).render();
+
     if (path.toString().endsWith(".less")) {
-      String content = Resources.read(path, StandardCharsets.UTF_8);
       return new LessCompiler().compile(content);
     }
     if (path.toString().endsWith(".coffee")) {
-      String content = Resources.read(path, StandardCharsets.UTF_8);
       return new CoffeeScriptCompiler().compile(content);
     }
-    return Resources.read(path, StandardCharsets.UTF_8);
+
+    return content;
   }
 }

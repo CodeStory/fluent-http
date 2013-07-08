@@ -28,7 +28,11 @@ public class Template {
   private final Path path;
 
   public Template(String url) {
-    this.path = Paths.get(url);
+    this(Paths.get(url));
+  }
+
+  public Template(Path path) {
+    this.path = path;
   }
 
   public String render() {

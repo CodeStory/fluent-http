@@ -21,6 +21,8 @@ import java.nio.file.*;
 
 import net.codestory.http.*;
 import net.codestory.http.io.*;
+import net.codestory.http.templating.*;
+import net.codestory.http.types.*;
 
 import com.sun.net.httpserver.*;
 
@@ -50,6 +52,7 @@ class StaticRoute implements RouteHolder {
   private boolean serve(Path path, HttpExchange exchange) throws IOException {
     if (path.normalize().startsWith(root) && Resources.exists(path)) {
       new Payload(path).writeTo(exchange);
+      return true;
     }
 
     return false;

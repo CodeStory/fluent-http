@@ -147,8 +147,12 @@ public class WebServerTest {
 
   @Test
   public void templates() {
-    server.configure(routes -> routes.get("/hello/:name", (name) -> new Template("classpath:web/1variable.txt").render("name", name)));
+    server.configure(routes -> {
+      routes.staticDir("classpath:web");
+      routes.get("/hello/:name", (name) -> new Template("classpath:web/1variable.txt").render("name", name));
+    });
 
+    expect().content(containsString("<div>_PREFIX_TEXT_SUFFIX_</div>")).when().get("/pageYaml");
     expect().content(equalTo("Hello Joe")).when().get("/hello/Joe");
   }
 
