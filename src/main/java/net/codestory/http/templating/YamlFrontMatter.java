@@ -15,7 +15,11 @@
  */
 package net.codestory.http.templating;
 
+import static net.codestory.http.io.Strings.*;
+
 import java.util.*;
+
+import net.codestory.http.io.*;
 
 public class YamlFrontMatter {
   private static final String SEPARATOR = "---\n";
@@ -45,47 +49,5 @@ public class YamlFrontMatter {
     }
 
     return variables;
-  }
-
-  private static int countMatches(String in, String what) {
-    int count = 0;
-
-    int index = in.indexOf(what);
-    while (index != -1) {
-      count++;
-      index = in.indexOf(what, index + what.length());
-    }
-
-    return count;
-  }
-
-  private static String substringAfter(String in, String what) {
-    int index = in.indexOf(what);
-    if (index == -1) {
-      return "";
-    }
-    return in.substring(index + what.length());
-  }
-
-  private static String substringBefore(String in, String what) {
-    int index = in.indexOf(what);
-    if (index == -1) {
-      return in;
-    }
-    return in.substring(0, index);
-  }
-
-  private static String substringBetween(String in, String start, String end) {
-    int indexStart = in.indexOf(start);
-    if (indexStart == -1) {
-      return "";
-    }
-
-    int indexEnd = in.indexOf(end, indexStart + start.length());
-    if (indexEnd == -1) {
-      return "";
-    }
-
-    return in.substring(indexStart + start.length(), indexEnd);
   }
 }

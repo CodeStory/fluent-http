@@ -17,6 +17,8 @@ package net.codestory.http;
 
 import java.util.*;
 
+import net.codestory.http.io.*;
+
 public class UriParser {
   private final String[] patternParts;
 
@@ -57,5 +59,9 @@ public class UriParser {
 
   static String[] parts(String uri) {
     return uri.split("/", -1);
+  }
+
+  public static int paramsCount(String uriPattern) {
+    return Strings.countMatches(uriPattern, "/:");
   }
 }

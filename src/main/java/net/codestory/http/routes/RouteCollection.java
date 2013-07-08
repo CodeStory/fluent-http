@@ -18,7 +18,6 @@ package net.codestory.http.routes;
 import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
-import java.nio.file.*;
 import java.util.*;
 
 import net.codestory.http.*;
@@ -54,33 +53,41 @@ public class RouteCollection implements Routes {
     for (Method method : resource.getClass().getDeclaredMethods()) {
       Get annotation = method.getAnnotation(Get.class);
       if (annotation != null) {
-        add(urlPrefix + annotation.value(), new ReflectionRoute(resource, method));
+        String uriPattern = urlPrefix + annotation.value();
+
+        checkParametersCount(method.getParameterCount(), uriPattern);
+        add(uriPattern, new ReflectionRoute(resource, method));
       }
     }
   }
 
   @Override
   public void get(String uriPattern, Route route) {
+    checkParametersCount(0, uriPattern);
     add(uriPattern, route);
   }
 
   @Override
   public void get(String uriPattern, OneParamRoute route) {
+    checkParametersCount(1, uriPattern);
     add(uriPattern, route);
   }
 
   @Override
   public void get(String uriPattern, TwoParamsRoute route) {
+    checkParametersCount(2, uriPattern);
     add(uriPattern, route);
   }
 
   @Override
   public void get(String uriPattern, ThreeParamsRoute route) {
+    checkParametersCount(3, uriPattern);
     add(uriPattern, route);
   }
 
   @Override
   public void get(String uriPattern, FourParamsRoute route) {
+    checkParametersCount(4, uriPattern);
     add(uriPattern, route);
   }
 
@@ -122,5 +129,11 @@ public class RouteCollection implements Routes {
     routes.clear();
     filters.clear();
     lastConfiguration.configure(this);
+  }
+
+  private static void checkParametersCount(int count, String uriPattern) {
+    if (UriParser.paramsCount(uriPattern) != count) {
+      throw new IllegalArgumentException("Expected " + count + " parameters in " + uriPattern);
+    }
   }
 }

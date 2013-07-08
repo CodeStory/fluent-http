@@ -24,11 +24,29 @@ public class RouteCollectionTest {
   @Rule
   public ExpectedException thrown = ExpectedException.none();
 
+  RouteCollection routeCollection = new RouteCollection(new DevMode());
+
   @Test
-  public void fail_with_invalid_static_path() {
+  public void fail_with_invalid_fail_path() {
     thrown.expect(IllegalArgumentException.class);
     thrown.expectMessage("Invalid directory for static content");
 
-    new RouteCollection(new DevMode()).staticDir("UNKNOWN_PATH");
+    routeCollection.staticDir("UNKNOWN_PATH");
+  }
+
+  @Test
+  public void fail_with_too_many_params() {
+    thrown.expect(IllegalArgumentException.class);
+    thrown.expectMessage("Expected 1 parameters in /");
+
+    routeCollection.get("/", (param) -> "");
+  }
+
+  @Test
+  public void fail_with_too_few_params() {
+    thrown.expect(IllegalArgumentException.class);
+    thrown.expectMessage("Expected 2 parameters in /:one/:two/:three");
+
+    routeCollection.get("/:one/:two/:three", (one, two) -> "");
   }
 }
