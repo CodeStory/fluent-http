@@ -19,7 +19,6 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import net.codestory.http.dev.*;
 import net.codestory.http.errors.*;
 import net.codestory.http.routes.*;
 
@@ -27,8 +26,8 @@ import com.sun.net.httpserver.*;
 
 public class WebServer {
   private final HttpServer server;
-  private final DevMode devMode = new DevMode();
-  private final RouteCollection routes = new RouteCollection(devMode);
+  private final RouteCollection routes = new RouteCollection();
+  private Configuration lastConfiguration;
 
   public WebServer() {
     try {
@@ -40,7 +39,11 @@ public class WebServer {
 
   public WebServer configure(Configuration configuration) {
     configuration.configure(routes);
-    devMode.setLastConfiguration(configuration);
+
+    if (devMode()) {
+      lastConfiguration = configuration;
+    }
+
     return this;
   }
 
@@ -77,12 +80,19 @@ public class WebServer {
     return server.getAddress().getPort();
   }
 
+  public void reset() {
+    lastConfiguration = null;
+    routes.reset();
+  }
+
   public void stop() {
     server.stop(0);
   }
 
   protected void onRequest(HttpExchange exchange) {
     try {
+      hotReloadConfigurationInDevMode();
+
       applyRoutes(exchange);
     } catch (Exception e) {
       try {
@@ -102,7 +112,7 @@ public class WebServer {
   }
 
   protected void onError(HttpExchange exchange, Exception e) throws IOException {
-    if (DevMode.isDevMode()) {
+    if (devMode()) {
       errorPage(500, e).writeTo(exchange);
     } else {
       errorPage(500, null).writeTo(exchange);
@@ -117,8 +127,17 @@ public class WebServer {
     return new ErrorPage(code, e).payload();
   }
 
-  public void reset() {
-    devMode.setLastConfiguration(null);
+  protected boolean devMode() {
+    return !Boolean.parseBoolean(System.getProperty("PROD_MODE", "false"));
+  }
+
+  protected void hotReloadConfigurationInDevMode() {
+    if (lastConfiguration == null) {
+      return;
+    }
+
+    System.out.println("Reloading configuration");
     routes.reset();
+    lastConfiguration.configure(routes);
   }
 }

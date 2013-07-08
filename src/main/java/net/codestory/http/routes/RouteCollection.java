@@ -22,18 +22,15 @@ import java.util.*;
 
 import net.codestory.http.*;
 import net.codestory.http.annotations.*;
-import net.codestory.http.dev.*;
 import net.codestory.http.filters.Filter;
 
 import com.sun.net.httpserver.*;
 
 public class RouteCollection implements Routes {
-  private final DevMode devMode;
   private final LinkedList<RouteHolder> routes;
   private final LinkedList<Filter> filters;
 
-  public RouteCollection(DevMode devMode) {
-    this.devMode = devMode;
+  public RouteCollection() {
     this.routes = new LinkedList<>();
     this.filters = new LinkedList<>();
   }
@@ -106,8 +103,6 @@ public class RouteCollection implements Routes {
   }
 
   public boolean apply(HttpExchange exchange) throws IOException {
-    hotReloadConfigurationInDevMode();
-
     String uri = URLDecoder.decode(exchange.getRequestURI().getRawPath(), "US-ASCII");
     System.out.println(uri);
 
@@ -124,18 +119,6 @@ public class RouteCollection implements Routes {
     }
 
     return false;
-  }
-
-  private void hotReloadConfigurationInDevMode() {
-    Configuration lastConfiguration = devMode.getLastConfiguration();
-    if (lastConfiguration == null) {
-      return;
-    }
-
-    System.out.println("Reloading configuration");
-    routes.clear();
-    filters.clear();
-    lastConfiguration.configure(this);
   }
 
   private static void checkParametersCount(int count, String uriPattern) {

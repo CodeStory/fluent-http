@@ -31,7 +31,12 @@ import com.jayway.restassured.specification.*;
 
 public class WebServerTest {
   @ClassRule
-  public static WebServerRule server = new WebServerRule();
+  public static WebServerRule server = new WebServerRule() {
+    @Override
+    protected boolean devMode() {
+      return false;
+    }
+  };
 
   @Before
   public void resetWebServer() {

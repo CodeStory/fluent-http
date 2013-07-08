@@ -15,8 +15,6 @@
  */
 package net.codestory.http.routes;
 
-import net.codestory.http.dev.*;
-
 import org.junit.*;
 import org.junit.rules.*;
 
@@ -24,7 +22,7 @@ public class RouteCollectionTest {
   @Rule
   public ExpectedException thrown = ExpectedException.none();
 
-  RouteCollection routeCollection = new RouteCollection(new DevMode());
+  RouteCollection routeCollection = new RouteCollection();
 
   @Test
   public void fail_with_invalid_fail_path() {
