@@ -83,7 +83,11 @@ public class WebServer {
     try {
       applyRoutes(exchange);
     } catch (Exception e) {
-      onError(exchange, e);
+      try {
+        onError(exchange, e);
+      } catch (IOException ioe) {
+        e.printStackTrace(); // Cannot do much
+      }
     } finally {
       exchange.close();
     }
@@ -95,15 +99,19 @@ public class WebServer {
     }
   }
 
-  protected void onError(HttpExchange exchange, Exception e) {
+  protected void onError(HttpExchange exchange, Exception e) throws IOException {
     if (DevMode.isDevMode()) {
-      new ErrorPage(500, e).writeTo(exchange);
+      errorPage(500, e).writeTo(exchange);
     } else {
-      new ErrorPage(500).writeTo(exchange);
+      errorPage(500, null).writeTo(exchange);
     }
   }
 
-  protected void onPageNotFound(HttpExchange exchange) {
-    new ErrorPage(404).writeTo(exchange);
+  protected void onPageNotFound(HttpExchange exchange) throws IOException {
+    errorPage(404, null).writeTo(exchange);
+  }
+
+  protected Payload errorPage(int code, Exception e) throws IOException {
+    return new ErrorPage(code, e).payload();
   }
 }

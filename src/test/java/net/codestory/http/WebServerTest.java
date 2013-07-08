@@ -64,13 +64,16 @@ public class WebServerTest {
 
     expect().body(equalTo("Hello Dave")).when().get("/hello/Dave");
     expect().body(equalTo("Hello Bob")).when().get("/hello/Bob");
+    expect().body(equalTo("Hello John Doe")).when().get("/hello/John Doe");
     expect().body(equalTo("Other Joe")).when().get("/other/Joe");
     expect().body(equalTo("HI LOUD")).when().get("/say/HI/how/LOUD");
   }
 
   @Test
-  public void static_content_from_classpath() {
-    server.configure(routes -> routes.staticDir("classpath:web"));
+  public void static_content() {
+    String web = ClassLoader.getSystemResource("web").getFile();
+
+    server.configure(routes -> routes.staticDir(web));
 
     expect().content(containsString("Hello From a File")).contentType("text/html").when().get("/index.html");
     expect().content(containsString("Hello From a File")).contentType("text/html").when().get("/");
@@ -82,15 +85,6 @@ public class WebServerTest {
     expect().content(containsString("body h1 {\n  color: red;\n}\n")).contentType("text/css").when().get("/assets/style.less");
     expect().statusCode(404).when().get("/../private.txt");
     expect().statusCode(404).when().get("/unknown");
-  }
-
-  @Test
-  public void static_content_from_directory() {
-    String filePath = ClassLoader.getSystemResource("web").getFile();
-
-    server.configure(routes -> routes.staticDir("file:" + filePath));
-
-    expect().content(containsString("Hello From a File")).contentType("text/html").when().get("/index.html");
   }
 
   @Test
@@ -146,15 +140,19 @@ public class WebServerTest {
 
   @Test
   public void templates() {
-    server.configure(routes -> routes.get("/hello/:name", (name) -> new Template("classpath:web/1variable.txt").render("name", name)));
+    String web = ClassLoader.getSystemResource("web").getFile();
+
+    server.configure(routes -> routes.get("/hello/:name", (name) -> new Template(web + "/1variable.txt").render("name", name)));
 
     expect().content(equalTo("Hello Joe")).when().get("/hello/Joe");
   }
 
   @Test
   public void priority_to_route() {
+    String web = ClassLoader.getSystemResource("web").getFile();
+
     server.configure(routes -> {
-      routes.staticDir("classpath:web");
+      routes.staticDir(web);
       routes.get("/", () -> "PRIORITY");
     });
 

@@ -17,6 +17,8 @@ package net.codestory.http.routes;
 
 import java.io.*;
 import java.lang.reflect.*;
+import java.net.*;
+import java.nio.file.*;
 import java.util.*;
 
 import net.codestory.http.*;
@@ -39,7 +41,7 @@ public class RouteCollection implements Routes {
 
   @Override
   public void staticDir(String fileOrClassPathDir) {
-    routes.addLast(StaticRoute.forUrl(fileOrClassPathDir));
+    routes.addLast(new StaticRoute(Paths.get(fileOrClassPathDir)));
   }
 
   @Override
@@ -94,7 +96,7 @@ public class RouteCollection implements Routes {
   public boolean apply(HttpExchange exchange) throws IOException {
     hotReloadConfigurationInDevMode();
 
-    String uri = exchange.getRequestURI().getRawPath();
+    String uri = URLDecoder.decode(exchange.getRequestURI().getRawPath(), "US-ASCII");
 
     for (Filter filter : filters) {
       if (filter.apply(uri, exchange)) {

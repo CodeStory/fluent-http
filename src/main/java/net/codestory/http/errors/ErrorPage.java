@@ -19,37 +19,21 @@ import static java.nio.charset.StandardCharsets.*;
 
 import java.io.*;
 
+import net.codestory.http.*;
 import net.codestory.http.io.*;
-
-import com.sun.net.httpserver.*;
 
 public class ErrorPage {
   private final int code;
   private final Exception exception;
-
-  public ErrorPage(int code) {
-    this(code, null);
-  }
 
   public ErrorPage(int code, Exception exception) {
     this.code = code;
     this.exception = exception;
   }
 
-  // TODO: Should be a standard Payload
-  public void writeTo(HttpExchange exchange) {
-    try {
-      String html = readHtml();
-
-      String response = html.replace("[[ERROR]]", exceptionToString(exception));
-
-      byte[] data = response.getBytes(UTF_8);
-
-      exchange.sendResponseHeaders(code, data.length);
-      exchange.getResponseBody().write(data);
-    } catch (IOException ioe) {
-      ioe.printStackTrace();
-    }
+  public Payload payload() throws IOException {
+    String html = readHtml().replace("[[ERROR]]", exceptionToString(exception));
+    return new Payload("text/html", html, code);
   }
 
   private String readHtml() throws IOException {

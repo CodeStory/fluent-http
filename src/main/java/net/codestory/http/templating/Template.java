@@ -15,14 +15,9 @@
  */
 package net.codestory.http.templating;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import java.io.*;
-import java.nio.charset.*;
 import java.nio.file.*;
 import java.util.*;
-
-import net.codestory.http.io.*;
 
 import com.github.mustachejava.*;
 
@@ -71,7 +66,7 @@ public class Template {
     DefaultMustacheFactory mustacheFactory = new DefaultMustacheFactory();
 
     try {
-      String templateContent = read(url);
+      String templateContent = readFile(url);
 
       ContentWithVariables parsedTemplate = new YamlFrontMatter().parse(templateContent);
       String content = parsedTemplate.getContent();
@@ -88,7 +83,7 @@ public class Template {
         String layoutName = (String) allKeyValues.get("layout");
         allKeyValues.put("body", "[[body]]");
 
-        return new Template(type(url) + layoutName).render(allKeyValues).replace("[[body]]", body);
+        return new Template(path(layoutName)).render(allKeyValues).replace("[[body]]", body);
       }
 
       return body;
@@ -104,40 +99,14 @@ public class Template {
     return merged;
   }
 
-  private String read(String url) throws IOException {
-    if (url.startsWith("classpath:")) {
-      return readClasspath(url.substring(10));
-    }
-    if (url.startsWith("file:")) {
-      return readFile(url.substring(5));
-    }
-
-    throw new IllegalArgumentException("Invalid path for static content. Should be prefixed by file: or classpath:");
-  }
-
-  private String readClasspath(String path) throws IOException {
-    if (ClassLoader.getSystemResourceAsStream(path) == null) {
-      throw new IllegalArgumentException("Invalid classpath path: " + path);
-    }
-    return Resources.toString(path, UTF_8);
-  }
-
-  private String readFile(String path) throws IOException {
+  private static String readFile(String path) throws IOException {
     if (!new File(path).exists()) {
       throw new IllegalArgumentException("Invalid file path: " + path);
     }
     return new String(Files.readAllBytes(Paths.get(path)));
   }
 
-  // TEMP
-  private String type(String url) throws IOException {
-    if (url.startsWith("classpath:")) {
-      return "classpath:";
-    }
-    if (url.startsWith("file:")) {
-      return "file:";
-    }
-
-    throw new IllegalArgumentException("Invalid path for static content. Should be prefixed by file: or classpath:");
+  private String path(String file) {
+    return new File(new File(url).getParentFile(), file).getAbsolutePath();
   }
 }

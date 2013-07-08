@@ -27,7 +27,7 @@ public class UriParser {
   public String[] params(String uri) {
     String[] uriParts = parts(uri);
 
-    List<String> result = new ArrayList<>(); // TODO : optimize
+    List<String> result = new ArrayList<>();
 
     for (int i = 0; i < patternParts.length; i++) {
       String patternPart = patternParts[i];

@@ -27,19 +27,13 @@ class StaticRoute implements RouteHolder {
 
   private final String root;
 
-  StaticRoute(Path path) {
-    this.root = path.normalize().toString();
-  }
-
-  static StaticRoute forUrl(String url) {
-    if (url.startsWith("classpath:")) {
-      return new StaticClasspathRoute(url.substring(10));
-    }
-    if (url.startsWith("file:")) {
-      return new StaticFileRoute(url.substring(5));
+  StaticRoute(Path directoryPath) {
+    File rootResource = directoryPath.toFile();
+    if (!rootResource.exists()) {
+      throw new IllegalArgumentException("Invalid directory for static content: " + directoryPath);
     }
 
-    throw new IllegalArgumentException("Invalid path for static content. Should be prefixed by file: or classpath:");
+    this.root = directoryPath.normalize().toString();
   }
 
   @Override
