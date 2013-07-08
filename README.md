@@ -11,4 +11,3 @@
  + Auto-render static resources as templates without additional arguments
  + Don't allow serving layouts alone ?
  + Validation of number of params
- + decoding params
