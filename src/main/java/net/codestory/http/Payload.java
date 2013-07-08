@@ -71,7 +71,6 @@ public class Payload {
     byte[] data = getData();
     if (data != null) {
       exchange.getResponseHeaders().add("Content-Type", getContentType());
-
       exchange.sendResponseHeaders(code, data.length);
       exchange.getResponseBody().write(data);
     } else {

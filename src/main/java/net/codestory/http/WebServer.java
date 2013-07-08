@@ -95,9 +95,10 @@ public class WebServer {
 
       applyRoutes(exchange);
     } catch (Exception e) {
+      System.out.println("Error " + e);
       try {
         onError(exchange, e);
-      } catch (IOException ioe) {
+      } catch (Exception ioe) {
         System.out.println("Unable to respond to query " + e);
       }
     } finally {

@@ -45,7 +45,7 @@ public class WebServerTest {
 
   @Test
   public void not_found() {
-    expect().statusCode(404).when().get("/");
+    expect().content(containsString("404 - Page not found")).contentType("text/html").statusCode(404).when().get("/");
   }
 
   @Test
@@ -140,7 +140,6 @@ public class WebServerTest {
     expect().content(equalTo("Hello World")).when().get("/say/hello");
   }
 
-
   @Test
   public void ignore_query_params() {
     server.configure(routes -> routes.get("/index", () -> "Hello"));
@@ -170,7 +169,7 @@ public class WebServerTest {
   public void priority_to_route() {
     server.configure(routes -> {
       routes.staticDir("classpath:web");
-          routes.get("/", () -> "PRIORITY");
+      routes.get("/", () -> "PRIORITY");
     });
 
     expect().content(equalTo("PRIORITY")).when().get("/");
@@ -193,6 +192,7 @@ public class WebServerTest {
       routes.get("/other", () -> "OTHER");
       routes.filter((uri, exchange) -> {
         if ("/".equals(uri)) {
+          exchange.getResponseHeaders().add("Content-Type", "text/html");
           exchange.sendResponseHeaders(200, 8);
           exchange.getResponseBody().write("FILTERED".getBytes());
           return true;
@@ -203,6 +203,15 @@ public class WebServerTest {
 
     expect().content(equalTo("FILTERED")).when().get("/");
     expect().content(equalTo("OTHER")).when().get("/other");
+  }
+
+  @Test
+  public void error() {
+    server.configure(routes -> routes.get("/", () -> {
+      throw new RuntimeException("BUG");
+    }));
+
+    expect().content(containsString("An error occurred on the server")).contentType("text/html").statusCode(500).when().get("/");
   }
 
   private ResponseSpecification expect() {
