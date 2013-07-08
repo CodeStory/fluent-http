@@ -15,9 +15,9 @@
  */
 package net.codestory.http.errors;
 
-import static java.nio.charset.StandardCharsets.*;
-
 import java.io.*;
+import java.nio.charset.*;
+import java.nio.file.*;
 
 import net.codestory.http.*;
 import net.codestory.http.io.*;
@@ -38,9 +38,9 @@ public class ErrorPage {
 
   private String readHtml() throws IOException {
     if (code == 404) {
-      return Resources.toString("400.html", UTF_8);
+      return Resources.read(Paths.get("classpath:400.html"), StandardCharsets.UTF_8);
     }
-    return Resources.toString("500.html", UTF_8);
+    return Resources.read(Paths.get("classpath:500.html"), StandardCharsets.UTF_8);
   }
 
   private static String exceptionToString(Exception error) {

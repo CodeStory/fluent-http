@@ -107,10 +107,10 @@ public class Payload {
       return null;
     }
     if (content instanceof File) {
-      return forPath(((File) content).toPath());
+      return forString(forPath(((File) content).toPath()));
     }
     if (content instanceof Path) {
-      return forPath((Path) content);
+      return forString(forPath((Path) content));
     }
     if (content instanceof byte[]) {
       return (byte[]) content;
@@ -124,21 +124,23 @@ public class Payload {
     return forString(new Gson().toJson(content));
   }
 
-  private static byte[] forPath(Path path) throws IOException {
-    if (path.toString().endsWith(".less")) {
-      return forString(new LessCompiler().compile(path));
-    }
-    if (path.toString().endsWith(".coffee")) {
-      return forString(new CoffeeScriptCompiler().compile(path));
-    }
-    return Files.readAllBytes(path);
-  }
-
   private static byte[] forString(String value) {
     return value.getBytes(StandardCharsets.UTF_8);
   }
 
   private static byte[] forInputStream(InputStream stream) throws IOException {
     return Bytes.readBytes(stream);
+  }
+
+  private static String forPath(Path path) throws IOException {
+    if (path.toString().endsWith(".less")) {
+      String content = Resources.read(path, StandardCharsets.UTF_8);
+      return new LessCompiler().compile(content);
+    }
+    if (path.toString().endsWith(".coffee")) {
+      String content = Resources.read(path, StandardCharsets.UTF_8);
+      return new CoffeeScriptCompiler().compile(content);
+    }
+    return Resources.read(path, StandardCharsets.UTF_8);
   }
 }

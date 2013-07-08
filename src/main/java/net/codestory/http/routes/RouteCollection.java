@@ -41,7 +41,7 @@ public class RouteCollection implements Routes {
 
   @Override
   public void staticDir(String fileOrClassPathDir) {
-    routes.addLast(new StaticRoute(Paths.get(fileOrClassPathDir)));
+    routes.addLast(new StaticRoute(fileOrClassPathDir));
   }
 
   @Override

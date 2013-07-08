@@ -16,9 +16,11 @@
 package net.codestory.http.routes;
 
 import java.io.*;
+import java.net.*;
 import java.nio.file.*;
 
 import net.codestory.http.*;
+import net.codestory.http.io.*;
 
 import com.sun.net.httpserver.*;
 
@@ -27,13 +29,11 @@ class StaticRoute implements RouteHolder {
 
   private final String root;
 
-  StaticRoute(Path directoryPath) {
-    File rootResource = directoryPath.toFile();
-    if (!rootResource.exists()) {
-      throw new IllegalArgumentException("Invalid directory for static content: " + directoryPath);
+  StaticRoute(String root) {
+    if (!root.startsWith("classpath:") && !new File(root).exists()) {
+      throw new IllegalArgumentException("Invalid directory for static content: " + root);
     }
-
-    this.root = directoryPath.normalize().toString();
+    this.root = root;
   }
 
   @Override
@@ -47,10 +47,9 @@ class StaticRoute implements RouteHolder {
     return serve(file, exchange) || serve(Paths.get(file + ".html"), exchange);
   }
 
-  private boolean serve(Path file, HttpExchange exchange) throws IOException {
-    if (file.normalize().startsWith(root) && file.toFile().exists()) {
-      new Payload(file).writeTo(exchange);
-      return true;
+  private boolean serve(Path path, HttpExchange exchange) throws IOException {
+    if (path.normalize().startsWith(root) && Resources.exists(path)) {
+      new Payload(path).writeTo(exchange);
     }
 
     return false;

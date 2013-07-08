@@ -16,16 +16,19 @@
 package net.codestory.http.templating;
 
 import java.io.*;
+import java.nio.charset.*;
 import java.nio.file.*;
 import java.util.*;
+
+import net.codestory.http.io.*;
 
 import com.github.mustachejava.*;
 
 public class Template {
-  private final String url;
+  private final Path path;
 
   public Template(String url) {
-    this.url = url;
+    this.path = Paths.get(url);
   }
 
   public String render() {
@@ -66,7 +69,7 @@ public class Template {
     DefaultMustacheFactory mustacheFactory = new DefaultMustacheFactory();
 
     try {
-      String templateContent = readFile(url);
+      String templateContent = Resources.read(path, StandardCharsets.UTF_8);
 
       ContentWithVariables parsedTemplate = new YamlFrontMatter().parse(templateContent);
       String content = parsedTemplate.getContent();
@@ -99,14 +102,7 @@ public class Template {
     return merged;
   }
 
-  private static String readFile(String path) throws IOException {
-    if (!new File(path).exists()) {
-      throw new IllegalArgumentException("Invalid file path: " + path);
-    }
-    return new String(Files.readAllBytes(Paths.get(path)));
-  }
-
   private String path(String file) {
-    return new File(new File(url).getParentFile(), file).getAbsolutePath();
+    return Resources.type(path) + ":" + file;
   }
 }

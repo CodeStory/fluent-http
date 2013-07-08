@@ -22,15 +22,12 @@ import java.util.*;
 import org.junit.*;
 
 public class TemplateTest {
-  String web = ClassLoader.getSystemResource("web").getFile();
-
   @Test
   public void render() {
-
-    assertThat(new Template(web + "/0variable.txt").render()).isEqualTo("0 variables");
-    assertThat(new Template(web + "/1variable.txt").render("name", "Bob")).isEqualTo("Hello Bob");
-    assertThat(new Template(web + "/2variables.txt").render("verb", "Hello", "name", "Bob")).isEqualTo("Hello Bob");
-    assertThat(new Template(web + "/2variables.txt").render(new HashMap<String, Object>() {{
+    assertThat(new Template("classpath:web/0variable.txt").render()).isEqualTo("0 variables");
+    assertThat(new Template("classpath:web/1variable.txt").render("name", "Bob")).isEqualTo("Hello Bob");
+    assertThat(new Template("classpath:web/2variables.txt").render("verb", "Hello", "name", "Bob")).isEqualTo("Hello Bob");
+    assertThat(new Template("classpath:web/2variables.txt").render(new HashMap<String, Object>() {{
       put("verb", "Hello");
       put("name", 12);
     }})).isEqualTo("Hello 12");
@@ -38,11 +35,11 @@ public class TemplateTest {
 
   @Test
   public void yaml_front_matter() {
-    assertThat(new Template(web + "/indexYaml.html").render()).contains("Hello Yaml");
+    assertThat(new Template("classpath:web/indexYaml.html").render()).contains("Hello Yaml");
   }
 
   @Test
-  public void layout() {
-    assertThat(new Template(web + "/pageYaml.html").render()).contains("PREFIX_LAYOUT<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_LAYOUT");
+  public void layout_decorator() {
+    assertThat(new Template("classpath:web/pageYaml.html").render()).contains("PREFIX_LAYOUT<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_LAYOUT");
   }
 }

@@ -15,24 +15,19 @@
  */
 package net.codestory.http.compilers;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.*;
-import static org.jcoffeescript.Option.BARE;
+import static org.jcoffeescript.Option.*;
 
 import java.io.*;
-import java.nio.charset.*;
-import java.nio.file.*;
 
 import org.jcoffeescript.*;
 
 public class CoffeeScriptCompiler {
-  public String compile(Path path) throws IOException {
+  public String compile(String coffee) throws IOException {
     try {
-      String coffee = new String(Files.readAllBytes(path), UTF_8);
-
       return new JCoffeeScriptCompiler(asList(BARE)).compile(coffee);
     } catch (JCoffeeScriptCompileException e) {
-      throw new IOException("Unable to compile coffee file " + path, e);
+      throw new IOException("Unable to compile coffee", e);
     }
   }
 }

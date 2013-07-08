@@ -24,13 +24,11 @@ import com.github.sommeri.less4j.*;
 import com.github.sommeri.less4j.core.*;
 
 public class LessCompiler {
-  public String compile(Path path) throws IOException {
+  public String compile(String less) throws IOException {
     try {
-      String less = new String(Files.readAllBytes(path), UTF_8);
-
       return new ThreadUnsafeLessCompiler().compile(less).getCss();
     } catch (Less4jException e) {
-      throw new IOException("Unable to compile less file " + path, e);
+      throw new IOException("Unable to compile less", e);
     }
   }
 }
