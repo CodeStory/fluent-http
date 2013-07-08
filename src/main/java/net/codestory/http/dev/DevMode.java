@@ -27,7 +27,9 @@ public class DevMode {
   }
 
   public void setLastConfiguration(Configuration configuration) {
-    lastConfiguration = configuration;
+    if (isDevMode()) {
+      lastConfiguration = configuration;
+    }
   }
 
   public Configuration getLastConfiguration() {
