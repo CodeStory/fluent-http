@@ -29,20 +29,20 @@ public class Resources {
 
   public static String type(Path path) {
     if (path.toString().startsWith("classpath:")) {
-      return "classpath";
+      return "classpath:";
     }
-    return "file";
+    return "";
   }
 
   public static boolean exists(Path path) {
-    if ("classpath".equals(type(path))) {
+    if ("classpath:".equals(type(path))) {
       return ClassLoader.getSystemResource(path.toString().substring(10)) != null;
     }
     return path.toFile().exists();
   }
 
   public static String read(Path path, Charset charset) throws IOException {
-    if ("classpath".equals(type(path))) {
+    if ("classpath:".equals(type(path))) {
       return readClasspath(path.toString().substring(10), charset);
     }
     return readFile(path, charset);
@@ -55,10 +55,13 @@ public class Resources {
     }
 
     if (url.getFile() != null) {
-      return readFile(Paths.get(url.getFile()), charset);
+      File file = new File(url.getFile());
+      if (file.exists()) {
+        return readFile(file.toPath(), charset);
+      }
     }
 
-    return Resources.read(url, StandardCharsets.UTF_8);
+    return Resources.read(url, charset);
   }
 
   private static String readFile(Path path, Charset charset) throws IOException {

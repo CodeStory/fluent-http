@@ -107,6 +107,6 @@ public class Template {
   }
 
   private String path(String file) {
-    return Resources.type(path) + ":" + file;
+    return Resources.type(path) + file;
   }
 }
