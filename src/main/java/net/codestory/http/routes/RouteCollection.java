@@ -15,20 +15,20 @@
  */
 package net.codestory.http.routes;
 
+import static net.codestory.http.UriParser.*;
+
 import java.io.*;
 import java.lang.reflect.*;
-import java.net.*;
 import java.util.*;
 
-import net.codestory.http.*;
 import net.codestory.http.annotations.*;
 import net.codestory.http.filters.Filter;
 
 import com.sun.net.httpserver.*;
 
 public class RouteCollection implements Routes {
-  private final LinkedList<RouteHolder> routes;
-  private final LinkedList<Filter> filters;
+  private final Deque<Filter> routes;
+  private final Deque<Filter> filters;
 
   public RouteCollection() {
     this.routes = new LinkedList<>();
@@ -103,7 +103,7 @@ public class RouteCollection implements Routes {
   }
 
   public boolean apply(HttpExchange exchange) throws IOException {
-    String uri = URLDecoder.decode(exchange.getRequestURI().getRawPath(), "US-ASCII");
+    String uri = exchange.getRequestURI().getPath();
     System.out.println(uri);
 
     for (Filter filter : filters) {
@@ -112,7 +112,7 @@ public class RouteCollection implements Routes {
       }
     }
 
-    for (RouteHolder route : routes) {
+    for (Filter route : routes) {
       if (route.apply(uri, exchange)) {
         return true;
       }
@@ -122,7 +122,7 @@ public class RouteCollection implements Routes {
   }
 
   private static void checkParametersCount(int count, String uriPattern) {
-    if (UriParser.paramsCount(uriPattern) != count) {
+    if (paramsCount(uriPattern) != count) {
       throw new IllegalArgumentException("Expected " + count + " parameters in " + uriPattern);
     }
   }

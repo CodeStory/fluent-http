@@ -20,18 +20,16 @@ import java.lang.reflect.*;
 class ReflectionRoute implements AnyRoute {
   private final Object resource;
   private final Method method;
-  private final Class<?>[] parameterTypes;
 
   ReflectionRoute(Object resource, Method method) {
     this.resource = resource;
     this.method = method;
-    this.parameterTypes = method.getParameterTypes();
   }
 
   @Override
   public Object body(String[] parameters) {
     try {
-      Object[] arguments = convert(parameters, parameterTypes);
+      Object[] arguments = convert(parameters, method.getParameterTypes());
 
       method.setAccessible(true);
       return method.invoke(resource, arguments);

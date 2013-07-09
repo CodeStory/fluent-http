@@ -15,6 +15,7 @@
  */
 package net.codestory.http.routes;
 
+@FunctionalInterface
 interface AnyRoute {
   Object body(String[] parameters);
 }

@@ -15,6 +15,7 @@
  */
 package net.codestory.http.routes;
 
+@FunctionalInterface
 public interface OneParamRoute extends AnyRoute {
   Object body(String parameters);
 

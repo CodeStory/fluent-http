@@ -19,6 +19,7 @@ import java.io.*;
 
 import com.sun.net.httpserver.*;
 
+@FunctionalInterface
 public interface Filter {
   boolean apply(String uri, HttpExchange exchange) throws IOException;
 }

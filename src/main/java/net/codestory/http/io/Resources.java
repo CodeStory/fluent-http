@@ -21,17 +21,12 @@ import java.nio.charset.*;
 import java.nio.file.*;
 
 public class Resources {
-  private static final int BUF_SIZE = 0x1000; // 4K
-
   private Resources() {
     // Static utility class
   }
 
   public static String type(Path path) {
-    if (path.toString().startsWith("classpath:")) {
-      return "classpath:";
-    }
-    return "";
+    return path.toString().startsWith("classpath:") ? "classpath:" : "";
   }
 
   public static boolean exists(Path path) {
@@ -68,7 +63,9 @@ public class Resources {
       }
     }
 
-    return read(url, charset);
+    try (InputStream from = url.openStream()) {
+      return InputStreams.readString(from, charset);
+    }
   }
 
   private static byte[] readClasspathBytes(String path) throws IOException {
@@ -84,7 +81,9 @@ public class Resources {
       }
     }
 
-    return readBytes(url);
+    try (InputStream from = url.openStream()) {
+      return InputStreams.readBytes(from);
+    }
   }
 
   private static String readFile(Path path, Charset charset) throws IOException {
@@ -99,32 +98,4 @@ public class Resources {
     return Files.readAllBytes(path);
   }
 
-  private static String read(URL url, Charset charset) throws IOException {
-    try (InputStream stream = url.openStream()) {
-      StringBuilder string = new StringBuilder();
-      char[] buffer = new char[BUF_SIZE];
-
-      try (Reader from = new InputStreamReader(stream, charset)) {
-        int count;
-        while (-1 != (count = from.read(buffer))) {
-          string.append(buffer, 0, count);
-        }
-      }
-
-      return string.toString();
-    }
-  }
-
-  private static byte[] readBytes(URL url) throws IOException {
-    try (BufferedInputStream from = new BufferedInputStream(url.openStream()); ByteArrayOutputStream bytes = new ByteArrayOutputStream()) {
-      byte[] buffer = new byte[BUF_SIZE];
-
-      int count;
-      while (-1 != (count = from.read(buffer))) {
-        bytes.write(buffer, 0, count);
-      }
-
-      return bytes.toByteArray();
-    }
-  }
 }

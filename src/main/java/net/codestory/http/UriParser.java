@@ -15,31 +15,30 @@
  */
 package net.codestory.http;
 
-import java.util.*;
-
 import net.codestory.http.io.*;
 
 public class UriParser {
   private final String[] patternParts;
+  private final int paramsCount;
 
   public UriParser(String uriPattern) {
     this.patternParts = parts(uriPattern);
+    this.paramsCount = paramsCount(uriPattern);
   }
 
   public String[] params(String uri) {
     String[] uriParts = parts(uri);
 
-    List<String> result = new ArrayList<>();
+    String[] params = new String[paramsCount];
 
+    int index = 0;
     for (int i = 0; i < patternParts.length; i++) {
-      String patternPart = patternParts[i];
-
-      if (patternPart.startsWith(":")) {
-        result.add(uriParts[i]);
+      if (patternParts[i].startsWith(":")) {
+        params[index++] = uriParts[i];
       }
     }
 
-    return result.toArray(new String[result.size()]);
+    return params;
   }
 
   public boolean matches(String uri) {
@@ -58,7 +57,7 @@ public class UriParser {
   }
 
   static String[] parts(String uri) {
-    return uri.split("/", -1);
+    return uri.split("[/]", -1);
   }
 
   public static int paramsCount(String uriPattern) {

@@ -15,17 +15,20 @@
  */
 package net.codestory.http.compilers;
 
-import static java.util.Arrays.*;
+import static java.util.Collections.*;
 import static org.jcoffeescript.Option.*;
 
 import java.io.*;
+import java.util.*;
 
 import org.jcoffeescript.*;
 
 public class CoffeeScriptCompiler {
+  private static final Collection<Option> OPTIONS = singletonList(BARE);
+
   public String compile(String coffee) throws IOException {
     try {
-      return new JCoffeeScriptCompiler(asList(BARE)).compile(coffee);
+      return new JCoffeeScriptCompiler(OPTIONS).compile(coffee);
     } catch (JCoffeeScriptCompileException e) {
       throw new IOException("Unable to compile coffee", e);
     }

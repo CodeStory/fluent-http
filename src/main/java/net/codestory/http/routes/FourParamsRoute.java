@@ -15,6 +15,7 @@
  */
 package net.codestory.http.routes;
 
+@FunctionalInterface
 public interface FourParamsRoute extends AnyRoute {
   Object body(String parameter1, String parameter2, String parameter3, String parameter4);
 

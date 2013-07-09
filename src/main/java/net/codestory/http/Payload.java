@@ -18,7 +18,6 @@ package net.codestory.http;
 import java.io.*;
 import java.nio.charset.*;
 import java.nio.file.*;
-import java.util.*;
 
 import net.codestory.http.compilers.*;
 import net.codestory.http.io.*;
@@ -32,7 +31,7 @@ public class Payload {
   private final String contentType;
   private final Object content;
   private final int code;
-  private final Map<String, String> responseHeaders;
+  private final Headers headers;
 
   public Payload(Object content) {
     this(null, content);
@@ -46,7 +45,7 @@ public class Payload {
     this.contentType = contentType;
     this.content = content;
     this.code = code;
-    this.responseHeaders = new HashMap<>();
+    this.headers = new Headers();
   }
 
   public static Payload wrap(Object payload) {
@@ -55,7 +54,7 @@ public class Payload {
 
   public static Payload seeOther(String url) {
     Payload payload = new Payload(null, null, 303);
-    payload.responseHeaders.put("Location", url);
+    payload.headers.add("Location", url);
     return payload;
   }
 
@@ -64,9 +63,7 @@ public class Payload {
   }
 
   public void writeTo(HttpExchange exchange) throws IOException {
-    for (Map.Entry<String, String> keyValue : responseHeaders.entrySet()) {
-      exchange.getResponseHeaders().add(keyValue.getKey(), keyValue.getValue());
-    }
+    exchange.getResponseHeaders().putAll(headers);
 
     byte[] data = getData();
     if (data != null) {
@@ -129,7 +126,7 @@ public class Payload {
   }
 
   private static byte[] forInputStream(InputStream stream) throws IOException {
-    return Bytes.readBytes(stream);
+    return InputStreams.readBytes(stream);
   }
 
   private static byte[] forPath(Path path) throws IOException {

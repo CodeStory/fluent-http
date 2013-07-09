@@ -20,16 +20,12 @@ import static org.fest.assertions.MapAssert.*;
 
 import org.junit.*;
 
-import com.google.common.base.*;
-
 public class YamlFrontMatterTest {
-  YamlFrontMatter yamlFrontMatter = new YamlFrontMatter();
-
   @Test
   public void should_read_empty_file() {
-    String content = fileContent("");
+    String content = content("");
 
-    ContentWithVariables parsed = yamlFrontMatter.parse(content);
+    YamlFrontMatter parsed = YamlFrontMatter.parse(content);
 
     assertThat(parsed.getVariables()).isEmpty();
     assertThat(parsed.getContent()).isEmpty();
@@ -37,9 +33,9 @@ public class YamlFrontMatterTest {
 
   @Test
   public void should_read_file_without_headers() {
-    String content = fileContent("CONTENT");
+    String content = content("CONTENT");
 
-    ContentWithVariables parsed = yamlFrontMatter.parse(content);
+    YamlFrontMatter parsed = YamlFrontMatter.parse(content);
 
     assertThat(parsed.getVariables()).isEmpty();
     assertThat(parsed.getContent()).isEqualTo("CONTENT");
@@ -47,14 +43,14 @@ public class YamlFrontMatterTest {
 
   @Test
   public void should_read_header_variables() {
-    String content = fileContent(
+    String content = content(
         "---",
         "layout: standard",
         "title: CodeStory - Devoxx Fight",
         "---",
         "CONTENT");
 
-    ContentWithVariables parsed = yamlFrontMatter.parse(content);
+    YamlFrontMatter parsed = YamlFrontMatter.parse(content);
 
     assertThat(parsed.getVariables()).includes(
         entry("layout", "standard"),
@@ -64,14 +60,14 @@ public class YamlFrontMatterTest {
 
   @Test
   public void should_ignore_commented_variable() {
-    String content = fileContent(
+    String content = content(
         "---",
         "#layout: standard",
         "title: CodeStory - Devoxx Fight",
         "---",
         "CONTENT");
 
-    ContentWithVariables parsed = yamlFrontMatter.parse(content);
+    YamlFrontMatter parsed = YamlFrontMatter.parse(content);
 
     assertThat(parsed.getVariables())
         .excludes(entry("layout", "standard"))
@@ -79,7 +75,7 @@ public class YamlFrontMatterTest {
         .includes(entry("title", "CodeStory - Devoxx Fight"));
   }
 
-  static String fileContent(String... lines) {
-    return Joiner.on("\n").join(lines);
+  static String content(String... lines) {
+    return String.join("\n", lines);
   }
 }

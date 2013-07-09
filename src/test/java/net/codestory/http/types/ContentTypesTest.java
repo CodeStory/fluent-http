@@ -20,37 +20,37 @@ import static org.fest.assertions.Assertions.*;
 import org.junit.*;
 
 public class ContentTypesTest {
-  ContentTypes contentTypes = new ContentTypes();
+  ContentTypes types = new ContentTypes();
 
   @Test
   public void find_content_type_from_extension() {
-    assertThat(contentTypes.get("index.html")).isEqualTo("text/html");
-    assertThat(contentTypes.get("style.css")).isEqualTo("text/css");
-    assertThat(contentTypes.get("style.less")).isEqualTo("text/css");
-    assertThat(contentTypes.get("text.txt")).isEqualTo("text/plain");
-    assertThat(contentTypes.get("text.zip")).isEqualTo("application/zip");
-    assertThat(contentTypes.get("image.gif")).isEqualTo("image/gif");
-    assertThat(contentTypes.get("image.jpeg")).isEqualTo("image/jpeg");
-    assertThat(contentTypes.get("image.jpg")).isEqualTo("image/jpeg");
-    assertThat(contentTypes.get("image.png")).isEqualTo("image/png");
-    assertThat(contentTypes.get("script.js")).isEqualTo("application/javascript");
-    assertThat(contentTypes.get("script.coffee")).isEqualTo("application/javascript");
-    assertThat(contentTypes.get("unknown")).isEqualTo("text/plain");
+    assertThat(types.get("index.html")).isEqualTo("text/html");
+    assertThat(types.get("style.css")).isEqualTo("text/css");
+    assertThat(types.get("style.less")).isEqualTo("text/css");
+    assertThat(types.get("text.txt")).isEqualTo("text/plain");
+    assertThat(types.get("text.zip")).isEqualTo("application/zip");
+    assertThat(types.get("image.gif")).isEqualTo("image/gif");
+    assertThat(types.get("image.jpeg")).isEqualTo("image/jpeg");
+    assertThat(types.get("image.jpg")).isEqualTo("image/jpeg");
+    assertThat(types.get("image.png")).isEqualTo("image/png");
+    assertThat(types.get("script.js")).isEqualTo("application/javascript");
+    assertThat(types.get("script.coffee")).isEqualTo("application/javascript");
+    assertThat(types.get("unknown")).isEqualTo("text/plain");
   }
 
   @Test
   public void find_compatibily_with_templating() {
-    assertThat(contentTypes.support_templating("index.html")).isTrue();
-    assertThat(contentTypes.support_templating("style.css")).isTrue();
-    assertThat(contentTypes.support_templating("style.less")).isTrue();
-    assertThat(contentTypes.support_templating("text.txt")).isTrue();
-    assertThat(contentTypes.support_templating("text.zip")).isFalse();
-    assertThat(contentTypes.support_templating("image.gif")).isFalse();
-    assertThat(contentTypes.support_templating("image.jpeg")).isFalse();
-    assertThat(contentTypes.support_templating("image.jpg")).isFalse();
-    assertThat(contentTypes.support_templating("image.png")).isFalse();
-    assertThat(contentTypes.support_templating("script.js")).isTrue();
-    assertThat(contentTypes.support_templating("script.coffee")).isTrue();
-    assertThat(contentTypes.support_templating("unknown")).isFalse();
+    assertThat(types.support_templating("index.html")).isTrue();
+    assertThat(types.support_templating("style.css")).isTrue();
+    assertThat(types.support_templating("style.less")).isTrue();
+    assertThat(types.support_templating("text.txt")).isTrue();
+    assertThat(types.support_templating("text.zip")).isFalse();
+    assertThat(types.support_templating("image.gif")).isFalse();
+    assertThat(types.support_templating("image.jpeg")).isFalse();
+    assertThat(types.support_templating("image.jpg")).isFalse();
+    assertThat(types.support_templating("image.png")).isFalse();
+    assertThat(types.support_templating("script.js")).isTrue();
+    assertThat(types.support_templating("script.coffee")).isTrue();
+    assertThat(types.support_templating("unknown")).isFalse();
   }
 }

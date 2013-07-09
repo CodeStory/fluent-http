@@ -16,7 +16,9 @@
 package net.codestory.http;
 
 import static java.nio.charset.StandardCharsets.*;
+import static java.util.Arrays.*;
 import static org.fest.assertions.Assertions.*;
+import static org.fest.assertions.MapAssert.*;
 import static org.mockito.Mockito.*;
 
 import java.io.*;
@@ -72,20 +74,20 @@ public class PayloadTest {
   @Test
   public void support_redirect() throws IOException {
     HttpExchange exchange = mock(HttpExchange.class);
-    Headers headers = mock(Headers.class);
+    Headers headers = new Headers();
     when(exchange.getResponseHeaders()).thenReturn(headers);
 
     Payload payload = Payload.seeOther("/url");
     payload.writeTo(exchange);
 
+    assertThat(headers).includes(entry("Location", asList("/url")));
     verify(exchange).sendResponseHeaders(303, 0);
-    verify(headers).add("Location", "/url");
-    verifyNoMoreInteractions(ignoreStubs(exchange, headers));
+    verifyNoMoreInteractions(ignoreStubs(exchange));
   }
 
   static class Person {
-    final String name;
-    final int age;
+    String name;
+    int age;
 
     Person(String name, int age) {
       this.name = name;

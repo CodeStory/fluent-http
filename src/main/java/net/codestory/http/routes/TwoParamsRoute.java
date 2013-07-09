@@ -15,6 +15,7 @@
  */
 package net.codestory.http.routes;
 
+@FunctionalInterface
 public interface TwoParamsRoute extends AnyRoute {
   Object body(String parameter1, String parameter2);
 

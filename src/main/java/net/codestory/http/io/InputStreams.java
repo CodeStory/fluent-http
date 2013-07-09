@@ -16,15 +16,24 @@
 package net.codestory.http.io;
 
 import java.io.*;
+import java.nio.charset.*;
 
-public class Bytes {
-  private static final int BUF_SIZE = 0x1000; // 4K
+public class InputStreams {
+  private static final int BUF_SIZE = 4096;
 
-  private Bytes() {
+  private InputStreams() {
     // Static utility class
   }
 
   public static byte[] readBytes(InputStream from) throws IOException {
+    return read(from, ByteArrayOutputStream::toByteArray);
+  }
+
+  public static String readString(InputStream from, Charset charset) throws IOException {
+    return read(from, bytes -> bytes.toString(charset.name()));
+  }
+
+  public static <T> T read(InputStream from, ForBytes<T> transform) throws IOException {
     try (ByteArrayOutputStream bytes = new ByteArrayOutputStream()) {
       byte[] buffer = new byte[BUF_SIZE];
 
@@ -32,7 +41,12 @@ public class Bytes {
       while (-1 != (count = from.read(buffer))) {
         bytes.write(buffer, 0, count);
       }
-      return bytes.toByteArray();
+      return transform.apply(bytes);
     }
+  }
+
+  @FunctionalInterface
+  private static interface ForBytes<T> {
+    T apply(ByteArrayOutputStream bytes) throws IOException;
   }
 }

@@ -16,13 +16,12 @@
 package net.codestory.http;
 
 import static com.jayway.restassured.RestAssured.*;
+import static java.nio.charset.StandardCharsets.*;
 import static org.hamcrest.Matchers.*;
 
 import java.io.*;
-import java.nio.charset.*;
 
 import net.codestory.http.annotations.*;
-import net.codestory.http.misc.*;
 import net.codestory.http.templating.*;
 
 import org.junit.*;
@@ -30,13 +29,17 @@ import org.junit.*;
 import com.jayway.restassured.specification.*;
 
 public class WebServerTest {
-  @ClassRule
-  public static WebServerRule server = new WebServerRule() {
+  static WebServer server = new WebServer() {
     @Override
     protected boolean devMode() {
       return false;
     }
   };
+
+  @BeforeClass
+  public static void startServer() {
+    server.startOnRandomPort();
+  }
 
   @Before
   public void resetWebServer() {
@@ -52,7 +55,7 @@ public class WebServerTest {
   public void content_types() {
     server.configure(routes -> {
       routes.get("/index", () -> "Hello");
-      routes.get("/raw", () -> "RAW DATA".getBytes(StandardCharsets.UTF_8));
+      routes.get("/raw", () -> "RAW DATA".getBytes(UTF_8));
       routes.get("/json", () -> new Person("NAME", 42));
       routes.get("/text", () -> new Payload("text/plain", "TEXT"));
     });
@@ -60,6 +63,7 @@ public class WebServerTest {
     expect().body(equalTo("Hello")).contentType("text/html").when().get("/index");
     expect().body(equalTo("RAW DATA")).contentType("application/octet-stream").when().get("/raw");
     expect().body("name", equalTo("NAME")).body("age", equalTo(42)).contentType("application/json").when().get("/json");
+    expect().body(equalTo("TEXT")).contentType("text/plain").when().get("/text");
     expect().body(equalTo("TEXT")).contentType("text/plain").when().get("/text");
   }
 
@@ -108,22 +112,22 @@ public class WebServerTest {
   public void annotated_resources() {
     server.configure(routes -> routes.add(new Object() {
       @Get("/hello")
-      public String say_hello() {
-        return "Hello World";
+      public String hello() {
+        return "Hello";
       }
 
       @Get("/bye/:whom")
-      public String say_bye_to_(String whom) {
+      public String bye_to_(String whom) {
         return "Good Bye " + whom;
       }
 
       @Get("/add/:left/:right")
-      public String say_bye_to_(int left, int right) {
+      public String bye_to_(int left, int right) {
         return Integer.toString(left + right);
       }
     }));
 
-    expect().content(equalTo("Hello World")).when().get("/hello");
+    expect().content(equalTo("Hello")).when().get("/hello");
     expect().content(equalTo("Good Bye Bob")).when().get("/bye/Bob");
     expect().content(equalTo("42")).when().get("/add/22/20");
   }
@@ -133,11 +137,11 @@ public class WebServerTest {
     server.configure(routes -> routes.add("/say", new Object() {
       @Get("/hello")
       public String say_hello() {
-        return "Hello World";
+        return "Hello";
       }
     }));
 
-    expect().content(equalTo("Hello World")).when().get("/say/hello");
+    expect().content(equalTo("Hello")).when().get("/say/hello");
   }
 
   @Test

@@ -17,6 +17,7 @@ package net.codestory.http;
 
 import net.codestory.http.routes.*;
 
+@FunctionalInterface
 public interface Configuration {
   void configure(Routes routes);
 }

@@ -16,17 +16,15 @@
 package net.codestory.http.routes;
 
 import java.io.*;
-import java.net.*;
 import java.nio.file.*;
 
 import net.codestory.http.*;
+import net.codestory.http.filters.Filter;
 import net.codestory.http.io.*;
-import net.codestory.http.templating.*;
-import net.codestory.http.types.*;
 
 import com.sun.net.httpserver.*;
 
-class StaticRoute implements RouteHolder {
+class StaticRoute implements Filter {
   private static final String WELCOME_FILE = "index.html";
 
   private final String root;
@@ -40,7 +38,7 @@ class StaticRoute implements RouteHolder {
 
   @Override
   public boolean apply(String uri, HttpExchange exchange) throws IOException {
-    if (uri.equals("/")) {
+    if ("/".equals(uri)) {
       uri = WELCOME_FILE;
     }
 

@@ -18,10 +18,11 @@ package net.codestory.http.routes;
 import java.io.*;
 
 import net.codestory.http.*;
+import net.codestory.http.filters.Filter;
 
 import com.sun.net.httpserver.*;
 
-class RouteWrapper implements RouteHolder {
+class RouteWrapper implements Filter {
   private final UriParser uriParser;
   private final AnyRoute route;
 
@@ -32,16 +33,16 @@ class RouteWrapper implements RouteHolder {
 
   @Override
   public boolean apply(String uri, HttpExchange exchange) throws IOException {
-    if (uriParser.matches(uri)) {
-      String[] parameters = uriParser.params(uri);
-
-      Object body = route.body(parameters);
-
-      Payload payload = Payload.wrap(body);
-      payload.writeTo(exchange);
-
-      return true;
+    if (!uriParser.matches(uri)) {
+      return false;
     }
-    return false;
+
+    String[] parameters = uriParser.params(uri);
+    Object body = route.body(parameters);
+
+    Payload payload = Payload.wrap(body);
+    payload.writeTo(exchange);
+
+    return true;
   }
 }

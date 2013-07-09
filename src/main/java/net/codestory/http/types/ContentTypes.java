@@ -17,15 +17,7 @@ package net.codestory.http.types;
 
 public class ContentTypes {
   public String get(String filename) {
-    int dotIndex = filename.lastIndexOf('.');
-    if (dotIndex == -1) {
-      return "text/plain";
-    }
-
-    String ext = filename.substring(dotIndex);
-    switch (ext) {
-      case ".txt":
-        return "text/plain";
+    switch (extension(filename)) {
       case ".html":
         return "text/html";
       case ".css":
@@ -49,13 +41,7 @@ public class ContentTypes {
   }
 
   public boolean support_templating(String filename) {
-    int dotIndex = filename.lastIndexOf('.');
-    if (dotIndex == -1) {
-      return false;
-    }
-
-    String ext = filename.substring(dotIndex);
-    switch (ext) {
+    switch (extension(filename)) {
       case ".txt":
       case ".html":
       case ".css":
@@ -66,5 +52,10 @@ public class ContentTypes {
       default:
         return false;
     }
+  }
+
+  private static String extension(String filename) {
+    int dotIndex = filename.lastIndexOf('.');
+    return dotIndex == -1 ? "" : filename.substring(dotIndex);
   }
 }

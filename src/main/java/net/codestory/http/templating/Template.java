@@ -19,10 +19,10 @@ import java.io.*;
 import java.nio.charset.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.function.*;
 
+import net.codestory.http.compilers.*;
 import net.codestory.http.io.*;
-
-import com.github.mustachejava.*;
 
 public class Template {
   private final Path path;
@@ -40,57 +40,55 @@ public class Template {
   }
 
   public String render(String key, Object value) {
-    Map<String, Object> keyValues = new HashMap<>();
-    keyValues.put(key, value);
-    return render(keyValues);
+    return render(keyValues -> {
+      keyValues.put(key, value);
+    });
   }
 
   public String render(String k1, String v1, String k2, Object v2) {
-    Map<String, Object> keyValues = new HashMap<>();
-    keyValues.put(k1, v1);
-    keyValues.put(k2, v2);
-    return render(keyValues);
+    return render(keyValues -> {
+      keyValues.put(k1, v1);
+      keyValues.put(k2, v2);
+    });
   }
 
   public String render(String k1, Object v1, String k2, Object v2, String k3, Object v3) {
-    Map<String, Object> keyValues = new HashMap<>();
-    keyValues.put(k1, v1);
-    keyValues.put(k2, v2);
-    keyValues.put(k3, v3);
-    return render(keyValues);
+    return render(keyValues -> {
+      keyValues.put(k1, v1);
+      keyValues.put(k2, v2);
+      keyValues.put(k3, v3);
+    });
   }
 
   public String render(String k1, Object v1, String k2, Object v2, String k3, Object v3, String k4, Object v4) {
+    return render(keyValues -> {
+      keyValues.put(k1, v1);
+      keyValues.put(k2, v2);
+      keyValues.put(k3, v3);
+      keyValues.put(k4, v4);
+    });
+  }
+
+  private String render(Consumer<Map<String, Object>> addKeyValues) {
     Map<String, Object> keyValues = new HashMap<>();
-    keyValues.put(k1, v1);
-    keyValues.put(k2, v2);
-    keyValues.put(k3, v3);
-    keyValues.put(k4, v4);
+    addKeyValues.accept(keyValues);
     return render(keyValues);
   }
 
   public String render(Map<String, Object> keyValues) {
-    DefaultMustacheFactory mustacheFactory = new DefaultMustacheFactory();
-
     try {
       String templateContent = Resources.read(path, StandardCharsets.UTF_8);
 
-      ContentWithVariables parsedTemplate = new YamlFrontMatter().parse(templateContent);
+      YamlFrontMatter parsedTemplate = YamlFrontMatter.parse(templateContent);
       String content = parsedTemplate.getContent();
       Map<String, String> variables = parsedTemplate.getVariables();
       Map<String, Object> allKeyValues = merge(keyValues, variables);
 
-      Mustache mustache = mustacheFactory.compile(new StringReader(content), "", "[[", "]]");
+      String body = new MustacheCompiler().compile(content, allKeyValues);
 
-      Writer output = new StringWriter();
-      mustache.execute(output, allKeyValues).flush();
-      String body = output.toString();
-
-      if (variables.containsKey("layout")) {
-        String layoutName = (String) allKeyValues.get("layout");
-        allKeyValues.put("body", "[[body]]");
-
-        return new Template(path(layoutName)).render(allKeyValues).replace("[[body]]", body);
+      String layout = variables.get("layout");
+      if (layout != null) {
+        return new Template(path(layout)).render(allKeyValues).replace("[[body]]", body);
       }
 
       return body;
@@ -103,6 +101,7 @@ public class Template {
     Map<String, Object> merged = new HashMap<>();
     merged.putAll(keyValues);
     merged.putAll(variables);
+    merged.put("body", "[[body]]");
     return merged;
   }
 

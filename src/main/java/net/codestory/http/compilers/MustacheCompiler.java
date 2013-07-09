@@ -13,12 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.routes;
+package net.codestory.http.compilers;
 
 import java.io.*;
+import java.util.*;
 
-import com.sun.net.httpserver.*;
+import com.github.mustachejava.*;
 
-interface RouteHolder {
-  boolean apply(String uri, HttpExchange exchange) throws IOException;
+public class MustacheCompiler {
+  private static DefaultMustacheFactory MUSTACHE = new DefaultMustacheFactory();
+
+  public String compile(String template, Map<String, Object> variables) throws IOException {
+    Mustache mustache = MUSTACHE.compile(new StringReader(template), "", "[[", "]]");
+
+    return mustache.execute(new StringWriter(), variables).toString();
+  }
 }

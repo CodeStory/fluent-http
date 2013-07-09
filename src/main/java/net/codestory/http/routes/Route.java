@@ -15,6 +15,7 @@
  */
 package net.codestory.http.routes;
 
+@FunctionalInterface
 public interface Route extends AnyRoute {
   Object body();
 

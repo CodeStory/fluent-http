@@ -15,10 +15,13 @@
  */
 package net.codestory.http.annotations;
 
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.RetentionPolicy.*;
+
 import java.lang.annotation.*;
 
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
+@Target(METHOD)
+@Retention(RUNTIME)
 public @interface Get {
   String value();
 }

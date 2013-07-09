@@ -19,16 +19,31 @@ import static net.codestory.http.io.Strings.*;
 
 import java.util.*;
 
-import net.codestory.http.io.*;
-
 public class YamlFrontMatter {
   private static final String SEPARATOR = "---\n";
 
-  public ContentWithVariables parse(String content) {
+  private final String content;
+  private final Map<String, String> variables;
+
+  private YamlFrontMatter(String content, Map<String, String> variables) {
+    this.content = content;
+    this.variables = variables;
+  }
+
+  public String getContent() {
+    return content;
+  }
+
+  public Map<String, String> getVariables() {
+    return variables;
+  }
+
+  public static YamlFrontMatter parse(String content) {
     if (countMatches(content, SEPARATOR) < 2) {
-      return new ContentWithVariables(content, new HashMap<>());
+      return new YamlFrontMatter(content, Collections.emptyMap());
     }
-    return new ContentWithVariables(stripHeader(content), parseVariables(content));
+
+    return new YamlFrontMatter(stripHeader(content), parseVariables(content));
   }
 
   private static String stripHeader(String content) {

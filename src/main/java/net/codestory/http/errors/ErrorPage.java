@@ -16,11 +16,9 @@
 package net.codestory.http.errors;
 
 import java.io.*;
-import java.nio.charset.*;
-import java.nio.file.*;
 
 import net.codestory.http.*;
-import net.codestory.http.io.*;
+import net.codestory.http.templating.*;
 
 public class ErrorPage {
   private final int code;
@@ -32,18 +30,16 @@ public class ErrorPage {
   }
 
   public Payload payload() throws IOException {
-    String html = readHtml().replace("[[ERROR]]", exceptionToString(exception));
+    String html = new Template(filename()).render("ERROR", toString(exception));
+
     return new Payload("text/html", html, code);
   }
 
-  private String readHtml() throws IOException {
-    if (code == 404) {
-      return Resources.read(Paths.get("classpath:400.html"), StandardCharsets.UTF_8);
-    }
-    return Resources.read(Paths.get("classpath:500.html"), StandardCharsets.UTF_8);
+  private String filename() throws IOException {
+    return code == 404 ? "classpath:404.html" : "classpath:500.html";
   }
 
-  private static String exceptionToString(Exception error) {
+  private static String toString(Exception error) {
     if (error == null) {
       return "";
     }
