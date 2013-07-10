@@ -15,9 +15,15 @@
  */
 package net.codestory.http.types;
 
+import java.nio.file.*;
+
 public class ContentTypes {
-  public String get(String filename) {
-    switch (extension(filename)) {
+  private ContentTypes() {
+    // Static class
+  }
+
+  public static String get(Path path) {
+    switch (extension(path)) {
       case ".html":
         return "text/html";
       case ".css":
@@ -40,21 +46,34 @@ public class ContentTypes {
     }
   }
 
-  public boolean support_templating(String filename) {
-    switch (extension(filename)) {
+  public static boolean support_templating(Path path) {
+    switch (extension(path)) {
       case ".txt":
       case ".html":
       case ".css":
       case ".less":
-      case ".js":
-      case ".coffee":
         return true;
       default:
         return false;
     }
   }
 
-  private static String extension(String filename) {
+  public static boolean is_binary(Path path) {
+    switch (extension(path)) {
+      case ".txt":
+      case ".html":
+      case ".css":
+      case ".less":
+      case ".js":
+      case ".coffee":
+        return false;
+      default:
+        return true;
+    }
+  }
+
+  private static String extension(Path path) {
+    String filename = path.toString();
     int dotIndex = filename.lastIndexOf('.');
     return dotIndex == -1 ? "" : filename.substring(dotIndex);
   }

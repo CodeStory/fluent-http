@@ -81,11 +81,11 @@ public class Payload {
     }
     if (content instanceof File) {
       File file = (File) content;
-      return new ContentTypes().get(file.getName());
+      return ContentTypes.get(file.toPath());
     }
     if (content instanceof Path) {
       Path path = (Path) content;
-      return new ContentTypes().get(path.toString());
+      return ContentTypes.get(path);
     }
     if (content instanceof byte[]) {
       return "application/octet-stream";
@@ -130,11 +130,14 @@ public class Payload {
   }
 
   private static byte[] forPath(Path path) throws IOException {
-    if (!new ContentTypes().support_templating(path.toString())) {
+    if (ContentTypes.is_binary(path)) {
       return Resources.readBytes(path);
     }
 
     String content = new Template(path).render();
+    if (!ContentTypes.support_templating(path)) {
+      content = Resources.read(path, StandardCharsets.UTF_8);
+    }
 
     if (path.toString().endsWith(".less")) {
       return forString(new LessCompiler().compile(content));
