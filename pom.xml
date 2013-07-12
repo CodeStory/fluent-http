@@ -134,26 +134,10 @@
       <artifactId>compiler</artifactId>
       <version>0.8.13</version>
     </dependency>
-
     <dependency>
-      <groupId>org.xwiki.commons</groupId>
-      <artifactId>xwiki-commons-component-default</artifactId>
-      <version>5.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.xwiki.rendering</groupId>
-      <artifactId>xwiki-rendering-syntax-xwiki21</artifactId>
-      <version>5.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.xwiki.rendering</groupId>
-      <artifactId>xwiki-rendering-syntax-markdown</artifactId>
-      <version>5.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.xwiki.rendering</groupId>
-      <artifactId>xwiki-rendering-syntax-xhtml</artifactId>
-      <version>5.1</version>
+      <groupId>org.pegdown</groupId>
+      <artifactId>pegdown</artifactId>
+      <version>1.4.0</version>
     </dependency>
 
     <!-- Test dependencies -->
