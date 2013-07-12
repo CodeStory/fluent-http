@@ -44,7 +44,9 @@ class StaticRoute implements Filter {
 
     Path file = Paths.get(root, uri);
 
-    return serve(file, exchange) || serve(Paths.get(file + ".html"), exchange);
+    return serve(file, exchange)
+        || serve(Paths.get(file + ".html"), exchange)
+        || serve(Paths.get(file + ".md"), exchange);
   }
 
   private boolean serve(Path path, HttpExchange exchange) throws IOException {

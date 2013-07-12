@@ -15,11 +15,13 @@
  */
 package net.codestory.http;
 
+import static java.nio.charset.StandardCharsets.*;
+
 import java.io.*;
 import java.nio.charset.*;
 import java.nio.file.*;
 
-import net.codestory.http.compilers.*;
+import net.codestory.http.compilers.Compiler;
 import net.codestory.http.io.*;
 import net.codestory.http.templating.*;
 import net.codestory.http.types.*;
@@ -134,21 +136,12 @@ public class Payload {
       return Resources.readBytes(path);
     }
 
-    String content = new Template(path).render();
     if (!ContentTypes.support_templating(path)) {
-      content = Resources.read(path, StandardCharsets.UTF_8);
+      String content = Resources.read(path, UTF_8);
+
+      return forString(new Compiler().compile(content, path));
     }
 
-    if (path.toString().endsWith(".less")) {
-      return forString(new LessCompiler().compile(content));
-    }
-    if (path.toString().endsWith(".coffee")) {
-      return forString(new CoffeeScriptCompiler().compile(content));
-    }
-    if (path.toString().endsWith(".md")) {
-      return forString(new MarkdownCompiler().compile(content));
-    }
-
-    return forString(content);
+    return forString(new Template(path).render());
   }
 }

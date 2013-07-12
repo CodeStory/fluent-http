@@ -33,6 +33,6 @@ public class MarkdownCompilerTest {
   public void markdown_to_html() {
     String css = markdownCompiler.compile("This is **bold**");
 
-    assertThat(css).isEqualTo("<p>This is <strong>bold</strong></p>");
+    assertThat(css).isEqualTo("<p>This is <strong>bold</strong></p>\n");
   }
 }

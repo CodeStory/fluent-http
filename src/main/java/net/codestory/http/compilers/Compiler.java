@@ -15,10 +15,21 @@
  */
 package net.codestory.http.compilers;
 
-import com.github.rjeschke.txtmark.*;
+import java.io.*;
+import java.nio.file.*;
 
-public class MarkdownCompiler {
-  public String compile(String markdown) {
-    return Processor.process(markdown);
+public class Compiler {
+  public String compile(String content, Path path) throws IOException {
+    if (path.toString().endsWith(".less")) {
+      return new LessCompiler().compile(content);
+    }
+    if (path.toString().endsWith(".coffee")) {
+      return new CoffeeScriptCompiler().compile(content);
+    }
+    if (path.toString().endsWith(".md")) {
+      return new MarkdownCompiler().compile(content);
+    }
+
+    return content;
   }
 }

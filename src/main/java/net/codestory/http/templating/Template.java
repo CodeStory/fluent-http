@@ -21,6 +21,7 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.function.*;
 
+import net.codestory.http.compilers.Compiler;
 import net.codestory.http.compilers.*;
 import net.codestory.http.io.*;
 
@@ -45,7 +46,7 @@ public class Template {
     });
   }
 
-  public String render(String k1, String v1, String k2, Object v2) {
+  public String render(String k1, Object v1, String k2, Object v2) {
     return render(keyValues -> {
       keyValues.put(k1, v1);
       keyValues.put(k2, v2);
@@ -80,10 +81,10 @@ public class Template {
       String templateContent = Resources.read(path, StandardCharsets.UTF_8);
 
       YamlFrontMatter parsedTemplate = YamlFrontMatter.parse(templateContent);
-      String content = parsedTemplate.getContent();
       Map<String, String> variables = parsedTemplate.getVariables();
       Map<String, Object> allKeyValues = merge(keyValues, variables);
 
+      String content = new Compiler().compile(parsedTemplate.getContent(), path);
       String body = new MustacheCompiler().compile(content, allKeyValues);
 
       String layout = variables.get("layout");
