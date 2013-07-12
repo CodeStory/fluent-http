@@ -95,6 +95,7 @@ public class WebServerTest {
     expect().content(containsString("console.log('Hello');")).contentType("application/javascript").when().get("/js/script.coffee");
     expect().content(containsString("* {}")).contentType("text/css").when().get("/assets/style.css");
     expect().content(containsString("body h1 {\n  color: red;\n}\n")).contentType("text/css").when().get("/assets/style.less");
+    expect().content(containsString("<strong>Hello</strong>")).contentType("text/html").when().get("/hello.md");
     expect().statusCode(404).when().get("/../private.txt");
     expect().statusCode(404).when().get("/unknown");
   }

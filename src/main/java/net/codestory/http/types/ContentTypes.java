@@ -25,6 +25,7 @@ public class ContentTypes {
   public static String get(Path path) {
     switch (extension(path)) {
       case ".html":
+      case ".md":
         return "text/html";
       case ".css":
       case ".less":
@@ -49,6 +50,7 @@ public class ContentTypes {
   public static boolean support_templating(Path path) {
     switch (extension(path)) {
       case ".txt":
+      case ".md":
       case ".html":
       case ".css":
       case ".less":
@@ -61,6 +63,7 @@ public class ContentTypes {
   public static boolean is_binary(Path path) {
     switch (extension(path)) {
       case ".txt":
+      case ".md":
       case ".html":
       case ".css":
       case ".less":

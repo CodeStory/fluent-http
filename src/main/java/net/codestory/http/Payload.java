@@ -145,6 +145,9 @@ public class Payload {
     if (path.toString().endsWith(".coffee")) {
       return forString(new CoffeeScriptCompiler().compile(content));
     }
+    if (path.toString().endsWith(".md")) {
+      return forString(new MarkdownCompiler().compile(content));
+    }
 
     return forString(content);
   }
