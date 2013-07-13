@@ -15,14 +15,14 @@
  */
 package net.codestory.http.templating;
 
+import static java.nio.charset.StandardCharsets.*;
+
 import java.io.*;
-import java.nio.charset.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.function.*;
 
 import net.codestory.http.compilers.Compiler;
-import net.codestory.http.compilers.*;
 import net.codestory.http.io.*;
 
 public class Template {
@@ -77,19 +77,22 @@ public class Template {
   }
 
   public String render(Map<String, Object> keyValues) {
+    String type = Resources.type(path);
+
     try {
-      String templateContent = Resources.read(path, StandardCharsets.UTF_8);
+      String templateContent = Resources.read(path, UTF_8);
 
       YamlFrontMatter parsedTemplate = YamlFrontMatter.parse(templateContent);
+      Map<String, Object> globalVariables = loadGlobalVariables(type + "config.yml");
       Map<String, Object> variables = parsedTemplate.getVariables();
-      Map<String, Object> allKeyValues = merge(keyValues, variables);
+      Map<String, Object> allKeyValues = merge(globalVariables, variables, keyValues);
 
       String content = new Compiler().compile(parsedTemplate.getContent(), path);
-      String body = new MustacheCompiler().compile(Resources.type(path), content, allKeyValues);
+      String body = new MustacheCompiler().compile(type, content, allKeyValues);
 
       String layout = (String) variables.get("layout");
       if (layout != null) {
-        return new Template(path(layout)).render(allKeyValues).replace("[[body]]", body);
+        return new Template(type + layout).render(allKeyValues).replace("[[body]]", body);
       }
 
       return body;
@@ -98,15 +101,24 @@ public class Template {
     }
   }
 
-  private static Map<String, Object> merge(Map<String, Object> keyValues, Map<String, Object> variables) {
-    Map<String, Object> merged = new HashMap<>();
-    merged.putAll(keyValues);
-    merged.putAll(variables);
-    merged.put("body", "[[body]]");
-    return merged;
+  @SuppressWarnings("unchecked")
+  private Map<String, Object> loadGlobalVariables(String configFile) throws IOException {
+    Path configPath = Paths.get(configFile);
+    if (!Resources.exists(configPath)) {
+      return new HashMap<>();
+    }
+
+    String config = Resources.read(configPath, UTF_8);
+    return new YamlParser().parse(config);
   }
 
-  private String path(String file) {
-    return Resources.type(path) + file;
+  @SafeVarargs
+  private static Map<String, Object> merge(Map<String, Object>... keyValues) {
+    Map<String, Object> merged = new HashMap<>();
+    for (Map<String, Object> keyValue : keyValues) {
+      merged.putAll(keyValue);
+    }
+    merged.put("body", "[[body]]");
+    return merged;
   }
 }

@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.compilers;
+package net.codestory.http.templating;
 
 import static org.fest.assertions.Assertions.*;
 
 import java.io.*;
-import java.nio.file.*;
+
+import net.codestory.http.templating.*;
 
 import org.junit.*;
 

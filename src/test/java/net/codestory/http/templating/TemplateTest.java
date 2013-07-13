@@ -42,4 +42,9 @@ public class TemplateTest {
   public void layout_decorator() {
     assertThat(new Template("classpath:web/pageYaml.html").render()).contains("PREFIX_LAYOUT<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_LAYOUT");
   }
+
+  @Test
+  public void global_variables() {
+    assertThat(new Template("classpath:web/useGlobalVariablesYaml.html").render()).contains("Hello Bob");
+  }
 }

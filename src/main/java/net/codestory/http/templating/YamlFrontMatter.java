@@ -19,8 +19,6 @@ import static net.codestory.http.io.Strings.*;
 
 import java.util.*;
 
-import org.yaml.snakeyaml.*;
-
 public class YamlFrontMatter {
   private static final String SEPARATOR = "---\n";
 
@@ -44,7 +42,6 @@ public class YamlFrontMatter {
     if (countMatches(content, SEPARATOR) < 2) {
       return new YamlFrontMatter(content, Collections.emptyMap());
     }
-
     return new YamlFrontMatter(stripHeader(content), parseVariables(content));
   }
 
@@ -56,6 +53,6 @@ public class YamlFrontMatter {
   private static Map<String, Object> parseVariables(String content) {
     String header = substringBetween(content, SEPARATOR, SEPARATOR);
 
-    return (Map<String, Object>) new Yaml().load(header);
+    return new YamlParser().parse(header);
   }
 }
