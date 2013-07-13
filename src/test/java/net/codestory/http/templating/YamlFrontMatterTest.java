@@ -78,6 +78,19 @@ public class YamlFrontMatterTest {
   }
 
   @Test
+  public void escape_strings_with_quotes() {
+    String content = content(
+        "---",
+        "title: \'{{Code}} Fight by Code-Story\'",
+        "---",
+        "CONTENT");
+
+    YamlFrontMatter parsed = YamlFrontMatter.parse(content);
+
+    assertThat(parsed.getVariables().get("title")).isEqualTo("{{Code}} Fight by Code-Story");
+  }
+
+  @Test
   public void complex_yaml() {
     String content = content(
         "---",
