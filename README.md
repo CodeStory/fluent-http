@@ -8,4 +8,3 @@
  + Supporter les coffee et less pré-générés
  + Supporter les templates pré-générés
  + Don't allow serving layouts alone ?
- + Partials in Mustache
