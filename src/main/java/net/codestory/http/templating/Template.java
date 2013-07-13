@@ -81,13 +81,13 @@ public class Template {
       String templateContent = Resources.read(path, StandardCharsets.UTF_8);
 
       YamlFrontMatter parsedTemplate = YamlFrontMatter.parse(templateContent);
-      Map<String, String> variables = parsedTemplate.getVariables();
+      Map<String, Object> variables = parsedTemplate.getVariables();
       Map<String, Object> allKeyValues = merge(keyValues, variables);
 
       String content = new Compiler().compile(parsedTemplate.getContent(), path);
       String body = new MustacheCompiler().compile(content, allKeyValues);
 
-      String layout = variables.get("layout");
+      String layout = (String) variables.get("layout");
       if (layout != null) {
         return new Template(path(layout)).render(allKeyValues).replace("[[body]]", body);
       }
@@ -98,7 +98,7 @@ public class Template {
     }
   }
 
-  private static Map<String, Object> merge(Map<String, Object> keyValues, Map<String, String> variables) {
+  private static Map<String, Object> merge(Map<String, Object> keyValues, Map<String, Object> variables) {
     Map<String, Object> merged = new HashMap<>();
     merged.putAll(keyValues);
     merged.putAll(variables);

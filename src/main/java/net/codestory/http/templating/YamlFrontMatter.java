@@ -19,13 +19,15 @@ import static net.codestory.http.io.Strings.*;
 
 import java.util.*;
 
+import org.yaml.snakeyaml.*;
+
 public class YamlFrontMatter {
   private static final String SEPARATOR = "---\n";
 
   private final String content;
-  private final Map<String, String> variables;
+  private final Map<String, Object> variables;
 
-  private YamlFrontMatter(String content, Map<String, String> variables) {
+  private YamlFrontMatter(String content, Map<String, Object> variables) {
     this.content = content;
     this.variables = variables;
   }
@@ -34,7 +36,7 @@ public class YamlFrontMatter {
     return content;
   }
 
-  public Map<String, String> getVariables() {
+  public Map<String, Object> getVariables() {
     return variables;
   }
 
@@ -50,19 +52,10 @@ public class YamlFrontMatter {
     return substringAfter(substringAfter(content, SEPARATOR), SEPARATOR);
   }
 
-  private static Map<String, String> parseVariables(String content) {
-    Map<String, String> variables = new HashMap<>();
-
+  @SuppressWarnings("unchecked")
+  private static Map<String, Object> parseVariables(String content) {
     String header = substringBetween(content, SEPARATOR, SEPARATOR);
-    for (String line : header.split("[\n]")) {
-      String key = substringBefore(line, ":").trim();
-      String value = substringAfter(line, ":").trim();
 
-      if (!key.startsWith("#")) {
-        variables.put(key, value);
-      }
-    }
-
-    return variables;
+    return (Map<String, Object>) new Yaml().load(header);
   }
 }

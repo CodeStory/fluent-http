@@ -18,6 +18,8 @@ package net.codestory.http.templating;
 import static org.fest.assertions.Assertions.*;
 import static org.fest.assertions.MapAssert.*;
 
+import java.util.*;
+
 import org.junit.*;
 
 public class YamlFrontMatterTest {
@@ -73,6 +75,24 @@ public class YamlFrontMatterTest {
         .excludes(entry("layout", "standard"))
         .excludes(entry("#layout", "standard"))
         .includes(entry("title", "CodeStory - Devoxx Fight"));
+  }
+
+  @Test
+  public void complex_yaml() {
+    String content = content(
+        "---",
+        "products: ",
+        " - name: PROD1",
+        " - name: PROD2",
+        "---",
+        "CONTENT");
+
+    YamlFrontMatter parsed = YamlFrontMatter.parse(content);
+
+    List<Map<String, Object>> products = (List<Map<String, Object>>) parsed.getVariables().get("products");
+    assertThat(products).hasSize(2);
+    assertThat(products.get(0)).includes(entry("name", "PROD1"));
+    assertThat(products.get(1)).includes(entry("name", "PROD2"));
   }
 
   static String content(String... lines) {

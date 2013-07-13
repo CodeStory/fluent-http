@@ -139,6 +139,11 @@
       <artifactId>txtmark</artifactId>
       <version>0.10</version>
     </dependency>
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>1.12</version>
+    </dependency>
 
     <!-- Test dependencies -->
     <dependency>
