@@ -53,7 +53,7 @@ public class Resources {
   private static String readClasspath(String path, Charset charset) throws IOException {
     URL url = ClassLoader.getSystemResource(path);
     if (url == null) {
-      throw new IllegalArgumentException("Invalid file classpath: " + path);
+      throw new IllegalArgumentException("Classpath resource not found classpath:" + path);
     }
 
     if (url.getFile() != null) {

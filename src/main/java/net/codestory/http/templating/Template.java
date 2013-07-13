@@ -85,7 +85,7 @@ public class Template {
       Map<String, Object> allKeyValues = merge(keyValues, variables);
 
       String content = new Compiler().compile(parsedTemplate.getContent(), path);
-      String body = new MustacheCompiler().compile(content, allKeyValues);
+      String body = new MustacheCompiler().compile(Resources.type(path), content, allKeyValues);
 
       String layout = (String) variables.get("layout");
       if (layout != null) {
