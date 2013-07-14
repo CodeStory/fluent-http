@@ -25,8 +25,6 @@ import net.codestory.http.io.*;
 import com.sun.net.httpserver.*;
 
 class StaticRoute implements Filter {
-  private static final String WELCOME_FILE = "index.html";
-
   private final String root;
 
   StaticRoute(String root) {
@@ -38,19 +36,17 @@ class StaticRoute implements Filter {
 
   @Override
   public boolean apply(String uri, HttpExchange exchange) throws IOException {
-    if ("/".equals(uri)) {
-      uri = WELCOME_FILE;
+    if (uri.endsWith("/")) {
+      return apply(uri + "index", exchange);
     }
 
-    Path file = Paths.get(root, uri);
-
-    return serve(file, exchange)
-        || serve(Paths.get(file + ".html"), exchange)
-        || serve(Paths.get(file + ".md"), exchange);
+    return serve(Paths.get(root + uri), exchange)
+        || serve(Paths.get(root + uri + ".html"), exchange)
+        || serve(Paths.get(root + uri + ".md"), exchange);
   }
 
   private boolean serve(Path path, HttpExchange exchange) throws IOException {
-    if (path.normalize().startsWith(root) && Resources.exists(path)) {
+    if (path.normalize().toString().startsWith(root) && Resources.exists(path)) {
       new Payload(path).writeTo(exchange);
       return true;
     }
