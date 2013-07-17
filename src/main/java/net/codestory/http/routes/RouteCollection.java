@@ -47,7 +47,13 @@ public class RouteCollection implements Routes {
 
   @Override
   public void add(String urlPrefix, Object resource) {
-    for (Method method : resource.getClass().getDeclaredMethods()) {
+    // Hack to support Mockito spies
+    Class<?> type = resource.getClass();
+    if (resource.getClass().getName().contains("EnhancerByMockito")) {
+      type = type.getSuperclass();
+    }
+
+    for (Method method : type.getMethods()) {
       Get annotation = method.getAnnotation(Get.class);
       if (annotation != null) {
         String uriPattern = urlPrefix + annotation.value();

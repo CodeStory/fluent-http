@@ -18,6 +18,7 @@ package net.codestory.http;
 import static com.jayway.restassured.RestAssured.*;
 import static java.nio.charset.StandardCharsets.*;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
 
 import java.io.*;
 
@@ -217,6 +218,21 @@ public class WebServerTest {
     }));
 
     expect().content(containsString("An error occurred on the server")).contentType("text/html").statusCode(500).when().get("/");
+  }
+
+
+  @Test
+  public void supports_spied_resources() {
+    server.configure(routes -> routes.add(spy(new TestResource())));
+
+    expect().content(equalTo("HELLO")).when().get("/");
+  }
+
+  static class TestResource {
+    @Get("/")
+    public String hello() {
+      return "HELLO";
+    }
   }
 
   private ResponseSpecification expect() {
