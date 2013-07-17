@@ -25,6 +25,10 @@ public class Resources {
     // Static utility class
   }
 
+  public static String extension(Path path) {
+    return Strings.substringAfterLast(path.toString(), ".");
+  }
+
   public static String type(Path path) {
     return path.toString().startsWith("classpath:") ? "classpath:" : "";
   }
@@ -97,5 +101,4 @@ public class Resources {
 
     return Files.readAllBytes(path);
   }
-
 }

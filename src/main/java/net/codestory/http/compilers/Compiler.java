@@ -15,21 +15,74 @@
  */
 package net.codestory.http.compilers;
 
+import static java.util.Collections.*;
+import static org.jcoffeescript.Option.*;
+
 import java.io.*;
 import java.nio.file.*;
 
-public class Compiler {
-  public String compile(String content, Path path) throws IOException {
-    if (path.toString().endsWith(".less")) {
-      return new LessCompiler().compile(content);
-    }
-    if (path.toString().endsWith(".coffee")) {
-      return new CoffeeScriptCompiler().compile(content);
-    }
-    if (path.toString().endsWith(".md")) {
-      return new MarkdownCompiler().compile(content);
-    }
+import net.codestory.http.io.*;
 
-    return content;
+import org.jcoffeescript.*;
+
+import com.github.rjeschke.txtmark.*;
+import com.github.sommeri.less4j.*;
+import com.github.sommeri.less4j.core.*;
+
+public enum Compiler {
+  COFFEE {
+    @Override
+    String compile(String coffee) throws IOException {
+      try {
+        return new JCoffeeScriptCompiler(singletonList(BARE)).compile(coffee);
+      } catch (JCoffeeScriptCompileException e) {
+        throw new IOException("Unable to compile coffee", e);
+      }
+    }
+  },
+  MARKDOWN {
+    @Override
+    String compile(String markdown) {
+      return Processor.process(markdown);
+    }
+  },
+  LESS {
+    @Override
+    String compile(String less) throws IOException {
+      try {
+        return new ThreadUnsafeLessCompiler().compile(less).getCss();
+      } catch (Less4jException e) {
+        throw new IOException("Unable to compile less", e);
+      }
+    }
+  },
+  NONE {
+    @Override
+    String compile(String content) {
+      return content;
+    }
+  };
+
+  abstract String compile(String content) throws IOException;
+
+  public static String compile(Path path, String content) throws IOException {
+    String extension = Resources.extension(path);
+
+    Compiler compiler = compilerForExtension(extension);
+
+    return compiler.compile(content);
+  }
+
+  private static Compiler compilerForExtension(String extension) {
+    switch (extension) {
+      case "less":
+        return LESS;
+      case "coffee":
+        return COFFEE;
+      case "md":
+        return MARKDOWN;
+      default:
+        return NONE;
+    }
   }
 }

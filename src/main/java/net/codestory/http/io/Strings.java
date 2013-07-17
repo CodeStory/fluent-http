@@ -40,12 +40,12 @@ public class Strings {
     return in.substring(index + what.length());
   }
 
-  public static String substringBefore(String in, String what) {
-    int index = in.indexOf(what);
+  public static String substringAfterLast(String in, String what) {
+    int index = in.lastIndexOf(what);
     if (index == -1) {
-      return in;
+      return "";
     }
-    return in.substring(0, index);
+    return in.substring(index + what.length());
   }
 
   public static String substringBetween(String in, String start, String end) {
@@ -54,8 +54,8 @@ public class Strings {
       return "";
     }
 
-    int indexEnd = in.indexOf(end, indexStart + start.length());
-    if (indexEnd == -1) {
+    int indexEnd = in.lastIndexOf(end);
+    if (indexEnd <= (indexStart + start.length())) {
       return "";
     }
 

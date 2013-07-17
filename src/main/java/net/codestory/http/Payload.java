@@ -139,7 +139,7 @@ public class Payload {
     if (!ContentTypes.support_templating(path)) {
       String content = Resources.read(path, UTF_8);
 
-      return forString(new Compiler().compile(content, path));
+      return forString(Compiler.compile(path, content));
     }
 
     return forString(new Template(path).render());

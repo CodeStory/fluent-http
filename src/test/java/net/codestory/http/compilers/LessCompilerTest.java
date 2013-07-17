@@ -22,7 +22,7 @@ import java.io.*;
 import org.junit.*;
 
 public class LessCompilerTest {
-  LessCompiler lessCompiler = new LessCompiler();
+  Compiler lessCompiler = Compiler.LESS;
 
   @Test
   public void empty_less() throws IOException {
