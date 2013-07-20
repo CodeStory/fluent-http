@@ -114,6 +114,11 @@ public class Resources {
     if (url.getFile() == null) {
       return null;
     }
-    return new File(url.getFile().replace("/target/classes/", "/src/main/resources/"));
+
+    try {
+      return new File(URLDecoder.decode(url.getFile(), "US-ASCII").replace("/target/classes/", "/src/main/resources/"));
+    } catch (UnsupportedEncodingException e) {
+      throw new IllegalArgumentException("Invalid file classpath: " + url, e);
+    }
   }
 }
