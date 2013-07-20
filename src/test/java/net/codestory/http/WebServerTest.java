@@ -102,6 +102,13 @@ public class WebServerTest {
   }
 
   @Test
+  public void dont_serve_directories() {
+    server.configure(routes -> routes.staticDir("classpath:web"));
+
+    expect().statusCode(404).when().get("/js");
+  }
+
+  @Test
   public void static_content_from_file() {
     String web = ClassLoader.getSystemResource("web").getFile();
 
@@ -219,7 +226,6 @@ public class WebServerTest {
 
     expect().content(containsString("An error occurred on the server")).contentType("text/html").statusCode(500).when().get("/");
   }
-
 
   @Test
   public void supports_spied_resources() {

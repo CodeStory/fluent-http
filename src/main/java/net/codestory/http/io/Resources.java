@@ -35,9 +35,16 @@ public class Resources {
 
   public static boolean exists(Path path) {
     if ("classpath:".equals(type(path))) {
-      return ClassLoader.getSystemResource(path.toString().substring(10)) != null;
+      URL url = ClassLoader.getSystemResource(path.toString().substring(10));
+      if (url == null) {
+        return false;
+      }
+
+      File file = fileForClasspath(url);
+      return (file == null) || file.isFile();
+
     }
-    return path.toFile().exists();
+    return path.toFile().isFile();
   }
 
   public static String read(Path path, Charset charset) throws IOException {
@@ -60,11 +67,12 @@ public class Resources {
       throw new IllegalArgumentException("Classpath resource not found classpath:" + path);
     }
 
-    if (url.getFile() != null) {
-      File file = new File(url.getFile());
-      if (file.exists()) {
-        return readFile(file.toPath(), charset);
+    File file = fileForClasspath(url);
+    if (file != null) {
+      if (!file.isFile()) {
+        throw new IllegalArgumentException("Invalid file classpath: " + path);
       }
+      return readFile(file.toPath(), charset);
     }
 
     try (InputStream from = url.openStream()) {
@@ -78,11 +86,12 @@ public class Resources {
       throw new IllegalArgumentException("Invalid file classpath: " + path);
     }
 
-    if (url.getFile() != null) {
-      File file = new File(url.getFile());
-      if (file.exists()) {
-        return readFileBytes(file.toPath());
+    File file = fileForClasspath(url);
+    if (file != null) {
+      if (!file.isFile()) {
+        throw new IllegalArgumentException("Invalid file classpath: " + path);
       }
+      return readFileBytes(file.toPath());
     }
 
     try (InputStream from = url.openStream()) {
@@ -95,10 +104,16 @@ public class Resources {
   }
 
   private static byte[] readFileBytes(Path path) throws IOException {
-    if (!path.toFile().exists()) {
+    if (!path.toFile().isFile()) {
       throw new IllegalArgumentException("Invalid file path: " + path);
     }
-
     return Files.readAllBytes(path);
+  }
+
+  private static File fileForClasspath(URL url) {
+    if (url.getFile() == null) {
+      return null;
+    }
+    return new File(url.getFile().replace("/target/classes/", "/src/main/resources/"));
   }
 }
