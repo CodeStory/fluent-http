@@ -234,6 +234,28 @@ public class WebServerTest {
     expect().content(equalTo("HELLO")).when().get("/");
   }
 
+  @Test
+  public void post() {
+    server.configure(routes -> {
+      routes.staticDir("classpath:web");
+      routes.post("/post", () -> "Done");
+      routes.get("/get", () -> "Done");
+      routes.get("/action", () -> "Done GET");
+      routes.post("/action", () -> "Done POST");
+      routes.post("/post/:who", (who) -> "Done " + who);
+    });
+
+    expect().content(equalTo("Done")).when().post("/post");
+    expect().content(equalTo("Done Bob")).when().post("/post/Bob");
+    expect().content(equalTo("Done POST")).when().post("/action");
+    expect().content(equalTo("Done GET")).when().get("/action");
+    //expect().statusCode(405).when().post("/get");
+    expect().statusCode(404).when().post("/get");
+    expect().statusCode(404).when().post("/unknown");
+    expect().statusCode(404).when().post("/index.html");
+    //expect().statusCode(405).when().post("/index.html");
+  }
+
   static class TestResource {
     @Get("/")
     public String hello() {

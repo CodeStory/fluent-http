@@ -36,6 +36,10 @@ class StaticRoute implements Filter {
 
   @Override
   public boolean apply(String uri, HttpExchange exchange) throws IOException {
+    if (!"GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+      return false;
+    }
+
     if (uri.endsWith("/")) {
       return apply(uri + "index", exchange);
     }

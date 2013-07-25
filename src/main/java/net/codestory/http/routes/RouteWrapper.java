@@ -23,16 +23,22 @@ import net.codestory.http.filters.Filter;
 import com.sun.net.httpserver.*;
 
 class RouteWrapper implements Filter {
+  private final String method;
   private final UriParser uriParser;
   private final AnyRoute route;
 
-  RouteWrapper(String uriPattern, AnyRoute route) {
+  RouteWrapper(String method, String uriPattern, AnyRoute route) {
+    this.method = method;
     this.uriParser = new UriParser(uriPattern);
     this.route = route;
   }
 
   @Override
   public boolean apply(String uri, HttpExchange exchange) throws IOException {
+    if (!method.equalsIgnoreCase(exchange.getRequestMethod())) {
+      return false;
+    }
+
     if (!uriParser.matches(uri)) {
       return false;
     }

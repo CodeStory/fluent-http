@@ -58,7 +58,7 @@ public class RouteCollection implements Routes {
       if (annotation != null) {
         String uriPattern = urlPrefix + annotation.value();
 
-        checkParametersCount(method.getParameterCount(), uriPattern);
+        checkParametersCount(uriPattern, method.getParameterCount());
         add(uriPattern, new ReflectionRoute(resource, method));
       }
     }
@@ -66,32 +66,56 @@ public class RouteCollection implements Routes {
 
   @Override
   public void get(String uriPattern, Route route) {
-    checkParametersCount(0, uriPattern);
-    add(uriPattern, route);
+    add(checkParametersCount(uriPattern, 0), route);
   }
 
   @Override
   public void get(String uriPattern, OneParamRoute route) {
-    checkParametersCount(1, uriPattern);
-    add(uriPattern, route);
+    add(checkParametersCount(uriPattern, 1), route);
   }
 
   @Override
   public void get(String uriPattern, TwoParamsRoute route) {
-    checkParametersCount(2, uriPattern);
-    add(uriPattern, route);
+    add(checkParametersCount(uriPattern, 2), route);
   }
 
   @Override
   public void get(String uriPattern, ThreeParamsRoute route) {
-    checkParametersCount(3, uriPattern);
-    add(uriPattern, route);
+    add(checkParametersCount(uriPattern, 3), route);
   }
 
   @Override
   public void get(String uriPattern, FourParamsRoute route) {
-    checkParametersCount(4, uriPattern);
-    add(uriPattern, route);
+    add(checkParametersCount(uriPattern, 4), route);
+  }
+
+  @Override
+  public void post(String uriPattern, Route route) {
+    addPost(checkParametersCount(uriPattern, 0), route);
+  }
+
+
+  @Override
+  public void post(String uriPattern, OneParamRoute route) {
+    addPost(checkParametersCount(uriPattern, 1), route);
+  }
+
+
+  @Override
+  public void post(String uriPattern, TwoParamsRoute route) {
+    addPost(checkParametersCount(uriPattern, 2), route);
+  }
+
+
+  @Override
+  public void post(String uriPattern, ThreeParamsRoute route) {
+    addPost(checkParametersCount(uriPattern, 3), route);
+  }
+
+
+  @Override
+  public void post(String uriPattern, FourParamsRoute route) {
+    addPost(checkParametersCount(uriPattern, 4), route);
   }
 
   @Override
@@ -105,7 +129,11 @@ public class RouteCollection implements Routes {
   }
 
   private void add(String uriPattern, AnyRoute route) {
-    routes.addFirst(new RouteWrapper(uriPattern, route));
+    routes.addFirst(new RouteWrapper("GET", uriPattern, route));
+  }
+
+  private void addPost(String uriPattern, AnyRoute route) {
+    routes.addFirst(new RouteWrapper("POST", uriPattern, route));
   }
 
   public boolean apply(HttpExchange exchange) throws IOException {
@@ -127,9 +155,10 @@ public class RouteCollection implements Routes {
     return false;
   }
 
-  private static void checkParametersCount(int count, String uriPattern) {
+  private static String checkParametersCount(String uriPattern, int count) {
     if (paramsCount(uriPattern) != count) {
       throw new IllegalArgumentException("Expected " + count + " parameters in " + uriPattern);
     }
+    return uriPattern;
   }
 }
