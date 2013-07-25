@@ -243,12 +243,19 @@ public class WebServerTest {
       routes.get("/action", () -> "Done GET");
       routes.post("/action", () -> "Done POST");
       routes.post("/post/:who", (who) -> "Done " + who);
+      routes.add(new Object() {
+        @Post("/person")
+        public String created() {
+          return "CREATED";
+        }
+      });
     });
 
     expect().content(equalTo("Done")).when().post("/post");
     expect().content(equalTo("Done Bob")).when().post("/post/Bob");
     expect().content(equalTo("Done POST")).when().post("/action");
     expect().content(equalTo("Done GET")).when().get("/action");
+    expect().content(equalTo("CREATED")).when().post("/person");
     //expect().statusCode(405).when().post("/get");
     expect().statusCode(404).when().post("/get");
     expect().statusCode(404).when().post("/unknown");

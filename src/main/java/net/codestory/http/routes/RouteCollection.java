@@ -54,68 +54,75 @@ public class RouteCollection implements Routes {
     }
 
     for (Method method : type.getMethods()) {
-      Get annotation = method.getAnnotation(Get.class);
-      if (annotation != null) {
-        String uriPattern = urlPrefix + annotation.value();
+      int parameterCount = method.getParameterCount();
 
-        checkParametersCount(uriPattern, method.getParameterCount());
-        add(uriPattern, new ReflectionRoute(resource, method));
+      Get annotationGet = method.getAnnotation(Get.class);
+      if (annotationGet != null) {
+        String uriPattern = urlPrefix + annotationGet.value();
+
+        add("GET", checkParametersCount(uriPattern, parameterCount), new ReflectionRoute(resource, method));
+      }
+      Post annotationPost = method.getAnnotation(Post.class);
+      if (annotationPost != null) {
+        String uriPattern = urlPrefix + annotationPost.value();
+
+        add("POST", checkParametersCount(uriPattern, parameterCount), new ReflectionRoute(resource, method));
       }
     }
   }
 
   @Override
   public void get(String uriPattern, Route route) {
-    add(checkParametersCount(uriPattern, 0), route);
+    add("GET", checkParametersCount(uriPattern, 0), route);
   }
 
   @Override
   public void get(String uriPattern, OneParamRoute route) {
-    add(checkParametersCount(uriPattern, 1), route);
+    add("GET", checkParametersCount(uriPattern, 1), route);
   }
 
   @Override
   public void get(String uriPattern, TwoParamsRoute route) {
-    add(checkParametersCount(uriPattern, 2), route);
+    add("GET", checkParametersCount(uriPattern, 2), route);
   }
 
   @Override
   public void get(String uriPattern, ThreeParamsRoute route) {
-    add(checkParametersCount(uriPattern, 3), route);
+    add("GET", checkParametersCount(uriPattern, 3), route);
   }
 
   @Override
   public void get(String uriPattern, FourParamsRoute route) {
-    add(checkParametersCount(uriPattern, 4), route);
+    add("GET", checkParametersCount(uriPattern, 4), route);
   }
 
   @Override
   public void post(String uriPattern, Route route) {
-    addPost(checkParametersCount(uriPattern, 0), route);
+    add("POST", checkParametersCount(uriPattern, 0), route);
   }
 
 
   @Override
   public void post(String uriPattern, OneParamRoute route) {
-    addPost(checkParametersCount(uriPattern, 1), route);
+    add("POST", checkParametersCount(uriPattern, 1), route);
   }
 
 
   @Override
   public void post(String uriPattern, TwoParamsRoute route) {
-    addPost(checkParametersCount(uriPattern, 2), route);
+    add("POST", checkParametersCount(uriPattern, 2), route);
   }
 
 
   @Override
   public void post(String uriPattern, ThreeParamsRoute route) {
-    addPost(checkParametersCount(uriPattern, 3), route);
+    add("POST", checkParametersCount(uriPattern, 3), route);
   }
 
 
   @Override
   public void post(String uriPattern, FourParamsRoute route) {
-    addPost(checkParametersCount(uriPattern, 4), route);
+    add("POST", checkParametersCount(uriPattern, 4), route);
   }
 
   @Override
@@ -128,12 +135,8 @@ public class RouteCollection implements Routes {
     filters.clear();
   }
 
-  private void add(String uriPattern, AnyRoute route) {
-    routes.addFirst(new RouteWrapper("GET", uriPattern, route));
-  }
-
-  private void addPost(String uriPattern, AnyRoute route) {
-    routes.addFirst(new RouteWrapper("POST", uriPattern, route));
+  private void add(String method, String uriPattern, AnyRoute route) {
+    routes.addFirst(new RouteWrapper(method, uriPattern, route));
   }
 
   public boolean apply(HttpExchange exchange) throws IOException {
