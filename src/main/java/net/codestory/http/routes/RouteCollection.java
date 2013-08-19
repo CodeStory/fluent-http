@@ -16,6 +16,7 @@
 package net.codestory.http.routes;
 
 import static net.codestory.http.UriParser.*;
+import static net.codestory.http.filters.Matching.*;
 
 import java.io.*;
 import java.lang.reflect.*;
@@ -23,6 +24,7 @@ import java.util.*;
 
 import net.codestory.http.annotations.*;
 import net.codestory.http.filters.Filter;
+import net.codestory.http.filters.*;
 
 import com.sun.net.httpserver.*;
 
@@ -139,23 +141,34 @@ public class RouteCollection implements Routes {
     routes.addFirst(new RouteWrapper(method, uriPattern, route));
   }
 
-  public boolean apply(HttpExchange exchange) throws IOException {
+  public Matching apply(HttpExchange exchange) throws IOException {
     String uri = exchange.getRequestURI().getPath();
-    System.out.println(uri);
+
+    Matching bestMatching = WRONG_URL;
 
     for (Filter filter : filters) {
-      if (filter.apply(uri, exchange)) {
-        return true;
+      Matching matching = filter.apply(uri, exchange);
+      if (matching == MATCH) {
+        return MATCH;
+      }
+      if (matching.isBest(bestMatching)) {
+        bestMatching = matching;
       }
     }
 
     for (Filter route : routes) {
-      if (route.apply(uri, exchange)) {
-        return true;
+      Matching matching = route.apply(uri, exchange);
+      if (matching == MATCH) {
+        return MATCH;
+      }
+      if (matching.isBest(bestMatching)) {
+        bestMatching = matching;
       }
     }
 
-    return false;
+    System.out.println(uri + " - " + bestMatching);
+
+    return bestMatching;
   }
 
   private static String checkParametersCount(String uriPattern, int count) {

@@ -15,11 +15,14 @@
  */
 package net.codestory.http.routes;
 
+import static net.codestory.http.filters.Matching.*;
+
 import java.io.*;
 import java.nio.file.*;
 
 import net.codestory.http.*;
 import net.codestory.http.filters.Filter;
+import net.codestory.http.filters.*;
 import net.codestory.http.io.*;
 
 import com.sun.net.httpserver.*;
@@ -35,26 +38,38 @@ class StaticRoute implements Filter {
   }
 
   @Override
-  public boolean apply(String uri, HttpExchange exchange) throws IOException {
-    if (!"GET".equalsIgnoreCase(exchange.getRequestMethod())) {
-      return false;
-    }
-
+  public Matching apply(String uri, HttpExchange exchange) throws IOException {
     if (uri.endsWith("/")) {
       return apply(uri + "index", exchange);
     }
 
-    return serve(Paths.get(root + uri), exchange)
-        || serve(Paths.get(root + uri + ".html"), exchange)
-        || serve(Paths.get(root + uri + ".md"), exchange);
-  }
-
-  private boolean serve(Path path, HttpExchange exchange) throws IOException {
-    if (path.normalize().toString().startsWith(root) && Resources.exists(path)) {
-      new Payload(path).writeTo(exchange);
-      return true;
+    // TODO
+    Matching matching = serve(Paths.get(root + uri), exchange);
+    if (WRONG_URL != matching) {
+      return matching;
+    }
+    matching = serve(Paths.get(root + uri + ".html"), exchange);
+    if (WRONG_URL != matching) {
+      return matching;
+    }
+    matching = serve(Paths.get(root + uri + ".md"), exchange);
+    if (WRONG_URL != matching) {
+      return matching;
     }
 
-    return false;
+    return WRONG_URL;
+  }
+
+  private Matching serve(Path path, HttpExchange exchange) throws IOException {
+    if (path.normalize().toString().startsWith(root) && Resources.exists(path)) {
+      if (!"GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+        return WRONG_METHOD;
+      }
+
+      new Payload(path).writeTo(exchange);
+      return MATCH;
+    }
+
+    return WRONG_URL;
   }
 }

@@ -15,10 +15,13 @@
  */
 package net.codestory.http.routes;
 
+import static net.codestory.http.filters.Matching.*;
+
 import java.io.*;
 
 import net.codestory.http.*;
 import net.codestory.http.filters.Filter;
+import net.codestory.http.filters.*;
 
 import com.sun.net.httpserver.*;
 
@@ -34,13 +37,13 @@ class RouteWrapper implements Filter {
   }
 
   @Override
-  public boolean apply(String uri, HttpExchange exchange) throws IOException {
-    if (!method.equalsIgnoreCase(exchange.getRequestMethod())) {
-      return false;
+  public Matching apply(String uri, HttpExchange exchange) throws IOException {
+    if (!uriParser.matches(uri)) {
+      return WRONG_URL;
     }
 
-    if (!uriParser.matches(uri)) {
-      return false;
+    if (!method.equalsIgnoreCase(exchange.getRequestMethod())) {
+      return WRONG_METHOD;
     }
 
     String[] parameters = uriParser.params(uri);
@@ -49,6 +52,6 @@ class RouteWrapper implements Filter {
     Payload payload = Payload.wrap(body);
     payload.writeTo(exchange);
 
-    return true;
+    return MATCH;
   }
 }

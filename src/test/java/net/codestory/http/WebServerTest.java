@@ -17,12 +17,14 @@ package net.codestory.http;
 
 import static com.jayway.restassured.RestAssured.*;
 import static java.nio.charset.StandardCharsets.*;
+import static net.codestory.http.filters.Matching.*;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
 import java.io.*;
 
 import net.codestory.http.annotations.*;
+import net.codestory.http.filters.*;
 import net.codestory.http.templating.*;
 
 import org.junit.*;
@@ -208,9 +210,9 @@ public class WebServerTest {
           exchange.getResponseHeaders().add("Content-Type", "text/html");
           exchange.sendResponseHeaders(200, 8);
           exchange.getResponseBody().write("FILTERED".getBytes());
-          return true;
+          return MATCH;
         }
-        return false;
+        return WRONG_URL;
       });
     });
 
@@ -256,11 +258,9 @@ public class WebServerTest {
     expect().content(equalTo("Done POST")).when().post("/action");
     expect().content(equalTo("Done GET")).when().get("/action");
     expect().content(equalTo("CREATED")).when().post("/person");
-    //expect().statusCode(405).when().post("/get");
-    expect().statusCode(404).when().post("/get");
+    expect().statusCode(405).when().post("/get");
+    expect().statusCode(405).when().post("/index.html");
     expect().statusCode(404).when().post("/unknown");
-    expect().statusCode(404).when().post("/index.html");
-    //expect().statusCode(405).when().post("/index.html");
   }
 
   static class TestResource {
