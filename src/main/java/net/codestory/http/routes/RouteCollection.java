@@ -151,7 +151,7 @@ public class RouteCollection implements Routes {
       if (matching == MATCH) {
         return MATCH;
       }
-      if (matching.isBest(bestMatching)) {
+      if (matching.isBetter(bestMatching)) {
         bestMatching = matching;
       }
     }
@@ -161,7 +161,7 @@ public class RouteCollection implements Routes {
       if (matching == MATCH) {
         return MATCH;
       }
-      if (matching.isBest(bestMatching)) {
+      if (matching.isBetter(bestMatching)) {
         bestMatching = matching;
       }
     }
