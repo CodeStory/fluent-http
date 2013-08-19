@@ -15,7 +15,7 @@
  */
 package net.codestory.http.routes;
 
-import static net.codestory.http.filters.Matching.*;
+import static net.codestory.http.filters.Match.*;
 
 import java.io.*;
 
@@ -37,7 +37,7 @@ class RouteWrapper implements Filter {
   }
 
   @Override
-  public Matching apply(String uri, HttpExchange exchange) throws IOException {
+  public Match apply(String uri, HttpExchange exchange) throws IOException {
     if (!uriParser.matches(uri)) {
       return WRONG_URL;
     }
@@ -52,6 +52,6 @@ class RouteWrapper implements Filter {
     Payload payload = Payload.wrap(body);
     payload.writeTo(exchange);
 
-    return MATCH;
+    return OK;
   }
 }

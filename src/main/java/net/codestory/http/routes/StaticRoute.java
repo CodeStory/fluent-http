@@ -15,7 +15,7 @@
  */
 package net.codestory.http.routes;
 
-import static net.codestory.http.filters.Matching.*;
+import static net.codestory.http.filters.Match.*;
 
 import java.io.*;
 import java.nio.file.*;
@@ -28,6 +28,8 @@ import net.codestory.http.io.*;
 import com.sun.net.httpserver.*;
 
 class StaticRoute implements Filter {
+  private static final String[] EXTENSIONS = {"", ".html", ".md"};
+
   private final String root;
 
   StaticRoute(String root) {
@@ -38,38 +40,35 @@ class StaticRoute implements Filter {
   }
 
   @Override
-  public Matching apply(String uri, HttpExchange exchange) throws IOException {
+  public Match apply(String uri, HttpExchange exchange) throws IOException {
     if (uri.endsWith("/")) {
       return apply(uri + "index", exchange);
     }
 
-    // TODO
-    Matching matching = serve(Paths.get(root + uri), exchange);
-    if (WRONG_URL != matching) {
-      return matching;
-    }
-    matching = serve(Paths.get(root + uri + ".html"), exchange);
-    if (WRONG_URL != matching) {
-      return matching;
-    }
-    matching = serve(Paths.get(root + uri + ".md"), exchange);
-    if (WRONG_URL != matching) {
-      return matching;
+    for (String extension : EXTENSIONS) {
+      Match match = serve(Paths.get(root, uri + extension), exchange);
+      if (WRONG_URL != match) {
+        return match;
+      }
     }
 
     return WRONG_URL;
   }
 
-  private Matching serve(Path path, HttpExchange exchange) throws IOException {
-    if (path.normalize().toString().startsWith(root) && Resources.exists(path)) {
-      if (!"GET".equalsIgnoreCase(exchange.getRequestMethod())) {
-        return WRONG_METHOD;
-      }
-
-      new Payload(path).writeTo(exchange);
-      return MATCH;
+  private Match serve(Path path, HttpExchange exchange) throws IOException {
+    if (!path.normalize().toString().startsWith(root)) {
+      return WRONG_URL;
     }
 
-    return WRONG_URL;
+    if (!Resources.exists(path)) {
+      return WRONG_URL;
+    }
+
+    if (!"GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+      return WRONG_METHOD;
+    }
+
+    new Payload(path).writeTo(exchange);
+    return OK;
   }
 }

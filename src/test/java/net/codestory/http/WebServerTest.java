@@ -17,14 +17,13 @@ package net.codestory.http;
 
 import static com.jayway.restassured.RestAssured.*;
 import static java.nio.charset.StandardCharsets.*;
-import static net.codestory.http.filters.Matching.*;
+import static net.codestory.http.filters.Match.*;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
 import java.io.*;
 
 import net.codestory.http.annotations.*;
-import net.codestory.http.filters.*;
 import net.codestory.http.templating.*;
 
 import org.junit.*;
@@ -210,7 +209,7 @@ public class WebServerTest {
           exchange.getResponseHeaders().add("Content-Type", "text/html");
           exchange.sendResponseHeaders(200, 8);
           exchange.getResponseBody().write("FILTERED".getBytes());
-          return MATCH;
+          return OK;
         }
         return WRONG_URL;
       });

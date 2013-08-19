@@ -15,7 +15,7 @@
  */
 package net.codestory.http;
 
-import static net.codestory.http.filters.Matching.*;
+import static net.codestory.http.filters.Match.*;
 
 import java.io.*;
 import java.net.*;
@@ -96,7 +96,7 @@ public class WebServer {
     } catch (Exception e) {
       System.out.println("Error " + e);
       try {
-        onError(exchange, e);
+        onError(e, exchange);
       } catch (Exception ioe) {
         System.out.println("Unable to respond to query " + e);
       }
@@ -106,25 +106,25 @@ public class WebServer {
   }
 
   protected void applyRoutes(HttpExchange exchange) throws IOException {
-    Matching matching = routes.apply(exchange);
-    if (matching != MATCH) {
-      onPageNotFound(exchange, matching);
+    Match match = routes.apply(exchange);
+    if (match != OK) {
+      onPageNotFound(match, exchange);
     }
   }
 
-  protected void onError(HttpExchange exchange, Exception e) throws IOException {
+  protected void onPageNotFound(Match match, HttpExchange exchange) throws IOException {
+    if (match == WRONG_METHOD) {
+      errorPage(405, null).writeTo(exchange);
+    } else {
+      errorPage(404, null).writeTo(exchange);
+    }
+  }
+
+  protected void onError(Exception e, HttpExchange exchange) throws IOException {
     if (devMode()) {
       errorPage(500, e).writeTo(exchange);
     } else {
       errorPage(500, null).writeTo(exchange);
-    }
-  }
-
-  protected void onPageNotFound(HttpExchange exchange, Matching matching) throws IOException {
-    if (matching == WRONG_METHOD) {
-      errorPage(405, null).writeTo(exchange);
-    } else {
-      errorPage(404, null).writeTo(exchange);
     }
   }
 

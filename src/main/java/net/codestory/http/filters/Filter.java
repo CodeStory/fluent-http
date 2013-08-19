@@ -21,6 +21,6 @@ import com.sun.net.httpserver.*;
 
 @FunctionalInterface
 public interface Filter {
-  Matching apply(String uri, HttpExchange exchange) throws IOException;
+  Match apply(String uri, HttpExchange exchange) throws IOException;
 }
 
