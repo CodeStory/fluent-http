@@ -23,7 +23,6 @@ import java.lang.annotation.*;
 @Documented
 @Target(METHOD)
 @Retention(RUNTIME)
-@Repeatable(Gets.class)
-public @interface Get {
-  String value();
+public @interface Posts {
+  Post[] value();
 }

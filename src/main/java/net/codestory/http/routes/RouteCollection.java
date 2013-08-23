@@ -50,7 +50,7 @@ public class RouteCollection implements Routes {
 
   @Override
   public void add(String urlPrefix, Object resource) {
-    // Hack to support Mockito spies
+    // Hack to support Mockito Spies
     Class<?> type = resource.getClass();
     if (resource.getClass().getName().contains("EnhancerByMockito")) {
       type = type.getSuperclass();
@@ -59,15 +59,14 @@ public class RouteCollection implements Routes {
     for (Method method : type.getMethods()) {
       int parameterCount = method.getParameterCount();
 
-      Get annotationGet = method.getAnnotation(Get.class);
-      if (annotationGet != null) {
-        String uriPattern = urlPrefix + annotationGet.value();
+      for (Get get : method.getDeclaredAnnotationsByType(Get.class)) {
+        String uriPattern = urlPrefix + get.value();
 
         add("GET", checkParametersCount(uriPattern, parameterCount), new ReflectionRoute(resource, method));
       }
-      Post annotationPost = method.getAnnotation(Post.class);
-      if (annotationPost != null) {
-        String uriPattern = urlPrefix + annotationPost.value();
+
+      for (Post post : method.getDeclaredAnnotationsByType(Post.class)) {
+        String uriPattern = urlPrefix + post.value();
 
         add("POST", checkParametersCount(uriPattern, parameterCount), new ReflectionRoute(resource, method));
       }

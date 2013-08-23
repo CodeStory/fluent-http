@@ -122,6 +122,7 @@ public class WebServerTest {
   public void annotated_resources() {
     server.configure(routes -> routes.add(new Object() {
       @Get("/hello")
+      @Get("/")
       public String hello() {
         return "Hello";
       }
@@ -138,6 +139,7 @@ public class WebServerTest {
     }));
 
     expect().content(equalTo("Hello")).when().get("/hello");
+    expect().content(equalTo("Hello")).when().get("/");
     expect().content(equalTo("Good Bye Bob")).when().get("/bye/Bob");
     expect().content(equalTo("42")).when().get("/add/22/20");
   }
@@ -246,6 +248,7 @@ public class WebServerTest {
       routes.post("/post/:who", (who) -> "Done " + who);
       routes.add(new Object() {
         @Post("/person")
+        @Post("/person_alt")
         public String created() {
           return "CREATED";
         }
@@ -257,6 +260,7 @@ public class WebServerTest {
     expect().content(equalTo("Done POST")).when().post("/action");
     expect().content(equalTo("Done GET")).when().get("/action");
     expect().content(equalTo("CREATED")).when().post("/person");
+    expect().content(equalTo("CREATED")).when().post("/person_alt");
     expect().statusCode(405).when().post("/get");
     expect().statusCode(405).when().post("/index.html");
     expect().statusCode(404).when().post("/unknown");

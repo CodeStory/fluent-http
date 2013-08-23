@@ -20,8 +20,10 @@ import static java.lang.annotation.RetentionPolicy.*;
 
 import java.lang.annotation.*;
 
+@Documented
 @Target(METHOD)
 @Retention(RUNTIME)
+@Repeatable(Posts.class)
 public @interface Post {
   String value();
 }
