@@ -21,6 +21,7 @@ import static net.codestory.http.filters.Match.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.stream.*;
 
 import net.codestory.http.annotations.*;
 import net.codestory.http.filters.Filter;
@@ -146,18 +147,8 @@ public class RouteCollection implements Routes {
 
     Match bestMatch = WRONG_URL;
 
-    for (Filter filter : filters) {
+    for (Filter filter : Stream.of(filters, routes).flatMap(Collection::stream).toArray(l -> new Filter[l])) {
       Match match = filter.apply(uri, exchange);
-      if (match == OK) {
-        return OK;
-      }
-      if (match.isBetter(bestMatch)) {
-        bestMatch = match;
-      }
-    }
-
-    for (Filter route : routes) {
-      Match match = route.apply(uri, exchange);
       if (match == OK) {
         return OK;
       }
