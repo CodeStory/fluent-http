@@ -60,6 +60,12 @@ public class Payload {
     return payload;
   }
 
+  public static Payload movedPermanently(String url) {
+    Payload payload = new Payload(null, null, 301);
+    payload.headers.add("Location", url);
+    return payload;
+  }
+
   public int code() {
     return code;
   }

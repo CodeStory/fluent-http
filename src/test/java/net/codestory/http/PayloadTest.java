@@ -85,6 +85,20 @@ public class PayloadTest {
     verifyNoMoreInteractions(ignoreStubs(exchange));
   }
 
+  @Test
+  public void support_permanent_move() throws IOException {
+    HttpExchange exchange = mock(HttpExchange.class);
+    Headers headers = new Headers();
+    when(exchange.getResponseHeaders()).thenReturn(headers);
+
+    Payload payload = Payload.movedPermanently("/url");
+    payload.writeTo(exchange);
+
+    assertThat(headers).includes(entry("Location", asList("/url")));
+    verify(exchange).sendResponseHeaders(301, 0);
+    verifyNoMoreInteractions(ignoreStubs(exchange));
+  }
+
   static class Person {
     String name;
     int age;
