@@ -26,6 +26,7 @@ public class ContentTypesTest {
   @Test
   public void find_content_type_from_extension() {
     assertThat(get(Paths.get("index.html"))).isEqualTo("text/html");
+    assertThat(get(Paths.get("data.xml"))).isEqualTo("application/xml");
     assertThat(get(Paths.get("style.css"))).isEqualTo("text/css");
     assertThat(get(Paths.get("style.less"))).isEqualTo("text/css");
     assertThat(get(Paths.get("text.md"))).isEqualTo("text/html");
@@ -43,6 +44,7 @@ public class ContentTypesTest {
   @Test
   public void find_compatibility_with_templating() {
     assertThat(support_templating(Paths.get("index.html"))).isTrue();
+    assertThat(support_templating(Paths.get("data.xml"))).isTrue();
     assertThat(support_templating(Paths.get("style.css"))).isTrue();
     assertThat(support_templating(Paths.get("style.less"))).isTrue();
     assertThat(support_templating(Paths.get("test.md"))).isTrue();
@@ -60,6 +62,7 @@ public class ContentTypesTest {
   @Test
   public void binary() {
     assertThat(is_binary(Paths.get("index.html"))).isFalse();
+    assertThat(is_binary(Paths.get("data.xml"))).isFalse();
     assertThat(is_binary(Paths.get("style.css"))).isFalse();
     assertThat(is_binary(Paths.get("style.less"))).isFalse();
     assertThat(is_binary(Paths.get("text.md"))).isFalse();

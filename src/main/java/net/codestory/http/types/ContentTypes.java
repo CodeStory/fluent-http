@@ -27,6 +27,8 @@ public class ContentTypes {
       case ".html":
       case ".md":
         return "text/html";
+      case ".xml":
+        return "application/xml";
       case ".css":
       case ".less":
         return "text/css";
@@ -52,6 +54,7 @@ public class ContentTypes {
       case ".txt":
       case ".md":
       case ".html":
+      case ".xml":
       case ".css":
       case ".less":
         return true;
@@ -65,6 +68,7 @@ public class ContentTypes {
       case ".txt":
       case ".md":
       case ".html":
+      case ".xml":
       case ".css":
       case ".less":
       case ".js":
