@@ -103,24 +103,20 @@ public class RouteCollection implements Routes {
     add("POST", checkParametersCount(uriPattern, 0), route);
   }
 
-
   @Override
   public void post(String uriPattern, OneParamRoute route) {
     add("POST", checkParametersCount(uriPattern, 1), route);
   }
-
 
   @Override
   public void post(String uriPattern, TwoParamsRoute route) {
     add("POST", checkParametersCount(uriPattern, 2), route);
   }
 
-
   @Override
   public void post(String uriPattern, ThreeParamsRoute route) {
     add("POST", checkParametersCount(uriPattern, 3), route);
   }
-
 
   @Override
   public void post(String uriPattern, FourParamsRoute route) {
