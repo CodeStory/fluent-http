@@ -111,14 +111,16 @@ public class Resources {
   }
 
   private static File fileForClasspath(URL url) {
-    if (url.getFile() == null) {
+    String filename = url.getFile();
+
+    if ((filename == null) || filename.contains(".jar!")) {
       return null;
     }
 
     try {
-      return new File(URLDecoder.decode(url.getFile(), "US-ASCII").replace("/target/classes/", "/src/main/resources/"));
+      return new File(URLDecoder.decode(filename, "US-ASCII").replace("/target/classes/", "/src/main/resources/"));
     } catch (UnsupportedEncodingException e) {
-      throw new IllegalArgumentException("Invalid file classpath: " + url, e);
+      throw new IllegalArgumentException("Invalid filename classpath: " + url, e);
     }
   }
 }
