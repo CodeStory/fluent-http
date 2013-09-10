@@ -40,4 +40,10 @@ public class UriParserTest {
     assertThat(new UriParser("/hello/:name/aged/:age").params("/hello//aged/")).containsOnly("", "");
     assertThat(new UriParser("/").params("/")).isEmpty();
   }
+
+  @Test
+  public void dont_match_if_last_param_is_empty() {
+    assertThat(new UriParser("/hello/:name").matches("/hello/")).isFalse();
+    assertThat(new UriParser("/hello/:name/last").matches("/hello//last")).isTrue();
+  }
 }

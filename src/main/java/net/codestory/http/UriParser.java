@@ -53,7 +53,8 @@ public class UriParser {
       }
     }
 
-    return true;
+    int lastPart = patternParts.length - 1;
+    return !(patternParts[lastPart].startsWith(":") && uriParts[lastPart].isEmpty());
   }
 
   static String[] parts(String uri) {
