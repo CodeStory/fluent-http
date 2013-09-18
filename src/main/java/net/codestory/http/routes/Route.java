@@ -15,12 +15,12 @@
  */
 package net.codestory.http.routes;
 
-@FunctionalInterface
-public interface Route extends AnyRoute {
-  Object body();
+import java.io.*;
 
-  @Override
-  default Object body(String[] parameters) {
-    return body();
-  }
+import com.sun.net.httpserver.*;
+
+@FunctionalInterface
+public interface Route {
+  Match apply(String uri, HttpExchange exchange) throws IOException;
 }
+

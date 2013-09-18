@@ -15,17 +15,15 @@
  */
 package net.codestory.http.routes;
 
-import static net.codestory.http.filters.Match.*;
+import static net.codestory.http.routes.Match.*;
 
 import java.io.*;
 
 import net.codestory.http.*;
-import net.codestory.http.filters.Filter;
-import net.codestory.http.filters.*;
 
 import com.sun.net.httpserver.*;
 
-class RouteWrapper implements Filter {
+class RouteWrapper implements Route {
   private final String method;
   private final UriParser uriParser;
   private final AnyRoute route;

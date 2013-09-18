@@ -16,21 +16,19 @@
 package net.codestory.http.routes;
 
 import static net.codestory.http.UriParser.*;
-import static net.codestory.http.filters.Match.*;
+import static net.codestory.http.routes.Match.*;
 
 import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.stream.*;
 
 import net.codestory.http.annotations.*;
 import net.codestory.http.filters.Filter;
-import net.codestory.http.filters.*;
 
 import com.sun.net.httpserver.*;
 
 public class RouteCollection implements Routes {
-  private final Deque<Filter> routes;
+  private final Deque<Route> routes;
   private final Deque<Filter> filters;
 
   public RouteCollection() {
@@ -74,8 +72,8 @@ public class RouteCollection implements Routes {
   }
 
   @Override
-  public void get(String uriPattern, Route route) {
-    add("GET", checkParametersCount(uriPattern, 0), route);
+  public void get(String uriPattern, NoParamRoute noParamRoute) {
+    add("GET", checkParametersCount(uriPattern, 0), noParamRoute);
   }
 
   @Override
@@ -99,8 +97,8 @@ public class RouteCollection implements Routes {
   }
 
   @Override
-  public void post(String uriPattern, Route route) {
-    add("POST", checkParametersCount(uriPattern, 0), route);
+  public void post(String uriPattern, NoParamRoute noParamRoute) {
+    add("POST", checkParametersCount(uriPattern, 0), noParamRoute);
   }
 
   @Override
@@ -140,10 +138,16 @@ public class RouteCollection implements Routes {
   public Match apply(HttpExchange exchange) throws IOException {
     String uri = exchange.getRequestURI().getPath();
 
+    for (Filter filter : filters) {
+      if (filter.apply(uri, exchange)) {
+        return OK;
+      }
+    }
+
     Match bestMatch = WRONG_URL;
 
-    for (Filter filter : Stream.of(filters, routes).flatMap(Collection::stream).toArray(l -> new Filter[l])) {
-      Match match = filter.apply(uri, exchange);
+    for (Route route : routes) {
+      Match match = route.apply(uri, exchange);
       if (match == OK) {
         return OK;
       }

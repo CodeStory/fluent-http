@@ -17,7 +17,7 @@ package net.codestory.http;
 
 import static com.jayway.restassured.RestAssured.*;
 import static java.nio.charset.StandardCharsets.*;
-import static net.codestory.http.filters.Match.*;
+import static net.codestory.http.routes.Match.*;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
@@ -211,9 +211,9 @@ public class WebServerTest {
           exchange.getResponseHeaders().add("Content-Type", "text/html");
           exchange.sendResponseHeaders(200, 8);
           exchange.getResponseBody().write("FILTERED".getBytes());
-          return OK;
+          return true;
         }
-        return WRONG_URL;
+        return false;
       });
     });
 

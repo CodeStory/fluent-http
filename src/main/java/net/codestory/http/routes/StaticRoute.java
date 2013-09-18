@@ -15,19 +15,17 @@
  */
 package net.codestory.http.routes;
 
-import static net.codestory.http.filters.Match.*;
+import static net.codestory.http.routes.Match.*;
 
 import java.io.*;
 import java.nio.file.*;
 
 import net.codestory.http.*;
-import net.codestory.http.filters.Filter;
-import net.codestory.http.filters.*;
 import net.codestory.http.io.*;
 
 import com.sun.net.httpserver.*;
 
-class StaticRoute implements Filter {
+class StaticRoute implements Route {
   private static final String[] EXTENSIONS = {"", ".html", ".md"};
 
   private final String root;

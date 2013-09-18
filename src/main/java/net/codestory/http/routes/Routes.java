@@ -26,7 +26,7 @@ public interface Routes {
 
   void add(String urlPrefix, Object resource);
 
-  void get(String uriPattern, Route route);
+  void get(String uriPattern, NoParamRoute noParamRoute);
 
   void get(String uriPattern, OneParamRoute route);
 
@@ -36,7 +36,7 @@ public interface Routes {
 
   void get(String uriPattern, FourParamsRoute route);
 
-  void post(String uriPattern, Route route);
+  void post(String uriPattern, NoParamRoute noParamRoute);
 
   void post(String uriPattern, OneParamRoute route);
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.filters;
+package net.codestory.http.routes;
 
 public enum Match {
   OK, WRONG_METHOD, WRONG_URL;

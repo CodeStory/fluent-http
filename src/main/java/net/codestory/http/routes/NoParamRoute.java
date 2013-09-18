@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.filters;
-
-import java.io.*;
-
-import net.codestory.http.routes.*;
-
-import com.sun.net.httpserver.*;
+package net.codestory.http.routes;
 
 @FunctionalInterface
-public interface Filter {
-  boolean apply(String uri, HttpExchange exchange) throws IOException;
-}
+public interface NoParamRoute extends AnyRoute {
+  Object body();
 
+  @Override
+  default Object body(String[] parameters) {
+    return body();
+  }
+}

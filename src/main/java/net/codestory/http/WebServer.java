@@ -15,14 +15,13 @@
  */
 package net.codestory.http;
 
-import static net.codestory.http.filters.Match.*;
+import static net.codestory.http.routes.Match.*;
 
 import java.io.*;
 import java.net.*;
 import java.util.*;
 
 import net.codestory.http.errors.*;
-import net.codestory.http.filters.*;
 import net.codestory.http.routes.*;
 
 import com.sun.net.httpserver.*;
