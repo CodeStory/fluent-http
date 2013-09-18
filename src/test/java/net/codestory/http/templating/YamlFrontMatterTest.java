@@ -93,12 +93,12 @@ public class YamlFrontMatterTest {
   @Test
   public void complex_yaml() {
     String content = content(
-        "---",
-        "products: ",
-        " - name: PROD1",
-        " - name: PROD2",
-        "---",
-        "CONTENT");
+      "---",
+      "products: ",
+      " - name: PROD1",
+      " - name: PROD2",
+      "---",
+      "CONTENT");
 
     YamlFrontMatter parsed = YamlFrontMatter.parse(content);
 
@@ -106,6 +106,23 @@ public class YamlFrontMatterTest {
     assertThat(products).hasSize(2);
     assertThat(products.get(0)).includes(entry("name", "PROD1"));
     assertThat(products.get(1)).includes(entry("name", "PROD2"));
+  }
+
+  @Test
+  public void ignore_dashes_in_content() {
+    String content = content(
+      "---",
+      "title: TITLE",
+      "---",
+      "START",
+      "---",
+      "END"
+    );
+
+    YamlFrontMatter parsed = YamlFrontMatter.parse(content);
+
+    assertThat(parsed.getVariables().get("title")).isEqualTo("TITLE");
+    assertThat(parsed.getContent()).isEqualTo("START\n---\nEND");
   }
 
   static String content(String... lines) {

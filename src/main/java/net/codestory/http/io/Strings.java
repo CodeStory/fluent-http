@@ -54,7 +54,7 @@ public class Strings {
       return "";
     }
 
-    int indexEnd = in.lastIndexOf(end);
+    int indexEnd = in.indexOf(end, indexStart + end.length());
     if (indexEnd <= (indexStart + start.length())) {
       return "";
     }
