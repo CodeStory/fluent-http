@@ -20,4 +20,12 @@ import net.codestory.http.routes.*;
 @FunctionalInterface
 public interface Configuration {
   void configure(Routes routes);
+
+  public default Payload seeOther(String url) {
+    return Payload.seeOther(url);
+  }
+
+  public default Payload movedPermanently(String url) {
+    return Payload.movedPermanently(url);
+  }
 }
