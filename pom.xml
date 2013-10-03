@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>codestory</groupId>
+  <groupId>net.codestory</groupId>
   <artifactId>http</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
@@ -12,6 +12,19 @@
   <name>CodeStory - Http Server</name>
   <description>This is the simplest fastest full fledged http server we could come up with</description>
   <url>https://github.com/CodeStory/code-story-http</url>
+
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+    <relativePath/>
+  </parent>
+
+  <scm>
+    <connection>scm:git:git@github.com:CodeStory/code-story-http.git</connection>
+    <url>scm:git:git@github.com:CodeStory/code-story-http.git</url>
+    <developerConnection>scm:git:git@github.com:CodeStory/code-story-http.git</developerConnection>
+  </scm>
 
   <licenses>
     <license>
@@ -32,6 +45,34 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
   </properties>
+
+  <profiles>
+    <profile>
+      <id>sign</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
   <build>
     <pluginManagement>
@@ -68,12 +109,19 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.15</version>
         </plugin>
+        <plugin>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>2.2.1</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>1.4</version>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
       <plugin>
         <artifactId>maven-source-plugin</artifactId>
-        <version>2.2.1</version>
         <executions>
           <execution>
             <id>attach-sources</id>
