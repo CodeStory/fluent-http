@@ -15,6 +15,7 @@
  */
 package net.codestory.http.routes;
 
+import net.codestory.http.*;
 import net.codestory.http.filters.*;
 
 public interface Routes {
@@ -25,6 +26,8 @@ public interface Routes {
   void add(Object resource);
 
   void add(String urlPrefix, Object resource);
+
+  void get(String uriPattern, Payload payload);
 
   void get(String uriPattern, NoParamRoute noParamRoute);
 

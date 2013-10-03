@@ -22,6 +22,7 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
 
+import net.codestory.http.*;
 import net.codestory.http.annotations.*;
 import net.codestory.http.filters.Filter;
 
@@ -69,6 +70,11 @@ public class RouteCollection implements Routes {
         add("POST", checkParametersCount(uriPattern, parameterCount), new ReflectionRoute(resource, method));
       }
     }
+  }
+
+  @Override
+  public void get(String uriPattern, Payload payload) {
+    get(uriPattern, () -> payload);
   }
 
   @Override

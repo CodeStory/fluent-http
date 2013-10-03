@@ -59,6 +59,7 @@ public class WebServerTest {
       routes.get("/raw", () -> "RAW DATA".getBytes(UTF_8));
       routes.get("/json", () -> new Person("NAME", 42));
       routes.get("/text", () -> new Payload("text/plain", "TEXT"));
+      routes.get("/otherText", new Payload("text/plain", "OTHER"));
     });
 
     expect().body(equalTo("Hello")).contentType("text/html").when().get("/index");
@@ -66,6 +67,7 @@ public class WebServerTest {
     expect().body("name", equalTo("NAME")).body("age", equalTo(42)).contentType("application/json").when().get("/json");
     expect().body(equalTo("TEXT")).contentType("text/plain").when().get("/text");
     expect().body(equalTo("TEXT")).contentType("text/plain").when().get("/text");
+    expect().body(equalTo("OTHER")).contentType("text/plain").when().get("/otherText");
   }
 
   @Test
