@@ -39,6 +39,10 @@ public class WebServer {
     }
   }
 
+  public static void main(String[] args) throws Exception {
+    new WebServer().start(8080);
+  }
+
   public WebServer configure(Configuration configuration) {
     routes.reset();
     configuration.configure(routes);
