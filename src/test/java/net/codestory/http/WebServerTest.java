@@ -17,7 +17,6 @@ package net.codestory.http;
 
 import static com.jayway.restassured.RestAssured.*;
 import static java.nio.charset.StandardCharsets.*;
-import static net.codestory.http.routes.Match.*;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
@@ -50,7 +49,7 @@ public class WebServerTest {
 
   @Test
   public void not_found() {
-    expect().content(containsString("404 - Page not found")).contentType("text/html").statusCode(404).when().get("/");
+    expect().content(containsString("Page not found")).contentType("text/html").statusCode(404).when().get("/");
   }
 
   @Test
