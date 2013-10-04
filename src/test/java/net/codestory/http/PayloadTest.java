@@ -17,8 +17,7 @@ package net.codestory.http;
 
 import static java.nio.charset.StandardCharsets.*;
 import static java.util.Arrays.*;
-import static org.fest.assertions.Assertions.*;
-import static org.fest.assertions.MapAssert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 import java.io.*;
@@ -80,7 +79,7 @@ public class PayloadTest {
     Payload payload = Payload.seeOther("/url");
     payload.writeTo(exchange);
 
-    assertThat(headers).includes(entry("Location", asList("/url")));
+    assertThat(headers).containsEntry("Location", asList("/url"));
     verify(exchange).sendResponseHeaders(303, 0);
     verifyNoMoreInteractions(ignoreStubs(exchange));
   }
@@ -94,7 +93,7 @@ public class PayloadTest {
     Payload payload = Payload.movedPermanently("/url");
     payload.writeTo(exchange);
 
-    assertThat(headers).includes(entry("Location", asList("/url")));
+    assertThat(headers).containsEntry("Location", asList("/url"));
     verify(exchange).sendResponseHeaders(301, 0);
     verifyNoMoreInteractions(ignoreStubs(exchange));
   }

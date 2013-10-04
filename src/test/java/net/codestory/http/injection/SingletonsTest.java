@@ -15,7 +15,7 @@
  */
 package net.codestory.http.injection;
 
-import static org.fest.assertions.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.*;
 

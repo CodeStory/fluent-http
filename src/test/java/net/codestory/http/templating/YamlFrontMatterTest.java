@@ -15,8 +15,7 @@
  */
 package net.codestory.http.templating;
 
-import static org.fest.assertions.Assertions.*;
-import static org.fest.assertions.MapAssert.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.*;
 
@@ -29,8 +28,8 @@ public class YamlFrontMatterTest {
 
     YamlFrontMatter parsed = YamlFrontMatter.parse(content);
 
-    assertThat(parsed.getVariables()).isEmpty();
     assertThat(parsed.getContent()).isEmpty();
+    assertThat(parsed.getVariables()).isEmpty();
   }
 
   @Test
@@ -39,55 +38,56 @@ public class YamlFrontMatterTest {
 
     YamlFrontMatter parsed = YamlFrontMatter.parse(content);
 
-    assertThat(parsed.getVariables()).isEmpty();
     assertThat(parsed.getContent()).isEqualTo("CONTENT");
+    assertThat(parsed.getVariables()).isEmpty();
   }
 
   @Test
   public void should_read_header_variables() {
     String content = content(
-        "---",
-        "layout: standard",
-        "title: CodeStory - Devoxx Fight",
-        "---",
-        "CONTENT");
+      "---",
+      "layout: standard",
+      "title: CodeStory - Devoxx Fight",
+      "---",
+      "CONTENT");
 
     YamlFrontMatter parsed = YamlFrontMatter.parse(content);
 
-    assertThat(parsed.getVariables()).includes(
-        entry("layout", "standard"),
-        entry("title", "CodeStory - Devoxx Fight"));
     assertThat(parsed.getContent()).isEqualTo("CONTENT");
+    assertThat(parsed.getVariables())
+      .containsEntry("layout", "standard")
+      .containsEntry("title", "CodeStory - Devoxx Fight");
   }
 
   @Test
   public void should_ignore_commented_variable() {
     String content = content(
-        "---",
-        "#layout: standard",
-        "title: CodeStory - Devoxx Fight",
-        "---",
-        "CONTENT");
+      "---",
+      "#layout: standard",
+      "title: CodeStory - Devoxx Fight",
+      "---",
+      "CONTENT");
 
     YamlFrontMatter parsed = YamlFrontMatter.parse(content);
 
     assertThat(parsed.getVariables())
-        .excludes(entry("layout", "standard"))
-        .excludes(entry("#layout", "standard"))
-        .includes(entry("title", "CodeStory - Devoxx Fight"));
+      .doesNotContainEntry("layout", "standard")
+      .doesNotContainEntry("#layout", "standard")
+      .containsEntry("title", "CodeStory - Devoxx Fight");
   }
 
   @Test
   public void escape_strings_with_quotes() {
     String content = content(
-        "---",
-        "title: \'{{Code}} Fight by Code-Story\'",
-        "---",
-        "CONTENT");
+      "---",
+      "title: \'{{Code}} Fight by Code-Story\'",
+      "---",
+      "CONTENT");
 
     YamlFrontMatter parsed = YamlFrontMatter.parse(content);
 
-    assertThat(parsed.getVariables().get("title")).isEqualTo("{{Code}} Fight by Code-Story");
+    assertThat(parsed.getVariables())
+      .containsEntry("title", "{{Code}} Fight by Code-Story");
   }
 
   @Test
@@ -104,8 +104,8 @@ public class YamlFrontMatterTest {
 
     List<Map<String, Object>> products = (List<Map<String, Object>>) parsed.getVariables().get("products");
     assertThat(products).hasSize(2);
-    assertThat(products.get(0)).includes(entry("name", "PROD1"));
-    assertThat(products.get(1)).includes(entry("name", "PROD2"));
+    assertThat(products.get(0)).containsEntry("name", "PROD1");
+    assertThat(products.get(1)).containsEntry("name", "PROD2");
   }
 
   @Test
@@ -121,8 +121,8 @@ public class YamlFrontMatterTest {
 
     YamlFrontMatter parsed = YamlFrontMatter.parse(content);
 
-    assertThat(parsed.getVariables().get("title")).isEqualTo("TITLE");
     assertThat(parsed.getContent()).isEqualTo("START\n---\nEND");
+    assertThat(parsed.getVariables()).containsEntry("title", "TITLE");
   }
 
   static String content(String... lines) {
