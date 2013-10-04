@@ -12,7 +12,6 @@
  + Déployer sur maven central
  + Simplifier le code du blog
  + Enlever la duplication dans le yaml
- + Remonter les fichiers web de plusieurs crans
  + Convertir plus de texte en markdown
  + Look du faq
  + Belle page de why?
@@ -23,7 +22,6 @@
  + Access yaml on server side
  + Better hot reload
  + Javadoc
- + Une sorte de resource manager ?
  + Compatibilité Guice
  + Security for free
  + Https

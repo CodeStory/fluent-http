@@ -45,8 +45,10 @@ class StaticRoute implements Route {
   }
 
   private Match serve(Path path, HttpExchange exchange) throws IOException {
-    if (path.toString().contains("..")) {
-      return WRONG_URL;
+    for (Path part : path) {
+      if (part.toString().equals("..") || part.toString().startsWith("_")) {
+        return WRONG_URL;
+      }
     }
 
     if (!Resources.exists(path)) {

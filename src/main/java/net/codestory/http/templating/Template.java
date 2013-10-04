@@ -81,7 +81,7 @@ public class Template {
       String templateContent = Resources.read(path, UTF_8);
 
       YamlFrontMatter parsedTemplate = YamlFrontMatter.parse(templateContent);
-      Map<String, Object> globalVariables = loadGlobalVariables("config.yml");
+      Map<String, Object> globalVariables = loadGlobalVariables("_config.yml");
       Map<String, Object> variables = parsedTemplate.getVariables();
       Map<String, Object> allKeyValues = merge(globalVariables, variables, keyValues);
 
@@ -90,7 +90,7 @@ public class Template {
 
       String layout = (String) variables.get("layout");
       if (layout != null) {
-        return new Template(layout).render(allKeyValues).replace("[[body]]", body);
+        return new Template("_layouts/" + layout).render(allKeyValues).replace("[[body]]", body);
       }
 
       return body;
