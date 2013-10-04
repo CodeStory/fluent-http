@@ -8,5 +8,28 @@
  + Simpler layout paths
  + Use file structure as yaml
  + Set ContenType on xmls using yaml
- + 
+ +
+ + Déployer sur maven central
+ + Simplifier le code du blog
+ + Enlever la duplication dans le yaml
+ + Remonter les fichiers web de plusieurs crans
+ + Convertir plus de texte en markdown
+ + Look du faq
+ + Belle page de why?
+ + Faciliter le deploy
+ + Query params
+ + Page 500 (bug photo)
+ + Redirection file
+ + Access yaml on server side
+ + Better hot reload
+ + Javadoc
+ + Une sorte de resource manager ?
+ + Compatibilité Guice
+ + Security for free
+ + Https
+
+
+
+
+
 
