@@ -26,6 +26,7 @@ public class ContentTypes {
     switch (extension(path)) {
       case ".html":
       case ".md":
+      case ".markdown":
         return "text/html";
       case ".xml":
         return "application/xml";
@@ -53,6 +54,7 @@ public class ContentTypes {
     switch (extension(path)) {
       case ".txt":
       case ".md":
+      case ".markdown":
       case ".html":
       case ".xml":
       case ".css":
@@ -67,6 +69,7 @@ public class ContentTypes {
     switch (extension(path)) {
       case ".txt":
       case ".md":
+      case ".markdown":
       case ".html":
       case ".xml":
       case ".css":

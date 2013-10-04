@@ -16,7 +16,7 @@
 package net.codestory.http.types;
 
 import static net.codestory.http.types.ContentTypes.*;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 import java.nio.file.*;
 
@@ -30,6 +30,7 @@ public class ContentTypesTest {
     assertThat(get(Paths.get("style.css"))).isEqualTo("text/css");
     assertThat(get(Paths.get("style.less"))).isEqualTo("text/css");
     assertThat(get(Paths.get("text.md"))).isEqualTo("text/html");
+    assertThat(get(Paths.get("text.markdown"))).isEqualTo("text/html");
     assertThat(get(Paths.get("text.txt"))).isEqualTo("text/plain");
     assertThat(get(Paths.get("text.zip"))).isEqualTo("application/zip");
     assertThat(get(Paths.get("image.gif"))).isEqualTo("image/gif");
@@ -48,6 +49,7 @@ public class ContentTypesTest {
     assertThat(support_templating(Paths.get("style.css"))).isTrue();
     assertThat(support_templating(Paths.get("style.less"))).isTrue();
     assertThat(support_templating(Paths.get("test.md"))).isTrue();
+    assertThat(support_templating(Paths.get("test.markdown"))).isTrue();
     assertThat(support_templating(Paths.get("text.txt"))).isTrue();
     assertThat(support_templating(Paths.get("text.zip"))).isFalse();
     assertThat(support_templating(Paths.get("image.gif"))).isFalse();
@@ -66,6 +68,7 @@ public class ContentTypesTest {
     assertThat(is_binary(Paths.get("style.css"))).isFalse();
     assertThat(is_binary(Paths.get("style.less"))).isFalse();
     assertThat(is_binary(Paths.get("text.md"))).isFalse();
+    assertThat(is_binary(Paths.get("text.markdown"))).isFalse();
     assertThat(is_binary(Paths.get("text.txt"))).isFalse();
     assertThat(is_binary(Paths.get("text.zip"))).isTrue();
     assertThat(is_binary(Paths.get("image.gif"))).isTrue();

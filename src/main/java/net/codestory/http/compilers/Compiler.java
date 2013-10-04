@@ -84,6 +84,7 @@ public enum Compiler {
       case "coffee":
         return COFFEE;
       case "md":
+      case "markdown":
         return MARKDOWN;
       default:
         return NONE;

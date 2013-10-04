@@ -26,7 +26,7 @@ import net.codestory.http.io.*;
 import com.sun.net.httpserver.*;
 
 class StaticRoute implements Route {
-  private static final String[] EXTENSIONS = {"", ".html", ".md"};
+  private static final String[] EXTENSIONS = {"", ".html", ".md", ".markdown"};
 
   @Override
   public Match apply(String uri, HttpExchange exchange) throws IOException {
