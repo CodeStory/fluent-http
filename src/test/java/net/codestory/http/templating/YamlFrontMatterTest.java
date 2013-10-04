@@ -102,6 +102,7 @@ public class YamlFrontMatterTest {
 
     YamlFrontMatter parsed = YamlFrontMatter.parse(content);
 
+    @SuppressWarnings("unchecked")
     List<Map<String, Object>> products = (List<Map<String, Object>>) parsed.getVariables().get("products");
     assertThat(products).hasSize(2);
     assertThat(products.get(0)).containsEntry("name", "PROD1");
