@@ -13,30 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.templating;
+package net.codestory.http.io;
 
 import static org.fest.assertions.Assertions.*;
 
-import java.io.*;
+import java.nio.file.*;
 
 import org.junit.*;
 
-import com.google.common.collect.*;
-
-public class MustacheCompilerTest {
-  MustacheCompiler compiler = new MustacheCompiler();
-
+public class ResourcesTest {
   @Test
-  public void compile() throws IOException {
-    String result = compiler.compile("-[[greeting]]-", ImmutableMap.<String, Object>of("greeting", "Hello"));
-
-    assertThat(result).isEqualTo("-Hello-");
-  }
-
-  @Test
-  public void partials() throws IOException {
-    String result = compiler.compile("-[[>partial]] [[>partial]]-", ImmutableMap.<String, Object>of("name", "Bob"));
-
-    assertThat(result).isEqualTo("-Hello Bob Hello Bob-");
+  public void exists_classpath_file() {
+    assertThat(Resources.exists(Paths.get("index.html"))).isTrue();
+    assertThat(Resources.exists(Paths.get("js"))).isFalse();
   }
 }

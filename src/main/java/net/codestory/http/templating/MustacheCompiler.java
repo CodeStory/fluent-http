@@ -16,20 +16,16 @@
 package net.codestory.http.templating;
 
 import java.io.*;
-import java.nio.file.*;
 import java.util.*;
-
-import net.codestory.http.io.*;
-import net.codestory.http.templating.*;
 
 import com.github.mustachejava.*;
 
 public class MustacheCompiler {
-  public String compile(String type, String templateContent, Map<String, Object> variables) throws IOException {
+  public String compile(String templateContent, Map<String, Object> variables) throws IOException {
     DefaultMustacheFactory factory = new DefaultMustacheFactory() {
       @Override
       public Reader getReader(String partialName) {
-        String partial = new Template(type + partialName).render(variables);
+        String partial = new Template(partialName).render(variables);
         return new StringReader(partial);
       }
     };

@@ -28,15 +28,6 @@ import com.sun.net.httpserver.*;
 class StaticRoute implements Route {
   private static final String[] EXTENSIONS = {"", ".html", ".md"};
 
-  private final String root;
-
-  StaticRoute(String root) {
-    if (!root.startsWith("classpath:") && !new File(root).exists()) {
-      throw new IllegalArgumentException("Invalid directory for static content: " + root);
-    }
-    this.root = root;
-  }
-
   @Override
   public Match apply(String uri, HttpExchange exchange) throws IOException {
     if (uri.endsWith("/")) {
@@ -44,7 +35,7 @@ class StaticRoute implements Route {
     }
 
     for (String extension : EXTENSIONS) {
-      Match match = serve(Paths.get(root, uri + extension), exchange);
+      Match match = serve(Paths.get(uri + extension), exchange);
       if (WRONG_URL != match) {
         return match;
       }
@@ -54,7 +45,7 @@ class StaticRoute implements Route {
   }
 
   private Match serve(Path path, HttpExchange exchange) throws IOException {
-    if (!path.normalize().toString().startsWith(root)) {
+    if (path.toString().contains("..")) {
       return WRONG_URL;
     }
 

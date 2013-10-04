@@ -25,40 +25,37 @@ public class Resources {
     // Static utility class
   }
 
-  public static String extension(Path path) {
-    return Strings.substringAfterLast(path.toString(), ".");
-  }
-
-  public static String type(Path path) {
-    return path.toString().startsWith("classpath:") ? "classpath:" : "";
-  }
-
   public static boolean exists(Path path) {
-    if ("classpath:".equals(type(path))) {
-      URL url = ClassLoader.getSystemResource(path.toString().substring(10));
-      if (url == null) {
-        return false;
-      }
-
-      File file = fileForClasspath(url);
-      return (file == null) || file.isFile();
-
-    }
-    return path.toFile().isFile();
+    String pathWithPrefix = withPrefix(path);
+    return existsInClassPath(pathWithPrefix) || existsInFileSystem(pathWithPrefix);
   }
 
   public static String read(Path path, Charset charset) throws IOException {
-    if ("classpath:".equals(type(path))) {
-      return readClasspath(path.toString().substring(10), charset);
-    }
-    return readFile(path, charset);
+    String pathWithPrefix = withPrefix(path);
+    return existsInFileSystem(pathWithPrefix) ? readFile(pathWithPrefix, charset) : readClasspath(pathWithPrefix, charset);
   }
 
   public static byte[] readBytes(Path path) throws IOException {
-    if ("classpath:".equals(type(path))) {
-      return readClasspathBytes(path.toString().substring(10));
+    String pathWithPrefix = withPrefix(path);
+    return existsInFileSystem(pathWithPrefix) ? readFileBytes(pathWithPrefix) : readClasspathBytes(pathWithPrefix);
+  }
+
+  private static String withPrefix(Path path) {
+    return path.toString().startsWith("/") ? "web" + path : "web/" + path;
+  }
+
+  private static boolean existsInClassPath(String path) {
+    URL url = ClassLoader.getSystemResource(path);
+    if (url == null) {
+      return false;
     }
-    return readFileBytes(path);
+
+    File file = fileForClasspath(url);
+    return (file == null) || file.isFile();
+  }
+
+  private static boolean existsInFileSystem(String path) {
+    return new File(path).isFile();
   }
 
   private static String readClasspath(String path, Charset charset) throws IOException {
@@ -72,7 +69,7 @@ public class Resources {
       if (!file.isFile()) {
         throw new IllegalArgumentException("Invalid file classpath: " + path);
       }
-      return readFile(file.toPath(), charset);
+      return readFile(file.getAbsolutePath(), charset);
     }
 
     try (InputStream from = url.openStream()) {
@@ -91,7 +88,7 @@ public class Resources {
       if (!file.isFile()) {
         throw new IllegalArgumentException("Invalid file classpath: " + path);
       }
-      return readFileBytes(file.toPath());
+      return readFileBytes(file.getAbsolutePath());
     }
 
     try (InputStream from = url.openStream()) {
@@ -99,15 +96,15 @@ public class Resources {
     }
   }
 
-  private static String readFile(Path path, Charset charset) throws IOException {
+  private static String readFile(String path, Charset charset) throws IOException {
     return new String(readFileBytes(path), charset);
   }
 
-  private static byte[] readFileBytes(Path path) throws IOException {
-    if (!path.toFile().isFile()) {
+  private static byte[] readFileBytes(String path) throws IOException {
+    if (!new File(path).isFile()) {
       throw new IllegalArgumentException("Invalid file path: " + path);
     }
-    return Files.readAllBytes(path);
+    return Files.readAllBytes(Paths.get(path));
   }
 
   private static File fileForClasspath(URL url) {

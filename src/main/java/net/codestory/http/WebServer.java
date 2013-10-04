@@ -45,7 +45,9 @@ public class WebServer {
 
   public WebServer configure(Configuration configuration) {
     routes.reset();
+
     configuration.configure(routes);
+
     if (devMode()) {
       lastConfiguration = configuration;
     }
@@ -98,10 +100,12 @@ public class WebServer {
       applyRoutes(exchange);
     } catch (Exception e) {
       System.out.println("Error " + e);
+      e.printStackTrace();
       try {
         onError(e, exchange);
       } catch (Exception ioe) {
-        System.out.println("Unable to respond to query " + e);
+        System.out.println("Unable to server an error page " + ioe);
+        ioe.printStackTrace();
       }
     } finally {
       exchange.close();

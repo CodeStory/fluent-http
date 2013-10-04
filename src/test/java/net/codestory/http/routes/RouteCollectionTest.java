@@ -19,18 +19,10 @@ import org.junit.*;
 import org.junit.rules.*;
 
 public class RouteCollectionTest {
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
-
   RouteCollection routeCollection = new RouteCollection();
 
-  @Test
-  public void fail_with_invalid_fail_path() {
-    thrown.expect(IllegalArgumentException.class);
-    thrown.expectMessage("Invalid directory for static content");
-
-    routeCollection.staticDir("UNKNOWN_PATH");
-  }
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
 
   @Test
   public void fail_with_too_many_params() {

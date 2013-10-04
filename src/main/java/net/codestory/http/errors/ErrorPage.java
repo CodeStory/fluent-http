@@ -36,7 +36,7 @@ public class ErrorPage {
   }
 
   private String filename() throws IOException {
-    return code == 404 ? "classpath:404.html" : "classpath:500.html";
+    return code == 404 ? "404.html" : "500.html";
   }
 
   private static String toString(Exception error) {

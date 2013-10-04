@@ -38,11 +38,6 @@ public class RouteCollection implements Routes {
   }
 
   @Override
-  public void staticDir(String fileOrClassPathDir) {
-    routes.addLast(new StaticRoute(fileOrClassPathDir));
-  }
-
-  @Override
   public void add(Object resource) {
     add("", resource);
   }
@@ -152,7 +147,11 @@ public class RouteCollection implements Routes {
 
     Match bestMatch = WRONG_URL;
 
-    for (Route route : routes) {
+    List<Route> allRoutes = new ArrayList<>();
+    allRoutes.addAll(routes);
+    allRoutes.add(new StaticRoute());
+
+    for (Route route : allRoutes) {
       Match match = route.apply(uri, exchange);
       if (match == OK) {
         return OK;

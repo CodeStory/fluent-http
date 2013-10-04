@@ -77,22 +77,20 @@ public class Template {
   }
 
   public String render(Map<String, Object> keyValues) {
-    String type = Resources.type(path);
-
     try {
       String templateContent = Resources.read(path, UTF_8);
 
       YamlFrontMatter parsedTemplate = YamlFrontMatter.parse(templateContent);
-      Map<String, Object> globalVariables = loadGlobalVariables(type + "config.yml");
+      Map<String, Object> globalVariables = loadGlobalVariables("config.yml");
       Map<String, Object> variables = parsedTemplate.getVariables();
       Map<String, Object> allKeyValues = merge(globalVariables, variables, keyValues);
 
       String content = Compiler.compile(path, parsedTemplate.getContent());
-      String body = new MustacheCompiler().compile(type, content, allKeyValues);
+      String body = new MustacheCompiler().compile(content, allKeyValues);
 
       String layout = (String) variables.get("layout");
       if (layout != null) {
-        return new Template(type + layout).render(allKeyValues).replace("[[body]]", body);
+        return new Template(layout).render(allKeyValues).replace("[[body]]", body);
       }
 
       return body;

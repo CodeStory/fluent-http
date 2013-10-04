@@ -49,7 +49,7 @@ public class WebServerTest {
 
   @Test
   public void not_found() {
-    expect().content(containsString("Page not found")).contentType("text/html").statusCode(404).when().get("/");
+    expect().content(containsString("Page not found")).contentType("text/html").statusCode(404).when().get("/notfound");
   }
 
   @Test
@@ -88,8 +88,6 @@ public class WebServerTest {
 
   @Test
   public void static_content_from_classpath() {
-    server.configure(routes -> routes.staticDir("classpath:web"));
-
     expect().content(containsString("Hello From a File")).contentType("text/html").when().get("/index.html");
     expect().content(containsString("Hello From a File")).contentType("text/html").when().get("/");
     expect().content(containsString("TEST")).contentType("text/html").when().get("/test.html");
@@ -105,18 +103,7 @@ public class WebServerTest {
 
   @Test
   public void dont_serve_directories() {
-    server.configure(routes -> routes.staticDir("classpath:web"));
-
     expect().statusCode(404).when().get("/js");
-  }
-
-  @Test
-  public void static_content_from_file() {
-    String web = ClassLoader.getSystemResource("web").getFile();
-
-    server.configure(routes -> routes.staticDir(web));
-
-    expect().content(containsString("Hello From a File")).contentType("text/html").when().get("/index.html");
   }
 
   @Test
@@ -173,10 +160,7 @@ public class WebServerTest {
 
   @Test
   public void templates() {
-    server.configure(routes -> {
-      routes.staticDir("classpath:web");
-      routes.get("/hello/:name", (name) -> new Template("classpath:web/1variable.txt").render("name", name));
-    });
+    server.configure(routes -> routes.get("/hello/:name", (name) -> new Template("1variable.txt").render("name", name)));
 
     expect().content(containsString("<div>_PREFIX_TEXT_SUFFIX_</div>")).when().get("/pageYaml");
     expect().content(equalTo("Hello Joe")).when().get("/hello/Joe");
@@ -184,10 +168,7 @@ public class WebServerTest {
 
   @Test
   public void priority_to_route() {
-    server.configure(routes -> {
-      routes.staticDir("classpath:web");
-      routes.get("/", () -> "PRIORITY");
-    });
+    server.configure(routes -> routes.get("/", () -> "PRIORITY"));
 
     expect().content(equalTo("PRIORITY")).when().get("/");
   }
@@ -241,7 +222,6 @@ public class WebServerTest {
   @Test
   public void post() {
     server.configure(routes -> {
-      routes.staticDir("classpath:web");
       routes.post("/post", () -> "Done");
       routes.get("/get", () -> "Done");
       routes.get("/action", () -> "Done GET");

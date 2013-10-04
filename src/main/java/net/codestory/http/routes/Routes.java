@@ -19,8 +19,6 @@ import net.codestory.http.*;
 import net.codestory.http.filters.*;
 
 public interface Routes {
-  void staticDir(String fileOrClassPathDir);
-
   void filter(Filter filter);
 
   void add(Object resource);
