@@ -25,7 +25,7 @@ public class MustacheCompiler {
     DefaultMustacheFactory factory = new DefaultMustacheFactory() {
       @Override
       public Reader getReader(String partialName) {
-        String partial = new Template(partialName).render(variables);
+        String partial = new Template("_includes/" + partialName).render(variables);
         return new StringReader(partial);
       }
     };
