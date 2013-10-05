@@ -21,7 +21,7 @@ import java.util.*;
 import com.github.mustachejava.*;
 
 public class MustacheCompiler {
-  public String compile(String templateContent, Map<String, Object> variables) throws IOException {
+  public String compile(String template, Map<String, Object> variables) throws IOException {
     DefaultMustacheFactory factory = new DefaultMustacheFactory() {
       @Override
       public Reader getReader(String partialName) {
@@ -30,7 +30,7 @@ public class MustacheCompiler {
       }
     };
 
-    Mustache mustache = factory.compile(new StringReader(templateContent), "", "[[", "]]");
+    Mustache mustache = factory.compile(new StringReader(template), "", "[[", "]]");
 
     StringWriter writer = new StringWriter();
     mustache.execute(writer, variables);

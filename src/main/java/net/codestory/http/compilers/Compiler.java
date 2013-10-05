@@ -66,11 +66,7 @@ public enum Compiler {
   abstract String compile(String content) throws IOException;
 
   public static String compile(Path path, String content) throws IOException {
-    String extension = extension(path);
-
-    Compiler compiler = compilerForExtension(extension);
-
-    return compiler.compile(content);
+    return compilerForExtension(extension(path)).compile(content);
   }
 
   private static String extension(Path path) {

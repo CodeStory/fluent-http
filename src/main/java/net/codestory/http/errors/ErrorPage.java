@@ -29,13 +29,16 @@ public class ErrorPage {
     this.exception = exception;
   }
 
-  public Payload payload() throws IOException {
-    String html = new Template(filename()).render("ERROR", toString(exception));
+  public Payload payload() {
+    String error = toString(exception);
+
+    String filename = filename();
+    String html = new Template(filename).render("ERROR", error);
 
     return new Payload("text/html", html, code);
   }
 
-  private String filename() throws IOException {
+  private String filename() {
     return code == 404 ? "404.html" : "500.html";
   }
 
@@ -44,7 +47,7 @@ public class ErrorPage {
       return "";
     }
 
-    StringWriter string = new StringWriter();
+    Writer string = new StringWriter();
     try (PrintWriter message = new PrintWriter(string)) {
       error.printStackTrace(message);
     }
