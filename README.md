@@ -24,6 +24,6 @@ Build the release :
 	mvn release:prepare
 	mvn release:perform
 
-Go to https://oss.sonatype.org/, log in, go to **Staging Repositories**, close the *net.code-story-XXX* repository then release it.
+Go to https://oss.sonatype.org/, log in, go to **Staging Repositories**, close the *netcode-story-XXXX* repository then release it.
 Synchro to Maven Central is done hourly.
 
