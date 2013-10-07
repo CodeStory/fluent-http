@@ -24,6 +24,7 @@ import java.util.function.*;
 
 import net.codestory.http.compilers.Compiler;
 import net.codestory.http.io.*;
+import net.codestory.http.types.*;
 
 public class Template {
   private final Path path;
@@ -90,7 +91,13 @@ public class Template {
 
       String layout = (String) variables.get("layout");
       if (layout != null) {
-        return new Template("_layouts/" + layout).render(allKeyValues).replace("[[body]]", body);
+        for (String extension : ContentTypes.TEMPLATE_EXTENSIONS) {
+          Path layoutPath = Paths.get("_layouts", layout + extension);
+          if (Resources.exists(layoutPath)) {
+            return new Template(layoutPath).render(allKeyValues).replace("[[body]]", body);
+          }
+        }
+        throw new IllegalStateException("Unable to find layout: " + layout);
       }
 
       return body;

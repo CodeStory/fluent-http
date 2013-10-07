@@ -18,6 +18,8 @@ package net.codestory.http.types;
 import java.nio.file.*;
 
 public class ContentTypes {
+  public static final String[] TEMPLATE_EXTENSIONS = {"", ".html", ".md", ".markdown"};
+
   private ContentTypes() {
     // Static class
   }

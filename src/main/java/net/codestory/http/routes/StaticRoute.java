@@ -22,19 +22,18 @@ import java.nio.file.*;
 
 import net.codestory.http.*;
 import net.codestory.http.io.*;
+import net.codestory.http.types.*;
 
 import com.sun.net.httpserver.*;
 
 class StaticRoute implements Route {
-  private static final String[] EXTENSIONS = {"", ".html", ".md", ".markdown"};
-
   @Override
   public Match apply(String uri, HttpExchange exchange) throws IOException {
     if (uri.endsWith("/")) {
       return apply(uri + "index", exchange);
     }
 
-    for (String extension : EXTENSIONS) {
+    for (String extension : ContentTypes.TEMPLATE_EXTENSIONS) {
       Match match = serve(Paths.get(uri + extension), exchange);
       if (WRONG_URL != match) {
         return match;

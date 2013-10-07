@@ -15,7 +15,6 @@
  + Compatibilité Guice
  + Security for free
  + Https
- + Ne pas avoir a preciser le type du layout
 
 
 
