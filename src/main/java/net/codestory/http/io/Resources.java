@@ -41,7 +41,7 @@ public class Resources {
   }
 
   private static String withPrefix(Path path) {
-    return "web" + (path.toString().startsWith("/") ? "" : "/") + path;
+    return "app" + (path.toString().startsWith("/") ? "" : "/") + path;
   }
 
   private static boolean existsInClassPath(String path) {
