@@ -16,8 +16,14 @@
  + Security for free
  + Https
 
+# Deploy on Maven Central
 
+Build the release :
 
+	mvn release:clean
+	mvn release:prepare
+	mvn release:perform
 
-
+Go to https://oss.sonatype.org/, log in, go to **Staging Repositories**, close the *net.code-story-XXX* repository then release it.
+Synchro to Maven Central is done hourly.
 
