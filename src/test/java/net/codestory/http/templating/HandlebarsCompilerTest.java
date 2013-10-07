@@ -15,28 +15,43 @@
  */
 package net.codestory.http.templating;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 import java.io.*;
+import java.util.*;
 
 import org.junit.*;
 
-import com.google.common.collect.*;
-
-public class MustacheCompilerTest {
-  MustacheCompiler compiler = new MustacheCompiler();
+public class HandlebarsCompilerTest {
+  HandlebarsCompiler compiler = new HandlebarsCompiler();
 
   @Test
   public void compile() throws IOException {
-    String result = compiler.compile("-[[greeting]]-", ImmutableMap.<String, Object>of("greeting", "Hello"));
+    Map<String, Object> variables = new HashMap<>();
+    variables.put("greeting", "Hello");
+
+    String result = compiler.compile("-[[greeting]]-", variables);
 
     assertThat(result).isEqualTo("-Hello-");
   }
 
   @Test
   public void partials() throws IOException {
-    String result = compiler.compile("-[[>partial]] [[>partial]]-", ImmutableMap.<String, Object>of("name", "Bob"));
+    Map<String, Object> variables = new HashMap<>();
+    variables.put("name", "Bob");
+
+    String result = compiler.compile("-[[>partial]] [[>partial]]-", variables);
 
     assertThat(result).isEqualTo("-Hello Bob Hello Bob-");
+  }
+
+  @Test
+  public void string_helpers() throws IOException {
+    Map<String, Object> variables = new HashMap<>();
+    variables.put("name", "joe");
+
+    String result = compiler.compile("Hello [[capitalizeFirst name]]", variables);
+
+    assertThat(result).isEqualTo("Hello Joe");
   }
 }

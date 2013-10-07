@@ -18,22 +18,20 @@ package net.codestory.http.templating;
 import java.io.*;
 import java.util.*;
 
-import com.github.mustachejava.*;
+import com.github.jknack.handlebars.*;
+import com.github.jknack.handlebars.helper.*;
+import com.github.jknack.handlebars.io.*;
 
-public class MustacheCompiler {
+public class HandlebarsCompiler {
   public String compile(String template, Map<String, Object> variables) throws IOException {
-    DefaultMustacheFactory factory = new DefaultMustacheFactory() {
+    Handlebars handlebars = new Handlebars(new AbstractTemplateLoader() {
       @Override
-      public Reader getReader(String partialName) {
-        String partial = new Template("_includes/" + partialName).render(variables);
-        return new StringReader(partial);
+      public TemplateSource sourceAt(String location) {
+        return new StringTemplateSource(location, new Template("_includes/" + location).render(variables));
       }
-    };
+    });
+    StringHelpers.register(handlebars);
 
-    Mustache mustache = factory.compile(new StringReader(template), "", "[[", "]]");
-
-    StringWriter writer = new StringWriter();
-    mustache.execute(writer, variables);
-    return writer.toString();
+    return handlebars.compileInline(template, "[[", "]]").apply(variables);
   }
 }

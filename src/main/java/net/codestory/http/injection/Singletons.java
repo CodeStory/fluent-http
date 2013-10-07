@@ -18,13 +18,11 @@ package net.codestory.http.injection;
 import java.lang.reflect.*;
 import java.util.*;
 
-import com.google.common.collect.*;
-
 public class Singletons {
   private final Map<Class<?>, Object> singletons;
 
   public Singletons() {
-    this.singletons = Maps.newHashMap();
+    this.singletons = new HashMap<>();
   }
 
   public synchronized <T> T get(Class<T> type) {
