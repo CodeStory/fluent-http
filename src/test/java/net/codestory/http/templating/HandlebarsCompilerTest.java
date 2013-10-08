@@ -15,12 +15,13 @@
  */
 package net.codestory.http.templating;
 
-import static org.assertj.core.api.Assertions.*;
+import org.junit.Test;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.junit.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class HandlebarsCompilerTest {
   HandlebarsCompiler compiler = new HandlebarsCompiler();
@@ -53,5 +54,39 @@ public class HandlebarsCompilerTest {
     String result = compiler.compile("Hello [[capitalizeFirst name]]", variables);
 
     assertThat(result).isEqualTo("Hello Joe");
+  }
+
+  @Test
+  public void java_getters() throws IOException {
+    Map<String, Object> variables = new HashMap<>();
+    variables.put("bean", new JavaBean("Bob", 12));
+
+    String result = compiler.compile("[[bean.name]]", variables);
+
+    assertThat(result).isEqualTo("Bob");
+  }
+
+  @Test
+  public void java_fields() throws IOException {
+    Map<String, Object> variables = new HashMap<>();
+    variables.put("bean", new JavaBean("Bob", 12));
+
+    String result = compiler.compile("[[bean.age]]", variables);
+
+    assertThat(result).isEqualTo("12");
+  }
+
+  public static class JavaBean {
+    private final String name;
+    public final int age;
+
+    private JavaBean(String name, int age) {
+      this.name = name;
+      this.age = age;
+    }
+
+    public String getName() {
+      return name;
+    }
   }
 }

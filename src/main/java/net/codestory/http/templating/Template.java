@@ -15,16 +15,19 @@
  */
 package net.codestory.http.templating;
 
-import static java.nio.charset.StandardCharsets.*;
-
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
-import java.util.function.*;
-
 import net.codestory.http.compilers.Compiler;
-import net.codestory.http.io.*;
-import net.codestory.http.types.*;
+import net.codestory.http.io.Resources;
+import net.codestory.http.types.ContentTypes;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class Template {
   private final Path path;
@@ -78,23 +81,24 @@ public class Template {
   }
 
   public String render(Map<String, Object> keyValues) {
+    return render(new Site(), keyValues);
+  }
+
+  String render(Site site, Map<String, Object> keyValues) {
     try {
       String templateContent = Resources.read(path, UTF_8);
-
       YamlFrontMatter parsedTemplate = YamlFrontMatter.parse(templateContent);
-      Map<String, Object> globalVariables = loadGlobalVariables("_config.yml");
-      Map<String, Object> variables = parsedTemplate.getVariables();
-      Map<String, Object> allKeyValues = merge(globalVariables, variables, keyValues);
+      Map<String, Object> allKeyValues = merge(parsedTemplate.getVariables(), keyValues);
 
       String content = Compiler.compile(path, parsedTemplate.getContent());
-      String body = new HandlebarsCompiler().compile(content, allKeyValues);
+      String body = new HandlebarsCompiler().compile(content, site, allKeyValues);
 
-      String layout = (String) variables.get("layout");
+      String layout = (String) parsedTemplate.getVariables().get("layout");
       if (layout != null) {
         for (String extension : ContentTypes.TEMPLATE_EXTENSIONS) {
           Path layoutPath = Paths.get("_layouts", layout + extension);
           if (Resources.exists(layoutPath)) {
-            return new Template(layoutPath).render(allKeyValues).replace("[[body]]", body);
+            return new Template(layoutPath).render(site, allKeyValues).replace("[[body]]", body);
           }
         }
         throw new IllegalStateException("Unable to find layout: " + layout);
@@ -104,17 +108,6 @@ public class Template {
     } catch (IOException e) {
       throw new IllegalStateException("Unable to render template", e);
     }
-  }
-
-  @SuppressWarnings("unchecked")
-  private Map<String, Object> loadGlobalVariables(String configFile) throws IOException {
-    Path configPath = Paths.get(configFile);
-    if (!Resources.exists(configPath)) {
-      return new HashMap<>();
-    }
-
-    String config = Resources.read(configPath, UTF_8);
-    return new YamlParser().parse(config);
   }
 
   @SafeVarargs

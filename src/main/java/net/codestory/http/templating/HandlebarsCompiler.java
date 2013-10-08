@@ -15,23 +15,39 @@
  */
 package net.codestory.http.templating;
 
-import java.io.*;
-import java.util.*;
+import com.github.jknack.handlebars.Context;
+import com.github.jknack.handlebars.Handlebars;
+import com.github.jknack.handlebars.context.FieldValueResolver;
+import com.github.jknack.handlebars.context.JavaBeanValueResolver;
+import com.github.jknack.handlebars.context.MapValueResolver;
+import com.github.jknack.handlebars.helper.StringHelpers;
+import com.github.jknack.handlebars.io.AbstractTemplateLoader;
+import com.github.jknack.handlebars.io.StringTemplateSource;
+import com.github.jknack.handlebars.io.TemplateSource;
 
-import com.github.jknack.handlebars.*;
-import com.github.jknack.handlebars.helper.*;
-import com.github.jknack.handlebars.io.*;
+import java.io.IOException;
+import java.util.Map;
 
 public class HandlebarsCompiler {
   public String compile(String template, Map<String, Object> variables) throws IOException {
+    return compile(template, null, variables);
+  }
+
+  String compile(String template, Site site, Map<String, Object> variables) throws IOException {
     Handlebars handlebars = new Handlebars(new AbstractTemplateLoader() {
       @Override
       public TemplateSource sourceAt(String location) {
-        return new StringTemplateSource(location, new Template("_includes/" + location).render(variables));
+        return new StringTemplateSource(location, new Template("_includes/" + location).render(site, variables));
       }
     });
     StringHelpers.register(handlebars);
 
-    return handlebars.compileInline(template, "[[", "]]").apply(variables);
+    Context context = Context
+        .newBuilder(site)
+        .combine(variables)
+        .resolver(MapValueResolver.INSTANCE, JavaBeanValueResolver.INSTANCE, FieldValueResolver.INSTANCE)
+        .build();
+
+    return handlebars.compileInline(template, "[[", "]]").apply(context);
   }
 }
