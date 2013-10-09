@@ -18,37 +18,74 @@ package net.codestory.http.templating;
 import net.codestory.http.io.Resources;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class Site {
-  private Map<String, Object> values;
+	private Map<String, Object> yaml;
 
-  public Map<String, Object> getSite() {
-    if (values == null) {
-      values = new HashMap<>();
+	public Map<String, List<Map<String, Object>>> getTags() {
+		Map<String, List<Map<String, Object>>> byTag = new HashMap<>();
 
-      values.put("name", "toto");
-      values.putAll(loadYamlConfig("_config.yml"));
-    }
-    return values;
-  }
+		for (Map<String, Object> page : getPages()) {
+			if (page.containsKey("tags")) {
+				for (String tag : page.get("tags").toString().split(",")) {
+					byTag.computeIfAbsent(tag.trim(), key -> new ArrayList<Map<String, Object>>()).add(page);
+				}
+			}
+		}
 
-  @SuppressWarnings("unchecked")
-  private Map<String, Object> loadYamlConfig(String configFile) {
-    Path configPath = Paths.get(configFile);
-    if (!Resources.exists(configPath)) {
-      return new HashMap<>();
-    }
+		return byTag;
+	}
 
-    try {
-      return new YamlParser().parse(Resources.read(configPath, UTF_8));
-    } catch (IOException e) {
-      throw new IllegalStateException("Unable to read " + configFile, e);
-    }
-  }
+	public Map<String, List<Map<String, Object>>> getCategories() {
+		Map<String, List<Map<String, Object>>> byTag = new HashMap<>();
+
+		for (Map<String, Object> page : getPages()) {
+			if (page.containsKey("category")) {
+				byTag.computeIfAbsent(page.get("category").toString().trim(), key -> new ArrayList<Map<String, Object>>()).add(page);
+			}
+		}
+
+		return byTag;
+	}
+
+	public List<Map<String, Object>> getPages() {
+		return Resources.list().stream().map(path -> {
+			try {
+				return YamlFrontMatter.parse(Resources.read(Paths.get(path), StandardCharsets.UTF_8)).getVariables();
+			} catch (IOException e) {
+				throw new IllegalStateException("Unable to read file: " + path, e);
+			}
+		}).collect(Collectors.toList());
+	}
+
+	Map<String, Object> configYaml() {
+		if (yaml == null) {
+			yaml = loadYamlConfig("_config.yml");
+		}
+		return yaml;
+	}
+
+	@SuppressWarnings("unchecked")
+	private Map<String, Object> loadYamlConfig(String configFile) {
+		Path configPath = Paths.get(configFile);
+		if (!Resources.exists(configPath)) {
+			return new HashMap<>();
+		}
+
+		try {
+			return new YamlParser().parse(Resources.read(configPath, UTF_8));
+		} catch (IOException e) {
+			throw new IllegalStateException("Unable to read " + configFile, e);
+		}
+	}
 }

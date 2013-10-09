@@ -42,12 +42,26 @@ public class HandlebarsCompiler {
     });
     StringHelpers.register(handlebars);
 
-    Context context = Context
-        .newBuilder(site)
-        .combine(variables)
-        .resolver(MapValueResolver.INSTANCE, JavaBeanValueResolver.INSTANCE, FieldValueResolver.INSTANCE)
-        .build();
+    Context context;
+    if (site == null) {
+      context = context(null, variables).build();
+    } else {
+      Context contextSite = context(null, null).combine("site", site).build();
+      Context contextYaml = context(contextSite, null).combine("site", site.configYaml()).build();
+
+      context = context(contextYaml, variables).build();
+    }
 
     return handlebars.compileInline(template, "[[", "]]").apply(context);
+  }
+
+  private static Context.Builder context(Context parent, Object model) {
+    Context.Builder builder;
+    if (parent == null) {
+      builder = Context.newBuilder(model);
+    } else {
+      builder = Context.newBuilder(parent, model);
+    }
+    return builder.resolver(MapValueResolver.INSTANCE, JavaBeanValueResolver.INSTANCE, FieldValueResolver.INSTANCE);
   }
 }

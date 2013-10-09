@@ -15,118 +15,120 @@
  */
 package net.codestory.http.templating;
 
-import static org.assertj.core.api.Assertions.*;
+import org.junit.Test;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
-import org.junit.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class YamlFrontMatterTest {
-  @Test
-  public void should_read_empty_file() {
-    String content = content("");
+	@Test
+	public void should_read_empty_file() {
+		String content = content("");
 
-    YamlFrontMatter parsed = YamlFrontMatter.parse(content);
+		YamlFrontMatter parsed = YamlFrontMatter.parse(content);
 
-    assertThat(parsed.getContent()).isEmpty();
-    assertThat(parsed.getVariables()).isEmpty();
-  }
+		assertThat(parsed.getContent()).isEmpty();
+		assertThat(parsed.getVariables()).hasSize(1).containsEntry("content", "");
+	}
 
-  @Test
-  public void should_read_file_without_headers() {
-    String content = content("CONTENT");
+	@Test
+	public void should_read_file_without_headers() {
+		String content = content("CONTENT");
 
-    YamlFrontMatter parsed = YamlFrontMatter.parse(content);
+		YamlFrontMatter parsed = YamlFrontMatter.parse(content);
 
-    assertThat(parsed.getContent()).isEqualTo("CONTENT");
-    assertThat(parsed.getVariables()).isEmpty();
-  }
+		assertThat(parsed.getContent()).isEqualTo("CONTENT");
+		assertThat(parsed.getVariables()).hasSize(1).containsEntry("content", "CONTENT");
+	}
 
-  @Test
-  public void should_read_header_variables() {
-    String content = content(
-      "---",
-      "layout: standard",
-      "title: CodeStory - Devoxx Fight",
-      "---",
-      "CONTENT");
+	@Test
+	public void should_read_header_variables() {
+		String content = content(
+				"---",
+				"layout: standard",
+				"title: CodeStory - Devoxx Fight",
+				"---",
+				"BODY");
 
-    YamlFrontMatter parsed = YamlFrontMatter.parse(content);
+		YamlFrontMatter parsed = YamlFrontMatter.parse(content);
 
-    assertThat(parsed.getContent()).isEqualTo("CONTENT");
-    assertThat(parsed.getVariables())
-      .containsEntry("layout", "standard")
-      .containsEntry("title", "CodeStory - Devoxx Fight");
-  }
+		assertThat(parsed.getContent()).isEqualTo("BODY");
+		assertThat(parsed.getVariables())
+				.containsEntry("content", "BODY")
+				.containsEntry("layout", "standard")
+				.containsEntry("title", "CodeStory - Devoxx Fight");
+	}
 
-  @Test
-  public void should_ignore_commented_variable() {
-    String content = content(
-      "---",
-      "#layout: standard",
-      "title: CodeStory - Devoxx Fight",
-      "---",
-      "CONTENT");
+	@Test
+	public void should_ignore_commented_variable() {
+		String content = content(
+				"---",
+				"#layout: standard",
+				"title: CodeStory - Devoxx Fight",
+				"---",
+				"CONTENT");
 
-    YamlFrontMatter parsed = YamlFrontMatter.parse(content);
+		YamlFrontMatter parsed = YamlFrontMatter.parse(content);
 
-    assertThat(parsed.getVariables())
-      .doesNotContainEntry("layout", "standard")
-      .doesNotContainEntry("#layout", "standard")
-      .containsEntry("title", "CodeStory - Devoxx Fight");
-  }
+		assertThat(parsed.getVariables())
+				.doesNotContainEntry("layout", "standard")
+				.doesNotContainEntry("#layout", "standard")
+				.containsEntry("title", "CodeStory - Devoxx Fight");
+	}
 
-  @Test
-  public void escape_strings_with_quotes() {
-    String content = content(
-      "---",
-      "title: \'{{Code}} Fight by Code-Story\'",
-      "---",
-      "CONTENT");
+	@Test
+	public void escape_strings_with_quotes() {
+		String content = content(
+				"---",
+				"title: \'{{Code}} Fight by Code-Story\'",
+				"---",
+				"CONTENT");
 
-    YamlFrontMatter parsed = YamlFrontMatter.parse(content);
+		YamlFrontMatter parsed = YamlFrontMatter.parse(content);
 
-    assertThat(parsed.getVariables())
-      .containsEntry("title", "{{Code}} Fight by Code-Story");
-  }
+		assertThat(parsed.getVariables())
+				.containsEntry("title", "{{Code}} Fight by Code-Story");
+	}
 
-  @Test
-  public void complex_yaml() {
-    String content = content(
-      "---",
-      "products: ",
-      " - name: PROD1",
-      " - name: PROD2",
-      "---",
-      "CONTENT");
+	@Test
+	public void complex_yaml() {
+		String content = content(
+				"---",
+				"products: ",
+				" - name: PROD1",
+				" - name: PROD2",
+				"---",
+				"CONTENT");
 
-    YamlFrontMatter parsed = YamlFrontMatter.parse(content);
+		YamlFrontMatter parsed = YamlFrontMatter.parse(content);
 
-    @SuppressWarnings("unchecked")
-    List<Map<String, Object>> products = (List<Map<String, Object>>) parsed.getVariables().get("products");
-    assertThat(products).hasSize(2);
-    assertThat(products.get(0)).containsEntry("name", "PROD1");
-    assertThat(products.get(1)).containsEntry("name", "PROD2");
-  }
+		@SuppressWarnings("unchecked")
+		List<Map<String, Object>> products = (List<Map<String, Object>>) parsed.getVariables().get("products");
+		assertThat(products).hasSize(2);
+		assertThat(products.get(0)).containsEntry("name", "PROD1");
+		assertThat(products.get(1)).containsEntry("name", "PROD2");
+	}
 
-  @Test
-  public void ignore_dashes_in_content() {
-    String content = content(
-      "---",
-      "title: TITLE",
-      "---",
-      "START",
-      "---",
-      "END"
-    );
+	@Test
+	public void ignore_dashes_in_content() {
+		String content = content(
+				"---",
+				"title: TITLE",
+				"---",
+				"START",
+				"---",
+				"END"
+		);
 
-    YamlFrontMatter parsed = YamlFrontMatter.parse(content);
+		YamlFrontMatter parsed = YamlFrontMatter.parse(content);
 
-    assertThat(parsed.getContent()).isEqualTo("START\n---\nEND");
-    assertThat(parsed.getVariables()).containsEntry("title", "TITLE");
-  }
+		assertThat(parsed.getContent()).isEqualTo("START\n---\nEND");
+		assertThat(parsed.getVariables()).containsEntry("title", "TITLE");
+	}
 
-  static String content(String... lines) {
-    return String.join("\n", lines);
-  }
+	static String content(String... lines) {
+		return String.join("\n", lines);
+	}
 }

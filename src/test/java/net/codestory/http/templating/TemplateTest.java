@@ -46,6 +46,6 @@ public class TemplateTest {
 
   @Test
   public void site_variables() {
-    assertThat(new Template("useSiteVariables.html").render()).contains("Hello Bob, name: toto");
+    assertThat(new Template("useSiteVariables.html").render()).contains("Hello Bob");
   }
 }

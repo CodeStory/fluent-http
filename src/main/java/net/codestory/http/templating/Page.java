@@ -13,25 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.io;
+package net.codestory.http.templating;
 
-import org.junit.Test;
+import java.util.List;
 
-import java.nio.file.Paths;
+public class Page {
+  private final String name;
+  private final String category;
+  private final List<String> tags;
 
-import static org.assertj.core.api.Assertions.assertThat;
+  public Page(String name, String category, List<String> tags) {
+    this.name = name;
+    this.category = category;
+    this.tags = tags;
+  }
 
-public class ResourcesTest {
-	@Test
-	public void exists() {
-		assertThat(Resources.exists(Paths.get("index.html"))).isTrue();
-		assertThat(Resources.exists(Paths.get("js"))).isFalse();
-	}
+  public String getName() {
+    return name;
+  }
 
-	@Test
-	public void list() {
-		assertThat(Resources.list())
-				.contains("js/script.coffee", "test.html")
-				.doesNotContain("");
-	}
+  public String getCategory() {
+    return category;
+  }
+
+  public List<String> getTags() {
+    return tags;
+  }
 }

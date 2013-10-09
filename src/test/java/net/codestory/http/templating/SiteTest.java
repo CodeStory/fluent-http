@@ -13,25 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.io;
+package net.codestory.http.templating;
 
 import org.junit.Test;
 
-import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ResourcesTest {
+public class SiteTest {
+	Site site = new Site();
+
 	@Test
-	public void exists() {
-		assertThat(Resources.exists(Paths.get("index.html"))).isTrue();
-		assertThat(Resources.exists(Paths.get("js"))).isFalse();
+	public void pages() {
+		List<Map<String, Object>> pages = site.getPages();
+
+		assertThat(pages).hasSize(24);
 	}
 
 	@Test
-	public void list() {
-		assertThat(Resources.list())
-				.contains("js/script.coffee", "test.html")
-				.doesNotContain("");
+	public void tags() {
+		Map<String, List<Map<String, Object>>> tags = site.getTags();
+
+		assertThat(tags).hasSize(2);
+		assertThat(tags.get("scala")).hasSize(2);
+		assertThat(tags.get("java")).hasSize(1);
+	}
+
+	@Test
+	public void categories() {
+		Map<String, List<Map<String, Object>>> categories = site.getCategories();
+
+		assertThat(categories).hasSize(2);
+		assertThat(categories.get("post")).hasSize(1);
+		assertThat(categories.get("test")).hasSize(1);
 	}
 }

@@ -15,44 +15,47 @@
  */
 package net.codestory.http.templating;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import static net.codestory.http.io.Strings.*;
 
-import java.util.*;
-
 public class YamlFrontMatter {
-  private static final String SEPARATOR = "---\n";
+	private static final String SEPARATOR = "---\n";
 
-  private final String content;
-  private final Map<String, Object> variables;
+	private final String content;
+	private final Map<String, Object> variables;
 
-  private YamlFrontMatter(String content, Map<String, Object> variables) {
-    this.content = content;
-    this.variables = variables;
-  }
+	private YamlFrontMatter(String content, Map<String, Object> variables) {
+		this.content = content;
+		this.variables = new HashMap<>(variables);
+		this.variables.put("content", content);
+	}
 
-  public String getContent() {
-    return content;
-  }
+	public String getContent() {
+		return content;
+	}
 
-  public Map<String, Object> getVariables() {
-    return variables;
-  }
+	public Map<String, Object> getVariables() {
+		return variables;
+	}
 
-  public static YamlFrontMatter parse(String content) {
-    if (countMatches(content, SEPARATOR) < 2) {
-      return new YamlFrontMatter(content, Collections.emptyMap());
-    }
-    return new YamlFrontMatter(stripHeader(content), parseVariables(content));
-  }
+	public static YamlFrontMatter parse(String content) {
+		if (countMatches(content, SEPARATOR) < 2) {
+			return new YamlFrontMatter(content, Collections.emptyMap());
+		}
+		return new YamlFrontMatter(stripHeader(content), parseVariables(content));
+	}
 
-  private static String stripHeader(String content) {
-    return substringAfter(substringAfter(content, SEPARATOR), SEPARATOR);
-  }
+	private static String stripHeader(String content) {
+		return substringAfter(substringAfter(content, SEPARATOR), SEPARATOR);
+	}
 
-  @SuppressWarnings("unchecked")
-  private static Map<String, Object> parseVariables(String content) {
-    String header = substringBetween(content, SEPARATOR, SEPARATOR);
+	@SuppressWarnings("unchecked")
+	private static Map<String, Object> parseVariables(String content) {
+		String header = substringBetween(content, SEPARATOR, SEPARATOR);
 
-    return new YamlParser().parse(header);
-  }
+		return new YamlParser().parse(header);
+	}
 }
