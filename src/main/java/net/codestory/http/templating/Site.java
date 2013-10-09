@@ -40,10 +40,8 @@ public class Site {
 			tags = new HashMap<>();
 
 			for (Map<String, Object> page : getPages()) {
-				if (page.containsKey("tags")) {
-					for (String tag : page.get("tags").toString().split(",")) {
-						tags.computeIfAbsent(tag.trim(), key -> new ArrayList<Map<String, Object>>()).add(page);
-					}
+				for (String tag : tags(page)) {
+					tags.computeIfAbsent(tag, key -> new ArrayList<Map<String, Object>>()).add(page);
 				}
 			}
 		}
@@ -53,30 +51,32 @@ public class Site {
 
 	public Map<String, List<Map<String, Object>>> getCategories() {
 		if (categories == null) {
-			categories = new HashMap<>();
-
-			for (Map<String, Object> page : getPages()) {
-				if (page.containsKey("category")) {
-					categories.computeIfAbsent(page.get("category").toString().trim(), key -> new ArrayList<Map<String, Object>>()).add(page);
-				}
-			}
+			categories = getPages().stream().collect(Collectors.groupingBy(Site::category));
 		}
-
 		return categories;
 	}
 
 	public List<Map<String, Object>> getPages() {
 		if (pages == null) {
-			pages = Resources.list().stream().map(path -> {
-				try {
-					return YamlFrontMatter.parse(Resources.read(Paths.get(path), StandardCharsets.UTF_8)).getVariables();
-				} catch (IOException e) {
-					throw new IllegalStateException("Unable to read file: " + path, e);
-				}
-			}).collect(Collectors.toList());
+			pages = Resources.list().stream().map(Site::pathToMap).collect(Collectors.toList());
 		}
-
 		return pages;
+	}
+
+	private static Map<String, Object> pathToMap(String path) {
+		try {
+			return YamlFrontMatter.parse(Resources.read(Paths.get(path), StandardCharsets.UTF_8)).getVariables();
+		} catch (IOException e) {
+			throw new IllegalStateException("Unable to read file: " + path, e);
+		}
+	}
+
+	private static String category(Map<String, Object> page) {
+		return page.getOrDefault("category", "").toString().trim();
+	}
+
+	private static String[] tags(Map<String, Object> page) {
+		return page.getOrDefault("tags", "").toString().trim().split("\\s*,\\s*");
 	}
 
 	Map<String, Object> configYaml() {
