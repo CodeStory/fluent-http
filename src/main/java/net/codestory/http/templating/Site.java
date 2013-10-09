@@ -31,41 +31,52 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class Site {
 	private Map<String, Object> yaml;
+	private Map<String, List<Map<String, Object>>> tags;
+	private Map<String, List<Map<String, Object>>> categories;
+	private List<Map<String, Object>> pages;
 
 	public Map<String, List<Map<String, Object>>> getTags() {
-		Map<String, List<Map<String, Object>>> byTag = new HashMap<>();
+		if (tags == null) {
+			tags = new HashMap<>();
 
-		for (Map<String, Object> page : getPages()) {
-			if (page.containsKey("tags")) {
-				for (String tag : page.get("tags").toString().split(",")) {
-					byTag.computeIfAbsent(tag.trim(), key -> new ArrayList<Map<String, Object>>()).add(page);
+			for (Map<String, Object> page : getPages()) {
+				if (page.containsKey("tags")) {
+					for (String tag : page.get("tags").toString().split(",")) {
+						tags.computeIfAbsent(tag.trim(), key -> new ArrayList<Map<String, Object>>()).add(page);
+					}
 				}
 			}
 		}
 
-		return byTag;
+		return tags;
 	}
 
 	public Map<String, List<Map<String, Object>>> getCategories() {
-		Map<String, List<Map<String, Object>>> byTag = new HashMap<>();
+		if (categories == null) {
+			categories = new HashMap<>();
 
-		for (Map<String, Object> page : getPages()) {
-			if (page.containsKey("category")) {
-				byTag.computeIfAbsent(page.get("category").toString().trim(), key -> new ArrayList<Map<String, Object>>()).add(page);
+			for (Map<String, Object> page : getPages()) {
+				if (page.containsKey("category")) {
+					categories.computeIfAbsent(page.get("category").toString().trim(), key -> new ArrayList<Map<String, Object>>()).add(page);
+				}
 			}
 		}
 
-		return byTag;
+		return categories;
 	}
 
 	public List<Map<String, Object>> getPages() {
-		return Resources.list().stream().map(path -> {
-			try {
-				return YamlFrontMatter.parse(Resources.read(Paths.get(path), StandardCharsets.UTF_8)).getVariables();
-			} catch (IOException e) {
-				throw new IllegalStateException("Unable to read file: " + path, e);
-			}
-		}).collect(Collectors.toList());
+		if (pages == null) {
+			pages = Resources.list().stream().map(path -> {
+				try {
+					return YamlFrontMatter.parse(Resources.read(Paths.get(path), StandardCharsets.UTF_8)).getVariables();
+				} catch (IOException e) {
+					throw new IllegalStateException("Unable to read file: " + path, e);
+				}
+			}).collect(Collectors.toList());
+		}
+
+		return pages;
 	}
 
 	Map<String, Object> configYaml() {
