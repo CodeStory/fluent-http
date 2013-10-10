@@ -25,9 +25,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -45,8 +44,13 @@ public class Resources {
 			new Reflections(ROOT, new ResourcesScanner()).getResources(name -> true)
 					.forEach(resource -> paths.add(relativeName(resource)));
 
-			Files.walk(Paths.get(ROOT)).filter(path -> !path.toFile().isDirectory())
-					.forEach(path -> paths.add(relativeName(path.toString())));
+			Files.walkFileTree(Paths.get(ROOT), new SimpleFileVisitor<Path>() {
+				@Override
+				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+					paths.add(relativeName(file.toString()));
+					return FileVisitResult.CONTINUE;
+				}
+			});
 		} catch (IOException e) {
 			// Ignore
 		}
