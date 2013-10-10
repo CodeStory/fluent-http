@@ -26,10 +26,24 @@ import java.util.stream.Collectors;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class Site {
+	private static Site INSTANCE = new Site();
+
 	private Map<String, Object> yaml;
 	private Map<String, List<Map<String, Object>>> tags;
 	private Map<String, List<Map<String, Object>>> categories;
 	private List<Map<String, Object>> pages;
+
+	private Site() {
+		// Private constructor
+	}
+
+	public static Site get() {
+		if (Boolean.getBoolean("PROD_MODE")) {
+			return INSTANCE;
+		}
+
+		return new Site();
+	}
 
 	public Map<String, List<Map<String, Object>>> getTags() {
 		if (tags == null) {

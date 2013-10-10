@@ -23,7 +23,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SiteTest {
-	Site site = new Site();
+	Site site = Site.get();
 
 	@Test
 	public void pages() {

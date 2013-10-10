@@ -81,7 +81,7 @@ public class Template {
 	}
 
 	public String render(Map<String, Object> keyValues) {
-		return render(new Site(), keyValues);
+		return render(Site.get(), keyValues);
 	}
 
 	String render(Site site, Map<String, Object> keyValues) {
