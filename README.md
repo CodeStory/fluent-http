@@ -4,9 +4,7 @@
  + Gestion des imports less qui doivent etre faits cote serveur pour fonctionner
  + Supporter les coffee et less pré-générés
  + Supporter les templates pré-générés
- + Use file structure as yaml
- + Set ContenType on xmls using yaml
- + Déployer sur maven central
+ + Set ContenType on xml using yaml
  + Query params
  + Page 500 (bug photo)
  + Access yaml on server side
