@@ -25,6 +25,7 @@ import com.github.jknack.handlebars.io.AbstractTemplateLoader;
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
 import net.codestory.http.templating.helpers.EachReverseHelper;
+import net.codestory.http.templating.helpers.EachValueHelperSource;
 
 import java.io.IOException;
 import java.util.Map;
@@ -51,15 +52,16 @@ public class HandlebarsCompiler {
 	}
 
 	private static Handlebars createHandlebars(Site site, Map<String, Object> variables) {
-		Handlebars handlebars = new Handlebars(new AbstractTemplateLoader() {
-			@Override
-			public TemplateSource sourceAt(String location) {
-				return new StringTemplateSource(location, new Template("_includes/" + location).render(site, variables));
-			}
-		});
-		StringHelpers.register(handlebars);
-		handlebars.registerHelper(EachReverseHelper.NAME, EachReverseHelper.INSTANCE);
-		return handlebars;
+		return new Handlebars()
+				.registerHelper(EachReverseHelper.NAME, EachReverseHelper.INSTANCE)
+				.registerHelpers(new EachValueHelperSource())
+				.registerHelpers(StringHelpers.class)
+				.with(new AbstractTemplateLoader() {
+					@Override
+					public TemplateSource sourceAt(String location) {
+						return new StringTemplateSource(location, new Template("_includes/" + location).render(site, variables));
+					}
+				});
 	}
 
 	private static Context.Builder context(Context parent, Object model) {

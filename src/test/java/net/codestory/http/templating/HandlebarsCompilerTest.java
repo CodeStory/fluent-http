@@ -69,6 +69,39 @@ public class HandlebarsCompilerTest {
 		assertThat(result).isEqualTo("BA");
 	}
 
+	@Test
+	public void values_by_key() throws IOException {
+		Map<String, Object> variables = new HashMap<>();
+		variables.put("letters", asList("A", "B"));
+		variables.put("descriptions", new HashMap<String, Object>() {{
+			put("A", "Letter A");
+			put("B", "Letter B");
+			put("C", "Letter C");
+		}});
+
+		String result = compiler.compile("[[#each_value descriptions letters]][[@key]]=[[.]][[/each_value]]", variables);
+
+		assertThat(result).isEqualTo("A=Letter AB=Letter B");
+	}
+
+	@Test
+	public void values_by_hash_key() throws IOException {
+		Map<String, Object> variables = new HashMap<>();
+		variables.put("letters", new HashMap<String, Object>() {{
+			put("A", map("id", "idA"));
+			put("B", map("id", "idB"));
+		}});
+		variables.put("descriptions", new HashMap<String, Object>() {{
+			put("A", "Description A");
+			put("B", "Description B");
+			put("C", "Description C");
+		}});
+
+		String result = compiler.compile("[[#each_value descriptions letters]][[@value.id]]=[[.]][[/each_value]]", variables);
+
+		assertThat(result).isEqualTo("idA=Description AidB=Description B");
+	}
+
 	private static Map<String, Object> map(String key, Object value) {
 		return new HashMap<String, Object>() {{
 			put(key, value);

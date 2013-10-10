@@ -29,15 +29,14 @@ public class EachReverseHelper implements Helper<Object> {
 	public static final Helper<Object> INSTANCE = new EachReverseHelper();
 	public static final String NAME = "each_reverse";
 
-	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Override
 	public CharSequence apply(Object context, Options options) throws IOException {
 		if (context == null) {
 			return StringUtils.EMPTY;
 		}
 
-		return (context instanceof Iterable)
-				? iterableContext((Iterable) context, options)
+		return (context instanceof Iterable<?>)
+				? iterableContext((Iterable<?>) context, options)
 				: hashContext(context, options);
 	}
 
@@ -55,14 +54,14 @@ public class EachReverseHelper implements Helper<Object> {
 		return buffer.toString();
 	}
 
-	private CharSequence iterableContext(Iterable<Object> context, Options options) throws IOException {
+	private CharSequence iterableContext(Iterable<?> context, Options options) throws IOException {
 		if (options.isFalsy(context)) {
 			return options.inverse();
 		}
 
 		StringBuilder buffer = new StringBuilder();
 
-		Iterator<Object> iterator = reverse(context);
+		Iterator<?> iterator = reverse(context);
 		int index = 0;
 		Context parent = options.context;
 		while (iterator.hasNext()) {
