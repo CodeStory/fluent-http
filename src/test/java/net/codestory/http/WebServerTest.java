@@ -21,7 +21,9 @@ import net.codestory.http.annotations.Post;
 import net.codestory.http.templating.Template;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 
 import java.io.ByteArrayInputStream;
 
@@ -38,6 +40,9 @@ public class WebServerTest {
 			return false;
 		}
 	};
+
+	@ClassRule
+	public static RestoreSystemProperties systemProperties = new RestoreSystemProperties("PROD_MODE");
 
 	@BeforeClass
 	public static void startServer() {
