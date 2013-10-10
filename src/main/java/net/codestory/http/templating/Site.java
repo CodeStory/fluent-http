@@ -18,13 +18,9 @@ package net.codestory.http.templating;
 import net.codestory.http.io.Resources;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -37,7 +33,7 @@ public class Site {
 
 	public Map<String, List<Map<String, Object>>> getTags() {
 		if (tags == null) {
-			tags = new HashMap<>();
+			tags = new TreeMap<>();
 
 			for (Map<String, Object> page : getPages()) {
 				for (String tag : tags(page)) {
@@ -51,7 +47,8 @@ public class Site {
 
 	public Map<String, List<Map<String, Object>>> getCategories() {
 		if (categories == null) {
-			categories = getPages().stream().collect(Collectors.groupingBy(Site::category));
+			Map<String, List<Map<String, Object>>> notSorted = getPages().stream().collect(Collectors.groupingBy(Site::category));
+			categories = new TreeMap<>(notSorted);
 		}
 		return categories;
 	}
@@ -65,7 +62,7 @@ public class Site {
 
 	private static Map<String, Object> pathToMap(String path) {
 		try {
-			return YamlFrontMatter.parse(Resources.read(Paths.get(path), StandardCharsets.UTF_8)).getVariables();
+			return YamlFrontMatter.parse(Paths.get(path)).getVariables();
 		} catch (IOException e) {
 			throw new IllegalStateException("Unable to read file: " + path, e);
 		}

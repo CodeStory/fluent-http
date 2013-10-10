@@ -21,72 +21,71 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class HandlebarsCompilerTest {
-  HandlebarsCompiler compiler = new HandlebarsCompiler();
+	HandlebarsCompiler compiler = new HandlebarsCompiler();
 
-  @Test
-  public void compile() throws IOException {
-    Map<String, Object> variables = new HashMap<>();
-    variables.put("greeting", "Hello");
+	@Test
+	public void compile() throws IOException {
+		String result = compiler.compile("-[[greeting]]-", map("greeting", "Hello"));
 
-    String result = compiler.compile("-[[greeting]]-", variables);
+		assertThat(result).isEqualTo("-Hello-");
+	}
 
-    assertThat(result).isEqualTo("-Hello-");
-  }
+	@Test
+	public void partials() throws IOException {
+		String result = compiler.compile("-[[>partial]] [[>partial]]-", map("name", "Bob"));
 
-  @Test
-  public void partials() throws IOException {
-    Map<String, Object> variables = new HashMap<>();
-    variables.put("name", "Bob");
+		assertThat(result).isEqualTo("-Hello Bob Hello Bob-");
+	}
 
-    String result = compiler.compile("-[[>partial]] [[>partial]]-", variables);
+	@Test
+	public void string_helpers() throws IOException {
+		String result = compiler.compile("Hello [[capitalizeFirst name]]", map("name", "joe"));
 
-    assertThat(result).isEqualTo("-Hello Bob Hello Bob-");
-  }
+		assertThat(result).isEqualTo("Hello Joe");
+	}
 
-  @Test
-  public void string_helpers() throws IOException {
-    Map<String, Object> variables = new HashMap<>();
-    variables.put("name", "joe");
+	@Test
+	public void java_getters_and_fields() throws IOException {
+		String result = compiler.compile("[[bean.name]] is [[bean.age]]", map("bean", new JavaBean("Bob", 12)));
 
-    String result = compiler.compile("Hello [[capitalizeFirst name]]", variables);
+		assertThat(result).isEqualTo("Bob is 12");
+	}
 
-    assertThat(result).isEqualTo("Hello Joe");
-  }
+	@Test
+	public void each() throws IOException {
+		String result = compiler.compile("[[#each list]][[.]][[/each]]", map("list", asList("A", "B")));
 
-  @Test
-  public void java_getters() throws IOException {
-    Map<String, Object> variables = new HashMap<>();
-    variables.put("bean", new JavaBean("Bob", 12));
+		assertThat(result).isEqualTo("AB");
+	}
 
-    String result = compiler.compile("[[bean.name]]", variables);
+	@Test
+	public void each_reverse() throws IOException {
+		String result = compiler.compile("[[#each_reverse list]][[.]][[/each_reverse]]", map("list", asList("A", "B")));
 
-    assertThat(result).isEqualTo("Bob");
-  }
+		assertThat(result).isEqualTo("BA");
+	}
 
-  @Test
-  public void java_fields() throws IOException {
-    Map<String, Object> variables = new HashMap<>();
-    variables.put("bean", new JavaBean("Bob", 12));
+	private static Map<String, Object> map(String key, Object value) {
+		return new HashMap<String, Object>() {{
+			put(key, value);
+		}};
+	}
 
-    String result = compiler.compile("[[bean.age]]", variables);
+	public static class JavaBean {
+		private final String name;
+		public final int age;
 
-    assertThat(result).isEqualTo("12");
-  }
+		private JavaBean(String name, int age) {
+			this.name = name;
+			this.age = age;
+		}
 
-  public static class JavaBean {
-    private final String name;
-    public final int age;
-
-    private JavaBean(String name, int age) {
-      this.name = name;
-      this.age = age;
-    }
-
-    public String getName() {
-      return name;
-    }
-  }
+		public String getName() {
+			return name;
+		}
+	}
 }

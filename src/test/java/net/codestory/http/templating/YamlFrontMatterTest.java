@@ -27,8 +27,9 @@ public class YamlFrontMatterTest {
 	public void should_read_empty_file() {
 		String content = content("");
 
-		YamlFrontMatter parsed = YamlFrontMatter.parse(content);
+		YamlFrontMatter parsed = YamlFrontMatter.parse("empty", content);
 
+		assertThat(parsed.getName()).isEqualTo("empty");
 		assertThat(parsed.getContent()).isEmpty();
 		assertThat(parsed.getVariables()).hasSize(1).containsEntry("content", "");
 	}
@@ -37,8 +38,9 @@ public class YamlFrontMatterTest {
 	public void should_read_file_without_headers() {
 		String content = content("CONTENT");
 
-		YamlFrontMatter parsed = YamlFrontMatter.parse(content);
+		YamlFrontMatter parsed = YamlFrontMatter.parse("name", content);
 
+		assertThat(parsed.getName()).isEqualTo("name");
 		assertThat(parsed.getContent()).isEqualTo("CONTENT");
 		assertThat(parsed.getVariables()).hasSize(1).containsEntry("content", "CONTENT");
 	}
@@ -52,7 +54,7 @@ public class YamlFrontMatterTest {
 				"---",
 				"BODY");
 
-		YamlFrontMatter parsed = YamlFrontMatter.parse(content);
+		YamlFrontMatter parsed = YamlFrontMatter.parse("", content);
 
 		assertThat(parsed.getContent()).isEqualTo("BODY");
 		assertThat(parsed.getVariables())
@@ -70,7 +72,7 @@ public class YamlFrontMatterTest {
 				"---",
 				"CONTENT");
 
-		YamlFrontMatter parsed = YamlFrontMatter.parse(content);
+		YamlFrontMatter parsed = YamlFrontMatter.parse("", content);
 
 		assertThat(parsed.getVariables())
 				.doesNotContainEntry("layout", "standard")
@@ -86,7 +88,7 @@ public class YamlFrontMatterTest {
 				"---",
 				"CONTENT");
 
-		YamlFrontMatter parsed = YamlFrontMatter.parse(content);
+		YamlFrontMatter parsed = YamlFrontMatter.parse("", content);
 
 		assertThat(parsed.getVariables())
 				.containsEntry("title", "{{Code}} Fight by Code-Story");
@@ -102,7 +104,7 @@ public class YamlFrontMatterTest {
 				"---",
 				"CONTENT");
 
-		YamlFrontMatter parsed = YamlFrontMatter.parse(content);
+		YamlFrontMatter parsed = YamlFrontMatter.parse("", content);
 
 		@SuppressWarnings("unchecked")
 		List<Map<String, Object>> products = (List<Map<String, Object>>) parsed.getVariables().get("products");
@@ -122,7 +124,7 @@ public class YamlFrontMatterTest {
 				"END"
 		);
 
-		YamlFrontMatter parsed = YamlFrontMatter.parse(content);
+		YamlFrontMatter parsed = YamlFrontMatter.parse("", content);
 
 		assertThat(parsed.getContent()).isEqualTo("START\n---\nEND");
 		assertThat(parsed.getVariables()).containsEntry("title", "TITLE");

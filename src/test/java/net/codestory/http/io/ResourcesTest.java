@@ -18,6 +18,8 @@ package net.codestory.http.io;
 import org.junit.Test;
 
 import java.nio.file.Paths;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,5 +35,13 @@ public class ResourcesTest {
 		assertThat(Resources.list())
 				.contains("js/script.coffee", "test.html")
 				.doesNotContain("");
+	}
+
+	@Test
+	public void ordered() {
+		Set<String> list = Resources.list();
+		Set<String> ordered = new TreeSet<>(list);
+
+		assertThat(list).isEqualTo(ordered);
 	}
 }

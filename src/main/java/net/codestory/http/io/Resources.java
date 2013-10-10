@@ -28,8 +28,8 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class Resources {
 	private static final String ROOT = "app";
@@ -39,18 +39,14 @@ public class Resources {
 	}
 
 	public static Set<String> list() {
-		Set<String> paths = new HashSet<>();
-
-		for (String resource : new Reflections(ROOT, new ResourcesScanner()).getResources(name -> true)) {
-			paths.add(Strings.substringAfter(resource, ROOT + '/'));
-		}
+		Set<String> paths = new TreeSet<>();
 
 		try {
-			Files.walk(Paths.get(ROOT)).forEach(path -> {
-				if (!path.toFile().isDirectory()) {
-					paths.add(Strings.substringAfter(path.toString(), ROOT + '/'));
-				}
-			});
+			new Reflections(ROOT, new ResourcesScanner()).getResources(name -> true)
+					.forEach(resource -> paths.add(relativeName(resource)));
+
+			Files.walk(Paths.get(ROOT)).filter(path -> !path.toFile().isDirectory())
+					.forEach(path -> paths.add(relativeName(path.toString())));
 		} catch (IOException e) {
 			// Ignore
 		}
@@ -58,6 +54,10 @@ public class Resources {
 		paths.remove("");
 
 		return paths;
+	}
+
+	private static String relativeName(String path) {
+		return Strings.substringAfter(path, ROOT + '/');
 	}
 
 	public static boolean exists(Path path) {

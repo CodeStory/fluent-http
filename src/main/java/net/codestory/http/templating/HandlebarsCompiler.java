@@ -24,44 +24,51 @@ import com.github.jknack.handlebars.helper.StringHelpers;
 import com.github.jknack.handlebars.io.AbstractTemplateLoader;
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
+import net.codestory.http.templating.helpers.EachReverseHelper;
 
 import java.io.IOException;
 import java.util.Map;
 
 public class HandlebarsCompiler {
-  public String compile(String template, Map<String, Object> variables) throws IOException {
-    return compile(template, null, variables);
-  }
+	public String compile(String template, Map<String, Object> variables) throws IOException {
+		return compile(template, null, variables);
+	}
 
-  String compile(String template, Site site, Map<String, Object> variables) throws IOException {
-    Handlebars handlebars = new Handlebars(new AbstractTemplateLoader() {
-      @Override
-      public TemplateSource sourceAt(String location) {
-        return new StringTemplateSource(location, new Template("_includes/" + location).render(site, variables));
-      }
-    });
-    StringHelpers.register(handlebars);
+	String compile(String template, Site site, Map<String, Object> variables) throws IOException {
+		Handlebars handlebars = createHandlebars(site, variables);
 
-    Context context;
-    if (site == null) {
-      context = context(null, variables).build();
-    } else {
-      Context contextSite = context(null, null).combine("site", site).build();
-      Context contextYaml = context(contextSite, null).combine("site", site.configYaml()).build();
+		Context context;
+		if (site == null) {
+			context = context(null, variables).build();
+		} else {
+			Context contextSite = context(null, null).combine("site", site).build();
+			Context contextYaml = context(contextSite, null).combine("site", site.configYaml()).build();
 
-      context = context(contextYaml, variables).build();
-    }
+			context = context(contextYaml, variables).build();
+		}
 
-    return handlebars.compileInline(template, "[[", "]]").apply(context);
-  }
+		return handlebars.compileInline(template, "[[", "]]").apply(context);
+	}
 
-  private static Context.Builder context(Context parent, Object model) {
-    Context.Builder builder;
-    if (parent == null) {
-      builder = Context.newBuilder(model);
-    } else {
-      builder = Context.newBuilder(parent, model);
-    }
-    return builder.resolver(MapValueResolver.INSTANCE, JavaBeanValueResolver.INSTANCE, FieldValueResolver.INSTANCE);
-  }
+	private static Handlebars createHandlebars(Site site, Map<String, Object> variables) {
+		Handlebars handlebars = new Handlebars(new AbstractTemplateLoader() {
+			@Override
+			public TemplateSource sourceAt(String location) {
+				return new StringTemplateSource(location, new Template("_includes/" + location).render(site, variables));
+			}
+		});
+		StringHelpers.register(handlebars);
+		handlebars.registerHelper(EachReverseHelper.NAME, EachReverseHelper.INSTANCE);
+		return handlebars;
+	}
+
+	private static Context.Builder context(Context parent, Object model) {
+		Context.Builder builder;
+		if (parent == null) {
+			builder = Context.newBuilder(model);
+		} else {
+			builder = Context.newBuilder(parent, model);
+		}
+		return builder.resolver(MapValueResolver.INSTANCE, JavaBeanValueResolver.INSTANCE, FieldValueResolver.INSTANCE);
+	}
 }

@@ -254,7 +254,7 @@ public class WebServerTest {
 
 	@Test
 	public void site_variables() {
-		expect().content(containsString("<p>\njava, scala\n\nscala\n</p>\n<p>\nscala\n</p>")).when().get("/testTags");
+		expect().content(containsString("<p>\nscala\n\njava, scala\n</p>\n<p>\nscala\n</p>")).when().get("/testTags");
 	}
 
 	static class TestResource {

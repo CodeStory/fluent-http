@@ -15,6 +15,11 @@
  */
 package net.codestory.http.templating;
 
+import net.codestory.http.io.Resources;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,13 +29,19 @@ import static net.codestory.http.io.Strings.*;
 public class YamlFrontMatter {
 	private static final String SEPARATOR = "---\n";
 
+	private final String name;
 	private final String content;
 	private final Map<String, Object> variables;
 
-	private YamlFrontMatter(String content, Map<String, Object> variables) {
+	private YamlFrontMatter(String name, String content, Map<String, Object> variables) {
+		this.name = name;
 		this.content = content;
 		this.variables = new HashMap<>(variables);
 		this.variables.put("content", content);
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	public String getContent() {
@@ -41,11 +52,15 @@ public class YamlFrontMatter {
 		return variables;
 	}
 
-	public static YamlFrontMatter parse(String content) {
+	public static YamlFrontMatter parse(Path path) throws IOException {
+		return parse(path.getFileName().toString(), Resources.read(path, StandardCharsets.UTF_8));
+	}
+
+	public static YamlFrontMatter parse(String name, String content) {
 		if (countMatches(content, SEPARATOR) < 2) {
-			return new YamlFrontMatter(content, Collections.emptyMap());
+			return new YamlFrontMatter(name, content, Collections.emptyMap());
 		}
-		return new YamlFrontMatter(stripHeader(content), parseVariables(content));
+		return new YamlFrontMatter(name, stripHeader(content), parseVariables(content));
 	}
 
 	private static String stripHeader(String content) {
