@@ -20,6 +20,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -71,9 +72,9 @@ public class HandlebarsCompilerTest {
 
 	@Test
 	public void values_by_key() throws IOException {
-		Map<String, Object> variables = new HashMap<>();
+		Map<String, Object> variables = new TreeMap<>();
 		variables.put("letters", asList("A", "B"));
-		variables.put("descriptions", new HashMap<String, Object>() {{
+		variables.put("descriptions", new TreeMap<String, Object>() {{
 			put("A", "Letter A");
 			put("B", "Letter B");
 			put("C", "Letter C");
@@ -86,12 +87,12 @@ public class HandlebarsCompilerTest {
 
 	@Test
 	public void values_by_hash_key() throws IOException {
-		Map<String, Object> variables = new HashMap<>();
-		variables.put("letters", new HashMap<String, Object>() {{
+		Map<String, Object> variables = new TreeMap<>();
+		variables.put("letters", new TreeMap<String, Object>() {{
 			put("A", map("id", "idA"));
 			put("B", map("id", "idB"));
 		}});
-		variables.put("descriptions", new HashMap<String, Object>() {{
+		variables.put("descriptions", new TreeMap<String, Object>() {{
 			put("A", "Description A");
 			put("B", "Description B");
 			put("C", "Description C");
@@ -103,7 +104,7 @@ public class HandlebarsCompilerTest {
 	}
 
 	private static Map<String, Object> map(String key, Object value) {
-		return new HashMap<String, Object>() {{
+		return new TreeMap<String, Object>() {{
 			put(key, value);
 		}};
 	}
