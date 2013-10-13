@@ -94,6 +94,14 @@ public class WebServerTest {
 	}
 
 	@Test
+	public void query_params() {
+		server.configure(routes -> routes.get("/hello?name=:name", (name) -> "Hello " + name));
+
+		expect().body(equalTo("Hello Dave")).when().get("/hello?name=Dave");
+		expect().body(equalTo("Hello Bob")).when().get("/hello?name=Bob");
+	}
+
+	@Test
 	public void static_content_from_classpath() {
 		expect().content(containsString("Hello From a File")).contentType("text/html").when().get("/index.html");
 		expect().content(containsString("Hello From a File")).contentType("text/html").when().get("/");

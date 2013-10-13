@@ -15,159 +15,169 @@
  */
 package net.codestory.http.routes;
 
-import static net.codestory.http.UriParser.*;
-import static net.codestory.http.routes.Match.*;
-
-import java.io.*;
-import java.lang.reflect.*;
-import java.util.*;
-
-import net.codestory.http.*;
-import net.codestory.http.annotations.*;
+import com.sun.net.httpserver.HttpExchange;
+import net.codestory.http.Payload;
+import net.codestory.http.annotations.Get;
+import net.codestory.http.annotations.Post;
 import net.codestory.http.filters.Filter;
 
-import com.sun.net.httpserver.*;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.List;
+
+import static net.codestory.http.UriParser.paramsCount;
+import static net.codestory.http.routes.Match.OK;
+import static net.codestory.http.routes.Match.WRONG_URL;
 
 public class RouteCollection implements Routes {
-  private final Deque<Route> routes;
-  private final Deque<Filter> filters;
+	private final Deque<Route> routes;
+	private final Deque<Filter> filters;
 
-  public RouteCollection() {
-    this.routes = new LinkedList<>();
-    this.filters = new LinkedList<>();
-  }
+	public RouteCollection() {
+		this.routes = new LinkedList<>();
+		this.filters = new LinkedList<>();
+	}
 
-  @Override
-  public void add(Object resource) {
-    add("", resource);
-  }
+	@Override
+	public void add(Object resource) {
+		add("", resource);
+	}
 
-  @Override
-  public void add(String urlPrefix, Object resource) {
-    // Hack to support Mockito Spies
-    Class<?> type = resource.getClass();
-    if (resource.getClass().getName().contains("EnhancerByMockito")) {
-      type = type.getSuperclass();
-    }
+	@Override
+	public void add(String urlPrefix, Object resource) {
+		// Hack to support Mockito Spies
+		Class<?> type = resource.getClass();
+		if (resource.getClass().getName().contains("EnhancerByMockito")) {
+			type = type.getSuperclass();
+		}
 
-    for (Method method : type.getMethods()) {
-      int parameterCount = method.getParameterCount();
+		for (Method method : type.getMethods()) {
+			int parameterCount = method.getParameterCount();
 
-      for (Get get : method.getDeclaredAnnotationsByType(Get.class)) {
-        String uriPattern = urlPrefix + get.value();
+			for (Get get : method.getDeclaredAnnotationsByType(Get.class)) {
+				String uriPattern = urlPrefix + get.value();
 
-        add("GET", checkParametersCount(uriPattern, parameterCount), new ReflectionRoute(resource, method));
-      }
+				add("GET", checkParametersCount(uriPattern, parameterCount), new ReflectionRoute(resource, method));
+			}
 
-      for (Post post : method.getDeclaredAnnotationsByType(Post.class)) {
-        String uriPattern = urlPrefix + post.value();
+			for (Post post : method.getDeclaredAnnotationsByType(Post.class)) {
+				String uriPattern = urlPrefix + post.value();
 
-        add("POST", checkParametersCount(uriPattern, parameterCount), new ReflectionRoute(resource, method));
-      }
-    }
-  }
+				add("POST", checkParametersCount(uriPattern, parameterCount), new ReflectionRoute(resource, method));
+			}
+		}
+	}
 
-  @Override
-  public void get(String uriPattern, Payload payload) {
-    get(uriPattern, () -> payload);
-  }
+	@Override
+	public void get(String uriPattern, Payload payload) {
+		get(uriPattern, () -> payload);
+	}
 
-  @Override
-  public void get(String uriPattern, NoParamRoute noParamRoute) {
-    add("GET", checkParametersCount(uriPattern, 0), noParamRoute);
-  }
+	@Override
+	public void get(String uriPattern, NoParamRoute noParamRoute) {
+		add("GET", checkParametersCount(uriPattern, 0), noParamRoute);
+	}
 
-  @Override
-  public void get(String uriPattern, OneParamRoute route) {
-    add("GET", checkParametersCount(uriPattern, 1), route);
-  }
+	@Override
+	public void get(String uriPattern, OneParamRoute route) {
+		add("GET", checkParametersCount(uriPattern, 1), route);
+	}
 
-  @Override
-  public void get(String uriPattern, TwoParamsRoute route) {
-    add("GET", checkParametersCount(uriPattern, 2), route);
-  }
+	@Override
+	public void get(String uriPattern, TwoParamsRoute route) {
+		add("GET", checkParametersCount(uriPattern, 2), route);
+	}
 
-  @Override
-  public void get(String uriPattern, ThreeParamsRoute route) {
-    add("GET", checkParametersCount(uriPattern, 3), route);
-  }
+	@Override
+	public void get(String uriPattern, ThreeParamsRoute route) {
+		add("GET", checkParametersCount(uriPattern, 3), route);
+	}
 
-  @Override
-  public void get(String uriPattern, FourParamsRoute route) {
-    add("GET", checkParametersCount(uriPattern, 4), route);
-  }
+	@Override
+	public void get(String uriPattern, FourParamsRoute route) {
+		add("GET", checkParametersCount(uriPattern, 4), route);
+	}
 
-  @Override
-  public void post(String uriPattern, NoParamRoute noParamRoute) {
-    add("POST", checkParametersCount(uriPattern, 0), noParamRoute);
-  }
+	@Override
+	public void post(String uriPattern, NoParamRoute noParamRoute) {
+		add("POST", checkParametersCount(uriPattern, 0), noParamRoute);
+	}
 
-  @Override
-  public void post(String uriPattern, OneParamRoute route) {
-    add("POST", checkParametersCount(uriPattern, 1), route);
-  }
+	@Override
+	public void post(String uriPattern, OneParamRoute route) {
+		add("POST", checkParametersCount(uriPattern, 1), route);
+	}
 
-  @Override
-  public void post(String uriPattern, TwoParamsRoute route) {
-    add("POST", checkParametersCount(uriPattern, 2), route);
-  }
+	@Override
+	public void post(String uriPattern, TwoParamsRoute route) {
+		add("POST", checkParametersCount(uriPattern, 2), route);
+	}
 
-  @Override
-  public void post(String uriPattern, ThreeParamsRoute route) {
-    add("POST", checkParametersCount(uriPattern, 3), route);
-  }
+	@Override
+	public void post(String uriPattern, ThreeParamsRoute route) {
+		add("POST", checkParametersCount(uriPattern, 3), route);
+	}
 
-  @Override
-  public void post(String uriPattern, FourParamsRoute route) {
-    add("POST", checkParametersCount(uriPattern, 4), route);
-  }
+	@Override
+	public void post(String uriPattern, FourParamsRoute route) {
+		add("POST", checkParametersCount(uriPattern, 4), route);
+	}
 
-  @Override
-  public void filter(Filter filter) {
-    filters.addLast(filter);
-  }
+	@Override
+	public void filter(Filter filter) {
+		filters.addLast(filter);
+	}
 
-  public void reset() {
-    routes.clear();
-    filters.clear();
-  }
+	public void reset() {
+		routes.clear();
+		filters.clear();
+	}
 
-  private void add(String method, String uriPattern, AnyRoute route) {
-    routes.addFirst(new RouteWrapper(method, uriPattern, route));
-  }
+	private void add(String method, String uriPattern, AnyRoute route) {
+		routes.addFirst(new RouteWrapper(method, uriPattern, route));
+	}
 
-  public Match apply(HttpExchange exchange) throws IOException {
-    String uri = exchange.getRequestURI().getPath();
+	public Match apply(HttpExchange exchange) throws IOException {
+		URI requestURI = exchange.getRequestURI();
 
-    for (Filter filter : filters) {
-      if (filter.apply(uri, exchange)) {
-        return OK;
-      }
-    }
+		String uri = requestURI.getPath();
+		if (exchange.getRequestURI().getQuery() != null) {
+			uri += "?" + exchange.getRequestURI().getQuery();
+		}
 
-    Match bestMatch = WRONG_URL;
+		for (Filter filter : filters) {
+			if (filter.apply(uri, exchange)) {
+				return OK;
+			}
+		}
 
-    List<Route> allRoutes = new ArrayList<>();
-    allRoutes.addAll(routes);
-    allRoutes.add(new StaticRoute());
+		Match bestMatch = WRONG_URL;
 
-    for (Route route : allRoutes) {
-      Match match = route.apply(uri, exchange);
-      if (match == OK) {
-        return OK;
-      }
-      if (match.isBetter(bestMatch)) {
-        bestMatch = match;
-      }
-    }
+		List<Route> allRoutes = new ArrayList<>();
+		allRoutes.addAll(routes);
+		allRoutes.add(new StaticRoute());
 
-    return bestMatch;
-  }
+		for (Route route : allRoutes) {
+			Match match = route.apply(uri, exchange);
+			if (match == OK) {
+				return OK;
+			}
+			if (match.isBetter(bestMatch)) {
+				bestMatch = match;
+			}
+		}
 
-  private static String checkParametersCount(String uriPattern, int count) {
-    if (paramsCount(uriPattern) != count) {
-      throw new IllegalArgumentException("Expected " + count + " parameters in " + uriPattern);
-    }
-    return uriPattern;
-  }
+		return bestMatch;
+	}
+
+	private static String checkParametersCount(String uriPattern, int count) {
+		if (paramsCount(uriPattern) != count) {
+			throw new IllegalArgumentException("Expected " + count + " parameters in " + uriPattern);
+		}
+		return uriPattern;
+	}
 }
