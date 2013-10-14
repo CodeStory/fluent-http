@@ -36,16 +36,20 @@ public class Resources {
     Set<String> paths = new TreeSet<>();
 
     try {
-      new Reflections(ROOT, new ResourcesScanner()).getResources(name -> true)
-          .forEach(resource -> paths.add(relativeName(resource)));
+      if (!Boolean.getBoolean("http.disable.classpath")) {
+        new Reflections(ROOT, new ResourcesScanner()).getResources(name -> true)
+            .forEach(resource -> paths.add(relativeName(resource)));
+      }
 
-      Files.walkFileTree(Paths.get(ROOT), new SimpleFileVisitor<Path>() {
-        @Override
-        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-          paths.add(relativeName(file.toString()));
-          return FileVisitResult.CONTINUE;
-        }
-      });
+      if (!Boolean.getBoolean("http.disable.filesystem")) {
+        Files.walkFileTree(Paths.get(ROOT), new SimpleFileVisitor<Path>() {
+          @Override
+          public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+            paths.add(relativeName(file.toString()));
+            return FileVisitResult.CONTINUE;
+          }
+        });
+      }
     } catch (IOException e) {
       // Ignore
     }
