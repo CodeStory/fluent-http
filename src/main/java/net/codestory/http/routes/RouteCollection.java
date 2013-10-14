@@ -142,10 +142,6 @@ public class RouteCollection implements Routes {
       return WRONG_URL;
     }
 
-    if ((request.getQuery() != null) && (request.getQuery().size() != 0)) {
-      uri += "?" + request.getQuery();
-    }
-
     for (Filter filter : filters) {
       if (filter.apply(uri, request, response)) {
         return OK;

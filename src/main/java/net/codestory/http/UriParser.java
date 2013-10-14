@@ -31,7 +31,7 @@ public class UriParser {
   }
 
   public String[] params(String uri, Map<String, String> queryParams) {
-    String[] uriParts = parts(stripQueryParams(uri));
+    String[] uriParts = parts(uri);
 
     String[] params = new String[paramsCount];
 
