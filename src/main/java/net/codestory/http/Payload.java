@@ -75,15 +75,15 @@ public class Payload {
   public void writeTo(Response response) throws IOException {
     headers.entrySet().forEach(entry -> response.setValue(entry.getKey(), entry.getValue()));
 
+    response.setCode(code);
+
     byte[] data = getData();
     if (data != null) {
       response.setValue("Content-Type", getContentType());
       response.setContentLength(data.length);
-      response.setCode(code);
       response.getOutputStream().write(data);
     } else {
       response.setContentLength(0);
-      response.setCode(code);
     }
   }
 
