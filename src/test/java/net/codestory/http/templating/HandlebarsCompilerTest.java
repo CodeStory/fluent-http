@@ -15,111 +15,109 @@
  */
 package net.codestory.http.templating;
 
-import org.junit.Test;
+import static java.util.Arrays.*;
+import static org.assertj.core.api.Assertions.*;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.io.*;
+import java.util.*;
 
-import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.*;
 
 public class HandlebarsCompilerTest {
-	HandlebarsCompiler compiler = new HandlebarsCompiler();
+  HandlebarsCompiler compiler = new HandlebarsCompiler();
 
-	@Test
-	public void compile() throws IOException {
-		String result = compiler.compile("-[[greeting]]-", map("greeting", "Hello"));
+  @Test
+  public void compile() throws IOException {
+    String result = compiler.compile("-[[greeting]]-", map("greeting", "Hello"));
 
-		assertThat(result).isEqualTo("-Hello-");
-	}
+    assertThat(result).isEqualTo("-Hello-");
+  }
 
-	@Test
-	public void partials() throws IOException {
-		String result = compiler.compile("-[[>partial]] [[>partial]]-", map("name", "Bob"));
+  @Test
+  public void partials() throws IOException {
+    String result = compiler.compile("-[[>partial]] [[>partial]]-", map("name", "Bob"));
 
-		assertThat(result).isEqualTo("-Hello Bob Hello Bob-");
-	}
+    assertThat(result).isEqualTo("-Hello Bob Hello Bob-");
+  }
 
-	@Test
-	public void string_helpers() throws IOException {
-		String result = compiler.compile("Hello [[capitalizeFirst name]]", map("name", "joe"));
+  @Test
+  public void string_helpers() throws IOException {
+    String result = compiler.compile("Hello [[capitalizeFirst name]]", map("name", "joe"));
 
-		assertThat(result).isEqualTo("Hello Joe");
-	}
+    assertThat(result).isEqualTo("Hello Joe");
+  }
 
-	@Test
-	public void java_getters_and_fields() throws IOException {
-		String result = compiler.compile("[[bean.name]] is [[bean.age]]", map("bean", new JavaBean("Bob", 12)));
+  @Test
+  public void java_getters_and_fields() throws IOException {
+    String result = compiler.compile("[[bean.name]] is [[bean.age]]", map("bean", new JavaBean("Bob", 12)));
 
-		assertThat(result).isEqualTo("Bob is 12");
-	}
+    assertThat(result).isEqualTo("Bob is 12");
+  }
 
-	@Test
-	public void each() throws IOException {
-		String result = compiler.compile("[[#each list]][[.]][[/each]]", map("list", asList("A", "B")));
+  @Test
+  public void each() throws IOException {
+    String result = compiler.compile("[[#each list]][[.]][[/each]]", map("list", asList("A", "B")));
 
-		assertThat(result).isEqualTo("AB");
-	}
+    assertThat(result).isEqualTo("AB");
+  }
 
-	@Test
-	public void each_reverse() throws IOException {
-		String result = compiler.compile("[[#each_reverse list]][[.]][[/each_reverse]]", map("list", asList("A", "B")));
+  @Test
+  public void each_reverse() throws IOException {
+    String result = compiler.compile("[[#each_reverse list]][[.]][[/each_reverse]]", map("list", asList("A", "B")));
 
-		assertThat(result).isEqualTo("BA");
-	}
+    assertThat(result).isEqualTo("BA");
+  }
 
-	@Test
-	public void values_by_key() throws IOException {
-		Map<String, Object> variables = new TreeMap<>();
-		variables.put("letters", asList("A", "B"));
-		variables.put("descriptions", new TreeMap<String, Object>() {{
-			put("A", "Letter A");
-			put("B", "Letter B");
-			put("C", "Letter C");
-		}});
+  @Test
+  public void values_by_key() throws IOException {
+    Map<String, Object> variables = new TreeMap<>();
+    variables.put("letters", asList("A", "B"));
+    variables.put("descriptions", new TreeMap<String, Object>() {{
+      put("A", "Letter A");
+      put("B", "Letter B");
+      put("C", "Letter C");
+    }});
 
-		String result = compiler.compile("[[#each_value descriptions letters]][[@key]]=[[.]][[/each_value]]", variables);
+    String result = compiler.compile("[[#each_value descriptions letters]][[@key]]=[[.]][[/each_value]]", variables);
 
-		assertThat(result).isEqualTo("A=Letter AB=Letter B");
-	}
+    assertThat(result).isEqualTo("A=Letter AB=Letter B");
+  }
 
-	@Test
-	public void values_by_hash_key() throws IOException {
-		Map<String, Object> variables = new TreeMap<>();
-		variables.put("letters", new TreeMap<String, Object>() {{
-			put("A", map("id", "idA"));
-			put("B", map("id", "idB"));
-		}});
-		variables.put("descriptions", new TreeMap<String, Object>() {{
-			put("A", "Description A");
-			put("B", "Description B");
-			put("C", "Description C");
-		}});
+  @Test
+  public void values_by_hash_key() throws IOException {
+    Map<String, Object> variables = new TreeMap<>();
+    variables.put("letters", new TreeMap<String, Object>() {{
+      put("A", map("id", "idA"));
+      put("B", map("id", "idB"));
+    }});
+    variables.put("descriptions", new TreeMap<String, Object>() {{
+      put("A", "Description A");
+      put("B", "Description B");
+      put("C", "Description C");
+    }});
 
-		String result = compiler.compile("[[#each_value descriptions letters]][[@value.id]]=[[.]][[/each_value]]", variables);
+    String result = compiler.compile("[[#each_value descriptions letters]][[@value.id]]=[[.]][[/each_value]]", variables);
 
-		assertThat(result).isEqualTo("idA=Description AidB=Description B");
-	}
+    assertThat(result).isEqualTo("idA=Description AidB=Description B");
+  }
 
-	private static Map<String, Object> map(String key, Object value) {
-		return new TreeMap<String, Object>() {{
-			put(key, value);
-		}};
-	}
+  private static Map<String, Object> map(String key, Object value) {
+    return new TreeMap<String, Object>() {{
+      put(key, value);
+    }};
+  }
 
-	public static class JavaBean {
-		private final String name;
-		public final int age;
+  public static class JavaBean {
+    private final String name;
+    public final int age;
 
-		private JavaBean(String name, int age) {
-			this.name = name;
-			this.age = age;
-		}
+    private JavaBean(String name, int age) {
+      this.name = name;
+      this.age = age;
+    }
 
-		public String getName() {
-			return name;
-		}
-	}
+    public String getName() {
+      return name;
+    }
+  }
 }

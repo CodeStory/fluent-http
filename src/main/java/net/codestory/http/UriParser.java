@@ -15,76 +15,76 @@
  */
 package net.codestory.http;
 
-import net.codestory.http.io.Strings;
+import net.codestory.http.io.*;
 
 public class UriParser {
-	private final String[] patternParts;
-	private final String[] queryParamsParts;
-	private final int paramsCount;
+  private final String[] patternParts;
+  private final String[] queryParamsParts;
+  private final int paramsCount;
 
-	public UriParser(String uriPattern) {
-		this.patternParts = parts(stripQueryParams(uriPattern));
-		this.queryParamsParts = queryParamsParts(extractQueryParams(uriPattern));
-		this.paramsCount = paramsCount(uriPattern);
-	}
+  public UriParser(String uriPattern) {
+    this.patternParts = parts(stripQueryParams(uriPattern));
+    this.queryParamsParts = queryParamsParts(extractQueryParams(uriPattern));
+    this.paramsCount = paramsCount(uriPattern);
+  }
 
-	public String[] params(String uri) {
-		String[] uriParts = parts(stripQueryParams(uri));
-		String[] queryParts = queryParamsParts(extractQueryParams(uri));
+  public String[] params(String uri) {
+    String[] uriParts = parts(stripQueryParams(uri));
+    String[] queryParts = queryParamsParts(extractQueryParams(uri));
 
-		String[] params = new String[paramsCount];
+    String[] params = new String[paramsCount];
 
-		int index = 0;
-		for (int i = 0; i < uriParts.length; i++) {
-			if (patternParts[i].startsWith(":")) {
-				params[index++] = uriParts[i];
-			}
-		}
-		for (int i = 0; i < queryParamsParts.length; i++) {
-			if (queryParamsParts[i].startsWith(":")) {
-				params[index++] = queryParts[i];
-			}
-		}
+    int index = 0;
+    for (int i = 0; i < uriParts.length; i++) {
+      if (patternParts[i].startsWith(":")) {
+        params[index++] = uriParts[i];
+      }
+    }
+    for (int i = 0; i < queryParamsParts.length; i++) {
+      if (queryParamsParts[i].startsWith(":")) {
+        params[index++] = queryParts[i];
+      }
+    }
 
-		return params;
-	}
+    return params;
+  }
 
-	public boolean matches(String uri) {
-		String[] uriParts = parts(stripQueryParams(uri));
-		if (patternParts.length != uriParts.length) {
-			return false;
-		}
+  public boolean matches(String uri) {
+    String[] uriParts = parts(stripQueryParams(uri));
+    if (patternParts.length != uriParts.length) {
+      return false;
+    }
 
-		for (int i = 0; i < patternParts.length; i++) {
-			if (!patternParts[i].startsWith(":") && !patternParts[i].equals(uriParts[i])) {
-				return false;
-			}
-		}
+    for (int i = 0; i < patternParts.length; i++) {
+      if (!patternParts[i].startsWith(":") && !patternParts[i].equals(uriParts[i])) {
+        return false;
+      }
+    }
 
-		int lastPart = patternParts.length - 1;
-		return !(patternParts[lastPart].startsWith(":") && uriParts[lastPart].isEmpty());
-	}
+    int lastPart = patternParts.length - 1;
+    return !(patternParts[lastPart].startsWith(":") && uriParts[lastPart].isEmpty());
+  }
 
-	static String[] parts(String uri) {
-		return uri.split("/", -1);
-	}
+  static String[] parts(String uri) {
+    return uri.split("/", -1);
+  }
 
-	static String[] queryParamsParts(String uri) {
-		return uri.split("[=&]", -1);
-	}
+  static String[] queryParamsParts(String uri) {
+    return uri.split("[=&]", -1);
+  }
 
-	static String stripQueryParams(String uri) {
-		int indexSlash = uri.indexOf('?');
-		return (indexSlash == -1) ? uri : uri.substring(0, indexSlash);
-	}
+  static String stripQueryParams(String uri) {
+    int indexSlash = uri.indexOf('?');
+    return (indexSlash == -1) ? uri : uri.substring(0, indexSlash);
+  }
 
-	static String extractQueryParams(String uri) {
-		int indexSlash = uri.indexOf('?');
-		return (indexSlash == -1) ? "" : uri.substring(indexSlash + 1);
-	}
+  static String extractQueryParams(String uri) {
+    int indexSlash = uri.indexOf('?');
+    return (indexSlash == -1) ? "" : uri.substring(indexSlash + 1);
+  }
 
-	public static int paramsCount(String uriPattern) {
-		return Strings.countMatches(uriPattern, "/:") +
-				Strings.countMatches(uriPattern, "=:");
-	}
+  public static int paramsCount(String uriPattern) {
+    return Strings.countMatches(uriPattern, "/:") +
+        Strings.countMatches(uriPattern, "=:");
+  }
 }

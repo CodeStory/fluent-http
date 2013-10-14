@@ -17,12 +17,10 @@ package net.codestory.http.filters;
 
 import java.io.*;
 
-import net.codestory.http.routes.*;
-
-import com.sun.net.httpserver.*;
+import org.simpleframework.http.*;
 
 @FunctionalInterface
 public interface Filter {
-  boolean apply(String uri, HttpExchange exchange) throws IOException;
+  boolean apply(String uri, Request request, Response response) throws IOException;
 }
 

@@ -15,33 +15,32 @@
  */
 package net.codestory.http.io;
 
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.*;
 
-import java.nio.file.Paths;
-import java.util.Set;
-import java.util.TreeSet;
+import java.nio.file.*;
+import java.util.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.*;
 
 public class ResourcesTest {
-	@Test
-	public void exists() {
-		assertThat(Resources.exists(Paths.get("index.html"))).isTrue();
-		assertThat(Resources.exists(Paths.get("js"))).isFalse();
-	}
+  @Test
+  public void exists() {
+    assertThat(Resources.exists(Paths.get("index.html"))).isTrue();
+    assertThat(Resources.exists(Paths.get("js"))).isFalse();
+  }
 
-	@Test
-	public void list() {
-		assertThat(Resources.list())
-				.contains("js/script.coffee", "test.html")
-				.doesNotContain("");
-	}
+  @Test
+  public void list() {
+    assertThat(Resources.list())
+        .contains("js/script.coffee", "test.html")
+        .doesNotContain("");
+  }
 
-	@Test
-	public void ordered() {
-		Set<String> list = Resources.list();
-		Set<String> ordered = new TreeSet<>(list);
+  @Test
+  public void ordered() {
+    Set<String> list = Resources.list();
+    Set<String> ordered = new TreeSet<>(list);
 
-		assertThat(list).isEqualTo(ordered);
-	}
+    assertThat(list).isEqualTo(ordered);
+  }
 }

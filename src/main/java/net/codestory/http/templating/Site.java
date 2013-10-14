@@ -15,99 +15,98 @@
  */
 package net.codestory.http.templating;
 
-import net.codestory.http.io.Resources;
+import static java.nio.charset.StandardCharsets.*;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.*;
+import java.nio.file.*;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.stream.*;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import net.codestory.http.io.*;
 
 public class Site {
-	private static Site INSTANCE = new Site();
+  private static Site INSTANCE = new Site();
 
-	private Map<String, Object> yaml;
-	private Map<String, List<Map<String, Object>>> tags;
-	private Map<String, List<Map<String, Object>>> categories;
-	private List<Map<String, Object>> pages;
+  private Map<String, Object> yaml;
+  private Map<String, List<Map<String, Object>>> tags;
+  private Map<String, List<Map<String, Object>>> categories;
+  private List<Map<String, Object>> pages;
 
-	private Site() {
-		// Private constructor
-	}
+  private Site() {
+    // Private constructor
+  }
 
-	public static Site get() {
-		if (Boolean.getBoolean("PROD_MODE")) {
-			return INSTANCE;
-		}
+  public static Site get() {
+    if (Boolean.getBoolean("PROD_MODE")) {
+      return INSTANCE;
+    }
 
-		return new Site();
-	}
+    return new Site();
+  }
 
-	public Map<String, List<Map<String, Object>>> getTags() {
-		if (tags == null) {
-			tags = new TreeMap<>();
+  public Map<String, List<Map<String, Object>>> getTags() {
+    if (tags == null) {
+      tags = new TreeMap<>();
 
-			for (Map<String, Object> page : getPages()) {
-				for (String tag : tags(page)) {
-					tags.computeIfAbsent(tag, key -> new ArrayList<Map<String, Object>>()).add(page);
-				}
-			}
-		}
+      for (Map<String, Object> page : getPages()) {
+        for (String tag : tags(page)) {
+          tags.computeIfAbsent(tag, key -> new ArrayList<Map<String, Object>>()).add(page);
+        }
+      }
+    }
 
-		return tags;
-	}
+    return tags;
+  }
 
-	public Map<String, List<Map<String, Object>>> getCategories() {
-		if (categories == null) {
-			Map<String, List<Map<String, Object>>> notSorted = getPages().stream().collect(Collectors.groupingBy(Site::category));
-			categories = new TreeMap<>(notSorted);
-		}
-		return categories;
-	}
+  public Map<String, List<Map<String, Object>>> getCategories() {
+    if (categories == null) {
+      Map<String, List<Map<String, Object>>> notSorted = getPages().stream().collect(Collectors.groupingBy(Site::category));
+      categories = new TreeMap<>(notSorted);
+    }
+    return categories;
+  }
 
-	public List<Map<String, Object>> getPages() {
-		if (pages == null) {
-			pages = Resources.list().stream().map(Site::pathToMap).collect(Collectors.toList());
-		}
-		return pages;
-	}
+  public List<Map<String, Object>> getPages() {
+    if (pages == null) {
+      pages = Resources.list().stream().map(Site::pathToMap).collect(Collectors.toList());
+    }
+    return pages;
+  }
 
-	private static Map<String, Object> pathToMap(String path) {
-		try {
-			return YamlFrontMatter.parse(Paths.get(path)).getVariables();
-		} catch (IOException e) {
-			throw new IllegalStateException("Unable to read file: " + path, e);
-		}
-	}
+  private static Map<String, Object> pathToMap(String path) {
+    try {
+      return YamlFrontMatter.parse(Paths.get(path)).getVariables();
+    } catch (IOException e) {
+      throw new IllegalStateException("Unable to read file: " + path, e);
+    }
+  }
 
-	private static String category(Map<String, Object> page) {
-		return page.getOrDefault("category", "").toString().trim();
-	}
+  private static String category(Map<String, Object> page) {
+    return page.getOrDefault("category", "").toString().trim();
+  }
 
-	private static String[] tags(Map<String, Object> page) {
-		return page.getOrDefault("tags", "").toString().trim().split("\\s*,\\s*");
-	}
+  private static String[] tags(Map<String, Object> page) {
+    return page.getOrDefault("tags", "").toString().trim().split("\\s*,\\s*");
+  }
 
-	Map<String, Object> configYaml() {
-		if (yaml == null) {
-			yaml = loadYamlConfig("_config.yml");
-		}
-		return yaml;
-	}
+  Map<String, Object> configYaml() {
+    if (yaml == null) {
+      yaml = loadYamlConfig("_config.yml");
+    }
+    return yaml;
+  }
 
-	@SuppressWarnings("unchecked")
-	private Map<String, Object> loadYamlConfig(String configFile) {
-		Path configPath = Paths.get(configFile);
-		if (!Resources.exists(configPath)) {
-			return new HashMap<>();
-		}
+  @SuppressWarnings("unchecked")
+  private Map<String, Object> loadYamlConfig(String configFile) {
+    Path configPath = Paths.get(configFile);
+    if (!Resources.exists(configPath)) {
+      return new HashMap<>();
+    }
 
-		try {
-			return new YamlParser().parse(Resources.read(configPath, UTF_8));
-		} catch (IOException e) {
-			throw new IllegalStateException("Unable to read " + configFile, e);
-		}
-	}
+    try {
+      return new YamlParser().parse(Resources.read(configPath, UTF_8));
+    } catch (IOException e) {
+      throw new IllegalStateException("Unable to read " + configFile, e);
+    }
+  }
 }

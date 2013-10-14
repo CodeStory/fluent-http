@@ -19,21 +19,23 @@ import static java.nio.charset.StandardCharsets.*;
 
 import java.io.*;
 import java.nio.charset.*;
-import java.nio.file.*;
+import java.nio.file.Path;
+import java.util.*;
 
 import net.codestory.http.compilers.Compiler;
 import net.codestory.http.io.*;
 import net.codestory.http.templating.*;
 import net.codestory.http.types.*;
 
+import org.simpleframework.http.*;
+
 import com.google.gson.*;
-import com.sun.net.httpserver.*;
 
 public class Payload {
   private final String contentType;
   private final Object content;
   private final int code;
-  private final Headers headers;
+  private final Map<String, String> headers;
 
   public Payload(Object content) {
     this(null, content);
@@ -47,7 +49,7 @@ public class Payload {
     this.contentType = contentType;
     this.content = content;
     this.code = code;
-    this.headers = new Headers();
+    this.headers = new LinkedHashMap<>();
   }
 
   public static Payload wrap(Object payload) {
@@ -56,13 +58,13 @@ public class Payload {
 
   public static Payload seeOther(String url) {
     Payload payload = new Payload(null, null, 303);
-    payload.headers.add("Location", url);
+    payload.headers.put("Location", url);
     return payload;
   }
 
   public static Payload movedPermanently(String url) {
     Payload payload = new Payload(null, null, 301);
-    payload.headers.add("Location", url);
+    payload.headers.put("Location", url);
     return payload;
   }
 
@@ -70,16 +72,18 @@ public class Payload {
     return code;
   }
 
-  public void writeTo(HttpExchange exchange) throws IOException {
-    exchange.getResponseHeaders().putAll(headers);
+  public void writeTo(Response response) throws IOException {
+    headers.entrySet().forEach(entry -> response.setValue(entry.getKey(), entry.getValue()));
 
     byte[] data = getData();
     if (data != null) {
-      exchange.getResponseHeaders().add("Content-Type", getContentType());
-      exchange.sendResponseHeaders(code, data.length);
-      exchange.getResponseBody().write(data);
+      response.setValue("Content-Type", getContentType());
+      response.setContentLength(data.length);
+      response.setCode(code);
+      response.getOutputStream().write(data);
     } else {
-      exchange.sendResponseHeaders(code, 0);
+      response.setContentLength(0);
+      response.setCode(code);
     }
   }
 

@@ -15,7 +15,7 @@
  */
 package net.codestory.http.compilers;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 import java.io.*;
 

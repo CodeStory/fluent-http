@@ -18,23 +18,24 @@ package net.codestory.http.routes;
 import static net.codestory.http.routes.Match.*;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.nio.file.*;
 
 import net.codestory.http.*;
 import net.codestory.http.io.*;
 import net.codestory.http.types.*;
 
-import com.sun.net.httpserver.*;
+import org.simpleframework.http.*;
 
 class StaticRoute implements Route {
   @Override
-  public Match apply(String uri, HttpExchange exchange) throws IOException {
+  public Match apply(String uri, Request request, Response response) throws IOException {
     if (uri.endsWith("/")) {
-      return apply(uri + "index", exchange);
+      return apply(uri + "index", request, response);
     }
 
     for (String extension : ContentTypes.TEMPLATE_EXTENSIONS) {
-      Match match = serve(Paths.get(uri + extension), exchange);
+      Match match = serve(Paths.get(uri + extension), request, response);
       if (WRONG_URL != match) {
         return match;
       }
@@ -43,7 +44,7 @@ class StaticRoute implements Route {
     return WRONG_URL;
   }
 
-  private Match serve(Path path, HttpExchange exchange) throws IOException {
+  private Match serve(Path path, Request request, Response response) throws IOException {
     for (Path part : path) {
       if (part.toString().equals("..") || part.toString().startsWith("_")) {
         return WRONG_URL;
@@ -54,11 +55,11 @@ class StaticRoute implements Route {
       return WRONG_URL;
     }
 
-    if (!"GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+    if (!"GET".equalsIgnoreCase(request.getMethod())) {
       return WRONG_METHOD;
     }
 
-    new Payload(path).writeTo(exchange);
+    new Payload(path).writeTo(response);
     return OK;
   }
 }

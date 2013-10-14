@@ -15,55 +15,54 @@
  */
 package net.codestory.http.templating.helpers;
 
-import com.github.jknack.handlebars.Context;
-import com.github.jknack.handlebars.Options;
-import org.apache.commons.lang3.StringUtils;
+import java.io.*;
+import java.util.*;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Set;
+import org.apache.commons.lang3.*;
+
+import com.github.jknack.handlebars.*;
 
 public class EachValueHelperSource {
-	public String each_value(Object context, Options options) throws IOException {
-		if (context == null) {
-			return StringUtils.EMPTY;
-		}
+  public String each_value(Object context, Options options) throws IOException {
+    if (context == null) {
+      return StringUtils.EMPTY;
+    }
 
-		Object param = options.param(0);
+    Object param = options.param(0);
 
-		return (param instanceof Iterable<?>)
-				? iterableContext(context, (Iterable<?>) param, options)
-				: hashContext(context, param, options);
-	}
+    return (param instanceof Iterable<?>)
+        ? iterableContext(context, (Iterable<?>) param, options)
+        : hashContext(context, param, options);
+  }
 
-	private String hashContext(Object context, Object param, Options options) throws IOException {
-		StringBuilder buffer = new StringBuilder();
+  private String hashContext(Object context, Object param, Options options) throws IOException {
+    StringBuilder buffer = new StringBuilder();
 
-		Set<Map.Entry<String, Object>> keys = options.propertySet(param);
+    Set<Map.Entry<String, Object>> keys = options.propertySet(param);
 
-		Context parent = options.context;
-		for (Map.Entry<String, Object> key : keys) {
-			Context current = Context
-					.newContext(parent, options.wrap(context).get(key.getKey()))
-					.data("value", key.getValue())
-					.data("key", key.getKey());
-			buffer.append(options.fn(current));
-		}
+    Context parent = options.context;
+    for (Map.Entry<String, Object> key : keys) {
+      Context current = Context
+          .newContext(parent, options.wrap(context).get(key.getKey()))
+          .data("value", key.getValue())
+          .data("key", key.getKey());
+      buffer.append(options.fn(current));
+    }
 
-		return buffer.toString();
-	}
+    return buffer.toString();
+  }
 
-	private String iterableContext(Object context, Iterable<?> keys, Options options) throws IOException {
-		StringBuilder buffer = new StringBuilder();
+  private String iterableContext(Object context, Iterable<?> keys, Options options) throws IOException {
+    StringBuilder buffer = new StringBuilder();
 
-		Context parent = options.context;
-		for (Object key : keys) {
-			Context current = Context
-					.newContext(parent, options.wrap(context).get(key.toString()))
-					.data("key", key);
-			buffer.append(options.fn(current));
-		}
+    Context parent = options.context;
+    for (Object key : keys) {
+      Context current = Context
+          .newContext(parent, options.wrap(context).get(key.toString()))
+          .data("key", key);
+      buffer.append(options.fn(current));
+    }
 
-		return buffer.toString();
-	}
+    return buffer.toString();
+  }
 }

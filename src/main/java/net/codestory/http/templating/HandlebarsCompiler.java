@@ -15,62 +15,57 @@
  */
 package net.codestory.http.templating;
 
-import com.github.jknack.handlebars.Context;
-import com.github.jknack.handlebars.Handlebars;
-import com.github.jknack.handlebars.context.FieldValueResolver;
-import com.github.jknack.handlebars.context.JavaBeanValueResolver;
-import com.github.jknack.handlebars.context.MapValueResolver;
-import com.github.jknack.handlebars.helper.StringHelpers;
-import com.github.jknack.handlebars.io.AbstractTemplateLoader;
-import com.github.jknack.handlebars.io.StringTemplateSource;
-import com.github.jknack.handlebars.io.TemplateSource;
-import net.codestory.http.templating.helpers.EachReverseHelper;
-import net.codestory.http.templating.helpers.EachValueHelperSource;
+import java.io.*;
+import java.util.*;
 
-import java.io.IOException;
-import java.util.Map;
+import net.codestory.http.templating.helpers.*;
+
+import com.github.jknack.handlebars.*;
+import com.github.jknack.handlebars.context.*;
+import com.github.jknack.handlebars.helper.*;
+import com.github.jknack.handlebars.io.*;
 
 public class HandlebarsCompiler {
-	public String compile(String template, Map<String, Object> variables) throws IOException {
-		return compile(template, null, variables);
-	}
+  public String compile(String template, Map<String, Object> variables) throws IOException {
+    return compile(template, null, variables);
+  }
 
-	String compile(String template, Site site, Map<String, Object> variables) throws IOException {
-		Handlebars handlebars = createHandlebars(site, variables);
+  String compile(String template, Site site, Map<String, Object> variables) throws IOException {
+    Handlebars handlebars = createHandlebars(site, variables);
 
-		Context context;
-		if (site == null) {
-			context = context(null, variables).build();
-		} else {
-			Context contextSite = context(null, null).combine("site", site).build();
-			Context contextYaml = context(contextSite, null).combine("site", site.configYaml()).build();
+    Context context;
+    if (site == null) {
+      context = context(null, variables).build();
+    } else {
+      Context contextSite = context(null, null).combine("site", site).build();
+      Context contextYaml = context(contextSite, null).combine("site", site.configYaml()).build();
 
-			context = context(contextYaml, variables).build();
-		}
+      context = context(contextYaml, variables).build();
+    }
 
-		return handlebars.compileInline(template, "[[", "]]").apply(context);
-	}
+    return handlebars.compileInline(template, "[[", "]]").apply(context);
+  }
 
-	private static Handlebars createHandlebars(Site site, Map<String, Object> variables) {
-		return new Handlebars()
-				.registerHelper(EachReverseHelper.NAME, EachReverseHelper.INSTANCE)
-				.registerHelpers(new EachValueHelperSource())
-				.registerHelpers(StringHelpers.class)
-				.with(new AbstractTemplateLoader() {
-					@Override
-					public TemplateSource sourceAt(String location) {
-						return new StringTemplateSource(location, new Template("_includes/" + location).render(site, variables));
-					}
-				});
-	}
+  private static Handlebars createHandlebars(Site site, Map<String, Object> variables) {
+    return new Handlebars()
+        .registerHelper(EachReverseHelper.NAME, EachReverseHelper.INSTANCE)
+        .registerHelpers(new EachValueHelperSource())
+        .registerHelpers(StringHelpers.class)
+        .with(new AbstractTemplateLoader() {
+          @Override
+          public TemplateSource sourceAt(String location) {
+            return new StringTemplateSource(location, new Template("_includes/" + location).render(site, variables));
+          }
+        });
+  }
 
-	private static Context.Builder context(Context parent, Object model) {
-		Context.Builder builder;
-		if (parent == null) {
-			builder = Context.newBuilder(model);
-		} else {
-			builder = Context.newBuilder(parent, model);
-		}
-		return builder.resolver(MapValueResolver.INSTANCE, JavaBeanValueResolver.INSTANCE, FieldValueResolver.INSTANCE);
-	}
+  private static Context.Builder context(Context parent, Object model) {
+    Context.Builder builder;
+    if (parent == null) {
+      builder = Context.newBuilder(model);
+    } else {
+      builder = Context.newBuilder(parent, model);
+    }
+    return builder.resolver(MapValueResolver.INSTANCE, JavaBeanValueResolver.INSTANCE, FieldValueResolver.INSTANCE);
+  }
 }

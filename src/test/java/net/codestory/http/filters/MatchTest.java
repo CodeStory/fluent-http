@@ -16,7 +16,7 @@
 package net.codestory.http.filters;
 
 import static net.codestory.http.routes.Match.*;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 import org.junit.*;
 

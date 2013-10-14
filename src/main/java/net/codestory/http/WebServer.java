@@ -24,16 +24,22 @@ import java.util.*;
 import net.codestory.http.errors.*;
 import net.codestory.http.routes.*;
 
-import com.sun.net.httpserver.*;
+import org.simpleframework.http.*;
+import org.simpleframework.http.core.*;
+import org.simpleframework.transport.*;
+import org.simpleframework.transport.connect.*;
 
 public class WebServer {
-  private final HttpServer server;
+  private final Server server;
+  private final SocketConnection connection;
   private final RouteCollection routes = new RouteCollection();
   private Configuration lastConfiguration;
+  private int port;
 
   public WebServer() {
     try {
-      server = HttpServer.create();
+      server = new ContainerServer(this::handle);
+      connection = new SocketConnection(server);
     } catch (IOException e) {
       throw new IllegalStateException("Unable to create http server", e);
     }
@@ -70,19 +76,19 @@ public class WebServer {
 
   public WebServer start(int port) {
     try {
-      server.bind(new InetSocketAddress(port), 0);
-      server.createContext("/", this::onRequest);
-      server.start();
+      SocketAddress address = new InetSocketAddress(port);
+      connection.connect(address);
+      this.port = port;
 
       System.out.println("Server started on port " + port);
     } catch (IOException e) {
-      throw new IllegalStateException("Unable to bind the web server on port " + port);
+      throw new IllegalStateException("Unable to bind the web server on port " + port, e);
     }
     return this;
   }
 
   public int port() {
-    return server.getAddress().getPort();
+    return port;
   }
 
   public void reset() {
@@ -91,47 +97,55 @@ public class WebServer {
   }
 
   public void stop() {
-    server.stop(0);
+    try {
+      server.stop();
+    } catch (IOException e) {
+      throw new IllegalStateException("Unable to stop the web server", e);
+    }
   }
 
-  protected void onRequest(HttpExchange exchange) {
+  void handle(Request request, Response response) {
     try {
       hotReloadConfigurationInDevMode();
-      applyRoutes(exchange);
+      applyRoutes(request, response);
     } catch (Exception e) {
       System.out.println("Error " + e);
       e.printStackTrace();
       try {
-        onError(e, exchange);
+        onError(e, response);
       } catch (Exception ioe) {
         System.out.println("Unable to server an error page " + ioe);
         ioe.printStackTrace();
       }
     } finally {
-      exchange.close();
+      try {
+        response.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
   }
 
-  protected void applyRoutes(HttpExchange exchange) throws IOException {
-    Match match = routes.apply(exchange);
+  protected void applyRoutes(Request request, Response response) throws IOException {
+    Match match = routes.apply(request, response);
     if (match != OK) {
-      onPageNotFound(match, exchange);
+      onPageNotFound(match, response);
     }
   }
 
-  protected void onPageNotFound(Match match, HttpExchange exchange) throws IOException {
+  protected void onPageNotFound(Match match, Response response) throws IOException {
     if (match == WRONG_METHOD) {
-      errorPage(405, null).writeTo(exchange);
+      errorPage(405, null).writeTo(response);
     } else {
-      errorPage(404, null).writeTo(exchange);
+      errorPage(404, null).writeTo(response);
     }
   }
 
-  protected void onError(Exception e, HttpExchange exchange) throws IOException {
+  protected void onError(Exception e, Response response) throws IOException {
     if (devMode()) {
-      errorPage(500, e).writeTo(exchange);
+      errorPage(500, e).writeTo(response);
     } else {
-      errorPage(500, null).writeTo(exchange);
+      errorPage(500, null).writeTo(response);
     }
   }
 

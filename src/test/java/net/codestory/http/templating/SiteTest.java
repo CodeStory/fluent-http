@@ -15,41 +15,40 @@
  */
 package net.codestory.http.templating;
 
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.*;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.*;
 
 public class SiteTest {
-	Site site = Site.get();
+  Site site = Site.get();
 
-	@Test
-	public void pages() {
-		List<Map<String, Object>> pages = site.getPages();
+  @Test
+  public void pages() {
+    List<Map<String, Object>> pages = site.getPages();
 
-		assertThat(pages).hasSize(24);
-	}
+    assertThat(pages).hasSize(24);
+  }
 
-	@Test
-	public void tags() {
-		Map<String, List<Map<String, Object>>> tags = site.getTags();
+  @Test
+  public void tags() {
+    Map<String, List<Map<String, Object>>> tags = site.getTags();
 
-		assertThat(tags).hasSize(3);
-		assertThat(tags.get("")).hasSize(22);
-		assertThat(tags.get("scala")).hasSize(2);
-		assertThat(tags.get("java")).hasSize(1);
-	}
+    assertThat(tags).hasSize(3);
+    assertThat(tags.get("")).hasSize(22);
+    assertThat(tags.get("scala")).hasSize(2);
+    assertThat(tags.get("java")).hasSize(1);
+  }
 
 
-	@Test
-	public void categories() {
-		Map<String, List<Map<String, Object>>> categories = site.getCategories();
+  @Test
+  public void categories() {
+    Map<String, List<Map<String, Object>>> categories = site.getCategories();
 
-		assertThat(categories).hasSize(3);
-		assertThat(categories.get("")).hasSize(22);
-		assertThat(categories.get("post")).hasSize(1);
-		assertThat(categories.get("test")).hasSize(1);
-	}
+    assertThat(categories).hasSize(3);
+    assertThat(categories.get("")).hasSize(22);
+    assertThat(categories.get("post")).hasSize(1);
+    assertThat(categories.get("test")).hasSize(1);
+  }
 }

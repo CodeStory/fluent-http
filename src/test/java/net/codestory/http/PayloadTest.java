@@ -16,15 +16,13 @@
 package net.codestory.http;
 
 import static java.nio.charset.StandardCharsets.*;
-import static java.util.Arrays.*;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.io.*;
 
 import org.junit.*;
-
-import com.sun.net.httpserver.*;
+import org.simpleframework.http.*;
 
 public class PayloadTest {
   @Test
@@ -72,30 +70,28 @@ public class PayloadTest {
 
   @Test
   public void support_redirect() throws IOException {
-    HttpExchange exchange = mock(HttpExchange.class);
-    Headers headers = new Headers();
-    when(exchange.getResponseHeaders()).thenReturn(headers);
+    Response response = mock(Response.class);
 
     Payload payload = Payload.seeOther("/url");
-    payload.writeTo(exchange);
+    payload.writeTo(response);
 
-    assertThat(headers).containsEntry("Location", asList("/url"));
-    verify(exchange).sendResponseHeaders(303, 0);
-    verifyNoMoreInteractions(ignoreStubs(exchange));
+    verify(response).setValue("Location", "/url");
+    verify(response).setCode(303);
+    verify(response).setContentLength(0);
+    verifyNoMoreInteractions(response);
   }
 
   @Test
   public void support_permanent_move() throws IOException {
-    HttpExchange exchange = mock(HttpExchange.class);
-    Headers headers = new Headers();
-    when(exchange.getResponseHeaders()).thenReturn(headers);
+    Response response = mock(Response.class);
 
     Payload payload = Payload.movedPermanently("/url");
-    payload.writeTo(exchange);
+    payload.writeTo(response);
 
-    assertThat(headers).containsEntry("Location", asList("/url"));
-    verify(exchange).sendResponseHeaders(301, 0);
-    verifyNoMoreInteractions(ignoreStubs(exchange));
+    verify(response).setValue("Location", "/url");
+    verify(response).setCode(301);
+    verify(response).setContentLength(0);
+    verifyNoMoreInteractions(response);
   }
 
   static class Person {

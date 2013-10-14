@@ -15,148 +15,143 @@
  */
 package net.codestory.http.io;
 
-import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.Charset;
+import java.io.*;
+import java.net.*;
+import java.nio.charset.*;
 import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Set;
-import java.util.TreeSet;
+import java.nio.file.attribute.*;
+import java.util.*;
+
+import org.reflections.*;
+import org.reflections.scanners.*;
 
 public class Resources {
-	private static final String ROOT = "app";
+  private static final String ROOT = "app";
 
-	private Resources() {
-		// Static utility class
-	}
+  private Resources() {
+    // Static utility class
+  }
 
-	public static Set<String> list() {
-		Set<String> paths = new TreeSet<>();
+  public static Set<String> list() {
+    Set<String> paths = new TreeSet<>();
 
-		try {
-			new Reflections(ROOT, new ResourcesScanner()).getResources(name -> true)
-					.forEach(resource -> paths.add(relativeName(resource)));
+    try {
+      new Reflections(ROOT, new ResourcesScanner()).getResources(name -> true)
+          .forEach(resource -> paths.add(relativeName(resource)));
 
-			Files.walkFileTree(Paths.get(ROOT), new SimpleFileVisitor<Path>() {
-				@Override
-				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-					paths.add(relativeName(file.toString()));
-					return FileVisitResult.CONTINUE;
-				}
-			});
-		} catch (IOException e) {
-			// Ignore
-		}
+      Files.walkFileTree(Paths.get(ROOT), new SimpleFileVisitor<Path>() {
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+          paths.add(relativeName(file.toString()));
+          return FileVisitResult.CONTINUE;
+        }
+      });
+    } catch (IOException e) {
+      // Ignore
+    }
 
-		paths.remove("");
+    paths.remove("");
 
-		return paths;
-	}
+    return paths;
+  }
 
-	private static String relativeName(String path) {
-		return Strings.substringAfter(path, ROOT + '/');
-	}
+  private static String relativeName(String path) {
+    return Strings.substringAfter(path, ROOT + '/');
+  }
 
-	public static boolean exists(Path path) {
-		String pathWithPrefix = withPrefix(path);
-		return existsInClassPath(pathWithPrefix) || existsInFileSystem(pathWithPrefix);
-	}
+  public static boolean exists(Path path) {
+    String pathWithPrefix = withPrefix(path);
+    return existsInClassPath(pathWithPrefix) || existsInFileSystem(pathWithPrefix);
+  }
 
-	public static String read(Path path, Charset charset) throws IOException {
-		String pathWithPrefix = withPrefix(path);
-		return existsInFileSystem(pathWithPrefix) ? readFile(pathWithPrefix, charset) : readClasspath(pathWithPrefix, charset);
-	}
+  public static String read(Path path, Charset charset) throws IOException {
+    String pathWithPrefix = withPrefix(path);
+    return existsInFileSystem(pathWithPrefix) ? readFile(pathWithPrefix, charset) : readClasspath(pathWithPrefix, charset);
+  }
 
-	public static byte[] readBytes(Path path) throws IOException {
-		String pathWithPrefix = withPrefix(path);
-		return existsInFileSystem(pathWithPrefix) ? readFileBytes(pathWithPrefix) : readClasspathBytes(pathWithPrefix);
-	}
+  public static byte[] readBytes(Path path) throws IOException {
+    String pathWithPrefix = withPrefix(path);
+    return existsInFileSystem(pathWithPrefix) ? readFileBytes(pathWithPrefix) : readClasspathBytes(pathWithPrefix);
+  }
 
-	private static String withPrefix(Path path) {
-		return ROOT + (path.toString().startsWith("/") ? "" : "/") + path;
-	}
+  private static String withPrefix(Path path) {
+    return ROOT + (path.toString().startsWith("/") ? "" : "/") + path;
+  }
 
-	private static boolean existsInClassPath(String path) {
-		URL url = ClassLoader.getSystemResource(path);
-		if (url == null) {
-			return false;
-		}
+  private static boolean existsInClassPath(String path) {
+    URL url = ClassLoader.getSystemResource(path);
+    if (url == null) {
+      return false;
+    }
 
-		File file = fileForClasspath(url);
-		return (file == null) || file.isFile();
-	}
+    File file = fileForClasspath(url);
+    return (file == null) || file.isFile();
+  }
 
-	private static boolean existsInFileSystem(String path) {
-		return new File(path).isFile();
-	}
+  private static boolean existsInFileSystem(String path) {
+    return new File(path).isFile();
+  }
 
-	private static String readClasspath(String path, Charset charset) throws IOException {
-		URL url = ClassLoader.getSystemResource(path);
-		if (url == null) {
-			throw new IllegalArgumentException("Classpath resource not found classpath:" + path);
-		}
+  private static String readClasspath(String path, Charset charset) throws IOException {
+    URL url = ClassLoader.getSystemResource(path);
+    if (url == null) {
+      throw new IllegalArgumentException("Classpath resource not found classpath:" + path);
+    }
 
-		File file = fileForClasspath(url);
-		if (file != null) {
-			if (!file.isFile()) {
-				throw new IllegalArgumentException("Invalid file classpath: " + path);
-			}
-			return readFile(file.getAbsolutePath(), charset);
-		}
+    File file = fileForClasspath(url);
+    if (file != null) {
+      if (!file.isFile()) {
+        throw new IllegalArgumentException("Invalid file classpath: " + path);
+      }
+      return readFile(file.getAbsolutePath(), charset);
+    }
 
-		try (InputStream from = url.openStream()) {
-			return InputStreams.readString(from, charset);
-		}
-	}
+    try (InputStream from = url.openStream()) {
+      return InputStreams.readString(from, charset);
+    }
+  }
 
-	private static byte[] readClasspathBytes(String path) throws IOException {
-		URL url = ClassLoader.getSystemResource(path);
-		if (url == null) {
-			throw new IllegalArgumentException("Invalid file classpath: " + path);
-		}
+  private static byte[] readClasspathBytes(String path) throws IOException {
+    URL url = ClassLoader.getSystemResource(path);
+    if (url == null) {
+      throw new IllegalArgumentException("Invalid file classpath: " + path);
+    }
 
-		File file = fileForClasspath(url);
-		if (file != null) {
-			if (!file.isFile()) {
-				throw new IllegalArgumentException("Invalid file classpath: " + path);
-			}
-			return readFileBytes(file.getAbsolutePath());
-		}
+    File file = fileForClasspath(url);
+    if (file != null) {
+      if (!file.isFile()) {
+        throw new IllegalArgumentException("Invalid file classpath: " + path);
+      }
+      return readFileBytes(file.getAbsolutePath());
+    }
 
-		try (InputStream from = url.openStream()) {
-			return InputStreams.readBytes(from);
-		}
-	}
+    try (InputStream from = url.openStream()) {
+      return InputStreams.readBytes(from);
+    }
+  }
 
-	private static String readFile(String path, Charset charset) throws IOException {
-		return new String(readFileBytes(path), charset);
-	}
+  private static String readFile(String path, Charset charset) throws IOException {
+    return new String(readFileBytes(path), charset);
+  }
 
-	private static byte[] readFileBytes(String path) throws IOException {
-		if (!new File(path).isFile()) {
-			throw new IllegalArgumentException("Invalid file path: " + path);
-		}
-		return Files.readAllBytes(Paths.get(path));
-	}
+  private static byte[] readFileBytes(String path) throws IOException {
+    if (!new File(path).isFile()) {
+      throw new IllegalArgumentException("Invalid file path: " + path);
+    }
+    return Files.readAllBytes(Paths.get(path));
+  }
 
-	private static File fileForClasspath(URL url) {
-		String filename = url.getFile();
+  private static File fileForClasspath(URL url) {
+    String filename = url.getFile();
 
-		if ((filename == null) || filename.contains(".jar!")) {
-			return null;
-		}
+    if ((filename == null) || filename.contains(".jar!")) {
+      return null;
+    }
 
-		try {
-			return new File(URLDecoder.decode(filename, "US-ASCII").replace("/target/classes/", "/src/main/resources/"));
-		} catch (UnsupportedEncodingException e) {
-			throw new IllegalArgumentException("Invalid filename classpath: " + url, e);
-		}
-	}
+    try {
+      return new File(URLDecoder.decode(filename, "US-ASCII").replace("/target/classes/", "/src/main/resources/"));
+    } catch (UnsupportedEncodingException e) {
+      throw new IllegalArgumentException("Invalid filename classpath: " + url, e);
+    }
+  }
 }

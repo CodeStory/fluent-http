@@ -17,10 +17,10 @@ package net.codestory.http.routes;
 
 import java.io.*;
 
-import com.sun.net.httpserver.*;
+import org.simpleframework.http.*;
 
 @FunctionalInterface
 public interface Route {
-  Match apply(String uri, HttpExchange exchange) throws IOException;
+  Match apply(String uri, Request request, Response response) throws IOException;
 }
 

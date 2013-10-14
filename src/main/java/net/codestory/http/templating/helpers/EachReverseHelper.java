@@ -15,81 +15,78 @@
  */
 package net.codestory.http.templating.helpers;
 
-import com.github.jknack.handlebars.Context;
-import com.github.jknack.handlebars.Helper;
-import com.github.jknack.handlebars.Options;
-import org.apache.commons.lang3.StringUtils;
+import java.io.*;
+import java.util.*;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
+import org.apache.commons.lang3.*;
+
+import com.github.jknack.handlebars.*;
 
 public class EachReverseHelper implements Helper<Object> {
-	public static final Helper<Object> INSTANCE = new EachReverseHelper();
-	public static final String NAME = "each_reverse";
+  public static final Helper<Object> INSTANCE = new EachReverseHelper();
+  public static final String NAME = "each_reverse";
 
-	@Override
-	public CharSequence apply(Object context, Options options) throws IOException {
-		if (context == null) {
-			return StringUtils.EMPTY;
-		}
+  @Override
+  public CharSequence apply(Object context, Options options) throws IOException {
+    if (context == null) {
+      return StringUtils.EMPTY;
+    }
 
-		return (context instanceof Iterable<?>)
-				? iterableContext((Iterable<?>) context, options)
-				: hashContext(context, options);
-	}
+    return (context instanceof Iterable<?>)
+        ? iterableContext((Iterable<?>) context, options)
+        : hashContext(context, options);
+  }
 
-	private CharSequence hashContext(Object context, Options options) throws IOException {
-		StringBuilder buffer = new StringBuilder();
+  private CharSequence hashContext(Object context, Options options) throws IOException {
+    StringBuilder buffer = new StringBuilder();
 
-		Context parent = options.context;
-		Iterator<Map.Entry<String, Object>> iterator = reverse(options.propertySet(context));
-		while (iterator.hasNext()) {
-			Map.Entry<String, Object> entry = iterator.next();
-			Context current = Context.newContext(parent, entry.getValue()).data("key", entry.getKey());
-			buffer.append(options.fn(current));
-		}
+    Context parent = options.context;
+    Iterator<Map.Entry<String, Object>> iterator = reverse(options.propertySet(context));
+    while (iterator.hasNext()) {
+      Map.Entry<String, Object> entry = iterator.next();
+      Context current = Context.newContext(parent, entry.getValue()).data("key", entry.getKey());
+      buffer.append(options.fn(current));
+    }
 
-		return buffer.toString();
-	}
+    return buffer.toString();
+  }
 
-	private CharSequence iterableContext(Iterable<?> context, Options options) throws IOException {
-		if (options.isFalsy(context)) {
-			return options.inverse();
-		}
+  private CharSequence iterableContext(Iterable<?> context, Options options) throws IOException {
+    if (options.isFalsy(context)) {
+      return options.inverse();
+    }
 
-		StringBuilder buffer = new StringBuilder();
+    StringBuilder buffer = new StringBuilder();
 
-		Iterator<?> iterator = reverse(context);
-		int index = 0;
-		Context parent = options.context;
-		while (iterator.hasNext()) {
-			Object element = iterator.next();
+    Iterator<?> iterator = reverse(context);
+    int index = 0;
+    Context parent = options.context;
+    while (iterator.hasNext()) {
+      Object element = iterator.next();
 
-			boolean first = index == 0;
-			boolean even = index % 2 == 0;
-			boolean last = !iterator.hasNext();
+      boolean first = index == 0;
+      boolean even = index % 2 == 0;
+      boolean last = !iterator.hasNext();
 
-			Context current = Context.newContext(parent, element)
-					.data("index", index)
-					.data("first", first ? "first" : "")
-					.data("last", last ? "last" : "")
-					.data("odd", even ? "" : "odd")
-					.data("even", even ? "even" : "");
-			buffer.append(options.fn(current));
+      Context current = Context.newContext(parent, element)
+          .data("index", index)
+          .data("first", first ? "first" : "")
+          .data("last", last ? "last" : "")
+          .data("odd", even ? "" : "odd")
+          .data("even", even ? "even" : "");
+      buffer.append(options.fn(current));
 
-			index++;
-		}
+      index++;
+    }
 
-		return buffer.toString();
-	}
+    return buffer.toString();
+  }
 
-	private static <T> Iterator<T> reverse(Iterable<T> values) {
-		LinkedList<T> reversed = new LinkedList<>();
-		for (T value : values) {
-			reversed.add(value);
-		}
-		return reversed.descendingIterator();
-	}
+  private static <T> Iterator<T> reverse(Iterable<T> values) {
+    LinkedList<T> reversed = new LinkedList<>();
+    for (T value : values) {
+      reversed.add(value);
+    }
+    return reversed.descendingIterator();
+  }
 }

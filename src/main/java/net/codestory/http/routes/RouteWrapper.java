@@ -21,7 +21,7 @@ import java.io.*;
 
 import net.codestory.http.*;
 
-import com.sun.net.httpserver.*;
+import org.simpleframework.http.*;
 
 class RouteWrapper implements Route {
   private final String method;
@@ -35,12 +35,12 @@ class RouteWrapper implements Route {
   }
 
   @Override
-  public Match apply(String uri, HttpExchange exchange) throws IOException {
+  public Match apply(String uri, Request request, Response response) throws IOException {
     if (!uriParser.matches(uri)) {
       return WRONG_URL;
     }
 
-    if (!method.equalsIgnoreCase(exchange.getRequestMethod())) {
+    if (!method.equalsIgnoreCase(request.getMethod())) {
       return WRONG_METHOD;
     }
 
@@ -48,7 +48,7 @@ class RouteWrapper implements Route {
     Object body = route.body(parameters);
 
     Payload payload = Payload.wrap(body);
-    payload.writeTo(exchange);
+    payload.writeTo(response);
 
     return OK;
   }
