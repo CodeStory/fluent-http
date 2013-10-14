@@ -44,7 +44,7 @@ class RouteWrapper implements Route {
       return WRONG_METHOD;
     }
 
-    String[] parameters = uriParser.params(uri);
+    String[] parameters = uriParser.params(uri, request.getQuery());
     Object body = route.body(parameters);
 
     Payload payload = Payload.wrap(body);

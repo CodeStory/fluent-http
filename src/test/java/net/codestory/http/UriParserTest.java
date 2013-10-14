@@ -17,6 +17,8 @@ package net.codestory.http;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.*;
+
 import org.junit.*;
 
 public class UriParserTest {
@@ -41,19 +43,17 @@ public class UriParserTest {
 
   @Test
   public void find_params() {
-    assertThat(new UriParser("/hello/:name").params("/hello/Bob")).containsExactly("Bob");
-    assertThat(new UriParser("/hello/:name").params("/hello/Dave")).containsExactly("Dave");
-    assertThat(new UriParser("/hello/:name/aged/:age").params("/hello/Dave/aged/42")).containsExactly("Dave", "42");
-    assertThat(new UriParser("/hello/:name/aged/:age").params("/hello//aged/")).containsExactly("", "");
-    assertThat(new UriParser("/").params("/")).isEmpty();
+    assertThat(new UriParser("/hello/:name").params("/hello/Bob", null)).containsExactly("Bob");
+    assertThat(new UriParser("/hello/:name").params("/hello/Dave", null)).containsExactly("Dave");
+    assertThat(new UriParser("/hello/:name/aged/:age").params("/hello/Dave/aged/42", null)).containsExactly("Dave", "42");
+    assertThat(new UriParser("/hello/:name/aged/:age").params("/hello//aged/", null)).containsExactly("", "");
+    assertThat(new UriParser("/").params("/", null)).isEmpty();
   }
 
   @Test
   public void find_query_params() {
-    assertThat(new UriParser("/hello/:name?opt=:option").params("/hello/Bob?opt=OPTIONS")).containsExactly("Bob", "OPTIONS");
-    assertThat(new UriParser("/hello/:name?opt=:option").params("/hello/Bob?opt=")).containsExactly("Bob", "");
-    assertThat(new UriParser("/hello/:name?opt=:option&lang=:language").params("/hello/Bob?opt=OPTIONS&lang=FR")).containsExactly("Bob", "OPTIONS", "FR");
-    //assertThat(new UriParser("/hello/:name?opt=:option&lang=:language").params("/hello/Bob?lang=FR&opt=OPTIONS")).containsExactly("Bob", "OPTIONS", "FR");
+    assertThat(new UriParser("/hello/:name?opt=:option").params("/hello/Bob", map("opt", "OPTIONS"))).containsExactly("Bob", "OPTIONS");
+    assertThat(new UriParser("/hello/:name?opt=:option&lang=:language").params("/hello/Bob", map("opt", "OPTIONS", "lang", "FR"))).containsExactly("Bob", "OPTIONS", "FR");
   }
 
   @Test
@@ -83,5 +83,18 @@ public class UriParserTest {
     assertThat(new UriParser("/hello/:name/last").matches("/hello//last")).isTrue();
     assertThat(new UriParser("/hello/:name?opt=:option").matches("/hello/")).isFalse();
     assertThat(new UriParser("/hello/:name?opt=:option").matches("/hello/?opt=OPTION")).isFalse();
+  }
+
+  private static Map<String, String> map(String key, String value) {
+    return new LinkedHashMap<String, String>() {{
+      put(key, value);
+    }};
+  }
+
+  private static Map<String, String> map(String key1, String value1, String key2, String value2) {
+    return new LinkedHashMap<String, String>() {{
+      put(key1, value1);
+      put(key2, value2);
+    }};
   }
 }

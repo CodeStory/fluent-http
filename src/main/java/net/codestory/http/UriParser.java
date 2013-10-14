@@ -15,6 +15,8 @@
  */
 package net.codestory.http;
 
+import java.util.*;
+
 import net.codestory.http.io.*;
 
 public class UriParser {
@@ -28,9 +30,8 @@ public class UriParser {
     this.paramsCount = paramsCount(uriPattern);
   }
 
-  public String[] params(String uri) {
+  public String[] params(String uri, Map<String, String> queryParams) {
     String[] uriParts = parts(stripQueryParams(uri));
-    String[] queryParts = queryParamsParts(extractQueryParams(uri));
 
     String[] params = new String[paramsCount];
 
@@ -42,7 +43,7 @@ public class UriParser {
     }
     for (int i = 0; i < queryParamsParts.length; i++) {
       if (queryParamsParts[i].startsWith(":")) {
-        params[index++] = queryParts[i];
+        params[index++] = queryParams.get(queryParamsParts[i-1]);
       }
     }
 
