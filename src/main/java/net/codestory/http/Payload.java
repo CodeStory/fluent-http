@@ -29,7 +29,8 @@ import net.codestory.http.types.*;
 
 import org.simpleframework.http.*;
 
-import com.google.gson.*;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.*;
 
 public class Payload {
   private final String contentType;
@@ -130,7 +131,11 @@ public class Payload {
     if (content instanceof InputStream) {
       return forInputStream((InputStream) content);
     }
-    return forString(new Gson().toJson(content));
+
+    return new ObjectMapper()
+        .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
+        .writer()
+        .writeValueAsBytes(content);
   }
 
   private static byte[] forString(String value) {

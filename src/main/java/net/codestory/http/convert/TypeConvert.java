@@ -2,6 +2,8 @@ package net.codestory.http.convert;
 
 import java.util.*;
 
+import com.fasterxml.jackson.databind.*;
+
 public class TypeConvert {
   private TypeConvert() {
     // static class
@@ -9,7 +11,7 @@ public class TypeConvert {
 
   public static Object[] convert(Map<String, String> keyValues, String[] values, Class<?>[] types) {
     Object[] converted = new Object[values.length + 1];
-    converted[0] = keyValues;
+    converted[0] = TypeConvert.convert(keyValues, types[0]);
     for (int i = 0; i < values.length; i++) {
       converted[i + 1] = TypeConvert.convert(values[i], types[i]);
     }
@@ -37,5 +39,12 @@ public class TypeConvert {
       return Boolean.parseBoolean(value);
     }
     return value;
+  }
+
+  public static Object convert(Map<String, String> keyValues, Class<?> type) {
+    if (type.isAssignableFrom(Map.class)) {
+      return keyValues;
+    }
+    return new ObjectMapper().convertValue(keyValues, type);
   }
 }

@@ -273,10 +273,17 @@ public class WebServerTest {
           return "CREATED " + keyValues.get("firstName") + " " + keyValues.get("lastName");
         }
       });
+      routes.add(new Object() {
+        @Post("/postBean")
+        public String create(Human human) {
+          return "CREATED " + human.firstName + " " + human.lastName;
+        }
+      });
     });
 
     given().parameters("firstName", "John", "lastName", "Doe").expect().content(equalTo("CREATED John Doe")).when().post("/postForm");
     given().parameters("firstName", "Jane", "lastName", "Doe").expect().content(equalTo("CREATED Jane Doe")).when().post("/postFormResource");
+    given().parameters("firstName", "Jane", "lastName", "Doe").expect().content(equalTo("CREATED Jane Doe")).when().post("/postBean");
   }
 
   @Test
@@ -307,5 +314,10 @@ public class WebServerTest {
       this.name = name;
       this.age = age;
     }
+  }
+
+  static class Human {
+    public String firstName;
+    public String lastName;
   }
 }

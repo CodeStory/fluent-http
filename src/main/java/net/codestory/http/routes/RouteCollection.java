@@ -52,7 +52,6 @@ public class RouteCollection implements Routes {
 
     for (Method method : type.getMethods()) {
       int parameterCount = method.getParameterCount();
-      Class<?>[] parameterTypes = method.getParameterTypes();
 
       for (Get get : method.getDeclaredAnnotationsByType(Get.class)) {
         String uriPattern = urlPrefix + get.value();
@@ -63,10 +62,13 @@ public class RouteCollection implements Routes {
       for (Post post : method.getDeclaredAnnotationsByType(Post.class)) {
         String uriPattern = urlPrefix + post.value();
 
-        if ((parameterTypes.length == 0) || !parameterTypes[0].isAssignableFrom(Map.class)) {
+        int uriParamsCount = paramsCount(uriPattern);
+        if (parameterCount == uriParamsCount) {
           add("POST", checkParametersCount(uriPattern, parameterCount), new ReflectionGetRoute(resource, method));
-        } else {
+        } else if (parameterCount == (uriParamsCount + 1)) {
           add("POST", checkParametersCount(uriPattern, parameterCount - 1), new ReflectionPostRoute(resource, method));
+        } else {
+          throw new IllegalArgumentException("Expected " + uriParamsCount + " or " + (uriParamsCount + 1) + " parameters in " + uriPattern);
         }
       }
     }
