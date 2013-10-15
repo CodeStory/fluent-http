@@ -43,7 +43,7 @@ public class UriParser {
     }
     for (int i = 0; i < queryParamsParts.length; i++) {
       if (queryParamsParts[i].startsWith(":")) {
-        params[index++] = queryParams.get(queryParamsParts[i-1]);
+        params[index++] = queryParams.get(queryParamsParts[i - 1]);
       }
     }
 
