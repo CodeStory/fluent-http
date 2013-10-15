@@ -93,10 +93,18 @@ public class WebServerTest {
 
   @Test
   public void query_params() {
-    server.configure(routes -> routes.get("/hello?name=:name", (name) -> "Hello " + name));
+    server.configure(routes -> {
+      routes.get("/hello?name=:name", (name) -> "Hello " + name);
+      routes.add(new Object() {
+        @Get("/keyValues")
+        public String keyValues(Map<String, String> keyValues) {
+          return keyValues.toString();
+        }
+      });
+    });
 
     expect().body(equalTo("Hello Dave")).when().get("/hello?name=Dave");
-    expect().body(equalTo("Hello Bob")).when().get("/hello?name=Bob");
+    expect().body(containsString("key2=value2")).when().get("/keyValues?key1=value1&key2=value2");
   }
 
   @Test

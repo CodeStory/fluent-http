@@ -56,7 +56,14 @@ public class RouteCollection implements Routes {
       for (Get get : method.getDeclaredAnnotationsByType(Get.class)) {
         String uriPattern = urlPrefix + get.value();
 
-        add("GET", checkParametersCount(uriPattern, parameterCount), new ReflectionGetRoute(resource, method));
+        int uriParamsCount = paramsCount(uriPattern);
+        if (parameterCount == uriParamsCount) {
+          add("GET", checkParametersCount(uriPattern, parameterCount), new ReflectionGetRoute(resource, method));
+        } else if (parameterCount == (uriParamsCount + 1)) {
+          add("GET", checkParametersCount(uriPattern, parameterCount - 1), new ReflectionPostRoute(resource, method));
+        } else {
+          throw new IllegalArgumentException("Expected " + uriParamsCount + " or " + (uriParamsCount + 1) + " parameters in " + uriPattern);
+        }
       }
 
       for (Post post : method.getDeclaredAnnotationsByType(Post.class)) {
