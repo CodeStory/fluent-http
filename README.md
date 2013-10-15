@@ -5,12 +5,9 @@
  + Supporter les coffee et less pré-générés
  + Supporter les templates pré-générés
  + Set ContenType on xml using yaml
- + Query params
  + Page 500 (bug photo)
- + Better hot reload
  + Javadoc
  + Compatibilité Guice
- + Security for free
  + Https
 
 # Deploy on Maven Central
