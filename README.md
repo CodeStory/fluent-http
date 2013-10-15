@@ -7,7 +7,6 @@
  + Set ContenType on xml using yaml
  + Query params
  + Page 500 (bug photo)
- + Access yaml on server side
  + Better hot reload
  + Javadoc
  + Compatibilité Guice

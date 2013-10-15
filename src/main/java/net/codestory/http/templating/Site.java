@@ -24,6 +24,8 @@ import java.util.stream.*;
 
 import net.codestory.http.io.*;
 
+import com.github.jknack.handlebars.*;
+
 public class Site {
   private static Site INSTANCE = new Site();
 
@@ -89,7 +91,11 @@ public class Site {
     return page.getOrDefault("tags", "").toString().trim().split("\\s*,\\s*");
   }
 
-  Map<String, Object> configYaml() {
+  public Object get(String key) {
+    return configYaml().get(key);
+  }
+
+  private Map<String, Object> configYaml() {
     if (yaml == null) {
       yaml = loadYamlConfig("_config.yml");
     }
@@ -107,6 +113,27 @@ public class Site {
       return new YamlParser().parse(Resources.read(configPath, UTF_8));
     } catch (IOException e) {
       throw new IllegalStateException("Unable to read " + configFile, e);
+    }
+  }
+
+  static enum SiteValueResolver implements ValueResolver {
+    INSTANCE;
+
+    @Override
+    public Object resolve(Object context, String name) {
+      Object value = null;
+      if (context instanceof Site) {
+        value = ((Site) context).configYaml().get(name);
+      }
+      return value == null ? UNRESOLVED : value;
+    }
+
+    @Override
+    public Set<Map.Entry<String, Object>> propertySet(Object context) {
+      if (context instanceof Site) {
+        return ((Site) context).configYaml().entrySet();
+      }
+      return Collections.emptySet();
     }
   }
 }

@@ -37,10 +37,7 @@ public class HandlebarsCompiler {
     if (site == null) {
       context = context(null, variables).build();
     } else {
-      Context contextSite = context(null, null).combine("site", site).build();
-      Context contextYaml = context(contextSite, null).combine("site", site.configYaml()).build();
-
-      context = context(contextYaml, variables).build();
+      context = context(null, null).combine("site", site).combine(variables).build();
     }
 
     return handlebars.compileInline(template, "[[", "]]").apply(context);
@@ -66,6 +63,11 @@ public class HandlebarsCompiler {
     } else {
       builder = Context.newBuilder(parent, model);
     }
-    return builder.resolver(MapValueResolver.INSTANCE, JavaBeanValueResolver.INSTANCE, FieldValueResolver.INSTANCE);
+
+    return builder.resolver(
+        MapValueResolver.INSTANCE,
+        JavaBeanValueResolver.INSTANCE,
+        FieldValueResolver.INSTANCE,
+        Site.SiteValueResolver.INSTANCE);
   }
 }
