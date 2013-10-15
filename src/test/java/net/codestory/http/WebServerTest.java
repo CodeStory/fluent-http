@@ -15,12 +15,12 @@
  */
 package net.codestory.http;
 
-import static com.jayway.restassured.RestAssured.*;
 import static java.nio.charset.StandardCharsets.*;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
 import java.io.*;
+import java.util.*;
 
 import net.codestory.http.annotations.*;
 import net.codestory.http.templating.*;
@@ -28,6 +28,7 @@ import net.codestory.http.templating.*;
 import org.junit.*;
 import org.junit.contrib.java.lang.system.*;
 
+import com.jayway.restassured.*;
 import com.jayway.restassured.specification.*;
 
 public class WebServerTest {
@@ -238,15 +239,15 @@ public class WebServerTest {
   @Test
   public void post() {
     server.configure(routes -> {
-      routes.post("/post", () -> "Done");
+      routes.post("/post", (parameters) -> "Done");
       routes.get("/get", () -> "Done");
       routes.get("/action", () -> "Done GET");
-      routes.post("/action", () -> "Done POST");
-      routes.post("/post/:who", (who) -> "Done " + who);
+      routes.post("/action", (parameters) -> "Done POST");
+      routes.post("/post/:who", (parameters, who) -> "Done " + who);
       routes.add(new Object() {
         @Post("/person")
         @Post("/person_alt")
-        public String created() {
+        public String create() {
           return "CREATED";
         }
       });
@@ -257,10 +258,25 @@ public class WebServerTest {
     expect().content(equalTo("Done POST")).when().post("/action");
     expect().content(equalTo("Done GET")).when().get("/action");
     expect().content(equalTo("CREATED")).when().post("/person");
-    expect().content(equalTo("CREATED")).when().post("/person_alt");
     expect().statusCode(405).when().post("/get");
     expect().statusCode(405).when().post("/index.html");
     expect().statusCode(404).when().post("/unknown");
+  }
+
+  @Test
+  public void postForm() {
+    server.configure(routes -> {
+      routes.post("/postForm", (keyValues) -> "CREATED " + keyValues.get("firstName") + " " + keyValues.get("lastName"));
+      routes.add(new Object() {
+        @Post("/postFormResource")
+        public String create(Map<String, String> keyValues) {
+          return "CREATED " + keyValues.get("firstName") + " " + keyValues.get("lastName");
+        }
+      });
+    });
+
+    given().parameters("firstName", "John", "lastName", "Doe").expect().content(equalTo("CREATED John Doe")).when().post("/postForm");
+    given().parameters("firstName", "Jane", "lastName", "Doe").expect().content(equalTo("CREATED Jane Doe")).when().post("/postFormResource");
   }
 
   @Test
@@ -276,7 +292,11 @@ public class WebServerTest {
   }
 
   private ResponseSpecification expect() {
-    return given().port(server.port()).expect();
+    return given().expect();
+  }
+
+  private RequestSpecification given() {
+    return RestAssured.given().port(server.port());
   }
 
   static class Person {

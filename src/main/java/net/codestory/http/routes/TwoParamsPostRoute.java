@@ -15,12 +15,14 @@
  */
 package net.codestory.http.routes;
 
+import java.util.*;
+
 @FunctionalInterface
-public interface OneParamRoute extends AnyRoute {
-  Object body(String parameters);
+public interface TwoParamsPostRoute extends AnyPostRoute {
+  Object body(Map<String, String> keyValues, String pathParameters1, String pathParameters2);
 
   @Override
-  default Object body(String[] parameters) {
-    return body(parameters[0]);
+  default Object body(Map<String, String> keyValues, String[] pathParameters) {
+    return body(keyValues, pathParameters[0], pathParameters[1]);
   }
 }

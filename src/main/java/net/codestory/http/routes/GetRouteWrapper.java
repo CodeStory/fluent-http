@@ -23,12 +23,12 @@ import net.codestory.http.*;
 
 import org.simpleframework.http.*;
 
-class RouteWrapper implements Route {
+class GetRouteWrapper implements Route {
   private final String method;
   private final UriParser uriParser;
-  private final AnyRoute route;
+  private final AnyGetRoute route;
 
-  RouteWrapper(String method, String uriPattern, AnyRoute route) {
+  GetRouteWrapper(String method, String uriPattern, AnyGetRoute route) {
     this.method = method;
     this.uriParser = new UriParser(uriPattern);
     this.route = route;

@@ -27,23 +27,23 @@ public interface Routes {
 
   void get(String uriPattern, Payload payload);
 
-  void get(String uriPattern, NoParamRoute noParamRoute);
+  void get(String uriPattern, NoParamGetRoute route);
 
-  void get(String uriPattern, OneParamRoute route);
+  void get(String uriPattern, OneParamGetRoute route);
 
-  void get(String uriPattern, TwoParamsRoute route);
+  void get(String uriPattern, TwoParamsGetRoute route);
 
-  void get(String uriPattern, ThreeParamsRoute route);
+  void get(String uriPattern, ThreeParamsGetRoute route);
 
-  void get(String uriPattern, FourParamsRoute route);
+  void get(String uriPattern, FourParamsGetRoute route);
 
-  void post(String uriPattern, NoParamRoute noParamRoute);
+  void post(String uriPattern, NoParamPostRoute route);
 
-  void post(String uriPattern, OneParamRoute route);
+  void post(String uriPattern, OneParamPostRoute route);
 
-  void post(String uriPattern, TwoParamsRoute route);
+  void post(String uriPattern, TwoParamsPostRoute route);
 
-  void post(String uriPattern, ThreeParamsRoute route);
+  void post(String uriPattern, ThreeParamsPostRoute route);
 
-  void post(String uriPattern, FourParamsRoute route);
+  void post(String uriPattern, FourParamsPostRoute route);
 }

@@ -16,11 +16,11 @@
 package net.codestory.http.routes;
 
 @FunctionalInterface
-public interface NoParamRoute extends AnyRoute {
-  Object body();
+public interface ThreeParamsGetRoute extends AnyGetRoute {
+  Object body(String pathParameters1, String pathParameters2, String pathParameters3);
 
   @Override
-  default Object body(String[] parameters) {
-    return body();
+  default Object body(String[] pathParameters) {
+    return body(pathParameters[0], pathParameters[1], pathParameters[2]);
   }
 }

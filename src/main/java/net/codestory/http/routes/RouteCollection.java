@@ -52,17 +52,22 @@ public class RouteCollection implements Routes {
 
     for (Method method : type.getMethods()) {
       int parameterCount = method.getParameterCount();
+      Class<?>[] parameterTypes = method.getParameterTypes();
 
       for (Get get : method.getDeclaredAnnotationsByType(Get.class)) {
         String uriPattern = urlPrefix + get.value();
 
-        add("GET", checkParametersCount(uriPattern, parameterCount), new ReflectionRoute(resource, method));
+        add("GET", checkParametersCount(uriPattern, parameterCount), new ReflectionGetRoute(resource, method));
       }
 
       for (Post post : method.getDeclaredAnnotationsByType(Post.class)) {
         String uriPattern = urlPrefix + post.value();
 
-        add("POST", checkParametersCount(uriPattern, parameterCount), new ReflectionRoute(resource, method));
+        if ((parameterTypes.length == 0) || !parameterTypes[0].isAssignableFrom(Map.class)) {
+          add("POST", checkParametersCount(uriPattern, parameterCount), new ReflectionGetRoute(resource, method));
+        } else {
+          add("POST", checkParametersCount(uriPattern, parameterCount - 1), new ReflectionPostRoute(resource, method));
+        }
       }
     }
   }
@@ -73,52 +78,52 @@ public class RouteCollection implements Routes {
   }
 
   @Override
-  public void get(String uriPattern, NoParamRoute noParamRoute) {
-    add("GET", checkParametersCount(uriPattern, 0), noParamRoute);
+  public void get(String uriPattern, NoParamGetRoute route) {
+    add("GET", checkParametersCount(uriPattern, 0), route);
   }
 
   @Override
-  public void get(String uriPattern, OneParamRoute route) {
+  public void get(String uriPattern, OneParamGetRoute route) {
     add("GET", checkParametersCount(uriPattern, 1), route);
   }
 
   @Override
-  public void get(String uriPattern, TwoParamsRoute route) {
+  public void get(String uriPattern, TwoParamsGetRoute route) {
     add("GET", checkParametersCount(uriPattern, 2), route);
   }
 
   @Override
-  public void get(String uriPattern, ThreeParamsRoute route) {
+  public void get(String uriPattern, ThreeParamsGetRoute route) {
     add("GET", checkParametersCount(uriPattern, 3), route);
   }
 
   @Override
-  public void get(String uriPattern, FourParamsRoute route) {
+  public void get(String uriPattern, FourParamsGetRoute route) {
     add("GET", checkParametersCount(uriPattern, 4), route);
   }
 
   @Override
-  public void post(String uriPattern, NoParamRoute noParamRoute) {
-    add("POST", checkParametersCount(uriPattern, 0), noParamRoute);
+  public void post(String uriPattern, NoParamPostRoute route) {
+    add("POST", checkParametersCount(uriPattern, 0), route);
   }
 
   @Override
-  public void post(String uriPattern, OneParamRoute route) {
+  public void post(String uriPattern, OneParamPostRoute route) {
     add("POST", checkParametersCount(uriPattern, 1), route);
   }
 
   @Override
-  public void post(String uriPattern, TwoParamsRoute route) {
+  public void post(String uriPattern, TwoParamsPostRoute route) {
     add("POST", checkParametersCount(uriPattern, 2), route);
   }
 
   @Override
-  public void post(String uriPattern, ThreeParamsRoute route) {
+  public void post(String uriPattern, ThreeParamsPostRoute route) {
     add("POST", checkParametersCount(uriPattern, 3), route);
   }
 
   @Override
-  public void post(String uriPattern, FourParamsRoute route) {
+  public void post(String uriPattern, FourParamsPostRoute route) {
     add("POST", checkParametersCount(uriPattern, 4), route);
   }
 
@@ -132,8 +137,12 @@ public class RouteCollection implements Routes {
     filters.clear();
   }
 
-  private void add(String method, String uriPattern, AnyRoute route) {
-    routes.addFirst(new RouteWrapper(method, uriPattern, route));
+  private void add(String method, String uriPattern, AnyGetRoute route) {
+    routes.addFirst(new GetRouteWrapper(method, uriPattern, route));
+  }
+
+  private void add(String method, String uriPattern, AnyPostRoute route) {
+    routes.addFirst(new PostRouteWrapper(method, uriPattern, route));
   }
 
   public Match apply(Request request, Response response) throws IOException {

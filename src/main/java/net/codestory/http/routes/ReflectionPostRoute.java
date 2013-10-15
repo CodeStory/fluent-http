@@ -16,43 +16,29 @@
 package net.codestory.http.routes;
 
 import java.lang.reflect.*;
+import java.util.*;
 
-class ReflectionRoute implements AnyRoute {
+import net.codestory.http.convert.*;
+
+class ReflectionPostRoute implements AnyPostRoute {
   private final Object resource;
   private final Method method;
 
-  ReflectionRoute(Object resource, Method method) {
+  ReflectionPostRoute(Object resource, Method method) {
     this.resource = resource;
     this.method = method;
   }
 
   @Override
-  public Object body(String[] parameters) {
+  public Object body(Map<String, String> keyValues, String[] pathParameters) {
     try {
-      Object[] arguments = convert(parameters, method.getParameterTypes());
+      Object[] arguments = TypeConvert.convert(keyValues, pathParameters, method.getParameterTypes());
 
       method.setAccessible(true);
       return method.invoke(resource, arguments);
     } catch (Exception e) {
       throw new IllegalStateException("Unable to apply resource", e);
     }
-  }
-
-  private static Object[] convert(String[] values, Class<?>[] types) {
-    Object[] converted = new Object[values.length];
-    for (int i = 0; i < values.length; i++) {
-      converted[i] = convert(values[i], types[i]);
-    }
-    return converted;
-  }
-
-  static Object convert(String value, Class<?> type) {
-    if ((type == int.class) || (type == Integer.class)) {
-      return Integer.parseInt(value);
-    } else if ((type == boolean.class) || (type == Boolean.class)) {
-      return Boolean.parseBoolean(value);
-    }
-    return value;
   }
 }
 

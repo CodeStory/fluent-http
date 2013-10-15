@@ -15,12 +15,29 @@
  */
 package net.codestory.http.routes;
 
-@FunctionalInterface
-public interface TwoParamsRoute extends AnyRoute {
-  Object body(String parameter1, String parameter2);
+import java.lang.reflect.*;
+
+import net.codestory.http.convert.*;
+
+class ReflectionGetRoute implements AnyGetRoute {
+  private final Object resource;
+  private final Method method;
+
+  ReflectionGetRoute(Object resource, Method method) {
+    this.resource = resource;
+    this.method = method;
+  }
 
   @Override
-  default Object body(String[] parameters) {
-    return body(parameters[0], parameters[1]);
+  public Object body(String[] pathParameters) {
+    try {
+      Object[] arguments = TypeConvert.convert(pathParameters, method.getParameterTypes());
+
+      method.setAccessible(true);
+      return method.invoke(resource, arguments);
+    } catch (Exception e) {
+      throw new IllegalStateException("Unable to apply resource", e);
+    }
   }
 }
+

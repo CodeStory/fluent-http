@@ -16,6 +16,11 @@
 package net.codestory.http.routes;
 
 @FunctionalInterface
-interface AnyRoute {
-  Object body(String[] parameters);
+public interface TwoParamsGetRoute extends AnyGetRoute {
+  Object body(String pathParameters1, String pathParameters2);
+
+  @Override
+  default Object body(String[] pathParameters) {
+    return body(pathParameters[0], pathParameters[1]);
+  }
 }
