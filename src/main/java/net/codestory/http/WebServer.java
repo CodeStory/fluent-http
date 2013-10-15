@@ -22,6 +22,7 @@ import java.net.*;
 import java.util.*;
 
 import net.codestory.http.errors.*;
+import net.codestory.http.reload.*;
 import net.codestory.http.routes.*;
 
 import org.simpleframework.http.*;
@@ -32,14 +33,14 @@ import org.simpleframework.transport.connect.*;
 public class WebServer {
   private final Server server;
   private final SocketConnection connection;
-  private final RouteCollection routes = new RouteCollection();
-  private Configuration lastConfiguration;
+  private RoutesProvider routesProvider;
   private int port;
 
   public WebServer() {
     try {
       server = new ContainerServer(this::handle);
       connection = new SocketConnection(server);
+      reset();
     } catch (IOException e) {
       throw new IllegalStateException("Unable to create http server", e);
     }
@@ -50,12 +51,10 @@ public class WebServer {
   }
 
   public WebServer configure(Configuration configuration) {
-    routes.reset();
-
-    configuration.configure(routes);
-
     if (devMode()) {
-      lastConfiguration = configuration;
+      routesProvider = new ReloadingRoutesProvider(configuration);
+    } else {
+      routesProvider = new FixedRoutesProvider(configuration);
     }
     return this;
   }
@@ -92,8 +91,7 @@ public class WebServer {
   }
 
   public void reset() {
-    lastConfiguration = null;
-    routes.reset();
+    routesProvider = new NoRoutesProvider();
   }
 
   public void stop() {
@@ -106,7 +104,6 @@ public class WebServer {
 
   void handle(Request request, Response response) {
     try {
-      hotReloadConfigurationInDevMode();
       applyRoutes(request, response);
     } catch (Exception e) {
       System.out.println("Error " + e);
@@ -127,7 +124,7 @@ public class WebServer {
   }
 
   protected void applyRoutes(Request request, Response response) throws IOException {
-    Match match = routes.apply(request, response);
+    Match match = routesProvider.get().apply(request, response);
     if (match != OK) {
       onPageNotFound(match, response);
     }
@@ -155,12 +152,5 @@ public class WebServer {
 
   protected boolean devMode() {
     return !Boolean.getBoolean("PROD_MODE");
-  }
-
-  protected void hotReloadConfigurationInDevMode() {
-    if (lastConfiguration != null) {
-      System.out.println("Reloading configuration");
-      configure(lastConfiguration);
-    }
   }
 }
