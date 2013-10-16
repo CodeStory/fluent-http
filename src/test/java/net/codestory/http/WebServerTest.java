@@ -27,6 +27,7 @@ import net.codestory.http.templating.*;
 
 import org.junit.*;
 import org.junit.contrib.java.lang.system.*;
+import org.simpleframework.http.*;
 
 import com.jayway.restassured.*;
 import com.jayway.restassured.specification.*;
@@ -78,10 +79,10 @@ public class WebServerTest {
   @Test
   public void request_params() {
     server.configure(routes -> {
-      routes.get("/hello/:name", (name) -> "Hello " + name);
-      routes.get("/other/:name", (name) -> "Other " + name);
-      routes.get("/say/:what/how/:loud", (what, loud) -> what + " " + loud);
-      routes.get("/:one/:two/:three", (one, two, three) -> one + two + three);
+      routes.get("/hello/:name", (String name) -> "Hello " + name);
+      routes.get("/other/:name", (String name) -> "Other " + name);
+      routes.get("/say/:what/how/:loud", (String what, String loud) -> what + " " + loud);
+      routes.get("/:one/:two/:three", (String one, String two, String three) -> one + two + three);
     });
 
     expect().body(equalTo("Hello Dave")).when().get("/hello/Dave");
@@ -94,7 +95,7 @@ public class WebServerTest {
   @Test
   public void query_params() {
     server.configure(routes -> {
-      routes.get("/hello?name=:name", (name) -> "Hello " + name);
+      routes.get("/hello?name=:name", (String name) -> "Hello " + name);
       routes.add(new Object() {
         @Get("/keyValues")
         public String keyValues(Map<String, String> keyValues) {
@@ -184,7 +185,7 @@ public class WebServerTest {
 
   @Test
   public void templates() {
-    server.configure(routes -> routes.get("/hello/:name", (name) -> new Template("1variable.txt").render("name", name)));
+    server.configure(routes -> routes.get("/hello/:name", (String name) -> new Template("1variable.txt").render("name", name)));
 
     expect().content(containsString("<div>_PREFIX_TEXT_SUFFIX_</div>")).when().get("/pageYaml");
     expect().content(equalTo("Hello Joe")).when().get("/hello/Joe");
@@ -247,11 +248,11 @@ public class WebServerTest {
   @Test
   public void post() {
     server.configure(routes -> {
-      routes.post("/post", (parameters) -> "Done");
+      routes.post("/post", (Query parameters) -> "Done");
       routes.get("/get", () -> "Done");
       routes.get("/action", () -> "Done GET");
-      routes.post("/action", (parameters) -> "Done POST");
-      routes.post("/post/:who", (parameters, who) -> "Done " + who);
+      routes.post("/action", (Query parameters) -> "Done POST");
+      routes.post("/post/:who", (Query parameters, String who) -> "Done " + who);
       routes.add(new Object() {
         @Post("/person")
         @Post("/person_alt")
@@ -274,7 +275,7 @@ public class WebServerTest {
   @Test
   public void postForm() {
     server.configure(routes -> {
-      routes.post("/postForm", (keyValues) -> "CREATED " + keyValues.get("firstName") + " " + keyValues.get("lastName"));
+      routes.post("/postForm", (Query keyValues) -> "CREATED " + keyValues.get("firstName") + " " + keyValues.get("lastName"));
       routes.add(new Object() {
         @Post("/postFormResource")
         public String create(Map<String, String> keyValues) {

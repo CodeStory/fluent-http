@@ -16,7 +16,7 @@
 package net.codestory.http.routes;
 
 @FunctionalInterface
-public interface OneParamGetRoute extends AnyGetRoute {
+public interface OneParamRoute extends AnyRoute {
   Object body(String pathParameters);
 
   @Override

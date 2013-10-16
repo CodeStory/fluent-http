@@ -29,7 +29,7 @@ public class RouteCollectionTest {
     thrown.expect(IllegalArgumentException.class);
     thrown.expectMessage("Expected 1 parameters in /");
 
-    routeCollection.get("/", (param) -> "");
+    routeCollection.get("/", (String param) -> "");
   }
 
   @Test
@@ -37,6 +37,6 @@ public class RouteCollectionTest {
     thrown.expect(IllegalArgumentException.class);
     thrown.expectMessage("Expected 2 parameters in /:one/:two/:three");
 
-    routeCollection.get("/:one/:two/:three", (one, two) -> "");
+    routeCollection.get("/:one/:two/:three", (String one, String two) -> "");
   }
 }

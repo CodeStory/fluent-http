@@ -27,23 +27,43 @@ public interface Routes {
 
   void get(String uriPattern, Payload payload);
 
-  void get(String uriPattern, NoParamGetRoute route);
+  void get(String uriPattern, NoParamRoute route);
 
-  void get(String uriPattern, OneParamGetRoute route);
+  void get(String uriPattern, OneParamRoute route);
 
-  void get(String uriPattern, TwoParamsGetRoute route);
+  void get(String uriPattern, TwoParamsRoute route);
 
-  void get(String uriPattern, ThreeParamsGetRoute route);
+  void get(String uriPattern, ThreeParamsRoute route);
 
-  void get(String uriPattern, FourParamsGetRoute route);
+  void get(String uriPattern, FourParamsRoute route);
 
-  void post(String uriPattern, NoParamPostRoute route);
+  void get(String uriPattern, NoParamRouteWithQuery route);
 
-  void post(String uriPattern, OneParamPostRoute route);
+  void get(String uriPattern, OneParamRouteWithQuery route);
 
-  void post(String uriPattern, TwoParamsPostRoute route);
+  void get(String uriPattern, TwoParamsRouteWithQuery route);
 
-  void post(String uriPattern, ThreeParamsPostRoute route);
+  void get(String uriPattern, ThreeParamsRouteWithQuery route);
 
-  void post(String uriPattern, FourParamsPostRoute route);
+  void get(String uriPattern, FourParamsRouteWithQuery route);
+
+  void post(String uriPattern, NoParamRoute route);
+
+  void post(String uriPattern, OneParamRoute route);
+
+  void post(String uriPattern, TwoParamsRoute route);
+
+  void post(String uriPattern, ThreeParamsRoute route);
+
+  void post(String uriPattern, FourParamsRoute route);
+
+  void post(String uriPattern, NoParamRouteWithQuery route);
+
+  void post(String uriPattern, OneParamRouteWithQuery route);
+
+  void post(String uriPattern, TwoParamsRouteWithQuery route);
+
+  void post(String uriPattern, ThreeParamsRouteWithQuery route);
+
+  void post(String uriPattern, FourParamsRouteWithQuery route);
 }

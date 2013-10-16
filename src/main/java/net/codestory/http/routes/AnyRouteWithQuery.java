@@ -15,12 +15,9 @@
  */
 package net.codestory.http.routes;
 
-@FunctionalInterface
-public interface NoParamGetRoute extends AnyGetRoute {
-  Object body();
+import org.simpleframework.http.*;
 
-  @Override
-  default Object body(String[] pathParameters) {
-    return body();
-  }
+@FunctionalInterface
+interface AnyRouteWithQuery {
+  Object body(Query query, String[] pathParameters);
 }

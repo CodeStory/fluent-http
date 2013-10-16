@@ -15,14 +15,31 @@
  */
 package net.codestory.http.routes;
 
+import java.lang.reflect.Method;
+
+import net.codestory.http.convert.*;
+
 import org.simpleframework.http.*;
 
-@FunctionalInterface
-public interface ThreeParamsPostRoute extends AnyPostRoute {
-  Object body(Query query, String pathParameter1, String pathParameter2, String pathParameter3);
+class ReflectionRouteWithQueryWithQuery implements AnyRouteWithQuery {
+  private final Object resource;
+  private final Method method;
+
+  ReflectionRouteWithQueryWithQuery(Object resource, Method method) {
+    this.resource = resource;
+    this.method = method;
+  }
 
   @Override
-  default Object body(Query query, String[] pathParameters) {
-    return body(query, pathParameters[0], pathParameters[1], pathParameters[2]);
+  public Object body(Query query, String[] pathParameters) {
+    try {
+      Object[] arguments = TypeConvert.convert(query, pathParameters, method.getParameterTypes());
+
+      method.setAccessible(true);
+      return method.invoke(resource, arguments);
+    } catch (Exception e) {
+      throw new IllegalStateException("Unable to apply resource", e);
+    }
   }
 }
+

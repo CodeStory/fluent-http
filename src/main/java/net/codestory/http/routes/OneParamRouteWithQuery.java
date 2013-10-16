@@ -18,7 +18,7 @@ package net.codestory.http.routes;
 import org.simpleframework.http.*;
 
 @FunctionalInterface
-public interface OneParamPostRoute extends AnyPostRoute {
+public interface OneParamRouteWithQuery extends AnyRouteWithQuery {
   Object body(Query query, String pathParameter);
 
   @Override

@@ -26,9 +26,9 @@ import org.simpleframework.http.*;
 class PostRouteWrapper implements Route {
   private final String method;
   private final UriParser uriParser;
-  private final AnyPostRoute route;
+  private final AnyRouteWithQuery route;
 
-  PostRouteWrapper(String method, String uriPattern, AnyPostRoute route) {
+  PostRouteWrapper(String method, String uriPattern, AnyRouteWithQuery route) {
     this.method = method;
     this.uriParser = new UriParser(uriPattern);
     this.route = route;

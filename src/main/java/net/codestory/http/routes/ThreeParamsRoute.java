@@ -15,9 +15,12 @@
  */
 package net.codestory.http.routes;
 
-import org.simpleframework.http.*;
-
 @FunctionalInterface
-interface AnyPostRoute {
-  Object body(Query query, String[] pathParameters);
+public interface ThreeParamsRoute extends AnyRoute {
+  Object body(String pathParameters1, String pathParameters2, String pathParameters3);
+
+  @Override
+  default Object body(String[] pathParameters) {
+    return body(pathParameters[0], pathParameters[1], pathParameters[2]);
+  }
 }

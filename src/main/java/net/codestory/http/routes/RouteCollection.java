@@ -58,9 +58,9 @@ public class RouteCollection implements Routes {
 
         int uriParamsCount = paramsCount(uriPattern);
         if (parameterCount == uriParamsCount) {
-          add("GET", checkParametersCount(uriPattern, parameterCount), new ReflectionGetRoute(resource, method));
+          add("GET", checkParametersCount(uriPattern, parameterCount), new ReflectionRoute(resource, method));
         } else if (parameterCount == (uriParamsCount + 1)) {
-          add("GET", checkParametersCount(uriPattern, parameterCount - 1), new ReflectionPostRoute(resource, method));
+          add("GET", checkParametersCount(uriPattern, parameterCount - 1), new ReflectionRouteWithQueryWithQuery(resource, method));
         } else {
           throw new IllegalArgumentException("Expected " + uriParamsCount + " or " + (uriParamsCount + 1) + " parameters in " + uriPattern);
         }
@@ -71,9 +71,9 @@ public class RouteCollection implements Routes {
 
         int uriParamsCount = paramsCount(uriPattern);
         if (parameterCount == uriParamsCount) {
-          add("POST", checkParametersCount(uriPattern, parameterCount), new ReflectionGetRoute(resource, method));
+          add("POST", checkParametersCount(uriPattern, parameterCount), new ReflectionRoute(resource, method));
         } else if (parameterCount == (uriParamsCount + 1)) {
-          add("POST", checkParametersCount(uriPattern, parameterCount - 1), new ReflectionPostRoute(resource, method));
+          add("POST", checkParametersCount(uriPattern, parameterCount - 1), new ReflectionRouteWithQueryWithQuery(resource, method));
         } else {
           throw new IllegalArgumentException("Expected " + uriParamsCount + " or " + (uriParamsCount + 1) + " parameters in " + uriPattern);
         }
@@ -87,52 +87,102 @@ public class RouteCollection implements Routes {
   }
 
   @Override
-  public void get(String uriPattern, NoParamGetRoute route) {
+  public void get(String uriPattern, NoParamRoute route) {
     add("GET", checkParametersCount(uriPattern, 0), route);
   }
 
   @Override
-  public void get(String uriPattern, OneParamGetRoute route) {
+  public void get(String uriPattern, OneParamRoute route) {
     add("GET", checkParametersCount(uriPattern, 1), route);
   }
 
   @Override
-  public void get(String uriPattern, TwoParamsGetRoute route) {
+  public void get(String uriPattern, TwoParamsRoute route) {
     add("GET", checkParametersCount(uriPattern, 2), route);
   }
 
   @Override
-  public void get(String uriPattern, ThreeParamsGetRoute route) {
+  public void get(String uriPattern, ThreeParamsRoute route) {
     add("GET", checkParametersCount(uriPattern, 3), route);
   }
 
   @Override
-  public void get(String uriPattern, FourParamsGetRoute route) {
+  public void get(String uriPattern, FourParamsRoute route) {
     add("GET", checkParametersCount(uriPattern, 4), route);
   }
 
   @Override
-  public void post(String uriPattern, NoParamPostRoute route) {
+  public void get(String uriPattern, NoParamRouteWithQuery route) {
+    add("GET", checkParametersCount(uriPattern, 0), route);
+  }
+
+  @Override
+  public void get(String uriPattern, OneParamRouteWithQuery route) {
+    add("GET", checkParametersCount(uriPattern, 1), route);
+  }
+
+  @Override
+  public void get(String uriPattern, TwoParamsRouteWithQuery route) {
+    add("GET", checkParametersCount(uriPattern, 2), route);
+  }
+
+  @Override
+  public void get(String uriPattern, ThreeParamsRouteWithQuery route) {
+    add("GET", checkParametersCount(uriPattern, 3), route);
+  }
+
+  @Override
+  public void get(String uriPattern, FourParamsRouteWithQuery route) {
+    add("GET", checkParametersCount(uriPattern, 4), route);
+  }
+
+  @Override
+  public void post(String uriPattern, NoParamRoute route) {
     add("POST", checkParametersCount(uriPattern, 0), route);
   }
 
   @Override
-  public void post(String uriPattern, OneParamPostRoute route) {
+  public void post(String uriPattern, OneParamRoute route) {
     add("POST", checkParametersCount(uriPattern, 1), route);
   }
 
   @Override
-  public void post(String uriPattern, TwoParamsPostRoute route) {
+  public void post(String uriPattern, TwoParamsRoute route) {
     add("POST", checkParametersCount(uriPattern, 2), route);
   }
 
   @Override
-  public void post(String uriPattern, ThreeParamsPostRoute route) {
+  public void post(String uriPattern, ThreeParamsRoute route) {
     add("POST", checkParametersCount(uriPattern, 3), route);
   }
 
   @Override
-  public void post(String uriPattern, FourParamsPostRoute route) {
+  public void post(String uriPattern, FourParamsRoute route) {
+    add("POST", checkParametersCount(uriPattern, 4), route);
+  }
+
+  @Override
+  public void post(String uriPattern, NoParamRouteWithQuery route) {
+    add("POST", checkParametersCount(uriPattern, 0), route);
+  }
+
+  @Override
+  public void post(String uriPattern, OneParamRouteWithQuery route) {
+    add("POST", checkParametersCount(uriPattern, 1), route);
+  }
+
+  @Override
+  public void post(String uriPattern, TwoParamsRouteWithQuery route) {
+    add("POST", checkParametersCount(uriPattern, 2), route);
+  }
+
+  @Override
+  public void post(String uriPattern, ThreeParamsRouteWithQuery route) {
+    add("POST", checkParametersCount(uriPattern, 3), route);
+  }
+
+  @Override
+  public void post(String uriPattern, FourParamsRouteWithQuery route) {
     add("POST", checkParametersCount(uriPattern, 4), route);
   }
 
@@ -146,11 +196,11 @@ public class RouteCollection implements Routes {
     filters.clear();
   }
 
-  private void add(String method, String uriPattern, AnyGetRoute route) {
+  private void add(String method, String uriPattern, AnyRoute route) {
     routes.addFirst(new GetRouteWrapper(method, uriPattern, route));
   }
 
-  private void add(String method, String uriPattern, AnyPostRoute route) {
+  private void add(String method, String uriPattern, AnyRouteWithQuery route) {
     routes.addFirst(new PostRouteWrapper(method, uriPattern, route));
   }
 

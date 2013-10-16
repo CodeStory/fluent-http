@@ -15,31 +15,14 @@
  */
 package net.codestory.http.routes;
 
-import java.lang.reflect.Method;
-
-import net.codestory.http.convert.*;
-
 import org.simpleframework.http.*;
 
-class ReflectionPostRoute implements AnyPostRoute {
-  private final Object resource;
-  private final Method method;
-
-  ReflectionPostRoute(Object resource, Method method) {
-    this.resource = resource;
-    this.method = method;
-  }
+@FunctionalInterface
+public interface FourParamsRouteWithQuery extends AnyRouteWithQuery {
+  Object body(Query query, String parameter1, String parameter2, String parameter3, String parameter4);
 
   @Override
-  public Object body(Query query, String[] pathParameters) {
-    try {
-      Object[] arguments = TypeConvert.convert(query, pathParameters, method.getParameterTypes());
-
-      method.setAccessible(true);
-      return method.invoke(resource, arguments);
-    } catch (Exception e) {
-      throw new IllegalStateException("Unable to apply resource", e);
-    }
+  default Object body(Query query, String[] pathParameters) {
+    return body(query, pathParameters[0], pathParameters[1], pathParameters[2], pathParameters[3]);
   }
 }
-

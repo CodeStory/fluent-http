@@ -26,9 +26,9 @@ import org.simpleframework.http.*;
 class GetRouteWrapper implements Route {
   private final String method;
   private final UriParser uriParser;
-  private final AnyGetRoute route;
+  private final AnyRoute route;
 
-  GetRouteWrapper(String method, String uriPattern, AnyGetRoute route) {
+  GetRouteWrapper(String method, String uriPattern, AnyRoute route) {
     this.method = method;
     this.uriParser = new UriParser(uriPattern);
     this.route = route;

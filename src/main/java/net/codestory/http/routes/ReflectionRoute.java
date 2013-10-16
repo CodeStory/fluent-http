@@ -19,11 +19,11 @@ import java.lang.reflect.*;
 
 import net.codestory.http.convert.*;
 
-class ReflectionGetRoute implements AnyGetRoute {
+class ReflectionRoute implements AnyRoute {
   private final Object resource;
   private final Method method;
 
-  ReflectionGetRoute(Object resource, Method method) {
+  ReflectionRoute(Object resource, Method method) {
     this.resource = resource;
     this.method = method;
   }
