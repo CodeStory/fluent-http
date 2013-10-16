@@ -17,7 +17,7 @@ package net.codestory.http.convert;
 
 import java.util.*;
 
-import org.simpleframework.http.*;
+import net.codestory.http.*;
 
 import com.fasterxml.jackson.databind.*;
 
@@ -28,12 +28,12 @@ public class TypeConvert {
     // static class
   }
 
-  public static Object[] convert(Query query, String[] values, Class<?>[] types) {
+  public static Object[] convert(Context context, String[] values, Class<?>[] types) {
     Object[] converted = new Object[values.length + 1];
 
-    converted[0] = TypeConvert.convert(query, types[0]);
+    converted[0] = convert(context, types[0]);
     for (int i = 0; i < values.length; i++) {
-      converted[i + 1] = TypeConvert.convert(values[i], types[i]);
+      converted[i + 1] = convert(values[i], types[i]);
     }
 
     return converted;
@@ -43,7 +43,7 @@ public class TypeConvert {
     Object[] converted = new Object[values.length];
 
     for (int i = 0; i < values.length; i++) {
-      converted[i] = TypeConvert.convert(values[i], types[i]);
+      converted[i] = convert(values[i], types[i]);
     }
 
     return converted;
@@ -53,12 +53,12 @@ public class TypeConvert {
     return OBJECT_MAPPER.convertValue(value, type);
   }
 
-  public static Object convert(Query query, Class<?> type) {
-    if (type.isAssignableFrom(Map.class)) {
-      return query;
-    } else if (type.isAssignableFrom(Query.class)) {
-      return query;
+  public static Object convert(Context context, Class<?> type) {
+    if (type.isAssignableFrom(Context.class)) {
+      return context;
+    } else if (type.isAssignableFrom(Map.class)) {
+      return context.getkeyValues();
     }
-    return OBJECT_MAPPER.convertValue(query, type);
+    return OBJECT_MAPPER.convertValue(context.getkeyValues(), type);
   }
 }

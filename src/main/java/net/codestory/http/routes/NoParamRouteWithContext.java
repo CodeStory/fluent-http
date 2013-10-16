@@ -15,14 +15,14 @@
  */
 package net.codestory.http.routes;
 
-import org.simpleframework.http.*;
+import net.codestory.http.*;
 
 @FunctionalInterface
-public interface NoParamRouteWithQuery extends AnyRouteWithQuery {
-  Object body(Query query);
+public interface NoParamRouteWithContext extends AnyRouteWithContext {
+  Object body(Context context);
 
   @Override
-  default Object body(Query query, String[] pathParameters) {
-    return body(query);
+  default Object body(Context context, String[] pathParameters) {
+    return body(context);
   }
 }

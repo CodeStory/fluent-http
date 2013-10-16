@@ -69,7 +69,7 @@ public class PayloadTest {
   }
 
   @Test
-  public void support_redirect() throws IOException {
+  public void redirect() throws IOException {
     Response response = mock(Response.class);
 
     Payload payload = Payload.seeOther("/url");
@@ -82,7 +82,19 @@ public class PayloadTest {
   }
 
   @Test
-  public void support_permanent_move() throws IOException {
+  public void forbidden() throws IOException {
+    Response response = mock(Response.class);
+
+    Payload payload = Payload.forbidden();
+    payload.writeTo(response);
+
+    verify(response).setCode(403);
+    verify(response).setContentLength(0);
+    verifyNoMoreInteractions(response);
+  }
+
+  @Test
+  public void permanent_move() throws IOException {
     Response response = mock(Response.class);
 
     Payload payload = Payload.movedPermanently("/url");

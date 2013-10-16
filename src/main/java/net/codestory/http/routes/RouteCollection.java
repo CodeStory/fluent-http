@@ -60,7 +60,7 @@ public class RouteCollection implements Routes {
         if (parameterCount == uriParamsCount) {
           add("GET", checkParametersCount(uriPattern, parameterCount), new ReflectionRoute(resource, method));
         } else if (parameterCount == (uriParamsCount + 1)) {
-          add("GET", checkParametersCount(uriPattern, parameterCount - 1), new ReflectionRouteWithQueryWithQuery(resource, method));
+          add("GET", checkParametersCount(uriPattern, parameterCount - 1), new ReflectionRouteWithContext(resource, method));
         } else {
           throw new IllegalArgumentException("Expected " + uriParamsCount + " or " + (uriParamsCount + 1) + " parameters in " + uriPattern);
         }
@@ -73,7 +73,7 @@ public class RouteCollection implements Routes {
         if (parameterCount == uriParamsCount) {
           add("POST", checkParametersCount(uriPattern, parameterCount), new ReflectionRoute(resource, method));
         } else if (parameterCount == (uriParamsCount + 1)) {
-          add("POST", checkParametersCount(uriPattern, parameterCount - 1), new ReflectionRouteWithQueryWithQuery(resource, method));
+          add("POST", checkParametersCount(uriPattern, parameterCount - 1), new ReflectionRouteWithContext(resource, method));
         } else {
           throw new IllegalArgumentException("Expected " + uriParamsCount + " or " + (uriParamsCount + 1) + " parameters in " + uriPattern);
         }
@@ -112,27 +112,27 @@ public class RouteCollection implements Routes {
   }
 
   @Override
-  public void get(String uriPattern, NoParamRouteWithQuery route) {
+  public void get(String uriPattern, NoParamRouteWithContext route) {
     add("GET", checkParametersCount(uriPattern, 0), route);
   }
 
   @Override
-  public void get(String uriPattern, OneParamRouteWithQuery route) {
+  public void get(String uriPattern, OneParamRouteWithContext route) {
     add("GET", checkParametersCount(uriPattern, 1), route);
   }
 
   @Override
-  public void get(String uriPattern, TwoParamsRouteWithQuery route) {
+  public void get(String uriPattern, TwoParamsRouteWithContext route) {
     add("GET", checkParametersCount(uriPattern, 2), route);
   }
 
   @Override
-  public void get(String uriPattern, ThreeParamsRouteWithQuery route) {
+  public void get(String uriPattern, ThreeParamsRouteWithContext route) {
     add("GET", checkParametersCount(uriPattern, 3), route);
   }
 
   @Override
-  public void get(String uriPattern, FourParamsRouteWithQuery route) {
+  public void get(String uriPattern, FourParamsRouteWithContext route) {
     add("GET", checkParametersCount(uriPattern, 4), route);
   }
 
@@ -162,27 +162,27 @@ public class RouteCollection implements Routes {
   }
 
   @Override
-  public void post(String uriPattern, NoParamRouteWithQuery route) {
+  public void post(String uriPattern, NoParamRouteWithContext route) {
     add("POST", checkParametersCount(uriPattern, 0), route);
   }
 
   @Override
-  public void post(String uriPattern, OneParamRouteWithQuery route) {
+  public void post(String uriPattern, OneParamRouteWithContext route) {
     add("POST", checkParametersCount(uriPattern, 1), route);
   }
 
   @Override
-  public void post(String uriPattern, TwoParamsRouteWithQuery route) {
+  public void post(String uriPattern, TwoParamsRouteWithContext route) {
     add("POST", checkParametersCount(uriPattern, 2), route);
   }
 
   @Override
-  public void post(String uriPattern, ThreeParamsRouteWithQuery route) {
+  public void post(String uriPattern, ThreeParamsRouteWithContext route) {
     add("POST", checkParametersCount(uriPattern, 3), route);
   }
 
   @Override
-  public void post(String uriPattern, FourParamsRouteWithQuery route) {
+  public void post(String uriPattern, FourParamsRouteWithContext route) {
     add("POST", checkParametersCount(uriPattern, 4), route);
   }
 
@@ -192,11 +192,11 @@ public class RouteCollection implements Routes {
   }
 
   private void add(String method, String uriPattern, AnyRoute route) {
-    routes.addFirst(new GetRouteWrapper(method, uriPattern, route));
+    routes.addFirst(new RouteWrapper(method, uriPattern, route));
   }
 
-  private void add(String method, String uriPattern, AnyRouteWithQuery route) {
-    routes.addFirst(new PostRouteWrapper(method, uriPattern, route));
+  private void add(String method, String uriPattern, AnyRouteWithContext route) {
+    routes.addFirst(new RouteWithContextWrapper(method, uriPattern, route));
   }
 
   public Match apply(Request request, Response response) throws IOException {

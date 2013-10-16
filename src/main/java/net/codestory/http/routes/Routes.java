@@ -37,15 +37,15 @@ public interface Routes {
 
   void get(String uriPattern, FourParamsRoute route);
 
-  void get(String uriPattern, NoParamRouteWithQuery route);
+  void get(String uriPattern, NoParamRouteWithContext route);
 
-  void get(String uriPattern, OneParamRouteWithQuery route);
+  void get(String uriPattern, OneParamRouteWithContext route);
 
-  void get(String uriPattern, TwoParamsRouteWithQuery route);
+  void get(String uriPattern, TwoParamsRouteWithContext route);
 
-  void get(String uriPattern, ThreeParamsRouteWithQuery route);
+  void get(String uriPattern, ThreeParamsRouteWithContext route);
 
-  void get(String uriPattern, FourParamsRouteWithQuery route);
+  void get(String uriPattern, FourParamsRouteWithContext route);
 
   void post(String uriPattern, NoParamRoute route);
 
@@ -57,13 +57,13 @@ public interface Routes {
 
   void post(String uriPattern, FourParamsRoute route);
 
-  void post(String uriPattern, NoParamRouteWithQuery route);
+  void post(String uriPattern, NoParamRouteWithContext route);
 
-  void post(String uriPattern, OneParamRouteWithQuery route);
+  void post(String uriPattern, OneParamRouteWithContext route);
 
-  void post(String uriPattern, TwoParamsRouteWithQuery route);
+  void post(String uriPattern, TwoParamsRouteWithContext route);
 
-  void post(String uriPattern, ThreeParamsRouteWithQuery route);
+  void post(String uriPattern, ThreeParamsRouteWithContext route);
 
-  void post(String uriPattern, FourParamsRouteWithQuery route);
+  void post(String uriPattern, FourParamsRouteWithContext route);
 }

@@ -69,6 +69,10 @@ public class Payload {
     return payload;
   }
 
+  public static Payload forbidden() {
+    return new Payload(null, null, 403);
+  }
+
   public int code() {
     return code;
   }

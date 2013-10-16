@@ -252,11 +252,11 @@ public class WebServerTest {
   @Test
   public void post() {
     server.configure(routes -> {
-      routes.post("/post", (Query parameters) -> "Done");
+      routes.post("/post", () -> "Done");
       routes.get("/get", () -> "Done");
       routes.get("/action", () -> "Done GET");
-      routes.post("/action", (Query parameters) -> "Done POST");
-      routes.post("/post/:who", (Query parameters, String who) -> "Done " + who);
+      routes.post("/action", () -> "Done POST");
+      routes.post("/post/:who", (String who) -> "Done " + who);
       routes.add(new Object() {
         @Post("/person")
         @Post("/person_alt")
@@ -279,7 +279,7 @@ public class WebServerTest {
   @Test
   public void postForm() {
     server.configure(routes -> {
-      routes.post("/postForm", (Query keyValues) -> "CREATED " + keyValues.get("firstName") + " " + keyValues.get("lastName"));
+      routes.post("/postForm", (Context context) -> "CREATED " + context.get("firstName") + " " + context.get("lastName"));
       routes.add(new Object() {
         @Post("/postFormResource")
         public String create(Map<String, String> keyValues) {

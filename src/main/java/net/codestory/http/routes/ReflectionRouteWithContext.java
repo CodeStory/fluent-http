@@ -17,23 +17,22 @@ package net.codestory.http.routes;
 
 import java.lang.reflect.Method;
 
+import net.codestory.http.*;
 import net.codestory.http.convert.*;
 
-import org.simpleframework.http.*;
-
-class ReflectionRouteWithQueryWithQuery implements AnyRouteWithQuery {
+class ReflectionRouteWithContext implements AnyRouteWithContext {
   private final Object resource;
   private final Method method;
 
-  ReflectionRouteWithQueryWithQuery(Object resource, Method method) {
+  ReflectionRouteWithContext(Object resource, Method method) {
     this.resource = resource;
     this.method = method;
   }
 
   @Override
-  public Object body(Query query, String[] pathParameters) {
+  public Object body(Context context, String[] pathParameters) {
     try {
-      Object[] arguments = TypeConvert.convert(query, pathParameters, method.getParameterTypes());
+      Object[] arguments = TypeConvert.convert(context, pathParameters, method.getParameterTypes());
 
       method.setAccessible(true);
       return method.invoke(resource, arguments);

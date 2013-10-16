@@ -15,14 +15,14 @@
  */
 package net.codestory.http.routes;
 
-import org.simpleframework.http.*;
+import net.codestory.http.*;
 
 @FunctionalInterface
-public interface ThreeParamsRouteWithQuery extends AnyRouteWithQuery {
-  Object body(Query query, String pathParameter1, String pathParameter2, String pathParameter3);
+public interface OneParamRouteWithContext extends AnyRouteWithContext {
+  Object body(Context context, String pathParameter);
 
   @Override
-  default Object body(Query query, String[] pathParameters) {
-    return body(query, pathParameters[0], pathParameters[1], pathParameters[2]);
+  default Object body(Context context, String[] pathParameters) {
+    return body(context, pathParameters[0]);
   }
 }
