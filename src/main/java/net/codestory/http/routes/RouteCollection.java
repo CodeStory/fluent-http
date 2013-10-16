@@ -191,11 +191,6 @@ public class RouteCollection implements Routes {
     filters.addLast(filter);
   }
 
-  public void reset() {
-    routes.clear();
-    filters.clear();
-  }
-
   private void add(String method, String uriPattern, AnyRoute route) {
     routes.addFirst(new GetRouteWrapper(method, uriPattern, route));
   }
