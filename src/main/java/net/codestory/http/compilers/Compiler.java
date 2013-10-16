@@ -43,7 +43,7 @@ public enum Compiler {
   MARKDOWN {
     @Override
     String compile(String markdown) {
-      return Processor.process(markdown);
+      return Processor.process(markdown, Configuration.builder().forceExtentedProfile().build());
     }
   },
   LESS {

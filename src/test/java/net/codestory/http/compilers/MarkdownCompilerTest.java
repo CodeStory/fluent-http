@@ -33,8 +33,15 @@ public class MarkdownCompilerTest {
 
   @Test
   public void markdown_to_html() throws IOException {
-    String css = markdownCompiler.compile("This is **bold**");
+    String html = markdownCompiler.compile("This is **bold**");
 
-    assertThat(css).isEqualTo("<p>This is <strong>bold</strong></p>\n");
+    assertThat(html).isEqualTo("<p>This is <strong>bold</strong></p>\n");
+  }
+
+  @Test
+  public void extension() throws IOException {
+    String html = markdownCompiler.compile("## HEADER ## {#ID}");
+
+    assertThat(html).isEqualTo("<h2 id=\"ID\">HEADER</h2>\n");
   }
 }
