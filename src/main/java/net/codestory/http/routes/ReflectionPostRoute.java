@@ -15,10 +15,11 @@
  */
 package net.codestory.http.routes;
 
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.Method;
 
 import net.codestory.http.convert.*;
+
+import org.simpleframework.http.*;
 
 class ReflectionPostRoute implements AnyPostRoute {
   private final Object resource;
@@ -30,9 +31,9 @@ class ReflectionPostRoute implements AnyPostRoute {
   }
 
   @Override
-  public Object body(Map<String, String> keyValues, String[] pathParameters) {
+  public Object body(Query query, String[] pathParameters) {
     try {
-      Object[] arguments = TypeConvert.convert(keyValues, pathParameters, method.getParameterTypes());
+      Object[] arguments = TypeConvert.convert(query, pathParameters, method.getParameterTypes());
 
       method.setAccessible(true);
       return method.invoke(resource, arguments);

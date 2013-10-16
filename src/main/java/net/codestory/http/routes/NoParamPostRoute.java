@@ -15,14 +15,14 @@
  */
 package net.codestory.http.routes;
 
-import java.util.*;
+import org.simpleframework.http.*;
 
 @FunctionalInterface
 public interface NoParamPostRoute extends AnyPostRoute {
-  Object body(Map<String, String> keyValues);
+  Object body(Query query);
 
   @Override
-  default Object body(Map<String, String> keyValues, String[] pathParameters) {
-    return body(keyValues);
+  default Object body(Query query, String[] pathParameters) {
+    return body(query);
   }
 }

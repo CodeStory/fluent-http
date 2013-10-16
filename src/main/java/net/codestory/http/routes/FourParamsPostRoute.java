@@ -15,14 +15,14 @@
  */
 package net.codestory.http.routes;
 
-import java.util.*;
+import org.simpleframework.http.*;
 
 @FunctionalInterface
 public interface FourParamsPostRoute extends AnyPostRoute {
-  Object body(Map<String, String> keyValues, String parameter1, String parameter2, String parameter3, String parameter4);
+  Object body(Query query, String parameter1, String parameter2, String parameter3, String parameter4);
 
   @Override
-  default Object body(Map<String, String> keyValues, String[] pathParameters) {
-    return body(keyValues, pathParameters[0], pathParameters[1], pathParameters[2], pathParameters[3]);
+  default Object body(Query query, String[] pathParameters) {
+    return body(query, pathParameters[0], pathParameters[1], pathParameters[2], pathParameters[3]);
   }
 }

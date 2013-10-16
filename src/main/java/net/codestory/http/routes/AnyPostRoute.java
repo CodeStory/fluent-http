@@ -15,9 +15,9 @@
  */
 package net.codestory.http.routes;
 
-import java.util.*;
+import org.simpleframework.http.*;
 
 @FunctionalInterface
 interface AnyPostRoute {
-  Object body(Map<String, String> keyValues, String[] pathParameters);
+  Object body(Query query, String[] pathParameters);
 }

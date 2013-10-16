@@ -15,14 +15,14 @@
  */
 package net.codestory.http.routes;
 
-import java.util.*;
+import org.simpleframework.http.*;
 
 @FunctionalInterface
 public interface TwoParamsPostRoute extends AnyPostRoute {
-  Object body(Map<String, String> keyValues, String pathParameters1, String pathParameters2);
+  Object body(Query query, String pathParameters1, String pathParameters2);
 
   @Override
-  default Object body(Map<String, String> keyValues, String[] pathParameters) {
-    return body(keyValues, pathParameters[0], pathParameters[1]);
+  default Object body(Query query, String[] pathParameters) {
+    return body(query, pathParameters[0], pathParameters[1]);
   }
 }

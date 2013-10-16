@@ -17,6 +17,8 @@ package net.codestory.http.convert;
 
 import java.util.*;
 
+import org.simpleframework.http.*;
+
 import com.fasterxml.jackson.databind.*;
 
 public class TypeConvert {
@@ -24,9 +26,9 @@ public class TypeConvert {
     // static class
   }
 
-  public static Object[] convert(Map<String, String> keyValues, String[] values, Class<?>[] types) {
+  public static Object[] convert(Query query, String[] values, Class<?>[] types) {
     Object[] converted = new Object[values.length + 1];
-    converted[0] = TypeConvert.convert(keyValues, types[0]);
+    converted[0] = TypeConvert.convert(query, types[0]);
     for (int i = 0; i < values.length; i++) {
       converted[i + 1] = TypeConvert.convert(values[i], types[i]);
     }
@@ -56,10 +58,12 @@ public class TypeConvert {
     return value;
   }
 
-  public static Object convert(Map<String, String> keyValues, Class<?> type) {
+  public static Object convert(Query query, Class<?> type) {
     if (type.isAssignableFrom(Map.class)) {
-      return keyValues;
+      return query;
+    } else if (type.isAssignableFrom(Query.class)) {
+      return query;
     }
-    return new ObjectMapper().convertValue(keyValues, type);
+    return new ObjectMapper().convertValue(query, type);
   }
 }
