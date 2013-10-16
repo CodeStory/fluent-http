@@ -22,40 +22,35 @@ import org.simpleframework.http.*;
 import com.fasterxml.jackson.databind.*;
 
 public class TypeConvert {
+  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
   private TypeConvert() {
     // static class
   }
 
   public static Object[] convert(Query query, String[] values, Class<?>[] types) {
     Object[] converted = new Object[values.length + 1];
+
     converted[0] = TypeConvert.convert(query, types[0]);
     for (int i = 0; i < values.length; i++) {
       converted[i + 1] = TypeConvert.convert(values[i], types[i]);
     }
+
     return converted;
   }
 
   public static Object[] convert(String[] values, Class<?>[] types) {
     Object[] converted = new Object[values.length];
+
     for (int i = 0; i < values.length; i++) {
       converted[i] = TypeConvert.convert(values[i], types[i]);
     }
+
     return converted;
   }
 
   public static Object convert(String value, Class<?> type) {
-    if ((type == int.class) || (type == Integer.class)) {
-      return Integer.parseInt(value);
-    } else if ((type == float.class) || (type == Float.class)) {
-      return Float.parseFloat(value);
-    } else if ((type == long.class) || (type == Long.class)) {
-      return Long.parseLong(value);
-    } else if ((type == double.class) || (type == Double.class)) {
-      return Double.parseDouble(value);
-    } else if ((type == boolean.class) || (type == Boolean.class)) {
-      return Boolean.parseBoolean(value);
-    }
-    return value;
+    return OBJECT_MAPPER.convertValue(value, type);
   }
 
   public static Object convert(Query query, Class<?> type) {
@@ -64,6 +59,6 @@ public class TypeConvert {
     } else if (type.isAssignableFrom(Query.class)) {
       return query;
     }
-    return new ObjectMapper().convertValue(query, type);
+    return OBJECT_MAPPER.convertValue(query, type);
   }
 }
