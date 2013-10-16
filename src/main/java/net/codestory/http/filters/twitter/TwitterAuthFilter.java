@@ -72,16 +72,16 @@ public class TwitterAuthFilter implements Filter {
       }
 
       response.setCookie(new Cookie("userId", user.getId().toString(), "/", true));
-      response.setValue("Location", "/test/");
+      response.setValue("Location", uriPrefix);
       response.setCode(303);
       response.setContentLength(0);
 
       return true;
     }
 
-    if (uri.equals("/test/logout")) {
+    if (uri.equals(uriPrefix + "logout")) {
       response.setCookie(new Cookie("userId", "", "/", false));
-      response.setValue("Location", "/test/");
+      response.setValue("Location", "/");
       response.setCode(303);
       response.setContentLength(0);
 
