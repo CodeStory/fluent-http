@@ -72,6 +72,7 @@ public class TwitterAuthFilter implements Filter {
       }
 
       response.setCookie(new Cookie("userId", user.getId().toString(), "/", true));
+      response.setCookie(new Cookie("screenName", user.getScreenName(), "/", true));
       response.setValue("Location", uriPrefix);
       response.setCode(303);
       response.setContentLength(0);
@@ -81,6 +82,7 @@ public class TwitterAuthFilter implements Filter {
 
     if (uri.equals(uriPrefix + "logout")) {
       response.setCookie(new Cookie("userId", "", "/", false));
+      response.setCookie(new Cookie("screenName", "", "/", false));
       response.setValue("Location", "/");
       response.setCode(303);
       response.setContentLength(0);
