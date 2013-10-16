@@ -185,10 +185,14 @@ public class WebServerTest {
 
   @Test
   public void templates() {
-    server.configure(routes -> routes.get("/hello/:name", (String name) -> new Template("1variable.txt").render("name", name)));
+    server.configure(routes -> {
+      routes.get("/hello/:name", (String name) -> new Template("1variable.txt").render("name", name));
+      routes.get("/bye", () -> new Template("goodbye").render());
+    });
 
     expect().content(containsString("<div>_PREFIX_TEXT_SUFFIX_</div>")).when().get("/pageYaml");
     expect().content(equalTo("Hello Joe")).when().get("/hello/Joe");
+    expect().content(equalTo("<p><strong>Good Bye</strong></p>\n")).when().get("/bye");
   }
 
   @Test

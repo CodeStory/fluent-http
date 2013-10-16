@@ -35,6 +35,13 @@ public class HandlebarsCompilerTest {
 
   @Test
   public void partials() throws IOException {
+    String result = compiler.compile("-[[>partial.txt]] [[>partial.txt]]-", map("name", "Bob"));
+
+    assertThat(result).isEqualTo("-Hello Bob Hello Bob-");
+  }
+
+  @Test
+  public void find_partial() throws IOException {
     String result = compiler.compile("-[[>partial]] [[>partial]]-", map("name", "Bob"));
 
     assertThat(result).isEqualTo("-Hello Bob Hello Bob-");

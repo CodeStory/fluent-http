@@ -32,7 +32,17 @@ public class Template {
   }
 
   public Template(Path path) {
-    this.path = path;
+    this.path = findExistingPath(path);
+  }
+
+  private static Path findExistingPath(Path path) {
+    for (String extension : ContentTypes.TEMPLATE_EXTENSIONS) {
+      Path templatePath = Paths.get(path.toString() + extension);
+      if (Resources.exists(templatePath)) {
+        return templatePath;
+      }
+    }
+    throw new IllegalArgumentException("Template not found " + path);
   }
 
   public String render() {

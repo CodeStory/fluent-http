@@ -19,9 +19,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
-import net.codestory.http.io.*;
 import net.codestory.http.templating.helpers.*;
-import net.codestory.http.types.*;
 
 import com.github.jknack.handlebars.*;
 import com.github.jknack.handlebars.context.*;
@@ -54,13 +52,7 @@ public class HandlebarsCompiler {
         .with(new AbstractTemplateLoader() {
           @Override
           public TemplateSource sourceAt(String location) {
-            for (String extension : ContentTypes.TEMPLATE_EXTENSIONS) {
-              Path templatePath = Paths.get("_includes", location + extension);
-              if (Resources.exists(templatePath)) {
-                return new StringTemplateSource(location, new Template(templatePath).render(site, variables));
-              }
-            }
-            throw new IllegalArgumentException("Partial not found " + location);
+            return new StringTemplateSource(location, new Template(Paths.get("_includes", location)).render(site, variables));
           }
         });
   }
