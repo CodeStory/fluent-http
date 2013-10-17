@@ -19,23 +19,32 @@ import static net.codestory.http.routes.Match.*;
 
 import java.io.*;
 import java.net.*;
+import java.nio.file.Path;
 import java.util.*;
 
 import net.codestory.http.errors.*;
 import net.codestory.http.filters.log.*;
 import net.codestory.http.reload.*;
 import net.codestory.http.routes.*;
+import net.codestory.http.ssl.*;
 
 import org.simpleframework.http.*;
 import org.simpleframework.http.core.*;
 import org.simpleframework.transport.*;
 import org.simpleframework.transport.connect.*;
 
+import javax.net.ssl.*;
+
 public class WebServer {
   private final Server server;
   private final SocketConnection connection;
   private RoutesProvider routesProvider;
   private int port;
+
+  public WebServer(Configuration configuration) {
+    this();
+    configure(configuration);
+  }
 
   public WebServer() {
     try {
@@ -45,11 +54,6 @@ public class WebServer {
     } catch (IOException e) {
       throw new IllegalStateException("Unable to create http server", e);
     }
-  }
-
-  public WebServer(Configuration configuration) {
-    this();
-    configure(configuration);
   }
 
   public static void main(String[] args) throws Exception {
@@ -81,22 +85,36 @@ public class WebServer {
     throw new IllegalStateException("Unable to start server");
   }
 
-  public WebServer start(int port) {
-    this.port = overrideWithCloudbeesPort(port);
-
-    try {
-      SocketAddress address = new InetSocketAddress(this.port);
-      connection.connect(address);
-
-      System.out.println("Server started on port " + this.port);
-    } catch (IOException e) {
-      throw new IllegalStateException("Unable to bind the web server on port " + this.port, e);
-    }
-    return this;
-  }
-
   private static int overrideWithCloudbeesPort(int port) {
     return Integer.parseInt(System.getProperty("app.port", "" + port));
+  }
+
+  public WebServer start(int port) {
+    return startWithContext(port, null);
+  }
+
+  public WebServer startSSL(int port, Path pathCertificate, Path pathPrivateKey) {
+    SSLContext context;
+    try {
+      context = new SSLContextFactory().create(pathCertificate, pathPrivateKey);
+    } catch (Exception e) {
+      throw new IllegalStateException("Unable to read certificate or key", e);
+    }
+    return startWithContext(port, context);
+  }
+
+  private WebServer startWithContext(int port, SSLContext context) {
+    try {
+      this.port = overrideWithCloudbeesPort(port);
+
+      connection.connect(new InetSocketAddress(this.port), context);
+
+      System.out.println("Server started on port " + this.port);
+    } catch (Exception e) {
+      throw new IllegalStateException("Unable to bind the web server on port " + this.port, e);
+    }
+
+    return this;
   }
 
   public int port() {
