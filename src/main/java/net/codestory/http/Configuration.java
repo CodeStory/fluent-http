@@ -16,6 +16,7 @@
 package net.codestory.http;
 
 import net.codestory.http.routes.*;
+import net.codestory.http.templating.*;
 
 @FunctionalInterface
 public interface Configuration {
@@ -27,5 +28,9 @@ public interface Configuration {
 
   public default Payload movedPermanently(String url) {
     return Payload.movedPermanently(url);
+  }
+
+  public default Site site() {
+    return Site.get();
   }
 }
