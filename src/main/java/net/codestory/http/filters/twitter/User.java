@@ -16,31 +16,17 @@
 package net.codestory.http.filters.twitter;
 
 public class User {
-  private final Long id;
-  private final String screenName;
-  private final String token;
-  private final String secret;
+  final Long id;
+  final String screenName;
+  final String token;
+  final String secret;
+  final String imageUrl;
 
-  public User(Long id, String screenName, String token, String secret) {
+  public User(Long id, String screenName, String token, String secret, String imageUrl) {
     this.id = id;
     this.screenName = screenName;
     this.token = token;
     this.secret = secret;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public String getScreenName() {
-    return screenName;
-  }
-
-  public String getToken() {
-    return token;
-  }
-
-  public String getSecret() {
-    return secret;
+    this.imageUrl = imageUrl;
   }
 }

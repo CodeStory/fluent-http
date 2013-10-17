@@ -17,6 +17,7 @@ package net.codestory.http.templating;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.nio.file.*;
 import java.util.*;
 
 import org.junit.*;
@@ -26,22 +27,30 @@ public class YamlFrontMatterTest {
   public void should_read_empty_file() {
     String content = content("");
 
-    YamlFrontMatter parsed = YamlFrontMatter.parse("empty", content);
+    YamlFrontMatter parsed = YamlFrontMatter.parse(Paths.get("empty"), content);
 
-    assertThat(parsed.getName()).isEqualTo("empty");
+    assertThat(parsed.getPath()).isEqualTo(Paths.get("empty"));
     assertThat(parsed.getContent()).isEmpty();
-    assertThat(parsed.getVariables()).hasSize(1).containsEntry("content", "");
+    assertThat(parsed.getVariables())
+        .hasSize(3)
+        .containsEntry("content", "")
+        .containsEntry("path", Paths.get("empty"))
+        .containsEntry("name", "empty");
   }
 
   @Test
   public void should_read_file_without_headers() {
     String content = content("CONTENT");
 
-    YamlFrontMatter parsed = YamlFrontMatter.parse("name", content);
+    YamlFrontMatter parsed = YamlFrontMatter.parse(Paths.get("folder/file.md"), content);
 
-    assertThat(parsed.getName()).isEqualTo("name");
+    assertThat(parsed.getPath()).isEqualTo(Paths.get("folder/file.md"));
     assertThat(parsed.getContent()).isEqualTo("CONTENT");
-    assertThat(parsed.getVariables()).hasSize(1).containsEntry("content", "CONTENT");
+    assertThat(parsed.getVariables())
+        .hasSize(3)
+        .containsEntry("content", "CONTENT")
+        .containsEntry("path", Paths.get("folder/file.md"))
+        .containsEntry("name", "file");
   }
 
   @Test
@@ -53,7 +62,7 @@ public class YamlFrontMatterTest {
         "---",
         "BODY");
 
-    YamlFrontMatter parsed = YamlFrontMatter.parse("", content);
+    YamlFrontMatter parsed = YamlFrontMatter.parse(Paths.get(""), content);
 
     assertThat(parsed.getContent()).isEqualTo("BODY");
     assertThat(parsed.getVariables())
@@ -71,7 +80,7 @@ public class YamlFrontMatterTest {
         "---",
         "CONTENT");
 
-    YamlFrontMatter parsed = YamlFrontMatter.parse("", content);
+    YamlFrontMatter parsed = YamlFrontMatter.parse(Paths.get(""), content);
 
     assertThat(parsed.getVariables())
         .doesNotContainEntry("layout", "standard")
@@ -87,7 +96,7 @@ public class YamlFrontMatterTest {
         "---",
         "CONTENT");
 
-    YamlFrontMatter parsed = YamlFrontMatter.parse("", content);
+    YamlFrontMatter parsed = YamlFrontMatter.parse(Paths.get(""), content);
 
     assertThat(parsed.getVariables())
         .containsEntry("title", "{{Code}} Fight by Code-Story");
@@ -103,7 +112,7 @@ public class YamlFrontMatterTest {
         "---",
         "CONTENT");
 
-    YamlFrontMatter parsed = YamlFrontMatter.parse("", content);
+    YamlFrontMatter parsed = YamlFrontMatter.parse(Paths.get(""), content);
 
     @SuppressWarnings("unchecked")
     List<Map<String, Object>> products = (List<Map<String, Object>>) parsed.getVariables().get("products");
@@ -123,7 +132,7 @@ public class YamlFrontMatterTest {
         "END"
     );
 
-    YamlFrontMatter parsed = YamlFrontMatter.parse("", content);
+    YamlFrontMatter parsed = YamlFrontMatter.parse(Paths.get(""), content);
 
     assertThat(parsed.getContent()).isEqualTo("START\n---\nEND");
     assertThat(parsed.getVariables()).containsEntry("title", "TITLE");

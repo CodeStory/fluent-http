@@ -18,13 +18,13 @@ package net.codestory.http.filters.twitter;
 import java.net.*;
 
 public class FakeAuthenticator implements Authenticator {
-	@Override
-	public URI getAuthenticateURI(String callbackUri) {
-		return URI.create(callbackUri);
-	}
+  @Override
+  public URI getAuthenticateURI(String callbackUri) {
+    return URI.create(callbackUri);
+  }
 
-	@Override
-	public User authenticate(String oauthToken, String oauthVerifier) {
-		return new User(42L, "arnold", "ring", "girl");
-	}
+  @Override
+  public User authenticate(String oauthToken, String oauthVerifier) {
+    return new User(42L, "arnold", "ring", "girl", "");
+  }
 }

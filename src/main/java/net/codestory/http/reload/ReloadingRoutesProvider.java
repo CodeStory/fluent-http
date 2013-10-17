@@ -24,11 +24,11 @@ import net.codestory.http.routes.*;
 
 import com.sun.nio.file.*;
 
-public class ReloadingRoutesProvider implements RoutesProvider {
+class ReloadingRoutesProvider implements RoutesProvider {
   private final Configuration configuration;
   private RouteCollection routes;
 
-  public ReloadingRoutesProvider(Configuration configuration) {
+  ReloadingRoutesProvider(Configuration configuration) {
     this.configuration = configuration;
     reload();
     startClassChangeWatcher(Paths.get("target/classes/"));

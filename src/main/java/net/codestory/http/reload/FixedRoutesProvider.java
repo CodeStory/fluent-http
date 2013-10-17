@@ -18,10 +18,10 @@ package net.codestory.http.reload;
 import net.codestory.http.*;
 import net.codestory.http.routes.*;
 
-public class FixedRoutesProvider implements RoutesProvider {
+class FixedRoutesProvider implements RoutesProvider {
   private final RouteCollection routes;
 
-  public FixedRoutesProvider(Configuration configuration) {
+  FixedRoutesProvider(Configuration configuration) {
     routes = new RouteCollection();
     configuration.configure(routes);
   }

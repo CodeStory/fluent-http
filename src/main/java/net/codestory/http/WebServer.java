@@ -22,6 +22,7 @@ import java.net.*;
 import java.util.*;
 
 import net.codestory.http.errors.*;
+import net.codestory.http.filters.log.*;
 import net.codestory.http.reload.*;
 import net.codestory.http.routes.*;
 
@@ -46,15 +47,22 @@ public class WebServer {
     }
   }
 
+  public WebServer(Configuration configuration) {
+    this();
+    configure(configuration);
+  }
+
   public static void main(String[] args) throws Exception {
-    new WebServer().start(8080);
+    new WebServer().configure(routes -> {
+      routes.filter(new LogRequestFilter());
+    }).start(8080);
   }
 
   public WebServer configure(Configuration configuration) {
     if (devMode()) {
-      routesProvider = new ReloadingRoutesProvider(configuration);
+      routesProvider = RoutesProvider.reloading(configuration);
     } else {
-      routesProvider = new FixedRoutesProvider(configuration);
+      routesProvider = RoutesProvider.fixed(configuration);
     }
     return this;
   }
@@ -74,16 +82,21 @@ public class WebServer {
   }
 
   public WebServer start(int port) {
-    try {
-      SocketAddress address = new InetSocketAddress(port);
-      connection.connect(address);
-      this.port = port;
+    this.port = overrideWithCloudbeesPort(port);
 
-      System.out.println("Server started on port " + port);
+    try {
+      SocketAddress address = new InetSocketAddress(this.port);
+      connection.connect(address);
+
+      System.out.println("Server started on port " + this.port);
     } catch (IOException e) {
-      throw new IllegalStateException("Unable to bind the web server on port " + port, e);
+      throw new IllegalStateException("Unable to bind the web server on port " + this.port, e);
     }
     return this;
+  }
+
+  private static int overrideWithCloudbeesPort(int port) {
+    return Integer.parseInt(System.getProperty("app.port", "" + port));
   }
 
   public int port() {
@@ -91,7 +104,7 @@ public class WebServer {
   }
 
   public void reset() {
-    routesProvider = new NoRoutesProvider();
+    routesProvider = RoutesProvider.empty();
   }
 
   public void stop() {

@@ -71,8 +71,9 @@ public class TwitterAuthFilter implements Filter {
         return true;
       }
 
-      response.setCookie(new Cookie("userId", user.getId().toString(), "/", true));
-      response.setCookie(new Cookie("screenName", user.getScreenName(), "/", true));
+      response.setCookie(new Cookie("userId", user.id.toString(), "/", true));
+      response.setCookie(new Cookie("screenName", user.screenName, "/", true));
+      response.setCookie(new Cookie("userPhoto", user.imageUrl, "/", true));
       response.setValue("Location", uriPrefix);
       response.setCode(303);
       response.setContentLength(0);
@@ -83,6 +84,7 @@ public class TwitterAuthFilter implements Filter {
     if (uri.equals(uriPrefix + "logout")) {
       response.setCookie(new Cookie("userId", "", "/", false));
       response.setCookie(new Cookie("screenName", "", "/", false));
+      response.setCookie(new Cookie("userPhoto", "", "/", false));
       response.setValue("Location", "/");
       response.setCode(303);
       response.setContentLength(0);
@@ -95,7 +97,8 @@ public class TwitterAuthFilter implements Filter {
       return false; // Authenticated
     }
 
-    String callbackUri = siteUri + uriPrefix + "authenticate";
+    String host = request.getValue("Host");
+    String callbackUri = ((host == null) ? siteUri : "http://" + host) + uriPrefix + "authenticate";
     URI authenticateURI = twitterAuthenticator.getAuthenticateURI(callbackUri);
 
     response.setValue("Location", authenticateURI.toString());

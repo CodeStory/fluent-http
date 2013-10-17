@@ -13,24 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.reload;
+package net.codestory.http.filters.log;
 
-import net.codestory.http.*;
-import net.codestory.http.routes.*;
+import net.codestory.http.filters.*;
 
-@FunctionalInterface
-public interface RoutesProvider {
-  RouteCollection get();
+import org.simpleframework.http.*;
 
-  static RoutesProvider fixed(Configuration configuration) {
-    return new FixedRoutesProvider(configuration);
-  }
-
-  static RoutesProvider empty() {
-    return new NoRoutesProvider();
-  }
-
-  static RoutesProvider reloading(Configuration configuration) {
-    return new ReloadingRoutesProvider(configuration);
+public class LogRequestFilter implements Filter {
+  @Override
+  public boolean apply(String uri, Request request, Response response) {
+    System.out.println(uri);
+    return false;
   }
 }

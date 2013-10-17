@@ -15,13 +15,12 @@
  */
 package net.codestory.http.reload;
 
-import net.codestory.http.*;
 import net.codestory.http.routes.*;
 
-public class NoRoutesProvider implements RoutesProvider {
+class NoRoutesProvider implements RoutesProvider {
   private final RouteCollection routes;
 
-  public NoRoutesProvider() {
+  NoRoutesProvider() {
     routes = new RouteCollection();
   }
 

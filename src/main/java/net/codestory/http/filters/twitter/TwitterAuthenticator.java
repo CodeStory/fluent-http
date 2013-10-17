@@ -22,34 +22,37 @@ import twitter4j.*;
 import twitter4j.auth.*;
 
 public class TwitterAuthenticator implements Authenticator {
-	private final TwitterFactory twitterFactory;
-	private final Map<String, RequestToken> oauthRequestByToken;
+  private final TwitterFactory twitterFactory;
+  private final Map<String, RequestToken> oauthRequestByToken;
 
-	public TwitterAuthenticator(TwitterFactory twitterFactory) {
-		this.twitterFactory = twitterFactory;
-		this.oauthRequestByToken = new HashMap<>();
-	}
+  public TwitterAuthenticator(TwitterFactory twitterFactory) {
+    this.twitterFactory = twitterFactory;
+    this.oauthRequestByToken = new HashMap<>();
+  }
 
-	@Override
-	public URI getAuthenticateURI(String callbackUri) {
-		Twitter twitter = twitterFactory.getInstance();
-		try {
-			RequestToken requestToken = twitter.getOAuthRequestToken(callbackUri);
-			oauthRequestByToken.put(requestToken.getToken(), requestToken);
-			return URI.create(requestToken.getAuthenticationURL());
-		} catch (TwitterException e) {
-			throw new AuthenticationException(e);
-		}
-	}
+  @Override
+  public URI getAuthenticateURI(String callbackUri) {
+    Twitter twitter = twitterFactory.getInstance();
+    try {
+      RequestToken requestToken = twitter.getOAuthRequestToken(callbackUri);
+      oauthRequestByToken.put(requestToken.getToken(), requestToken);
+      return URI.create(requestToken.getAuthenticationURL());
+    } catch (TwitterException e) {
+      throw new AuthenticationException(e);
+    }
+  }
 
-	@Override
-	public User authenticate(String oauthToken, String oauthVerifier) {
-		Twitter twitter = twitterFactory.getInstance();
-		try {
-			AccessToken accessToken = twitter.getOAuthAccessToken(oauthRequestByToken.remove(oauthToken), oauthVerifier);
-			return new User(accessToken.getUserId(), accessToken.getScreenName(), accessToken.getToken(), accessToken.getTokenSecret());
-		} catch (TwitterException e) {
-			throw new AuthenticationException(e);
-		}
-	}
+  @Override
+  public User authenticate(String oauthToken, String oauthVerifier) {
+    Twitter twitter = twitterFactory.getInstance();
+    try {
+      AccessToken accessToken = twitter.getOAuthAccessToken(oauthRequestByToken.remove(oauthToken), oauthVerifier);
+
+      twitter4j.User user = twitter.users().showUser(accessToken.getUserId());
+
+      return new User(accessToken.getUserId(), accessToken.getScreenName(), accessToken.getToken(), accessToken.getTokenSecret(), user.getBiggerProfileImageURL());
+    } catch (TwitterException e) {
+      throw new AuthenticationException(e);
+    }
+  }
 }
