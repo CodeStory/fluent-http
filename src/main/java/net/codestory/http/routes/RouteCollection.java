@@ -15,7 +15,7 @@
  */
 package net.codestory.http.routes;
 
-import static net.codestory.http.UriParser.*;
+import static net.codestory.http.internal.UriParser.*;
 import static net.codestory.http.routes.Match.*;
 
 import java.io.*;

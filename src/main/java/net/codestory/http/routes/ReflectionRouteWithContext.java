@@ -15,10 +15,10 @@
  */
 package net.codestory.http.routes;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 
-import net.codestory.http.*;
 import net.codestory.http.convert.*;
+import net.codestory.http.internal.*;
 
 class ReflectionRouteWithContext implements AnyRouteWithContext {
   private final Object resource;

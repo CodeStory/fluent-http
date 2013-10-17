@@ -17,7 +17,7 @@ package net.codestory.http.convert;
 
 import java.util.*;
 
-import net.codestory.http.*;
+import net.codestory.http.internal.*;
 
 import com.fasterxml.jackson.databind.*;
 
@@ -57,8 +57,8 @@ public class TypeConvert {
     if (type.isAssignableFrom(Context.class)) {
       return context;
     } else if (type.isAssignableFrom(Map.class)) {
-      return context.getkeyValues();
+      return context.getKeyValues();
     }
-    return OBJECT_MAPPER.convertValue(context.getkeyValues(), type);
+    return OBJECT_MAPPER.convertValue(context.getKeyValues(), type);
   }
 }

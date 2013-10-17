@@ -23,11 +23,11 @@ import java.io.*;
 import java.util.*;
 
 import net.codestory.http.annotations.*;
+import net.codestory.http.internal.*;
 import net.codestory.http.templating.*;
 
 import org.junit.*;
 import org.junit.contrib.java.lang.system.*;
-import org.simpleframework.http.*;
 
 import com.jayway.restassured.*;
 import com.jayway.restassured.specification.*;

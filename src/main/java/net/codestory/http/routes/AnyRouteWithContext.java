@@ -15,7 +15,7 @@
  */
 package net.codestory.http.routes;
 
-import net.codestory.http.*;
+import net.codestory.http.internal.*;
 
 @FunctionalInterface
 interface AnyRouteWithContext {

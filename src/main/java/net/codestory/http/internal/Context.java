@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http;
+package net.codestory.http.internal;
 
 import java.util.*;
 
@@ -56,7 +56,7 @@ public class Context {
     return query.getBoolean(name);
   }
 
-  public Map<String, String> getkeyValues() {
+  public Map<String, String> getKeyValues() {
     return query;
   }
 

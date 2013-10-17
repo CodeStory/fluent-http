@@ -19,10 +19,9 @@ import net.codestory.http.*;
 import net.codestory.http.routes.*;
 
 class FixedRoutesProvider implements RoutesProvider {
-  private final RouteCollection routes;
+  private final RouteCollection routes = new RouteCollection();
 
   FixedRoutesProvider(Configuration configuration) {
-    routes = new RouteCollection();
     configuration.configure(routes);
   }
 
