@@ -18,7 +18,6 @@ package net.codestory.http.templating;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
-import java.util.function.*;
 
 import net.codestory.http.compilers.Compiler;
 import net.codestory.http.io.*;
@@ -46,47 +45,35 @@ public class Template {
   }
 
   public String render() {
-    return render(Collections.emptyMap());
+    return render(Model.of());
   }
 
   public String render(String key, Object value) {
-    return render(keyValues -> {
-      keyValues.put(key, value);
-    });
+    return render(Model.of(key, value));
   }
 
   public String render(String k1, Object v1, String k2, Object v2) {
-    return render(keyValues -> {
-      keyValues.put(k1, v1);
-      keyValues.put(k2, v2);
-    });
+    return render(Model.of(k1, v1, k2, v2));
   }
 
   public String render(String k1, Object v1, String k2, Object v2, String k3, Object v3) {
-    return render(keyValues -> {
-      keyValues.put(k1, v1);
-      keyValues.put(k2, v2);
-      keyValues.put(k3, v3);
-    });
+    return render(Model.of(k1, v1, k2, v2, k3, v3));
   }
 
   public String render(String k1, Object v1, String k2, Object v2, String k3, Object v3, String k4, Object v4) {
-    return render(keyValues -> {
-      keyValues.put(k1, v1);
-      keyValues.put(k2, v2);
-      keyValues.put(k3, v3);
-      keyValues.put(k4, v4);
-    });
+    return render(Model.of(k1, v1, k2, v2, k3, v3, k4, v4));
   }
 
-  private String render(Consumer<Map<String, Object>> addKeyValues) {
-    Map<String, Object> keyValues = new HashMap<>();
-    addKeyValues.accept(keyValues);
-    return render(keyValues);
+  public String render(Model model) {
+    return render(model.getKeyValues());
   }
 
   public String render(Map<String, Object> keyValues) {
     return render(Site.get(), keyValues);
+  }
+
+  String render(Site site, Model model) {
+    return render(site, model.getKeyValues());
   }
 
   String render(Site site, Map<String, Object> keyValues) {
