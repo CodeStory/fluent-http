@@ -27,7 +27,6 @@ import net.codestory.http.internal.*;
 import net.codestory.http.templating.*;
 
 import org.junit.*;
-import org.junit.contrib.java.lang.system.*;
 
 import com.jayway.restassured.*;
 import com.jayway.restassured.specification.*;
@@ -39,9 +38,6 @@ public class WebServerTest {
       return false;
     }
   };
-
-  @ClassRule
-  public static RestoreSystemProperties systemProperties = new RestoreSystemProperties("PROD_MODE");
 
   @BeforeClass
   public static void startServer() {
