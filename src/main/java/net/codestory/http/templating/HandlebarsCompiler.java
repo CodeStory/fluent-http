@@ -46,7 +46,7 @@ public class HandlebarsCompiler {
 
   private static Handlebars createHandlebars(Site site, Map<String, Object> variables) {
     return new Handlebars()
-        .registerHelper(EachReverseHelper.NAME, EachReverseHelper.INSTANCE)
+        .registerHelpers(new EachReverseHelperSource())
         .registerHelpers(new EachValueHelperSource())
         .registerHelpers(StringHelpers.class)
         .with(new AbstractTemplateLoader() {

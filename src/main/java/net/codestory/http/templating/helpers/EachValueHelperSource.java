@@ -23,7 +23,7 @@ import org.apache.commons.lang3.*;
 import com.github.jknack.handlebars.*;
 
 public class EachValueHelperSource {
-  public String each_value(Object context, Options options) throws IOException {
+  public CharSequence each_value(Object context, Options options) throws IOException {
     if (context == null) {
       return StringUtils.EMPTY;
     }
@@ -35,7 +35,7 @@ public class EachValueHelperSource {
         : hashContext(context, param, options);
   }
 
-  private String hashContext(Object context, Object param, Options options) throws IOException {
+  private CharSequence hashContext(Object context, Object param, Options options) throws IOException {
     StringBuilder buffer = new StringBuilder();
 
     Set<Map.Entry<String, Object>> keys = options.propertySet(param);
@@ -49,10 +49,10 @@ public class EachValueHelperSource {
       buffer.append(options.fn(current));
     }
 
-    return buffer.toString();
+    return buffer;
   }
 
-  private String iterableContext(Object context, Iterable<?> keys, Options options) throws IOException {
+  private CharSequence iterableContext(Object context, Iterable<?> keys, Options options) throws IOException {
     StringBuilder buffer = new StringBuilder();
 
     Context parent = options.context;
@@ -63,6 +63,6 @@ public class EachValueHelperSource {
       buffer.append(options.fn(current));
     }
 
-    return buffer.toString();
+    return buffer;
   }
 }

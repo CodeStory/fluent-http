@@ -22,12 +22,8 @@ import org.apache.commons.lang3.*;
 
 import com.github.jknack.handlebars.*;
 
-public class EachReverseHelper implements Helper<Object> {
-  public static final Helper<Object> INSTANCE = new EachReverseHelper();
-  public static final String NAME = "each_reverse";
-
-  @Override
-  public CharSequence apply(Object context, Options options) throws IOException {
+public class EachReverseHelperSource {
+  public CharSequence each_reverse(Object context, Options options) throws IOException {
     if (context == null) {
       return StringUtils.EMPTY;
     }
@@ -44,11 +40,12 @@ public class EachReverseHelper implements Helper<Object> {
     Iterator<Map.Entry<String, Object>> iterator = reverse(options.propertySet(context));
     while (iterator.hasNext()) {
       Map.Entry<String, Object> entry = iterator.next();
-      Context current = Context.newContext(parent, entry.getValue()).data("key", entry.getKey());
+      Context current = Context.newContext(parent, entry.getValue())
+          .data("key", entry.getKey());
       buffer.append(options.fn(current));
     }
 
-    return buffer.toString();
+    return buffer;
   }
 
   private CharSequence iterableContext(Iterable<?> context, Options options) throws IOException {
@@ -79,7 +76,7 @@ public class EachReverseHelper implements Helper<Object> {
       index++;
     }
 
-    return buffer.toString();
+    return buffer;
   }
 
   private static <T> Iterator<T> reverse(Iterable<T> values) {
