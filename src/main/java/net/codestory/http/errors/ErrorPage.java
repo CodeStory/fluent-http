@@ -17,7 +17,7 @@ package net.codestory.http.errors;
 
 import java.io.*;
 
-import net.codestory.http.*;
+import net.codestory.http.payload.*;
 import net.codestory.http.templating.*;
 
 public class ErrorPage {

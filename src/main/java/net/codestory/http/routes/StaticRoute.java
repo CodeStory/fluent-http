@@ -21,8 +21,8 @@ import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.*;
 
-import net.codestory.http.*;
 import net.codestory.http.io.*;
+import net.codestory.http.payload.*;
 import net.codestory.http.types.*;
 
 import org.simpleframework.http.*;

@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http;
+package net.codestory.http.payload;
 
 import static java.nio.charset.StandardCharsets.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.io.*;
+
+import net.codestory.http.payload.*;
 
 import org.junit.*;
 import org.simpleframework.http.*;

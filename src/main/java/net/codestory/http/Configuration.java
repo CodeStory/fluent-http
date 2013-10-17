@@ -15,22 +15,10 @@
  */
 package net.codestory.http;
 
+import net.codestory.http.payload.*;
 import net.codestory.http.routes.*;
-import net.codestory.http.templating.*;
 
 @FunctionalInterface
-public interface Configuration {
+public interface Configuration extends Helpers {
   void configure(Routes routes);
-
-  public default Payload seeOther(String url) {
-    return Payload.seeOther(url);
-  }
-
-  public default Payload movedPermanently(String url) {
-    return Payload.movedPermanently(url);
-  }
-
-  public default Site site() {
-    return Site.get();
-  }
 }

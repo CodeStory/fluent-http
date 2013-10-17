@@ -19,8 +19,8 @@ import static net.codestory.http.routes.Match.*;
 
 import java.io.*;
 
-import net.codestory.http.*;
 import net.codestory.http.internal.*;
+import net.codestory.http.payload.*;
 
 import org.simpleframework.http.*;
 

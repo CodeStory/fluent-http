@@ -24,6 +24,7 @@ import java.util.*;
 
 import net.codestory.http.annotations.*;
 import net.codestory.http.internal.*;
+import net.codestory.http.payload.*;
 import net.codestory.http.templating.*;
 
 import org.junit.*;

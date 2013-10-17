@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http;
+package net.codestory.http.payload;
 
 import static java.nio.charset.StandardCharsets.*;
 
@@ -46,6 +46,10 @@ public class Payload {
     this(contentType, content, 200);
   }
 
+  public Payload(int code) {
+    this(null, null, code);
+  }
+
   public Payload(String contentType, Object content, int code) {
     this.contentType = contentType;
     this.content = content;
@@ -57,20 +61,21 @@ public class Payload {
     return (payload instanceof Payload) ? (Payload) payload : new Payload(payload);
   }
 
+  public Payload withHeader(String key, String value) {
+    headers.put(key, value);
+    return this;
+  }
+
   public static Payload seeOther(String url) {
-    Payload payload = new Payload(null, null, 303);
-    payload.headers.put("Location", url);
-    return payload;
+    return new Payload(303).withHeader("Location", url);
   }
 
   public static Payload movedPermanently(String url) {
-    Payload payload = new Payload(null, null, 301);
-    payload.headers.put("Location", url);
-    return payload;
+    return new Payload(301).withHeader("Location", url);
   }
 
   public static Payload forbidden() {
-    return new Payload(null, null, 403);
+    return new Payload(403);
   }
 
   public int code() {
