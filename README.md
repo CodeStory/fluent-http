@@ -7,7 +7,6 @@
  + Page 500 (bug photo)
  + Javadoc
  + Compatibilité Guice
- + Https
 
 # Java 8 required
 
