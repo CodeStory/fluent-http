@@ -9,6 +9,10 @@
  + Compatibilité Guice
  + Https
 
+# Java 8 required
+
+We currently only support java8 b92 version.
+
 # Deploy on Maven Central
 
 Build the release :
