@@ -65,7 +65,7 @@ public class Resources {
 
   public static boolean exists(Path path) {
     String pathWithPrefix = withPrefix(path);
-    return existsInClassPath(pathWithPrefix) || existsInFileSystem(pathWithPrefix);
+    return existsInFileSystem(pathWithPrefix) || existsInClassPath(pathWithPrefix);
   }
 
   public static String read(Path path, Charset charset) throws IOException {
