@@ -176,8 +176,8 @@
               <rules>
                 <requireProperty>
                   <property>java.runtime.version</property>
-                  <message>You must use java 1.8.0-ea-b96</message>
-                  <regex>1\.8\.0-ea-b96</regex>
+                  <message>You must use java 1.8.0-ea-b108</message>
+                  <regex>1\.8\.0-ea-b108</regex>
                 </requireProperty>
               </rules>
             </configuration>
