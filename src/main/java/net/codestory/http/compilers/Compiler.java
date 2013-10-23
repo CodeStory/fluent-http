@@ -24,6 +24,7 @@ import java.nio.file.*;
 import net.codestory.http.io.*;
 
 import org.jcoffeescript.*;
+import org.markdown4j.*;
 
 import com.github.rjeschke.txtmark.*;
 import com.github.sommeri.less4j.*;
@@ -42,8 +43,14 @@ public enum Compiler {
   },
   MARKDOWN {
     @Override
-    String compile(String markdown) {
-      return Processor.process(markdown, Configuration.builder().forceExtentedProfile().build());
+    String compile(String markdown) throws IOException {
+      Configuration.Builder builder = Configuration.builder()
+          .forceExtentedProfile()
+          .registerPlugins(new TablePlugin(), new YumlPlugin(), new WebSequencePlugin(), new IncludePlugin())
+          .setDecorator(new ExtDecorator())
+          .setCodeBlockEmitter(new CodeBlockEmitter());
+
+      return Processor.process(markdown, builder.build());
     }
   },
   LESS {

@@ -44,6 +44,14 @@
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
   </properties>
 
+  <repositories>
+    <repository>
+      <id>libs</id>
+      <name>Librairies Tierces</name>
+      <url>file:///${user.dir}/libs</url>
+    </repository>
+  </repositories>
+
   <profiles>
     <profile>
       <id>sign</id>
@@ -201,9 +209,9 @@
       <version>1.1.2</version>
     </dependency>
     <dependency>
-      <groupId>com.github.rjeschke</groupId>
-      <artifactId>txtmark</artifactId>
-      <version>0.10</version>
+      <groupId>org.markdown4j</groupId>
+      <artifactId>markdown4j</artifactId>
+      <version>2.2</version>
     </dependency>
     <dependency>
       <groupId>org.yaml</groupId>

@@ -39,6 +39,20 @@ public class MarkdownCompilerTest {
   }
 
   @Test
+  public void strikeout() throws IOException {
+    String html = markdownCompiler.compile("This is ~~deleted~~ text");
+
+    assertThat(html).isEqualTo("<p>This is <s>deleted</s> text</p>\n");
+  }
+
+  @Test
+  public void images() throws IOException {
+    String html = markdownCompiler.compile("![Alt text](/path/to/img.jpg)");
+
+    assertThat(html).isEqualTo("<p><img src=\"/path/to/img.jpg\" alt=\"Alt text\" /></p>\n");
+  }
+
+  @Test
   public void extension() throws IOException {
     String html = markdownCompiler.compile("## HEADER ## {#ID}");
 
