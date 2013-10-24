@@ -15,42 +15,20 @@
  */
 package net.codestory.http.routes;
 
-import static net.codestory.http.routes.Match.*;
-
-import java.io.*;
-
 import net.codestory.http.internal.*;
-import net.codestory.http.payload.*;
 
 import org.simpleframework.http.*;
 
-class RouteWithContextWrapper implements Route {
-  private final String method;
-  private final UriParser uriParser;
+class RouteWithContextWrapper extends AbstractRouteWrapper {
   private final AnyRouteWithContext route;
 
   RouteWithContextWrapper(String method, String uriPattern, AnyRouteWithContext route) {
-    this.method = method;
-    this.uriParser = new UriParser(uriPattern);
+    super(method, uriPattern);
     this.route = route;
   }
 
   @Override
-  public Match apply(String uri, Request request, Response response) throws IOException {
-    if (!uriParser.matches(uri)) {
-      return WRONG_URL;
-    }
-
-    if (!method.equalsIgnoreCase(request.getMethod())) {
-      return WRONG_METHOD;
-    }
-
-    String[] parameters = uriParser.params(uri, request.getQuery());
-    Object body = route.body(new Context(request), parameters);
-
-    Payload payload = Payload.wrap(body);
-    payload.writeTo(response);
-
-    return OK;
+  protected Object body(Request request, String[] parameters) {
+    return route.body(new Context(request), parameters);
   }
 }
