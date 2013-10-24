@@ -21,6 +21,7 @@ import java.io.*;
 
 import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
+import net.codestory.http.templating.*;
 
 import org.simpleframework.http.*;
 
@@ -45,6 +46,10 @@ abstract class AbstractRouteWrapper implements Route {
 
     String[] parameters = uriParser.params(uri, request.getQuery());
     Object body = body(request, parameters);
+
+    if (body instanceof Model) {
+      body = new Template(uri).render((Model) body);
+    }
 
     Payload payload = Payload.wrap(body);
     payload.writeTo(response);

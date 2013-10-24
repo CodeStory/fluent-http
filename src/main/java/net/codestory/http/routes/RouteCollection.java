@@ -232,7 +232,8 @@ public class RouteCollection implements Routes {
 
   private static String checkParametersCount(String uriPattern, int count) {
     if (paramsCount(uriPattern) != count) {
-      throw new IllegalArgumentException("Expected " + count + " parameters in " + uriPattern);
+      String error = (count == 1) ? "1 parameter" : count + " parameters";
+      throw new IllegalArgumentException("Expected " + error + " in " + uriPattern);
     }
     return uriPattern;
   }

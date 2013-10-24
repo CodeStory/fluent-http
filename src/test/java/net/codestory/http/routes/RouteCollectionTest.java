@@ -27,7 +27,7 @@ public class RouteCollectionTest {
   @Test
   public void fail_with_too_many_params() {
     thrown.expect(IllegalArgumentException.class);
-    thrown.expectMessage("Expected 1 parameters in /");
+    thrown.expectMessage("Expected 1 parameter in /");
 
     routeCollection.get("/", (String param) -> "");
   }

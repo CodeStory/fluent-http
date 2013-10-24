@@ -107,6 +107,8 @@ public class WebServerTest {
 
   @Test
   public void static_content_from_classpath() {
+    server.configure(routes -> routes.get("/1variable", () -> Model.of("name", "Toto")));
+
     expect().content(containsString("Hello From a File")).contentType("text/html").when().get("/index.html");
     expect().content(containsString("Hello From a File")).contentType("text/html").when().get("/");
     expect().content(containsString("TEST")).contentType("text/html").when().get("/test.html");
@@ -117,6 +119,7 @@ public class WebServerTest {
     expect().content(containsString("body h1 {\n  color: red;\n}\n")).contentType("text/css").when().get("/assets/style.less");
     expect().content(containsString("<strong>Hello</strong>")).contentType("text/html").when().get("/hello.md");
     expect().content(containsString("<strong>Good Bye</strong>")).contentType("text/html").when().get("/goodbye.markdown");
+    expect().content(containsString("Hello Toto")).contentType("text/html").when().get("/1variable");
     expect().statusCode(404).when().get("/../private.txt");
     expect().statusCode(404).when().get("/_config.yaml");
     expect().statusCode(404).when().get("/_layouts/default.html");
