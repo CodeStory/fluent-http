@@ -18,43 +18,42 @@ package net.codestory.http.compilers;
 import static org.assertj.core.api.Assertions.*;
 
 import java.io.*;
+import java.nio.file.*;
 
 import org.junit.*;
 
 public class MarkdownCompilerTest {
-  Compiler markdownCompiler = Compiler.MARKDOWN;
-
   @Test
   public void empty() throws IOException {
-    String html = markdownCompiler.compile("");
+    String html = Compiler.compile(Paths.get("empty.md"), "");
 
     assertThat(html).isEmpty();
   }
 
   @Test
   public void markdown_to_html() throws IOException {
-    String html = markdownCompiler.compile("This is **bold**");
+    String html = Compiler.compile(Paths.get("file.md"), "This is **bold**");
 
     assertThat(html).isEqualTo("<p>This is <strong>bold</strong></p>\n");
   }
 
   @Test
   public void strikeout() throws IOException {
-    String html = markdownCompiler.compile("This is ~~deleted~~ text");
+    String html = Compiler.compile(Paths.get("file.md"), "This is ~~deleted~~ text");
 
     assertThat(html).isEqualTo("<p>This is <s>deleted</s> text</p>\n");
   }
 
   @Test
   public void images() throws IOException {
-    String html = markdownCompiler.compile("![Alt text](/path/to/img.jpg)");
+    String html = Compiler.compile(Paths.get("file.md"), "![Alt text](/path/to/img.jpg)");
 
     assertThat(html).isEqualTo("<p><img src=\"/path/to/img.jpg\" alt=\"Alt text\" /></p>\n");
   }
 
   @Test
   public void extension() throws IOException {
-    String html = markdownCompiler.compile("## HEADER ## {#ID}");
+    String html = Compiler.compile(Paths.get("file.markdown"), "## HEADER ## {#ID}");
 
     assertThat(html).isEqualTo("<h2 id=\"ID\">HEADER</h2>\n");
   }

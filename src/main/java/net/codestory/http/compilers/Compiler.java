@@ -15,15 +15,11 @@
  */
 package net.codestory.http.compilers;
 
-import static java.util.Collections.*;
-import static org.jcoffeescript.Option.*;
+import static com.github.sommeri.less4j.LessSource.*;
 
 import java.io.*;
 import java.nio.file.*;
 
-import net.codestory.http.io.*;
-
-import org.jcoffeescript.*;
 import org.markdown4j.*;
 
 import com.github.rjeschke.txtmark.*;
@@ -33,17 +29,13 @@ import com.github.sommeri.less4j.core.*;
 public enum Compiler {
   COFFEE {
     @Override
-    String compile(String coffee) throws IOException {
-      try {
-        return new JCoffeeScriptCompiler(singletonList(BARE)).compile(coffee);
-      } catch (JCoffeeScriptCompileException e) {
-        throw new IOException("Unable to compile coffee", e);
-      }
+    String doCompile(Path path, String coffee) throws IOException {
+      return new CoffeeCompiler().compile(coffee);
     }
   },
   MARKDOWN {
     @Override
-    String compile(String markdown) throws IOException {
+    String doCompile(Path path, String markdown) throws IOException {
       Configuration.Builder builder = Configuration.builder()
           .forceExtentedProfile()
           .registerPlugins(new TablePlugin(), new YumlPlugin(), new WebSequencePlugin(), new IncludePlugin())
@@ -55,9 +47,19 @@ public enum Compiler {
   },
   LESS {
     @Override
-    String compile(String less) throws IOException {
+    String doCompile(Path path, String less) throws IOException {
       try {
-        return new ThreadUnsafeLessCompiler().compile(less).getCss();
+        return new ThreadUnsafeLessCompiler().compile(new StringSource(less, path.toString())).getCss();
+      } catch (Less4jException e) {
+        throw new IOException("Unable to compile less", e);
+      }
+    }
+  },
+  LESS_MAP {
+    @Override
+    String doCompile(Path path, String less) throws IOException {
+      try {
+        return new ThreadUnsafeLessCompiler().compile(new StringSource(less, path.toString())).getSourceMap();
       } catch (Less4jException e) {
         throw new IOException("Unable to compile less", e);
       }
@@ -65,32 +67,33 @@ public enum Compiler {
   },
   NONE {
     @Override
-    String compile(String content) {
+    String doCompile(Path path, String content) {
       return content;
     }
   };
 
-  abstract String compile(String content) throws IOException;
+  abstract String doCompile(Path path, String content) throws IOException;
 
   public static String compile(Path path, String content) throws IOException {
-    return compilerForExtension(extension(path)).compile(content);
+    return compilerForPath(path).doCompile(path, content);
   }
 
-  private static String extension(Path path) {
-    return Strings.substringAfterLast(path.toString(), ".");
-  }
+  private static Compiler compilerForPath(Path path) {
+    String name = path.toString();
 
-  private static Compiler compilerForExtension(String extension) {
-    switch (extension) {
-      case "less":
-        return LESS;
-      case "coffee":
-        return COFFEE;
-      case "md":
-      case "markdown":
-        return MARKDOWN;
-      default:
-        return NONE;
+    if (name.endsWith(".less")) {
+      return LESS;
     }
+    if (name.endsWith(".css.map")) {
+      return LESS_MAP;
+    }
+    if (name.endsWith(".coffee")) {
+      return COFFEE;
+    }
+    if (name.endsWith(".md") || name.endsWith(".markdown")) {
+      return MARKDOWN;
+    }
+
+    return NONE;
   }
 }
