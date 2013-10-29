@@ -31,17 +31,11 @@ public class Template {
   }
 
   public Template(Path path) {
-    this.path = findExistingPath(path);
-  }
-
-  private static Path findExistingPath(Path path) {
-    for (String extension : ContentTypes.TEMPLATE_EXTENSIONS) {
-      Path templatePath = Paths.get(path.toString() + extension);
-      if (Resources.exists(templatePath)) {
-        return templatePath;
-      }
+    Path existing = Resources.findExistingPath(path);
+    if (existing == null) {
+      throw new IllegalArgumentException("Template not found " + path);
     }
-    throw new IllegalArgumentException("Template not found " + path);
+    this.path = existing;
   }
 
   public String render() {

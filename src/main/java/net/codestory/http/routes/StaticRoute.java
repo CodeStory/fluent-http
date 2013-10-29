@@ -23,7 +23,6 @@ import java.nio.file.*;
 
 import net.codestory.http.io.*;
 import net.codestory.http.payload.*;
-import net.codestory.http.types.*;
 
 import org.simpleframework.http.*;
 
@@ -34,18 +33,11 @@ class StaticRoute implements Route {
       return apply(uri + "index", request, response);
     }
 
-    for (String extension : ContentTypes.TEMPLATE_EXTENSIONS) {
-      Path path = Paths.get(uri + extension);
-      Match match = serve(path, request, response);
-      if (WRONG_URL != match) {
-        return match;
-      }
+    Path path = Resources.findExistingPath(Paths.get(uri));
+    if (path == null) {
+      return WRONG_URL;
     }
 
-    return WRONG_URL;
-  }
-
-  private Match serve(Path path, Request request, Response response) throws IOException {
     if (!Resources.isPublic(path)) {
       return WRONG_URL;
     }

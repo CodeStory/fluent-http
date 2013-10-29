@@ -22,6 +22,8 @@ import java.nio.file.*;
 import java.nio.file.attribute.*;
 import java.util.*;
 
+import net.codestory.http.types.*;
+
 import org.reflections.*;
 import org.reflections.scanners.*;
 
@@ -70,6 +72,19 @@ public class Resources {
       }
     }
     return Resources.exists(path);
+  }
+
+  public static Path findExistingPath(Path path) {
+    if (path.toString().endsWith("/")) {
+      return findExistingPath(Paths.get(path.toString() + "index"));
+    }
+    for (String extension : ContentTypes.TEMPLATE_EXTENSIONS) {
+      Path templatePath = Paths.get(path.toString() + extension);
+      if (exists(templatePath)) {
+        return templatePath;
+      }
+    }
+    return null;
   }
 
   public static boolean exists(Path path) {
