@@ -63,6 +63,15 @@ public class Resources {
     return Strings.substringAfter(path, ROOT + '/');
   }
 
+  public static boolean isPublic(Path path) {
+    for (Path part : path) {
+      if (part.toString().equals("..") || part.toString().startsWith("_")) {
+        return false;
+      }
+    }
+    return Resources.exists(path);
+  }
+
   public static boolean exists(Path path) {
     String pathWithPrefix = withPrefix(path);
     return existsInFileSystem(pathWithPrefix) || existsInClassPath(pathWithPrefix);

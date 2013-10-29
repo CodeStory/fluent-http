@@ -76,6 +76,7 @@ public class ContentTypes {
       case ".xml":
       case ".css":
       case ".less":
+      case ".map":
       case ".js":
       case ".coffee":
         return false;

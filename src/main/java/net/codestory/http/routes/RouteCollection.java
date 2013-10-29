@@ -216,6 +216,7 @@ public class RouteCollection implements Routes {
     List<Route> allRoutes = new ArrayList<>();
     allRoutes.addAll(routes);
     allRoutes.add(new StaticRoute());
+    allRoutes.add(new SourceMapRoute());
 
     for (Route route : allRoutes) {
       Match match = route.apply(uri, request, response);

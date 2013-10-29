@@ -15,38 +15,31 @@
  */
 package net.codestory.http.routes;
 
+import static java.nio.charset.StandardCharsets.*;
 import static net.codestory.http.routes.Match.*;
 
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.*;
 
+import net.codestory.http.compilers.Compiler;
 import net.codestory.http.io.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.types.*;
 
 import org.simpleframework.http.*;
 
-class StaticRoute implements Route {
+class SourceMapRoute implements Route {
   @Override
   public Match apply(String uri, Request request, Response response) throws IOException {
-    if (uri.endsWith("/")) {
-      return apply(uri + "index", request, response);
+    if (!uri.endsWith(".css.map")) {
+      return WRONG_URL;
     }
 
-    for (String extension : ContentTypes.TEMPLATE_EXTENSIONS) {
-      Path path = Paths.get(uri + extension);
-      Match match = serve(path, request, response);
-      if (WRONG_URL != match) {
-        return match;
-      }
-    }
+    Path pathMap = Paths.get(uri);
+    Path pathLess = Paths.get(Strings.substringBeforeLast(uri, ".css.map") + ".less");
 
-    return WRONG_URL;
-  }
-
-  private Match serve(Path path, Request request, Response response) throws IOException {
-    if (!Resources.isPublic(path)) {
+    if (!Resources.isPublic(pathLess)) {
       return WRONG_URL;
     }
 
@@ -54,7 +47,11 @@ class StaticRoute implements Route {
       return WRONG_METHOD;
     }
 
-    new Payload(path).writeTo(response);
+    String contentType = ContentTypes.get(pathMap);
+    String less = Resources.read(pathLess, UTF_8);
+    String map = Compiler.compile(pathMap, less);
+
+    new Payload(contentType, map).writeTo(response);
     return OK;
   }
 }
