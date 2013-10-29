@@ -15,8 +15,6 @@
  */
 package net.codestory.http.compilers;
 
-import static com.github.sommeri.less4j.LessSource.*;
-
 import java.io.*;
 import java.nio.file.*;
 
@@ -49,7 +47,7 @@ public enum Compiler {
     @Override
     String doCompile(Path path, String less) throws IOException {
       try {
-        return new ThreadUnsafeLessCompiler().compile(new StringSource(less, path.toString())).getCss();
+        return new ThreadUnsafeLessCompiler().compile(new PathSource(path, less)).getCss();
       } catch (Less4jException e) {
         throw new IOException("Unable to compile less", e);
       }
@@ -59,7 +57,7 @@ public enum Compiler {
     @Override
     String doCompile(Path path, String less) throws IOException {
       try {
-        return new ThreadUnsafeLessCompiler().compile(new StringSource(less, path.toString())).getSourceMap();
+        return new ThreadUnsafeLessCompiler().compile(new PathSource(path, less)).getSourceMap();
       } catch (Less4jException e) {
         throw new IOException("Unable to compile less", e);
       }
@@ -83,14 +81,11 @@ public enum Compiler {
 
     if (name.endsWith(".less")) {
       return LESS;
-    }
-    if (name.endsWith(".css.map")) {
+    } else if (name.endsWith(".css.map")) {
       return LESS_MAP;
-    }
-    if (name.endsWith(".coffee")) {
+    } else if (name.endsWith(".coffee")) {
       return COFFEE;
-    }
-    if (name.endsWith(".md") || name.endsWith(".markdown")) {
+    } else if (name.endsWith(".md") || name.endsWith(".markdown")) {
       return MARKDOWN;
     }
 
