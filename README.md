@@ -3,7 +3,6 @@
  + Supporter les coffee et less pré-générés
  + Supporter les templates pré-générés
  + Set ContenType on xml using yaml
- + Page 500 (bug photo)
  + Javadoc
  + Compatibilité Guice
 
