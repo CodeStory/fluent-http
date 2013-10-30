@@ -161,6 +161,6 @@ public class Payload {
       return forString(compiled);
     }
 
-    return forString(new Template(path).render());
+    return forString(new Template(path.toString()).render());
   }
 }

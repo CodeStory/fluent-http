@@ -18,7 +18,6 @@ package net.codestory.http.templating;
 import static java.nio.charset.StandardCharsets.*;
 
 import java.io.*;
-import java.nio.file.*;
 import java.util.*;
 
 import net.codestory.http.io.*;
@@ -52,7 +51,7 @@ public enum HandlebarsCompiler {
         .with(new AbstractTemplateLoader() {
           @Override
           public TemplateSource sourceAt(String location) throws IOException {
-            return new StringTemplateSource(location, Resources.read(Resources.findExistingPath(Paths.get("_includes", location)), UTF_8));
+            return new StringTemplateSource(location, Resources.read(Resources.findExistingPath("_includes/" + location), UTF_8));
           }
         });
   }

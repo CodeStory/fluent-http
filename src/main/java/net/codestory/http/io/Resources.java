@@ -74,12 +74,12 @@ public class Resources {
     return Resources.exists(path);
   }
 
-  public static Path findExistingPath(Path path) {
-    if (path.toString().endsWith("/")) {
-      return findExistingPath(Paths.get(path.toString() + "index"));
+  public static Path findExistingPath(String uri) {
+    if (uri.endsWith("/")) {
+      return findExistingPath(uri + "index");
     }
     for (String extension : ContentTypes.TEMPLATE_EXTENSIONS) {
-      Path templatePath = Paths.get(path.toString() + extension);
+      Path templatePath = Paths.get(uri + extension);
       if (exists(templatePath)) {
         return templatePath;
       }

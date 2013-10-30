@@ -34,10 +34,6 @@ class StaticRoute implements Route {
 
   @Override
   public Match apply(String uri, Request request, Response response) throws IOException {
-    if (uri.endsWith("/")) {
-      return apply(uri + "index", request, response);
-    }
-
     Path path = pathForUri.computeIfAbsent(uri, StaticRoute::findPath);
     if (path == NOT_FOUND) {
       return WRONG_URL;
@@ -52,7 +48,7 @@ class StaticRoute implements Route {
   }
 
   private static Path findPath(String uri) {
-    Path path = Resources.findExistingPath(Paths.get(uri));
+    Path path = Resources.findExistingPath(uri);
     return (path != null) && Resources.isPublic(path) ? path : NOT_FOUND;
   }
 }

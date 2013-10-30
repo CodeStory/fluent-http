@@ -188,12 +188,14 @@ public class WebServerTest {
       routes.get("/hello/:name", (String name) -> new Template("1variable.txt").render("name", name));
       routes.get("/bye", () -> new Template("goodbye").render());
       routes.get("/1variable", Model.of("name", "Toto"));
+      routes.get("/section/", Model.of("name", "Bob"));
     });
 
     get("/pageYaml").produces("<div>_PREFIX_TEXT_SUFFIX_</div>");
     get("/hello/Joe").produces("Hello Joe");
     get("/bye").produces("<p><strong>Good Bye</strong></p>");
     get("/1variable").produces("text/html", "Hello Toto");
+    get("/section/").produces("text/html", "Hello Bob");
   }
 
   @Test

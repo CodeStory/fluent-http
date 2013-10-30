@@ -25,14 +25,10 @@ import net.codestory.http.io.*;
 public class Template {
   private final Path path;
 
-  public Template(String url) {
-    this(Paths.get(url));
-  }
-
-  public Template(Path path) {
-    Path existing = Resources.findExistingPath(path);
+  public Template(String uri) {
+    Path existing = Resources.findExistingPath(uri);
     if (existing == null) {
-      throw new IllegalArgumentException("Template not found " + path);
+      throw new IllegalArgumentException("Template not found " + uri);
     }
     this.path = existing;
   }
@@ -74,7 +70,7 @@ public class Template {
         return body;
       }
 
-      return new Template(Paths.get("_layouts", layout)).render(allKeyValues).replace("[[body]]", body);
+      return new Template("_layouts/" + layout).render(allKeyValues).replace("[[body]]", body);
     } catch (IOException e) {
       throw new IllegalStateException("Unable to render template", e);
     }
