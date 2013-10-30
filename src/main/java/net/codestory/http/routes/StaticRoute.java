@@ -20,6 +20,7 @@ import static net.codestory.http.routes.Match.*;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.*;
+import java.util.concurrent.*;
 
 import net.codestory.http.io.*;
 import net.codestory.http.payload.*;
@@ -27,18 +28,18 @@ import net.codestory.http.payload.*;
 import org.simpleframework.http.*;
 
 class StaticRoute implements Route {
+  private static final Path NOT_FOUND = Paths.get("");
+
+  private final ConcurrentHashMap<String, Path> pathForUri = new ConcurrentHashMap<>(10);
+
   @Override
   public Match apply(String uri, Request request, Response response) throws IOException {
     if (uri.endsWith("/")) {
       return apply(uri + "index", request, response);
     }
 
-    Path path = Resources.findExistingPath(Paths.get(uri));
-    if (path == null) {
-      return WRONG_URL;
-    }
-
-    if (!Resources.isPublic(path)) {
+    Path path = pathForUri.computeIfAbsent(uri, StaticRoute::findPath);
+    if (path == NOT_FOUND) {
       return WRONG_URL;
     }
 
@@ -48,5 +49,10 @@ class StaticRoute implements Route {
 
     new Payload(path).writeTo(response);
     return OK;
+  }
+
+  private static Path findPath(String uri) {
+    Path path = Resources.findExistingPath(Paths.get(uri));
+    return (path != null) && Resources.isPublic(path) ? path : NOT_FOUND;
   }
 }

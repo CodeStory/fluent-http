@@ -24,7 +24,6 @@ import java.util.*;
 
 import net.codestory.http.annotations.*;
 import net.codestory.http.filters.*;
-import net.codestory.http.payload.*;
 
 import org.simpleframework.http.*;
 
@@ -199,6 +198,12 @@ public class RouteCollection implements Routes {
     routes.addFirst(new RouteWithContextWrapper(method, uriPattern, route));
   }
 
+  // TEMP
+  public void addStaticRoutes() {
+    routes.add(new StaticRoute());
+    routes.add(new SourceMapRoute());
+  }
+
   public Match apply(Request request, Response response) throws IOException {
     String uri = request.getPath().getPath();
     if (uri == null) {
@@ -213,12 +218,7 @@ public class RouteCollection implements Routes {
 
     Match bestMatch = WRONG_URL;
 
-    List<Route> allRoutes = new ArrayList<>();
-    allRoutes.addAll(routes);
-    allRoutes.add(new StaticRoute());
-    allRoutes.add(new SourceMapRoute());
-
-    for (Route route : allRoutes) {
+    for (Route route : routes) {
       Match match = route.apply(uri, request, response);
       if (match == OK) {
         return OK;

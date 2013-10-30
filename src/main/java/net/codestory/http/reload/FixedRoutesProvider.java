@@ -23,6 +23,7 @@ class FixedRoutesProvider implements RoutesProvider {
 
   FixedRoutesProvider(Configuration configuration) {
     configuration.configure(routes);
+    routes.addStaticRoutes();
   }
 
   @Override

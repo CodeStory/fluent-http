@@ -42,8 +42,9 @@ class ReloadingRoutesProvider implements RoutesProvider {
   private synchronized void reload() {
     System.out.println("Reloading configuration");
 
-    this.routes = new RouteCollection();
+    routes = new RouteCollection();
     configuration.configure(routes);
+    routes.addStaticRoutes();
   }
 
   private void startClassChangeWatcher(Path path) {
