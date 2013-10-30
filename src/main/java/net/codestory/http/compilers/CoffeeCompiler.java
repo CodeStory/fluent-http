@@ -21,8 +21,6 @@ import java.io.*;
 
 import org.mozilla.javascript.*;
 
-import com.google.common.io.*;
-
 class CoffeeCompiler {
   public String compile(String source) throws IOException {
     Scriptable globalScope = initWithCoffeeScriptScript();
@@ -41,12 +39,10 @@ class CoffeeCompiler {
   }
 
   private Scriptable initWithCoffeeScriptScript() throws IOException {
-    String coffeeScriptJs = CharStreams.toString(Resources.newReaderSupplier(Resources.getResource("coffee/coffee-script.js"), UTF_8));
-
     Context context = Context.enter();
-    try {
+    try (Reader reader = new InputStreamReader(ClassLoader.getSystemResourceAsStream("coffee/coffee-script.js"), UTF_8)) {
       Scriptable globalScope = context.initStandardObjects();
-      context.evaluateString(globalScope, coffeeScriptJs, "coffee-script.js", 0, null);
+      context.evaluateReader(globalScope, reader, "coffee-script.js", 0, null);
       return globalScope;
     } finally {
       Context.exit();

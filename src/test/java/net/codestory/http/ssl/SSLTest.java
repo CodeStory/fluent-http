@@ -15,6 +15,7 @@
  */
 package net.codestory.http.ssl;
 
+import java.net.*;
 import java.nio.file.*;
 import java.util.*;
 
@@ -22,15 +23,17 @@ import net.codestory.http.*;
 
 import org.junit.*;
 
-import com.google.common.io.*;
-
 public class SSLTest {
   @Test
-  public void start_server() {
-    Path pathCertificate = Paths.get(Resources.getResource("certificates/server.crt").getPath());
-    Path pathPrivateKey = Paths.get(Resources.getResource("certificates/server.der").getPath());
+  public void start_server() throws URISyntaxException {
+    Path pathCertificate = resource("certificates/server.crt");
+    Path pathPrivateKey = resource("certificates/server.der");
 
-    WebServer webServer = new WebServer(routes -> routes.get("/", () -> "Hello"));
+    WebServer webServer = new WebServer();
     webServer.startSSL(8183 + new Random().nextInt(1000), pathCertificate, pathPrivateKey);
+  }
+
+  private static Path resource(String name) throws URISyntaxException {
+    return Paths.get(ClassLoader.getSystemResource(name).toURI());
   }
 }

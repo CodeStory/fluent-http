@@ -110,7 +110,7 @@ public class Site {
     }
 
     try {
-      return new YamlParser().parse(Resources.read(configPath, UTF_8));
+      return YamlParser.INSTANCE.parse(Resources.read(configPath, UTF_8));
     } catch (IOException e) {
       throw new IllegalStateException("Unable to read " + configFile, e);
     }

@@ -24,7 +24,7 @@ import java.util.*;
 import org.junit.*;
 
 public class HandlebarsCompilerTest {
-  HandlebarsCompiler compiler = new HandlebarsCompiler();
+  HandlebarsCompiler compiler = HandlebarsCompiler.INSTANCE;
 
   @Test
   public void compile() throws IOException {

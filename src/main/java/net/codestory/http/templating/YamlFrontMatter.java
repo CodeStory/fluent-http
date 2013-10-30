@@ -71,6 +71,6 @@ public class YamlFrontMatter {
   private static Map<String, Object> parseVariables(String content) {
     String header = substringBetween(content, SEPARATOR, SEPARATOR);
 
-    return new YamlParser().parse(header);
+    return YamlParser.INSTANCE.parse(header);
   }
 }

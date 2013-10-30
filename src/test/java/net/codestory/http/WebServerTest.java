@@ -29,6 +29,7 @@ import net.codestory.http.payload.*;
 import net.codestory.http.templating.*;
 
 import org.junit.*;
+import org.junit.contrib.java.lang.system.*;
 
 public class WebServerTest {
   static WebServer server = new WebServer() {
@@ -37,6 +38,14 @@ public class WebServerTest {
       return false;
     }
   };
+
+  @ClassRule
+  public static RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties("PROD_MODE");
+
+  @BeforeClass
+  public static void prodMode() {
+    System.setProperty("PROD_MODE", "true");
+  }
 
   @BeforeClass
   public static void startServer() {

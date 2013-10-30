@@ -64,11 +64,9 @@ public class WebServer {
   }
 
   public WebServer configure(Configuration configuration) {
-    if (devMode()) {
-      routesProvider = RoutesProvider.reloading(configuration);
-    } else {
-      routesProvider = RoutesProvider.fixed(configuration);
-    }
+    routesProvider = devMode()
+        ? RoutesProvider.reloading(configuration)
+        : RoutesProvider.fixed(configuration);
     return this;
   }
 

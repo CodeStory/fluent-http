@@ -19,17 +19,18 @@ import java.util.*;
 
 import org.yaml.snakeyaml.*;
 
-public class YamlParser {
-  private final Yaml yaml;
-
-  public YamlParser() {
-    this.yaml = new Yaml();
-  }
+public enum YamlParser {
+  INSTANCE;
 
   @SuppressWarnings("unchecked")
   public Map<String, Object> parse(String content) {
-    Map<String, Object> variables = (Map<String, Object>) yaml.load(content);
+    Map<String, Object> variables = (Map<String, Object>) createYaml().load(content);
 
     return variables != null ? variables : new HashMap<>();
+  }
+
+  // Not thread-safe
+  private Yaml createYaml() {
+    return new Yaml();
   }
 }

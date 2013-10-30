@@ -23,8 +23,6 @@ import net.codestory.http.compilers.Compiler;
 import net.codestory.http.io.*;
 
 public class Template {
-  private static final HandlebarsCompiler HANDLEBARS_COMPILER = new HandlebarsCompiler();
-
   private final Path path;
 
   public Template(String url) {
@@ -69,7 +67,7 @@ public class Template {
       Map<String, Object> allKeyValues = merge(parsedTemplate.getVariables(), keyValues);
 
       String content = Compiler.compile(path, parsedTemplate.getContent());
-      String body = HANDLEBARS_COMPILER.compile(content, allKeyValues);
+      String body = HandlebarsCompiler.INSTANCE.compile(content, allKeyValues);
 
       String layout = (String) parsedTemplate.getVariables().get("layout");
       if (layout == null) {

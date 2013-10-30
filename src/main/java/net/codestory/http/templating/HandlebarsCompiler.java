@@ -30,12 +30,10 @@ import com.github.jknack.handlebars.context.*;
 import com.github.jknack.handlebars.helper.*;
 import com.github.jknack.handlebars.io.*;
 
-public class HandlebarsCompiler {
-  private final Handlebars handlebars;
+public enum HandlebarsCompiler {
+  INSTANCE;
 
-  public HandlebarsCompiler() {
-    handlebars = handlebars();
-  }
+  private final Handlebars handlebars = handlebars();
 
   public String compile(String template, Map<String, Object> variables) throws IOException {
     return handlebars
