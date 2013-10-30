@@ -15,60 +15,59 @@
  */
 package net.codestory.http.templating;
 
+import static java.nio.charset.StandardCharsets.*;
+
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
+import net.codestory.http.io.*;
 import net.codestory.http.templating.helpers.*;
 
 import com.github.jknack.handlebars.*;
+import com.github.jknack.handlebars.cache.*;
 import com.github.jknack.handlebars.context.*;
 import com.github.jknack.handlebars.helper.*;
 import com.github.jknack.handlebars.io.*;
 
 public class HandlebarsCompiler {
+  private final Handlebars handlebars;
+
+  public HandlebarsCompiler() {
+    handlebars = handlebars();
+  }
+
   public String compile(String template, Map<String, Object> variables) throws IOException {
-    return compile(template, null, variables);
+    return handlebars
+        .compileInline(template)
+        .apply(context(variables));
   }
 
-  String compile(String template, Site site, Map<String, Object> variables) throws IOException {
-    Handlebars handlebars = createHandlebars(site, variables);
-
-    Context context;
-    if (site == null) {
-      context = context(null, variables).build();
-    } else {
-      context = context(null, null).combine("site", site).combine(variables).build();
-    }
-
-    return handlebars.compileInline(template, "[[", "]]").apply(context);
-  }
-
-  private static Handlebars createHandlebars(Site site, Map<String, Object> variables) {
+  private static Handlebars handlebars() {
     return new Handlebars()
+        .startDelimiter("[[")
+        .endDelimiter("]]")
         .registerHelpers(new EachReverseHelperSource())
         .registerHelpers(new EachValueHelperSource())
         .registerHelpers(StringHelpers.class)
+        .with(new ConcurrentMapTemplateCache())
         .with(new AbstractTemplateLoader() {
           @Override
-          public TemplateSource sourceAt(String location) {
-            return new StringTemplateSource(location, new Template(Paths.get("_includes", location)).render(site, variables));
+          public TemplateSource sourceAt(String location) throws IOException {
+            return new StringTemplateSource(location, Resources.read(Resources.findExistingPath(Paths.get("_includes", location)), UTF_8));
           }
         });
   }
 
-  private static Context.Builder context(Context parent, Object model) {
-    Context.Builder builder;
-    if (parent == null) {
-      builder = Context.newBuilder(model);
-    } else {
-      builder = Context.newBuilder(parent, model);
-    }
-
-    return builder.resolver(
-        MapValueResolver.INSTANCE,
-        JavaBeanValueResolver.INSTANCE,
-        FieldValueResolver.INSTANCE,
-        Site.SiteValueResolver.INSTANCE);
+  private static Context context(Map<String, Object> variables) {
+    return Context.newBuilder(null)
+        .resolver(
+            MapValueResolver.INSTANCE,
+            JavaBeanValueResolver.INSTANCE,
+            FieldValueResolver.INSTANCE,
+            Site.SiteValueResolver.INSTANCE)
+        .combine("site", Site.get())
+        .combine(variables)
+        .build();
   }
 }

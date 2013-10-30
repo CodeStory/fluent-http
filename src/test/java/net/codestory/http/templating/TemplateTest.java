@@ -40,8 +40,15 @@ public class TemplateTest {
 
   @Test
   public void layout_decorator() {
-    assertThat(new Template("pageYaml.html").render()).contains("PREFIX_LAYOUT<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_LAYOUT");
-    assertThat(new Template("pageYamlWithMarkdownLayout.html").render()).contains("TITLE: PREFIX_MD<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_MD");
+    long date1 = System.currentTimeMillis();
+
+    for (int i = 0; i < 1000; i++) {
+      assertThat(new Template("pageYaml.html").render()).contains("PREFIX_LAYOUT<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_LAYOUT");
+      assertThat(new Template("pageYamlWithMarkdownLayout.html").render()).contains("TITLE: PREFIX_MD<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_MD");
+    }
+    long date2 = System.currentTimeMillis();
+    System.out.println(date2 - date1);
+
   }
 
   @Test

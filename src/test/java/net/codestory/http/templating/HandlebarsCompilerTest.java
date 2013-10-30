@@ -42,9 +42,9 @@ public class HandlebarsCompilerTest {
 
   @Test
   public void find_partial() throws IOException {
-    String result = compiler.compile("-[[>partial]] [[>partial]]-", map("name", "Bob"));
+    String result = compiler.compile("[[>partial]]", map("name", "Bob"));
 
-    assertThat(result).isEqualTo("-Hello Bob Hello Bob-");
+    assertThat(result).isEqualTo("Hello Bob");
   }
 
   @Test

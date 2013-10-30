@@ -21,9 +21,10 @@ import java.util.*;
 
 import net.codestory.http.compilers.Compiler;
 import net.codestory.http.io.*;
-import net.codestory.http.types.*;
 
 public class Template {
+  private static final HandlebarsCompiler HANDLEBARS_COMPILER = new HandlebarsCompiler();
+
   private final Path path;
 
   public Template(String url) {
@@ -63,44 +64,27 @@ public class Template {
   }
 
   public String render(Map<String, Object> keyValues) {
-    return render(Site.get(), keyValues);
-  }
-
-  String render(Site site, Model model) {
-    return render(site, model.getKeyValues());
-  }
-
-  String render(Site site, Map<String, Object> keyValues) {
     try {
       YamlFrontMatter parsedTemplate = YamlFrontMatter.parse(path);
       Map<String, Object> allKeyValues = merge(parsedTemplate.getVariables(), keyValues);
 
       String content = Compiler.compile(path, parsedTemplate.getContent());
-      String body = new HandlebarsCompiler().compile(content, site, allKeyValues);
+      String body = HANDLEBARS_COMPILER.compile(content, allKeyValues);
 
       String layout = (String) parsedTemplate.getVariables().get("layout");
-      if (layout != null) {
-        for (String extension : ContentTypes.TEMPLATE_EXTENSIONS) {
-          Path layoutPath = Paths.get("_layouts", layout + extension);
-          if (Resources.exists(layoutPath)) {
-            return new Template(layoutPath).render(site, allKeyValues).replace("[[body]]", body);
-          }
-        }
-        throw new IllegalStateException("Unable to find layout: " + layout);
+      if (layout == null) {
+        return body;
       }
 
-      return body;
+      return new Template(Paths.get("_layouts", layout)).render(allKeyValues).replace("[[body]]", body);
     } catch (IOException e) {
       throw new IllegalStateException("Unable to render template", e);
     }
   }
 
-  @SafeVarargs
-  private static Map<String, Object> merge(Map<String, Object>... keyValues) {
-    Map<String, Object> merged = new HashMap<>();
-    for (Map<String, Object> keyValue : keyValues) {
-      merged.putAll(keyValue);
-    }
+  private static Map<String, Object> merge(Map<String, Object> first, Map<String, Object> second) {
+    Map<String, Object> merged = new HashMap<>(first);
+    merged.putAll(second);
     merged.put("body", "[[body]]");
     return merged;
   }
