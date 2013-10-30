@@ -16,7 +16,8 @@
 package net.codestory.http;
 
 import static java.nio.charset.StandardCharsets.*;
-import static org.hamcrest.Matchers.*;
+import static net.codestory.http.GetAssert.*;
+import static net.codestory.http.PostAssert.*;
 import static org.mockito.Mockito.*;
 
 import java.io.*;
@@ -28,9 +29,6 @@ import net.codestory.http.payload.*;
 import net.codestory.http.templating.*;
 
 import org.junit.*;
-
-import com.jayway.restassured.*;
-import com.jayway.restassured.specification.*;
 
 public class WebServerTest {
   static WebServer server = new WebServer() {
@@ -52,25 +50,24 @@ public class WebServerTest {
 
   @Test
   public void not_found() {
-    expect().content(containsString("Page not found")).contentType("text/html").statusCode(404).when().get("/notfound");
+    get("/notfound").produces(404, "text/html", "Page not found");
   }
 
   @Test
   public void content_types() {
     server.configure(routes -> {
-      routes.get("/index", () -> "Hello");
-      routes.get("/raw", () -> "RAW DATA".getBytes(UTF_8));
-      routes.get("/json", () -> new Person("NAME", 42));
-      routes.get("/text", () -> new Payload("text/plain", "TEXT"));
-      routes.get("/otherText", new Payload("text/plain", "OTHER"));
+      routes.get("/index", "Hello");
+      routes.get("/text", new Payload("text/plain", "TEXT"));
+      routes.get("/html", new Payload("text/html", "<body>HTML</body>"));
+      routes.get("/raw", "RAW".getBytes(UTF_8));
+      routes.get("/json", new Person("NAME", 42));
     });
 
-    expect().body(equalTo("Hello")).contentType("text/html").when().get("/index");
-    expect().body(equalTo("RAW DATA")).contentType("application/octet-stream").when().get("/raw");
-    expect().body("name", equalTo("NAME")).body("age", equalTo(42)).contentType("application/json").when().get("/json");
-    expect().body(equalTo("TEXT")).contentType("text/plain").when().get("/text");
-    expect().body(equalTo("TEXT")).contentType("text/plain").when().get("/text");
-    expect().body(equalTo("OTHER")).contentType("text/plain").when().get("/otherText");
+    get("/index").produces("text/html", "Hello");
+    get("/text").produces("text/plain", "TEXT");
+    get("/html").produces("text/html", "HTML");
+    get("/raw").produces("application/octet-stream", "RAW");
+    get("/json").produces("application/json", "{\"name\":\"NAME\",\"age\":42}");
   }
 
   @Test
@@ -79,19 +76,20 @@ public class WebServerTest {
       routes.get("/hello/:name", (String name) -> "Hello " + name);
       routes.get("/other/:name", (String name) -> "Other " + name);
       routes.get("/say/:what/how/:loud", (String what, String loud) -> what + " " + loud);
-      routes.get("/:one/:two/:three", (String one, String two, String three) -> one + two + three);
+      routes.get("/:one/:two/:three", (String one, String two, String three) -> one + " " + two + " " + three);
     });
 
-    expect().body(equalTo("Hello Dave")).when().get("/hello/Dave");
-    expect().body(equalTo("Hello Bob")).when().get("/hello/Bob");
-    expect().body(equalTo("Hello John Doe")).when().get("/hello/John Doe");
-    expect().body(equalTo("Other Joe")).when().get("/other/Joe");
-    expect().body(equalTo("HI LOUD")).when().get("/say/HI/how/LOUD");
+    get("/hello/Dave").produces("Hello Dave");
+    get("/hello/John Doe").produces("Hello John Doe");
+    get("/other/Joe").produces("Other Joe");
+    get("/say/HI/how/LOUD").produces("HI LOUD");
+    get("/ONE/TWO/THREE").produces("ONE TWO THREE");
   }
 
   @Test
   public void query_params() {
     server.configure(routes -> {
+      routes.get("/index", "Hello");
       routes.get("/hello?name=:name", (String name) -> "Hello " + name);
       routes.add(new Object() {
         @Get("/keyValues")
@@ -101,35 +99,33 @@ public class WebServerTest {
       });
     });
 
-    expect().body(equalTo("Hello Dave")).when().get("/hello?name=Dave");
-    expect().body(containsString("key2=value2")).when().get("/keyValues?key1=value1&key2=value2");
+    get("/index?query=useless").produces("Hello");
+    get("/hello?name=Dave").produces("Hello Dave");
+    get("/keyValues?key1=value1&key2=value2").produces("key2=value2");
   }
 
   @Test
-  public void static_content_from_classpath() {
-    server.configure(routes -> routes.get("/1variable", () -> Model.of("name", "Toto")));
-
-    expect().content(containsString("Hello From a File")).contentType("text/html").when().get("/index.html");
-    expect().content(containsString("Hello From a File")).contentType("text/html").when().get("/");
-    expect().content(containsString("TEST")).contentType("text/html").when().get("/test.html");
-    expect().content(containsString("TEST")).contentType("text/html").when().get("/test");
-    expect().content(containsString("console.log('Hello');")).contentType("application/javascript").when().get("/js/script.js");
-    expect().content(containsString("console.log('Hello');")).contentType("application/javascript").when().get("/js/script.coffee");
-    expect().content(containsString("* {}")).contentType("text/css").when().get("/assets/style.css");
-    expect().content(containsString("body h1 {\n  color: red;\n}\n")).contentType("text/css").when().get("/assets/style.less");
-    expect().content(containsString("\"file\":\"/assets/style.css.css\"")).contentType("text/plain").when().get("/assets/style.css.map");
-    expect().content(containsString("<strong>Hello</strong>")).contentType("text/html").when().get("/hello.md");
-    expect().content(containsString("<strong>Good Bye</strong>")).contentType("text/html").when().get("/goodbye.markdown");
-    expect().content(containsString("Hello Toto")).contentType("text/html").when().get("/1variable");
-    expect().statusCode(404).when().get("/../private.txt");
-    expect().statusCode(404).when().get("/_config.yaml");
-    expect().statusCode(404).when().get("/_layouts/default.html");
-    expect().statusCode(404).when().get("/unknown");
+  public void static_content() {
+    get("/").produces("text/html", "Hello From a File");
+    get("/index.html").produces("text/html", "Hello From a File");
+    get("/test").produces("text/html", "TEST");
+    get("/test.html").produces("text/html", "TEST");
+    get("/js/script.js").produces("application/javascript", "console.log('Hello');");
+    get("/js/script.coffee").produces("application/javascript", "console.log('Hello');");
+    get("/assets/style.css").produces("text/css", "* {}");
+    get("/assets/style.less").produces("text/css", "body h1 {\n  color: red;\n}");
+    get("/assets/style.css.map").produces("text/plain", "\"file\":\"/assets/style.css.css\"");
+    get("/hello.md").produces("text/html", "<strong>Hello</strong>");
+    get("/goodbye.markdown").produces("text/html", "<strong>Good Bye</strong>");
   }
 
   @Test
-  public void dont_serve_directories() {
-    expect().statusCode(404).when().get("/js");
+  public void private_files() {
+    get("/../private.txt").produces(404);
+    get("/_config.yaml").produces(404);
+    get("/_layouts/default.html").produces(404);
+    get("/unknown").produces(404);
+    get("/js").produces(404);
   }
 
   @Test
@@ -142,46 +138,39 @@ public class WebServerTest {
       }
 
       @Get("/bye/:whom")
-      public String bye_to_(String whom) {
+      public String bye(String whom) {
         return "Good Bye " + whom;
       }
 
       @Get("/add/:left/:right")
-      public String bye_to_(int left, int right) {
-        return Integer.toString(left + right);
+      public int add(int left, int right) {
+        return left + right;
       }
     }));
 
-    expect().content(equalTo("Hello")).when().get("/hello");
-    expect().content(equalTo("Hello")).when().get("/");
-    expect().content(equalTo("Good Bye Bob")).when().get("/bye/Bob");
-    expect().content(equalTo("42")).when().get("/add/22/20");
+    get("/hello").produces("Hello");
+    get("/").produces("Hello");
+    get("/bye/Bob").produces("Good Bye Bob");
+    get("/add/22/20").produces("application/json", "42");
   }
 
   @Test
   public void annotated_resources_with_prefix() {
     server.configure(routes -> routes.add("/say", new Object() {
       @Get("/hello")
-      public String say_hello() {
+      public String hello() {
         return "Hello";
       }
     }));
 
-    expect().content(equalTo("Hello")).when().get("/say/hello");
+    get("/say/hello").produces("Hello");
   }
 
   @Test
-  public void ignore_query_params() {
-    server.configure(routes -> routes.get("/index", () -> "Hello"));
-
-    expect().content(equalTo("Hello")).when().get("/index?query=value");
-  }
-
-  @Test
-  public void streams() {
+  public void io_streams() {
     server.configure(routes -> routes.get("/", () -> new Payload("text/html", new ByteArrayInputStream("Hello".getBytes()))));
 
-    expect().content(equalTo("Hello")).contentType("text/html").when().get("/");
+    get("/").produces("text/html", "Hello");
   }
 
   @Test
@@ -189,35 +178,37 @@ public class WebServerTest {
     server.configure(routes -> {
       routes.get("/hello/:name", (String name) -> new Template("1variable.txt").render("name", name));
       routes.get("/bye", () -> new Template("goodbye").render());
+      routes.get("/1variable", Model.of("name", "Toto"));
     });
 
-    expect().content(containsString("<div>_PREFIX_TEXT_SUFFIX_</div>")).when().get("/pageYaml");
-    expect().content(equalTo("Hello Joe")).when().get("/hello/Joe");
-    expect().content(equalTo("<p><strong>Good Bye</strong></p>\n")).when().get("/bye");
+    get("/pageYaml").produces("<div>_PREFIX_TEXT_SUFFIX_</div>");
+    get("/hello/Joe").produces("Hello Joe");
+    get("/bye").produces("<p><strong>Good Bye</strong></p>");
+    get("/1variable").produces("text/html", "Hello Toto");
   }
 
   @Test
   public void priority_to_route() {
-    server.configure(routes -> routes.get("/", () -> "PRIORITY"));
+    server.configure(routes -> routes.get("/", "PRIORITY"));
 
-    expect().content(equalTo("PRIORITY")).when().get("/");
+    get("/").produces("PRIORITY");
   }
 
   @Test
   public void redirect() {
     server.configure(routes -> {
-      routes.get("/index", () -> Payload.seeOther("/login"));
-      routes.get("/login", () -> "LOGIN");
+      routes.get("/", Payload.seeOther("/login"));
+      routes.get("/login", "LOGIN");
     });
 
-    expect().content(equalTo("LOGIN")).when().get("/index");
+    get("/").produces("LOGIN");
   }
 
   @Test
   public void filter() {
     server.configure(routes -> {
-      routes.get("/", () -> "NOT FILTERED");
-      routes.get("/other", () -> "OTHER");
+      routes.get("/", "NOT FILTERED");
+      routes.get("/other", "OTHER");
       routes.filter((uri, request, response) -> {
         if ("/".equals(uri)) {
           response.setValue("Content-Type", "text/html");
@@ -230,8 +221,8 @@ public class WebServerTest {
       });
     });
 
-    expect().content(equalTo("FILTERED")).when().get("/");
-    expect().content(equalTo("OTHER")).when().get("/other");
+    get("/").produces("FILTERED");
+    get("/other").produces("OTHER");
   }
 
   @Test
@@ -240,18 +231,18 @@ public class WebServerTest {
       throw new RuntimeException("BUG");
     }));
 
-    expect().content(containsString("An error occurred on the server")).contentType("text/html").statusCode(500).when().get("/");
+    get("/").produces(500, "text/html", "An error occurred on the server");
   }
 
   @Test
   public void supports_spied_resources() {
     server.configure(routes -> routes.add(spy(new TestResource())));
 
-    expect().content(equalTo("HELLO")).when().get("/");
+    get("/").produces("HELLO");
   }
 
   @Test
-  public void post() {
+  public void support_post() {
     server.configure(routes -> {
       routes.post("/post", () -> "Done");
       routes.get("/get", () -> "Done");
@@ -267,14 +258,14 @@ public class WebServerTest {
       });
     });
 
-    expect().content(equalTo("Done")).when().post("/post");
-    expect().content(equalTo("Done Bob")).when().post("/post/Bob");
-    expect().content(equalTo("Done POST")).when().post("/action");
-    expect().content(equalTo("Done GET")).when().get("/action");
-    expect().content(equalTo("CREATED")).when().post("/person");
-    expect().statusCode(405).when().post("/get");
-    expect().statusCode(405).when().post("/index.html");
-    expect().statusCode(404).when().post("/unknown");
+    post("/post").produces("Done");
+    post("/post/Bob").produces("Done Bob");
+    post("/action").produces("Done POST");
+    get("/action").produces("Done GET");
+    post("/person").produces("CREATED");
+    post("/get").produces(405);
+    post("/index.html").produces(405);
+    post("/unknown").produces(404);
   }
 
   @Test
@@ -295,14 +286,14 @@ public class WebServerTest {
       });
     });
 
-    given().parameters("firstName", "John", "lastName", "Doe").expect().content(equalTo("CREATED John Doe")).when().post("/postForm");
-    given().parameters("firstName", "Jane", "lastName", "Doe").expect().content(equalTo("CREATED Jane Doe")).when().post("/postFormResource");
-    given().parameters("firstName", "Jane", "lastName", "Doe").expect().content(equalTo("CREATED Jane Doe")).when().post("/postBean");
+    post("/postForm", "firstName", "John", "lastName", "Doe").produces("CREATED John Doe");
+    post("/postFormResource", "firstName", "Jane", "lastName", "Doe").produces("CREATED Jane Doe");
+    post("/postBean", "firstName", "John", "lastName", "Doe").produces("CREATED John Doe");
   }
 
   @Test
   public void site_variables() {
-    expect().content(containsString("<p>\nscala\n\njava, scala\n</p>\n<p>\nscala\n</p>")).when().get("/testTags");
+    get("/testTags").produces("<p>\nscala\n\njava, scala\n</p>\n<p>\nscala\n</p>");
   }
 
   static class TestResource {
@@ -312,17 +303,9 @@ public class WebServerTest {
     }
   }
 
-  private ResponseSpecification expect() {
-    return given().expect();
-  }
-
-  private RequestSpecification given() {
-    return RestAssured.given().port(server.port());
-  }
-
   static class Person {
-    final String name;
-    final int age;
+    String name;
+    int age;
 
     Person(String name, int age) {
       this.name = name;

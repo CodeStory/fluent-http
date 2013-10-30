@@ -82,7 +82,7 @@ public class RouteCollection implements Routes {
   }
 
   @Override
-  public void get(String uriPattern, Payload payload) {
+  public void get(String uriPattern, Object payload) {
     get(uriPattern, () -> payload);
   }
 

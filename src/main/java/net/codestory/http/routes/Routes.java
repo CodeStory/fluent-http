@@ -25,7 +25,7 @@ public interface Routes {
 
   void add(String urlPrefix, Object resource);
 
-  void get(String uriPattern, Payload payload);
+  void get(String uriPattern, Object payload);
 
   void get(String uriPattern, NoParamRoute route);
 
