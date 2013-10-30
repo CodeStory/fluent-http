@@ -314,7 +314,7 @@ public class WebServerTest {
   }
 
   static class Human {
-    public String firstName;
-    public String lastName;
+    String firstName;
+    String lastName;
   }
 }

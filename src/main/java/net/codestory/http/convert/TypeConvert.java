@@ -19,10 +19,13 @@ import java.util.*;
 
 import net.codestory.http.internal.*;
 
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
 
 public class TypeConvert {
-  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
+      .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
 
   private TypeConvert() {
     // static class
@@ -49,16 +52,24 @@ public class TypeConvert {
     return converted;
   }
 
-  public static Object convert(String value, Class<?> type) {
-    return OBJECT_MAPPER.convertValue(value, type);
-  }
-
   public static Object convert(Context context, Class<?> type) {
     if (type.isAssignableFrom(Context.class)) {
       return context;
     } else if (type.isAssignableFrom(Map.class)) {
       return context.getKeyValues();
     }
-    return OBJECT_MAPPER.convertValue(context.getKeyValues(), type);
+    return convert(context.getKeyValues(), type);
+  }
+
+  public static <T> T convert(String value, Class<T> type) {
+    return OBJECT_MAPPER.convertValue(value, type);
+  }
+
+  public static <T> T convert(Map<String, String> keyValues, Class<T> type) {
+    return OBJECT_MAPPER.convertValue(keyValues, type);
+  }
+
+  public static byte[] toByteArray(Object value) throws JsonProcessingException {
+    return OBJECT_MAPPER.writer().writeValueAsBytes(value);
   }
 }

@@ -17,6 +17,8 @@ package net.codestory.http.convert;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.*;
+
 import org.junit.*;
 
 public class TypeConvertTest {
@@ -38,5 +40,22 @@ public class TypeConvertTest {
     assertThat(TypeConvert.convert("true", boolean.class)).isEqualTo(true);
     assertThat(TypeConvert.convert("false", Boolean.class)).isEqualTo(false);
     assertThat(TypeConvert.convert("false", boolean.class)).isEqualTo(false);
+  }
+
+  @Test
+  public void convert_key_values() {
+    Map<String, String> keyValues = new HashMap<>();
+    keyValues.put("name", "joe");
+    keyValues.put("age", "42");
+
+    Human human = TypeConvert.convert(keyValues, Human.class);
+
+    assertThat(human.name).isEqualTo("joe");
+    assertThat(human.age).isEqualTo(42);
+  }
+
+  static class Human {
+    public String name;
+    public int age;
   }
 }

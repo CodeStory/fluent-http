@@ -23,14 +23,12 @@ import java.nio.file.Path;
 import java.util.*;
 
 import net.codestory.http.compilers.Compiler;
+import net.codestory.http.convert.*;
 import net.codestory.http.io.*;
 import net.codestory.http.templating.*;
 import net.codestory.http.types.*;
 
 import org.simpleframework.http.*;
-
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.databind.*;
 
 public class Payload {
   private final String contentType;
@@ -141,10 +139,7 @@ public class Payload {
       return forInputStream((InputStream) content);
     }
 
-    return new ObjectMapper()
-        .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
-        .writer()
-        .writeValueAsBytes(content);
+    return TypeConvert.toByteArray(content);
   }
 
   private static byte[] forString(String value) {
