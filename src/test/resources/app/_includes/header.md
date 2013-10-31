@@ -1,0 +1,4 @@
+---
+greeting: Hello
+---
+*[[greeting]] [[name]]*

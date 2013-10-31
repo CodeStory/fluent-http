@@ -15,12 +15,9 @@
  */
 package net.codestory.http.templating;
 
-import static java.nio.charset.StandardCharsets.*;
-
 import java.io.*;
 import java.util.*;
 
-import net.codestory.http.io.*;
 import net.codestory.http.templating.helpers.*;
 
 import com.github.jknack.handlebars.*;
@@ -32,15 +29,13 @@ import com.github.jknack.handlebars.io.*;
 public enum HandlebarsCompiler {
   INSTANCE;
 
-  private final Handlebars handlebars = handlebars();
-
   public String compile(String template, Map<String, Object> variables) throws IOException {
-    return handlebars
+    return handlebars(variables)
         .compileInline(template)
         .apply(context(variables));
   }
 
-  private static Handlebars handlebars() {
+  private static Handlebars handlebars(Map<String, Object> variables) {
     return new Handlebars()
         .startDelimiter("[[")
         .endDelimiter("]]")
@@ -51,7 +46,7 @@ public enum HandlebarsCompiler {
         .with(new AbstractTemplateLoader() {
           @Override
           public TemplateSource sourceAt(String location) throws IOException {
-            return new StringTemplateSource(location, Resources.read(Resources.findExistingPath("_includes/" + location), UTF_8));
+            return new StringTemplateSource(location, new Template("_includes", location).render(variables));
           }
         });
   }

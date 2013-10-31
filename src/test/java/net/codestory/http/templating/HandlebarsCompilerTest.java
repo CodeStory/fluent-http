@@ -41,6 +41,13 @@ public class HandlebarsCompilerTest {
   }
 
   @Test
+  public void yaml_front_matter_markdown_partial() throws IOException {
+    String result = compiler.compile("-[[>header.md]]-", map("name", "Bob"));
+
+    assertThat(result).isEqualTo("-<p><em>Hello Bob</em></p>\n-");
+  }
+
+  @Test
   public void find_partial() throws IOException {
     String result = compiler.compile("[[>partial]]", map("name", "Bob"));
 

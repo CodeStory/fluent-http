@@ -41,7 +41,7 @@ public class TemplateTest {
   @Test
   public void layout_decorator() {
     assertThat(new Template("pageYaml.html").render()).contains("PREFIX_LAYOUT<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_LAYOUT");
-    assertThat(new Template("pageYamlWithMarkdownLayout.html").render()).contains("TITLE: PREFIX_MD<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_MD");
+    assertThat(new Template("pageYamlWithMarkdownLayout.html").render()).contains("<em>TITLE</em>: PREFIX_MD<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_MD");
   }
 
   @Test

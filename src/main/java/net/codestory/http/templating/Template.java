@@ -25,6 +25,10 @@ import net.codestory.http.io.*;
 public class Template {
   private final Path path;
 
+  public Template(String folder, String name) {
+    this(folder + (name.startsWith("/") ? name : "/" + name));
+  }
+
   public Template(String uri) {
     Path existing = Resources.findExistingPath(uri);
     if (existing == null) {
@@ -70,7 +74,7 @@ public class Template {
         return body;
       }
 
-      return new Template("_layouts/" + layout).render(allKeyValues).replace("[[body]]", body);
+      return new Template("_layouts", layout).render(allKeyValues).replace("[[body]]", body);
     } catch (IOException e) {
       throw new IllegalStateException("Unable to render template", e);
     }
