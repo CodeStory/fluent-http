@@ -34,7 +34,9 @@ class ReflectionRoute implements AnyRoute {
       Object[] arguments = TypeConvert.convert(pathParameters, method.getParameterTypes());
 
       method.setAccessible(true);
-      return method.invoke(resource, arguments);
+      Object payload = method.invoke(resource, arguments);
+
+      return (payload == null) ? "" : payload;
     } catch (Exception e) {
       throw new IllegalStateException("Unable to apply resource", e);
     }

@@ -155,12 +155,17 @@ public class WebServerTest {
       public int add(int left, int right) {
         return left + right;
       }
+
+      @Get("/void")
+      public void empty() {
+      }
     }));
 
     get("/hello").produces("Hello");
     get("/").produces("Hello");
     get("/bye/Bob").produces("Good Bye Bob");
     get("/add/22/20").produces("application/json", "42");
+    get("/void").produces(200, "text/html", "");
   }
 
   @Test

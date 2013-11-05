@@ -35,7 +35,9 @@ class ReflectionRouteWithContext implements AnyRouteWithContext {
       Object[] arguments = TypeConvert.convert(context, pathParameters, method.getParameterTypes());
 
       method.setAccessible(true);
-      return method.invoke(resource, arguments);
+      Object payload = method.invoke(resource, arguments);
+
+      return (payload == null) ? "" : payload;
     } catch (Exception e) {
       throw new IllegalStateException("Unable to apply resource", e);
     }
