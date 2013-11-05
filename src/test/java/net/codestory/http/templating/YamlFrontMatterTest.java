@@ -105,11 +105,12 @@ public class YamlFrontMatterTest {
   @Test
   public void complex_yaml() {
     String content = content(
-        "---",
+        " ",
+        "  ---",
         "products: ",
         " - name: PROD1",
         " - name: PROD2",
-        "---",
+        "---  ",
         "CONTENT");
 
     YamlFrontMatter parsed = YamlFrontMatter.parse(Paths.get(""), content);

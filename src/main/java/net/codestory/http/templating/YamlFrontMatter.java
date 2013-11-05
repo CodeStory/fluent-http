@@ -15,17 +15,18 @@
  */
 package net.codestory.http.templating;
 
-import static net.codestory.http.io.Strings.*;
+import static java.nio.charset.StandardCharsets.*;
+import static java.util.regex.Pattern.*;
 
 import java.io.*;
-import java.nio.charset.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.regex.*;
 
 import net.codestory.http.io.*;
 
 public class YamlFrontMatter {
-  private static final String SEPARATOR = "---\n";
+  private static final Pattern FRONT_MATTER = compile("\\A\\s*(?:---\\r?\\n((?:(?!---).)*)---\\s*\\r?\\n)?(.*)\\z", DOTALL);
 
   private final Path path;
   private final String content;
@@ -53,24 +54,24 @@ public class YamlFrontMatter {
   }
 
   public static YamlFrontMatter parse(Path path) throws IOException {
-    return parse(path, Resources.read(path, StandardCharsets.UTF_8));
+    return parse(path, Resources.read(path, UTF_8));
   }
 
-  public static YamlFrontMatter parse(Path path, String content) {
-    if (countMatches(content, SEPARATOR) < 2) {
-      return new YamlFrontMatter(path, content, Collections.emptyMap());
-    }
-    return new YamlFrontMatter(path, stripHeader(content), parseVariables(content));
-  }
+  public static YamlFrontMatter parse(Path path, String text) {
+    Matcher matcher = FRONT_MATTER.matcher(text);
 
-  private static String stripHeader(String content) {
-    return substringAfter(substringAfter(content, SEPARATOR), SEPARATOR);
+    boolean matches = matcher.matches();
+    String header = matches ? matcher.group(1) : null;
+    String content = matches ? matcher.group(2) : text;
+
+    return new YamlFrontMatter(path, content, parseVariables(header));
   }
 
   @SuppressWarnings("unchecked")
-  private static Map<String, Object> parseVariables(String content) {
-    String header = substringBetween(content, SEPARATOR, SEPARATOR);
-
+  private static Map<String, Object> parseVariables(String header) {
+    if (header == null) {
+      return Collections.emptyMap();
+    }
     return YamlParser.INSTANCE.parse(header);
   }
 }
