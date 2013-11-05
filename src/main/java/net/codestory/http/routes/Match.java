@@ -16,7 +16,7 @@
 package net.codestory.http.routes;
 
 public enum Match {
-  OK, WRONG_METHOD, WRONG_URL;
+  OK, WRONG_METHOD, TRY_WITH_LEADING_SLASH, WRONG_URL;
 
   public boolean isBetter(Match other) {
     return ordinal() < other.ordinal();

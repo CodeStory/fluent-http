@@ -37,6 +37,9 @@ abstract class AbstractRouteWrapper implements Route {
   @Override
   public Match apply(String uri, Request request, Response response) throws IOException {
     if (!uriParser.matches(uri)) {
+      if (!uri.endsWith("/") && uriParser.matches(uri + "/")) {
+        return TRY_WITH_LEADING_SLASH;
+      }
       return WRONG_URL;
     }
 

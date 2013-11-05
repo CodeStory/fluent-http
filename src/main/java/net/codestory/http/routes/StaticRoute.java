@@ -36,6 +36,9 @@ class StaticRoute implements Route {
   public Match apply(String uri, Request request, Response response) throws IOException {
     Path path = pathForUri.computeIfAbsent(uri, StaticRoute::findPath);
     if (path == NOT_FOUND) {
+      if (!uri.endsWith("/") && (findPath(uri + "/") != null)) {
+        return TRY_WITH_LEADING_SLASH;
+      }
       return WRONG_URL;
     }
 

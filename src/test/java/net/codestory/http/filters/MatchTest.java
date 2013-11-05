@@ -25,14 +25,22 @@ public class MatchTest {
   public void better() {
     assertThat(OK.isBetter(OK)).isFalse();
     assertThat(OK.isBetter(WRONG_METHOD)).isTrue();
+    assertThat(OK.isBetter(TRY_WITH_LEADING_SLASH)).isTrue();
     assertThat(OK.isBetter(WRONG_URL)).isTrue();
 
     assertThat(WRONG_METHOD.isBetter(OK)).isFalse();
     assertThat(WRONG_METHOD.isBetter(WRONG_METHOD)).isFalse();
+    assertThat(WRONG_METHOD.isBetter(TRY_WITH_LEADING_SLASH)).isTrue();
     assertThat(WRONG_METHOD.isBetter(WRONG_URL)).isTrue();
+
+    assertThat(TRY_WITH_LEADING_SLASH.isBetter(OK)).isFalse();
+    assertThat(TRY_WITH_LEADING_SLASH.isBetter(WRONG_METHOD)).isFalse();
+    assertThat(TRY_WITH_LEADING_SLASH.isBetter(TRY_WITH_LEADING_SLASH)).isFalse();
+    assertThat(TRY_WITH_LEADING_SLASH.isBetter(WRONG_URL)).isTrue();
 
     assertThat(WRONG_URL.isBetter(OK)).isFalse();
     assertThat(WRONG_URL.isBetter(WRONG_METHOD)).isFalse();
+    assertThat(WRONG_URL.isBetter(TRY_WITH_LEADING_SLASH)).isFalse();
     assertThat(WRONG_URL.isBetter(WRONG_URL)).isFalse();
   }
 }

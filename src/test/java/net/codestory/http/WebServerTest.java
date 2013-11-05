@@ -210,9 +210,14 @@ public class WebServerTest {
     server.configure(routes -> {
       routes.get("/", Payload.seeOther("/login"));
       routes.get("/login", "LOGIN");
+      routes.get("/dynamic/", "Dynamic");
     });
 
     get("/").produces("LOGIN");
+    get("/section/").produces("text/plain", "Hello index");
+    get("/section").produces("text/plain", "Hello index");
+    get("/dynamic/").produces("text/html", "Dynamic");
+    get("/dynamic").produces("text/html", "Dynamic");
   }
 
   @Test

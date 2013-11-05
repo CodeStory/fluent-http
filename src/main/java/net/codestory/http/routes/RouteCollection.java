@@ -24,6 +24,7 @@ import java.util.*;
 
 import net.codestory.http.annotations.*;
 import net.codestory.http.filters.*;
+import net.codestory.http.payload.*;
 
 import org.simpleframework.http.*;
 
@@ -226,6 +227,11 @@ public class RouteCollection implements Routes {
       if (match.isBetter(bestMatch)) {
         bestMatch = match;
       }
+    }
+
+    if (bestMatch == TRY_WITH_LEADING_SLASH) {
+      Payload.seeOther(uri + "/").writeTo(response);
+      return OK;
     }
 
     return bestMatch;
