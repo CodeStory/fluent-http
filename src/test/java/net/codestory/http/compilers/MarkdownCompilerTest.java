@@ -57,4 +57,18 @@ public class MarkdownCompilerTest {
 
     assertThat(html).isEqualTo("<h2 id=\"ID\">HEADER</h2>\n");
   }
+
+  @Test
+  public void code_block() throws IOException {
+    String html = Compiler.compile(Paths.get("file.markdown"), "``` java\nnop\n```\n");
+
+    assertThat(html).isEqualTo("<pre><code class=\"java\">nop\n</code></pre>\n");
+  }
+
+  @Test
+  public void google_maps() throws IOException {
+    String html = Compiler.compile(Paths.get("file.markdown"), "<@15 rue de la paix Paris>");
+
+    assertThat(html).isEqualTo("<p><a href=\"https://maps.google.com/maps?q=15+rue+de+la+paix+Paris\">15 rue de la paix Paris</a></p>\n");
+  }
 }

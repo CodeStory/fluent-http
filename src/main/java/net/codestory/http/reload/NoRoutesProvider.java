@@ -22,7 +22,7 @@ class NoRoutesProvider implements RoutesProvider {
 
   NoRoutesProvider() {
     routes = new RouteCollection();
-    routes.addStaticRoutes();
+    routes.addStaticRoutes(false);
   }
 
   @Override

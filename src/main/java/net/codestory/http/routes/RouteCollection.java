@@ -200,8 +200,8 @@ public class RouteCollection implements Routes {
   }
 
   // TEMP
-  public void addStaticRoutes() {
-    routes.add(new StaticRoute());
+  public void addStaticRoutes(boolean cache) {
+    routes.add(cache ? new CachedStaticRoute() : new StaticRoute());
     routes.add(new SourceMapRoute());
   }
 

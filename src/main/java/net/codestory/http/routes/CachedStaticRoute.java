@@ -13,21 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.reload;
+package net.codestory.http.routes;
 
-import net.codestory.http.*;
-import net.codestory.http.routes.*;
+import java.nio.file.*;
+import java.util.concurrent.*;
 
-class FixedRoutesProvider implements RoutesProvider {
-  private final RouteCollection routes = new RouteCollection();
+import net.codestory.http.io.*;
 
-  FixedRoutesProvider(Configuration configuration) {
-    configuration.configure(routes);
-    routes.addStaticRoutes(true);
-  }
+class CachedStaticRoute extends StaticRoute {
+  private final ConcurrentHashMap<String, Path> pathForUri = new ConcurrentHashMap<>(10);
 
   @Override
-  public RouteCollection get() {
-    return routes;
+  protected Path path(String uri) {
+    return pathForUri.computeIfAbsent(uri, CachedStaticRoute::findPath);
+  }
+
+  private static Path findPath(String uri) {
+    Path path = Resources.findExistingPath(uri);
+    return (path != null) && Resources.isPublic(path) ? path : NOT_FOUND;
   }
 }
