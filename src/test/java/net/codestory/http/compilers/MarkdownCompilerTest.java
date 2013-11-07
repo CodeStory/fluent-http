@@ -71,4 +71,18 @@ public class MarkdownCompilerTest {
 
     assertThat(html).isEqualTo("<p><a href=\"https://maps.google.com/maps?q=15+rue+de+la+paix+Paris\">15 rue de la paix Paris</a></p>\n");
   }
+
+  @Test
+  public void formula_as_png() throws IOException {
+    String html = Compiler.compile(Paths.get("file.markdown"), "%%% formula\n(1+2)\n%%%\n");
+
+    assertThat(html).isEqualTo("<img src=\"http://latex.codecogs.com/png.download?%281%2B2%29\" />");
+  }
+
+  @Test
+  public void formula_as_gif() throws IOException {
+    String html = Compiler.compile(Paths.get("file.markdown"), "%%% formula type=gif\n(1+2)\n%%%\n");
+
+    assertThat(html).isEqualTo("<img src=\"http://latex.codecogs.com/gif.download?%281%2B2%29\" />");
+  }
 }

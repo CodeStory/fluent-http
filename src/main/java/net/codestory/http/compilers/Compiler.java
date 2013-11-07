@@ -36,7 +36,7 @@ public enum Compiler {
     String doCompile(Path path, String markdown) throws IOException {
       Configuration.Builder builder = Configuration.builder()
           .forceExtentedProfile()
-          .registerPlugins(new TablePlugin(), new YumlPlugin(), new WebSequencePlugin(), new IncludePlugin())
+          .registerPlugins(new TablePlugin(), new YumlPlugin(), new WebSequencePlugin(), new IncludePlugin(), new FormulaPlugin())
           .setDecorator(new ExtDecorator())
           .setCodeBlockEmitter(new CodeBlockEmitter());
 
