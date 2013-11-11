@@ -17,6 +17,7 @@ package net.codestory.http.compilers;
 
 import java.io.*;
 import java.nio.file.*;
+import java.util.concurrent.*;
 
 import org.markdown4j.*;
 
@@ -72,8 +73,16 @@ public enum Compiler {
 
   abstract String doCompile(Path path, String content) throws IOException;
 
-  public static String compile(Path path, String content) throws IOException {
-    return compilerForPath(path).doCompile(path, content);
+  private final static ConcurrentMap<String, String> CACHE = new ConcurrentHashMap<>();
+
+  public static String compile(Path path, String content) {
+    return CACHE.computeIfAbsent(path.toString() + ";" + content, (ignore) -> {
+      try {
+        return compilerForPath(path).doCompile(path, content);
+      } catch (IOException e) {
+        throw new IllegalStateException(e);
+      }
+    });
   }
 
   private static Compiler compilerForPath(Path path) {

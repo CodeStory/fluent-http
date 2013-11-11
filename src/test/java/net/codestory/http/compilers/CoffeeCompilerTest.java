@@ -17,21 +17,20 @@ package net.codestory.http.compilers;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.io.*;
 import java.nio.file.*;
 
 import org.junit.*;
 
 public class CoffeeCompilerTest {
   @Test
-  public void empty() throws IOException {
+  public void empty() {
     String js = Compiler.compile(Paths.get("empty.coffee"), "");
 
     assertThat(js).isEqualTo("\n");
   }
 
   @Test
-  public void coffee() throws IOException {
+  public void coffee() {
     String js = Compiler.compile(Paths.get("file.coffee"), "life=42");
 
     assertThat(js).isEqualTo("var life;\n\nlife = 42;\n");
