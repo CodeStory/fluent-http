@@ -23,14 +23,14 @@ import org.junit.*;
 
 public class LessCompilerTest {
   @Test
-  public void empty_less() {
+  public void empty() {
     String css = Compiler.compile(Paths.get("empty.less"), "");
 
     assertThat(css).isEqualTo("/*# sourceMappingURL=empty.css.map */\n");
   }
 
   @Test
-  public void less_to_css() {
+  public void to_css() {
     String css = Compiler.compile(Paths.get("file.less"), "body { h1 { color: red; } }");
 
     assertThat(css).isEqualTo("body h1 {\n  color: red;\n}\n/*# sourceMappingURL=file.css.map */\n");

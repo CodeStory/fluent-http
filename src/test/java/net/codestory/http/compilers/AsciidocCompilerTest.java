@@ -21,18 +21,19 @@ import java.nio.file.*;
 
 import org.junit.*;
 
-public class CoffeeCompilerTest {
+public class AsciidocCompilerTest {
   @Test
   public void empty() {
-    String js = Compiler.compile(Paths.get("empty.coffee"), "");
+    String html = Compiler.compile(Paths.get("empty.asciidoc"), "");
 
-    assertThat(js).isEqualTo("\n");
+    assertThat(html).isEqualTo("");
   }
 
   @Test
-  public void to_javascript() {
-    String js = Compiler.compile(Paths.get("file.coffee"), "life=42");
+  public void to_html() {
+    String html = Compiler.compile(Paths.get("doc.asciidoc"), "== Title\ntext http://asciidoc.org[AsciiDoc]");
 
-    assertThat(js).isEqualTo("var life;\n\nlife = 42;\n");
+    assertThat(html).contains("<h2 id=\"_title\">Title</h2>");
+    assertThat(html).contains("<p>text <a href=\"http://asciidoc.org\">AsciiDoc</a></p>");
   }
 }

@@ -19,6 +19,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.concurrent.*;
 
+import org.asciidoctor.*;
 import org.markdown4j.*;
 
 import com.github.rjeschke.txtmark.*;
@@ -64,6 +65,12 @@ public enum Compiler {
       }
     }
   },
+  ASCIIDOC {
+    @Override
+    String doCompile(Path path, String asciidoc) throws IOException {
+      return Asciidoctor.Factory.create().render(asciidoc, new Options());
+    }
+  },
   NONE {
     @Override
     String doCompile(Path path, String content) {
@@ -96,6 +103,8 @@ public enum Compiler {
       return COFFEE;
     } else if (name.endsWith(".md") || name.endsWith(".markdown")) {
       return MARKDOWN;
+    } else if (name.endsWith(".asciidoc")) {
+      return ASCIIDOC;
     }
 
     return NONE;

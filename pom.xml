@@ -229,6 +229,11 @@
       <version>2.2.3</version>
     </dependency>
     <dependency>
+      <groupId>org.asciidoctor</groupId>
+      <artifactId>asciidoctor-java-integration</artifactId>
+      <version>0.1.4</version>
+    </dependency>
+    <dependency>
       <groupId>org.twitter4j</groupId>
       <artifactId>twitter4j-core</artifactId>
       <version>3.0.4</version>
