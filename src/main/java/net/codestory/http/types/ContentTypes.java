@@ -18,7 +18,7 @@ package net.codestory.http.types;
 import java.nio.file.*;
 
 public class ContentTypes {
-  public static final String[] TEMPLATE_EXTENSIONS = {"", ".html", ".md", ".markdown", ".txt"};
+  public static final String[] TEMPLATE_EXTENSIONS = {"", ".html", ".md", ".markdown", ".txt", ".asciidoc"};
 
   private ContentTypes() {
     // Static class
@@ -29,6 +29,7 @@ public class ContentTypes {
       case ".html":
       case ".md":
       case ".markdown":
+      case ".asciidoc":
         return "text/html";
       case ".xml":
         return "application/xml";
@@ -57,6 +58,7 @@ public class ContentTypes {
       case ".txt":
       case ".md":
       case ".markdown":
+      case ".asciidoc":
       case ".html":
       case ".xml":
       case ".css":
@@ -72,6 +74,7 @@ public class ContentTypes {
       case ".txt":
       case ".md":
       case ".markdown":
+      case ".asciidoc":
       case ".html":
       case ".xml":
       case ".css":
