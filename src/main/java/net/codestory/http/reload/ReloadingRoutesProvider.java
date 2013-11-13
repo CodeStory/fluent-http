@@ -18,6 +18,7 @@ package net.codestory.http.reload;
 import java.io.*;
 import java.nio.file.*;
 import java.nio.file.attribute.*;
+import java.util.concurrent.atomic.*;
 
 import net.codestory.http.*;
 import net.codestory.http.routes.*;
@@ -26,63 +27,69 @@ import com.sun.nio.file.*;
 
 class ReloadingRoutesProvider implements RoutesProvider {
   private final Configuration configuration;
+  private final AtomicBoolean dirty;
   private RouteCollection routes;
 
   ReloadingRoutesProvider(Configuration configuration) {
     this.configuration = configuration;
-    reload();
+    this.dirty = new AtomicBoolean(true);
     startClassChangeWatcher(Paths.get("target/classes/"));
   }
 
   @Override
   public synchronized RouteCollection get() {
+    if (dirty.get()) {
+      System.out.println("Reloading configuration...");
+
+      routes = new RouteCollection();
+      configuration.configure(routes);
+      routes.addStaticRoutes(false);
+
+      dirty.set(false);
+    }
+
     return routes;
   }
 
-  private synchronized void reload() {
-    System.out.println("Reloading configuration");
-
-    routes = new RouteCollection();
-    configuration.configure(routes);
-    routes.addStaticRoutes(false);
+  private void startClassChangeWatcher(Path path) {
+    new Thread(() -> watchChanges(path)).start();
   }
 
-  private void startClassChangeWatcher(Path path) {
-    new Thread(() -> {
-      WatchService watcher;
-      try {
-        watcher = path.getFileSystem().newWatchService();
+  private void watchChanges(Path path) {
+    WatchService watcher = createWatcher(path);
+    reloadOnChange(watcher);
+  }
 
-        Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
-          @Override
-          public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attr) throws IOException {
-            dir.register(watcher, new WatchEvent.Kind[]{
-                StandardWatchEventKinds.ENTRY_CREATE,
-                StandardWatchEventKinds.ENTRY_MODIFY,
-                StandardWatchEventKinds.ENTRY_DELETE},
-                SensitivityWatchEventModifier.HIGH);
-            return FileVisitResult.CONTINUE;
-          }
-        });
-      } catch (IOException e) {
-        throw new IllegalStateException("Unable to watch folder " + path);
-      }
+  private WatchService createWatcher(Path path) {
+    try {
+      WatchService watcher = path.getFileSystem().newWatchService();
 
-      while (true) {
-        try {
-          WatchKey take = watcher.take();
-          boolean reload = false;
-          for (WatchEvent<?> watchEvent : take.pollEvents()) {
-            reload = true; // consume events of this shitty API
-          }
+      Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+        @Override
+        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attr) throws IOException {
+          dir.register(watcher, new WatchEvent.Kind[]{
+              StandardWatchEventKinds.ENTRY_CREATE,
+              StandardWatchEventKinds.ENTRY_MODIFY,
+              StandardWatchEventKinds.ENTRY_DELETE},
+              SensitivityWatchEventModifier.HIGH);
 
-          take.reset();
-          if (reload) {
-            reload();
-          }
-        } catch (InterruptedException e) {
+          return FileVisitResult.CONTINUE;
         }
+      });
+      return watcher;
+    } catch (IOException e) {
+      throw new IllegalStateException("Unable to watch folder " + path);
+    }
+  }
+
+  private void reloadOnChange(WatchService watcher) {
+    while (true) {
+      try {
+        WatchKey take = watcher.take();
+        take.pollEvents().forEach(ev -> dirty.set(true)); // consume all events of this shitty API;
+        take.reset();
+      } catch (InterruptedException e) {
       }
-    }).start();
+    }
   }
 }
