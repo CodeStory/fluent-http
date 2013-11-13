@@ -15,9 +15,12 @@
  */
 package net.codestory.http.compilers;
 
+import static net.codestory.http.misc.MemoizingSupplier.*;
+
 import java.io.*;
 import java.nio.file.*;
 import java.util.concurrent.*;
+import java.util.function.*;
 
 import org.asciidoctor.*;
 import org.markdown4j.*;
@@ -28,21 +31,23 @@ import com.github.sommeri.less4j.core.*;
 
 public enum Compiler {
   COFFEE {
+    private final Supplier<CoffeeCompiler> coffeeCompiler = memoize(CoffeeCompiler::new);
+
     @Override
     String doCompile(Path path, String coffee) throws IOException {
-      return new CoffeeCompiler().compile(coffee);
+      return coffeeCompiler.get().compile(coffee);
     }
   },
   MARKDOWN {
+    private final Configuration configuration = Configuration.builder()
+        .forceExtentedProfile()
+        .registerPlugins(new TablePlugin(), new YumlPlugin(), new WebSequencePlugin(), new IncludePlugin(), new FormulaPlugin())
+        .setDecorator(new ExtDecorator())
+        .setCodeBlockEmitter(new CodeBlockEmitter()).build();
+
     @Override
     String doCompile(Path path, String markdown) throws IOException {
-      Configuration.Builder builder = Configuration.builder()
-          .forceExtentedProfile()
-          .registerPlugins(new TablePlugin(), new YumlPlugin(), new WebSequencePlugin(), new IncludePlugin(), new FormulaPlugin())
-          .setDecorator(new ExtDecorator())
-          .setCodeBlockEmitter(new CodeBlockEmitter());
-
-      return Processor.process(markdown, builder.build());
+      return Processor.process(markdown, configuration);
     }
   },
   LESS {

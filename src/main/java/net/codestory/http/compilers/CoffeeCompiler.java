@@ -19,33 +19,29 @@ import static java.nio.charset.StandardCharsets.*;
 
 import java.io.*;
 
-import org.mozilla.javascript.*;
+import javax.script.*;
 
 class CoffeeCompiler {
-  public String compile(String source) throws IOException {
-    Scriptable globalScope = initWithCoffeeScriptScript();
+  private final Bindings CONTEXT;
+  private final CompiledScript COFFEE_JS;
 
-    Context context = Context.enter();
-    try {
-      Scriptable scope = context.newObject(globalScope);
-      scope.setParentScope(globalScope);
-      scope.put("coffeeScriptSource", scope, source);
-      return (String) context.evaluateString(scope, String.format("CoffeeScript.compile(coffeeScriptSource, %s);", "{bare: true}"), "JCoffeeScriptCompiler", 0, null);
-    } catch (JavaScriptException e) {
-      throw new IOException("Unable to compile coffee", e);
-    } finally {
-      Context.exit();
+  public CoffeeCompiler() {
+    ScriptEngine nashorn = new ScriptEngineManager().getEngineByName("nashorn");
+
+    try (Reader reader = new InputStreamReader(ClassLoader.getSystemResourceAsStream("coffee/coffee-script.js"), UTF_8)) {
+      COFFEE_JS = ((Compilable) nashorn).compile(reader);
+      CONTEXT = nashorn.getBindings(ScriptContext.ENGINE_SCOPE);
+    } catch (IOException | ScriptException e) {
+      throw new IllegalStateException(e);
     }
   }
 
-  private Scriptable initWithCoffeeScriptScript() throws IOException {
-    Context context = Context.enter();
-    try (Reader reader = new InputStreamReader(ClassLoader.getSystemResourceAsStream("coffee/coffee-script.js"), UTF_8)) {
-      Scriptable globalScope = context.initStandardObjects();
-      context.evaluateReader(globalScope, reader, "coffee-script.js", 0, null);
-      return globalScope;
-    } finally {
-      Context.exit();
+  public synchronized String compile(String source) throws IOException {
+    try {
+      CONTEXT.put("coffeeScriptSource", source);
+      return COFFEE_JS.eval(CONTEXT).toString();
+    } catch (ScriptException e) {
+      throw new IOException("Unable to compile coffee", e);
     }
   }
 }
