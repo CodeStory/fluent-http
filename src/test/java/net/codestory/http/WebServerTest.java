@@ -18,6 +18,7 @@ package net.codestory.http;
 import static java.nio.charset.StandardCharsets.*;
 import static net.codestory.http.GetAssert.*;
 import static net.codestory.http.PostAssert.*;
+import static net.codestory.http.PutAssert.put;
 import static org.mockito.Mockito.*;
 
 import java.io.*;
@@ -289,6 +290,14 @@ public class WebServerTest {
     post("/unknown").produces(404);
   }
 
+  @Test
+  public void support_put() {
+    server.configure(routes -> {
+      routes.put("/put", () -> "Done");
+    });
+
+    put("/put").produces("Done");
+  }
   @Test
   public void postForm() {
     server.configure(routes -> {

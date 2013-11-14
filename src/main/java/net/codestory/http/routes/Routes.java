@@ -66,4 +66,24 @@ public interface Routes {
   void post(String uriPattern, ThreeParamsRouteWithContext route);
 
   void post(String uriPattern, FourParamsRouteWithContext route);
+
+  void put(String uriPattern, NoParamRoute route);
+
+  void put(String uriPattern, OneParamRoute route);
+
+  void put(String uriPattern, TwoParamsRoute route);
+
+  void put(String uriPattern, ThreeParamsRoute route);
+
+  void put(String uriPattern, FourParamsRoute route);
+
+  void put(String uriPattern, NoParamRouteWithContext route);
+
+  void put(String uriPattern, OneParamRouteWithContext route);
+
+  void put(String uriPattern, TwoParamsRouteWithContext route);
+
+  void put(String uriPattern, ThreeParamsRouteWithContext route);
+
+  void put(String uriPattern, FourParamsRouteWithContext route);
 }

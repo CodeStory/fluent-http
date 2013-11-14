@@ -187,6 +187,56 @@ public class RouteCollection implements Routes {
   }
 
   @Override
+  public void put(String uriPattern, NoParamRoute route) {
+    add("PUT", checkParametersCount(uriPattern, 0), route);
+  }
+
+  @Override
+  public void put(String uriPattern, OneParamRoute route) {
+    add("PUT", checkParametersCount(uriPattern, 1), route);
+  }
+
+  @Override
+  public void put(String uriPattern, TwoParamsRoute route) {
+    add("PUT", checkParametersCount(uriPattern, 2), route);
+  }
+
+  @Override
+  public void put(String uriPattern, ThreeParamsRoute route) {
+    add("PUT", checkParametersCount(uriPattern, 3), route);
+  }
+
+  @Override
+  public void put(String uriPattern, FourParamsRoute route) {
+    add("PUT", checkParametersCount(uriPattern, 4), route);
+  }
+
+  @Override
+  public void put(String uriPattern, NoParamRouteWithContext route) {
+    add("PUT", checkParametersCount(uriPattern, 0), route);
+  }
+
+  @Override
+  public void put(String uriPattern, OneParamRouteWithContext route) {
+    add("PUT", checkParametersCount(uriPattern, 1), route);
+  }
+
+  @Override
+  public void put(String uriPattern, TwoParamsRouteWithContext route) {
+    add("PUT", checkParametersCount(uriPattern, 2), route);
+  }
+
+  @Override
+  public void put(String uriPattern, ThreeParamsRouteWithContext route) {
+    add("PUT", checkParametersCount(uriPattern, 3), route);
+  }
+
+  @Override
+  public void put(String uriPattern, FourParamsRouteWithContext route) {
+    add("PUT", checkParametersCount(uriPattern, 4), route);
+  }
+
+  @Override
   public void filter(Filter filter) {
     filters.addLast(filter);
   }
