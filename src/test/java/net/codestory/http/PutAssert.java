@@ -33,8 +33,8 @@ class PutAssert {
     return new PutAssert(path, RestAssured.given().port(WebServerTest.server.port()).expect());
   }
 
-  static PutAssert put(String path, String firstParameterName, Object firstParameterValue, Object... parameterNameValuePairs) {
-    return new PutAssert(path, RestAssured.given().port(WebServerTest.server.port()).parameters(firstParameterName, firstParameterValue, parameterNameValuePairs).expect());
+  static PutAssert put(String path, String body) {
+    return new PutAssert(path, RestAssured.given().port(WebServerTest.server.port()).body(body).expect());
   }
 
   public void produces(String content) {

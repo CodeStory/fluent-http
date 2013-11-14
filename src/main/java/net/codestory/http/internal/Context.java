@@ -15,7 +15,10 @@
  */
 package net.codestory.http.internal;
 
+import java.io.*;
 import java.util.*;
+
+import net.codestory.http.io.*;
 
 import org.simpleframework.http.*;
 
@@ -62,5 +65,13 @@ public class Context {
 
   public Request getRequest() {
     return request;
+  }
+
+  public byte[] getPayload() {
+    try {
+      return InputStreams.readBytes(request.getInputStream());
+    } catch (IOException e) {
+      throw new IllegalStateException("Unable to read payload", e);
+    }
   }
 }
