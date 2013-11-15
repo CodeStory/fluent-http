@@ -25,6 +25,7 @@ import java.io.*;
 import java.util.*;
 
 import net.codestory.http.annotations.*;
+import net.codestory.http.errors.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.templating.*;
@@ -60,7 +61,12 @@ public class WebServerTest {
 
   @Test
   public void not_found() {
+    server.configure(routes -> routes.get("/error", () -> {
+      throw new HttpException(404);
+    }));
+
     get("/notfound").produces(404, "text/html", "Page not found");
+    get("/error").produces(404, "text/html", "Page not found");
   }
 
   @Test
