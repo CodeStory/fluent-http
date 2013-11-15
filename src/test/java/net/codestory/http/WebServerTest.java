@@ -219,11 +219,11 @@ public class WebServerTest {
       routes.get("/dynamic/", "Dynamic");
     });
 
-    //get("/").produces("LOGIN");
-    //get("/section/").produces("text/plain", "Hello index");
+    get("/").produces("LOGIN");
+    get("/section/").produces("text/plain", "Hello index");
     get("/section").produces("text/plain", "Hello index");
-    //get("/dynamic/").produces("text/html", "Dynamic");
-    //get("/dynamic").produces("text/html", "Dynamic");
+    get("/dynamic/").produces("text/html", "Dynamic");
+    get("/dynamic").produces("text/html", "Dynamic");
   }
 
   @Test
