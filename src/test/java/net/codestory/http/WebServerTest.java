@@ -201,6 +201,7 @@ public class WebServerTest {
       routes.get("/bye", () -> new Template("goodbye").render());
       routes.get("/1variable", Model.of("name", "Toto"));
       routes.get("/section/", Model.of("name", "Bob"));
+      routes.get("/any", ModelAndView.of("section/index", "name", "Joe"));
     });
 
     get("/pageYaml").produces("<div>_PREFIX_TEXT_SUFFIX_</div>");
@@ -208,6 +209,7 @@ public class WebServerTest {
     get("/bye").produces("<p><strong>Good Bye</strong></p>");
     get("/1variable").produces("text/html", "Hello Toto");
     get("/section/").produces("text/html", "Hello Bob");
+    get("/any").produces("text/html", "Hello Joe");
   }
 
   @Test
