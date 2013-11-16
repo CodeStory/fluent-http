@@ -15,14 +15,8 @@
  */
 package net.codestory.http.errors;
 
-public class HttpException extends RuntimeException {
-  private final int code;
-
-  public HttpException(int code) {
-    this.code = code;
-  }
-
-  public int code() {
-    return code;
+public class NotFoundException extends HttpException {
+  public NotFoundException() {
+    super(404);
   }
 }

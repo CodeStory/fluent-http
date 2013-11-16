@@ -62,7 +62,7 @@ public class WebServerTest {
   @Test
   public void not_found() {
     server.configure(routes -> routes.get("/error", () -> {
-      throw new HttpException(404);
+      throw new NotFoundException();
     }));
 
     get("/notfound").produces(404, "text/html", "Page not found");

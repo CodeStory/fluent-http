@@ -22,14 +22,14 @@ import org.junit.*;
 public class HttpExceptionTest {
   @Test
   public void page_not_found() {
-    HttpException error = HttpException.pageNotFound();
+    HttpException error = new NotFoundException();
 
     assertThat(error.code()).isEqualTo(404);
   }
 
   @Test
   public void forbidden() {
-    HttpException error = HttpException.forbidden();
+    HttpException error = new ForbiddenException();
 
     assertThat(error.code()).isEqualTo(403);
   }
