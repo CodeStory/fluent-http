@@ -51,7 +51,13 @@ abstract class AbstractRouteWrapper implements Route {
     Object body = body(request, parameters);
 
     if (body instanceof Model) {
-      body = new Template(uri).render((Model) body);
+      Model model = (Model) body;
+
+      body = new Template(uri).render(model);
+    } else if (body instanceof ModelAndView) {
+      ModelAndView modelAndView = (ModelAndView) body;
+
+      body = new Template(modelAndView.view()).render(modelAndView.model());
     }
 
     Payload payload = Payload.wrap(body);

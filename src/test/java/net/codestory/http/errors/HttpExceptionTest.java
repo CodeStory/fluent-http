@@ -15,8 +15,22 @@
  */
 package net.codestory.http.errors;
 
-public class NotFoundException extends HttpException {
-  public NotFoundException() {
-    super(404);
+import static org.assertj.core.api.Assertions.*;
+
+import org.junit.*;
+
+public class HttpExceptionTest {
+  @Test
+  public void page_not_found() {
+    HttpException error = new NotFoundException();
+
+    assertThat(error.code()).isEqualTo(404);
+  }
+
+  @Test
+  public void forbidden() {
+    HttpException error = new ForbiddenException();
+
+    assertThat(error.code()).isEqualTo(403);
   }
 }

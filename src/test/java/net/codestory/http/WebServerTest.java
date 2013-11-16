@@ -25,7 +25,7 @@ import java.io.*;
 import java.util.*;
 
 import net.codestory.http.annotations.*;
-import net.codestory.http.errors.NotFoundException;
+import net.codestory.http.errors.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.templating.*;
@@ -61,7 +61,12 @@ public class WebServerTest {
 
   @Test
   public void not_found() {
+    server.configure(routes -> routes.get("/error", () -> {
+      throw new NotFoundException();
+    }));
+
     get("/notfound").produces(404, "text/html", "Page not found");
+    get("/error").produces(404, "text/html", "Page not found");
   }
 
   @Test
@@ -196,6 +201,7 @@ public class WebServerTest {
       routes.get("/bye", () -> new Template("goodbye").render());
       routes.get("/1variable", Model.of("name", "Toto"));
       routes.get("/section/", Model.of("name", "Bob"));
+      routes.get("/any", ModelAndView.of("section/index", "name", "Joe"));
     });
 
     get("/pageYaml").produces("<div>_PREFIX_TEXT_SUFFIX_</div>");
@@ -203,6 +209,7 @@ public class WebServerTest {
     get("/bye").produces("<p><strong>Good Bye</strong></p>");
     get("/1variable").produces("text/html", "Hello Toto");
     get("/section/").produces("text/html", "Hello Bob");
+    get("/any").produces("text/html", "Hello Joe");
   }
 
   @Test
@@ -220,11 +227,11 @@ public class WebServerTest {
       routes.get("/dynamic/", "Dynamic");
     });
 
-    //get("/").produces("LOGIN");
-    //get("/section/").produces("text/plain", "Hello index");
+    get("/").produces("LOGIN");
+    get("/section/").produces("text/plain", "Hello index");
     get("/section").produces("text/plain", "Hello index");
-    //get("/dynamic/").produces("text/html", "Dynamic");
-    //get("/dynamic").produces("text/html", "Dynamic");
+    get("/dynamic/").produces("text/html", "Dynamic");
+    get("/dynamic").produces("text/html", "Dynamic");
   }
 
   @Test
@@ -255,14 +262,6 @@ public class WebServerTest {
     }));
 
     get("/").produces(500, "text/html", "An error occurred on the server");
-  }
-
-  @Test
-  public void NotFoundException() {
-      server.configure(routes -> routes.get("/", () -> {
-          throw new NotFoundException();
-      }));
-      get("/").produces(404, "text/html", "Page not found");
   }
 
   @Test

@@ -13,10 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.errors;
+package net.codestory.http.annotations;
 
-public class NotFoundException extends HttpException {
-  public NotFoundException() {
-    super(404);
-  }
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.RetentionPolicy.*;
+
+import java.lang.annotation.*;
+
+@Documented
+@Target(METHOD)
+@Retention(RUNTIME)
+public @interface Puts {
+  Put[] value();
 }

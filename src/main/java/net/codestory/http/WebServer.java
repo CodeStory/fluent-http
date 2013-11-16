@@ -143,14 +143,8 @@ public class WebServer {
             ioe.printStackTrace();
         }
     } catch (Exception e) {
-      System.out.println("Error " + e);
       e.printStackTrace();
-      try {
-        onError(e, response);
-      } catch (Exception ioe) {
-        System.out.println("Unable to server an error page " + ioe);
-        ioe.printStackTrace();
-      }
+      onError(e, response);
     } finally {
       try {
         response.close();
@@ -167,23 +161,29 @@ public class WebServer {
     }
   }
 
-  protected void onPageNotFound(Match match, Response response) throws IOException {
-    if (match == WRONG_METHOD) {
-      errorPage(405, null).writeTo(response);
-    } else {
-      errorPage(404, null).writeTo(response);
+  protected void onPageNotFound(Match match, Response response) {
+    int code = match == WRONG_METHOD ? 405 : 404;
+    onError(code, null, response);
+  }
+
+  protected void onError(Exception e, Response response) {
+    int code = (e instanceof HttpException) ? ((HttpException) e).code() : 500;
+    onError(code, e, response);
+  }
+
+  protected void onError(int code, Exception e, Response response) {
+    Exception shownError = devMode() ? e : null;
+
+    Payload errorPage = errorPage(code, shownError);
+    try {
+      errorPage.writeTo(response);
+    } catch (IOException error) {
+      System.out.println("Unable to server an error page " + error);
+      error.printStackTrace();
     }
   }
 
-  protected void onError(Exception e, Response response) throws IOException {
-    if (devMode()) {
-      errorPage(500, e).writeTo(response);
-    } else {
-      errorPage(500, null).writeTo(response);
-    }
-  }
-
-  protected Payload errorPage(int code, Exception e) throws IOException {
+  protected Payload errorPage(int code, Exception e) {
     return new ErrorPage(code, e).payload();
   }
 

@@ -15,8 +15,8 @@
  */
 package net.codestory.http.errors;
 
-public class NotFoundException extends HttpException {
-  public NotFoundException() {
-    super(404);
+public class ForbiddenException extends HttpException {
+  public ForbiddenException() {
+    super(403);
   }
 }

@@ -51,33 +51,28 @@ public class RouteCollection implements Routes {
     }
 
     for (Method method : type.getMethods()) {
-      int parameterCount = method.getParameterCount();
-
       for (Get get : method.getDeclaredAnnotationsByType(Get.class)) {
-        String uriPattern = urlPrefix + get.value();
-
-        int uriParamsCount = paramsCount(uriPattern);
-        if (parameterCount == uriParamsCount) {
-          add("GET", checkParametersCount(uriPattern, parameterCount), new ReflectionRoute(resource, method));
-        } else if (parameterCount == (uriParamsCount + 1)) {
-          add("GET", checkParametersCount(uriPattern, parameterCount - 1), new ReflectionRouteWithContext(resource, method));
-        } else {
-          throw new IllegalArgumentException("Expected " + uriParamsCount + " or " + (uriParamsCount + 1) + " parameters in " + uriPattern);
-        }
+        add("GET", method, resource, urlPrefix + get.value());
       }
-
       for (Post post : method.getDeclaredAnnotationsByType(Post.class)) {
-        String uriPattern = urlPrefix + post.value();
-
-        int uriParamsCount = paramsCount(uriPattern);
-        if (parameterCount == uriParamsCount) {
-          add("POST", checkParametersCount(uriPattern, parameterCount), new ReflectionRoute(resource, method));
-        } else if (parameterCount == (uriParamsCount + 1)) {
-          add("POST", checkParametersCount(uriPattern, parameterCount - 1), new ReflectionRouteWithContext(resource, method));
-        } else {
-          throw new IllegalArgumentException("Expected " + uriParamsCount + " or " + (uriParamsCount + 1) + " parameters in " + uriPattern);
-        }
+        add("POST", method, resource, urlPrefix + post.value());
       }
+      for (Put put : method.getDeclaredAnnotationsByType(Put.class)) {
+        add("PUT", method, resource, urlPrefix + put.value());
+      }
+    }
+  }
+
+  private void add(String httpMethod, Method method, Object resource, String uriPattern) {
+    int methodParamsCount = method.getParameterCount();
+    int uriParamsCount = paramsCount(uriPattern);
+
+    if (methodParamsCount == uriParamsCount) {
+      add(httpMethod, checkParametersCount(uriPattern, methodParamsCount), new ReflectionRoute(resource, method));
+    } else if (methodParamsCount == (uriParamsCount + 1)) {
+      add(httpMethod, checkParametersCount(uriPattern, methodParamsCount - 1), new ReflectionRouteWithContext(resource, method));
+    } else {
+      throw new IllegalArgumentException("Expected " + uriParamsCount + " or " + (uriParamsCount + 1) + " parameters in " + uriPattern);
     }
   }
 
