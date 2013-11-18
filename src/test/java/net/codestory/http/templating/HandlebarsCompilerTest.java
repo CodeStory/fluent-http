@@ -122,6 +122,13 @@ public class HandlebarsCompilerTest {
     assertThat(result).isEqualTo("idA=Description AidB=Description B");
   }
 
+  @Test
+  public void unescaped_content() throws IOException {
+    String result = compiler.compile("[[&html]]", map("html", "<div>Hello</div>"));
+
+    assertThat(result).isEqualTo("<div>Hello</div>");
+  }
+
   private static Map<String, Object> map(String key, Object value) {
     return new TreeMap<String, Object>() {{
       put(key, value);
