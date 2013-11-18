@@ -301,7 +301,7 @@ public class WebServerTest {
   @Test
   public void support_put() {
     server.configure(routes -> routes.put("/put", () -> "Done"));
-    server.configure(routes -> routes.put("/putText", (Context context) -> context.getPayload()));
+    server.configure(routes -> routes.put("/putText", (Context context) -> context.payload()));
 
     put("/put").produces("Done");
     put("/putText", "PAYLOAD").produces("PAYLOAD");

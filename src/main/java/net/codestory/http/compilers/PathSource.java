@@ -15,8 +15,9 @@
  */
 package net.codestory.http.compilers;
 
+import static java.nio.charset.StandardCharsets.*;
+
 import java.io.*;
-import java.nio.charset.*;
 import java.nio.file.*;
 
 import net.codestory.http.io.*;
@@ -39,14 +40,13 @@ class PathSource extends LessSource {
       throw new FileNotFound();
     }
 
-    String includeContent;
     try {
-      includeContent = Resources.read(relativePath, StandardCharsets.UTF_8);
+      String includeContent = Resources.read(relativePath, UTF_8);
+
+      return new PathSource(relativePath, includeContent);
     } catch (IOException e) {
       throw new CannotReadFile();
     }
-
-    return new PathSource(relativePath, includeContent);
   }
 
   @Override

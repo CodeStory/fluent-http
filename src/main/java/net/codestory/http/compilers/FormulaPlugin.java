@@ -15,8 +15,6 @@
  */
 package net.codestory.http.compilers;
 
-import static java.nio.charset.StandardCharsets.*;
-
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -43,7 +41,7 @@ public class FormulaPlugin extends Plugin {
 
   private static String encode(String line) {
     try {
-      return URLEncoder.encode(line, US_ASCII.displayName());
+      return URLEncoder.encode(line, "US-ASCII");
     } catch (UnsupportedEncodingException e) {
       return line;
     }

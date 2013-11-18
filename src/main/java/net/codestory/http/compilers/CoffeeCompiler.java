@@ -16,21 +16,22 @@
 package net.codestory.http.compilers;
 
 import static java.nio.charset.StandardCharsets.*;
+import static javax.script.ScriptContext.*;
 
 import java.io.*;
 
 import javax.script.*;
 
 class CoffeeCompiler {
-  private final Bindings CONTEXT;
-  private final CompiledScript COFFEE_JS;
+  private final CompiledScript coffeeToJs;
+  private final Bindings bindings;
 
   public CoffeeCompiler() {
     ScriptEngine nashorn = new ScriptEngineManager().getEngineByName("nashorn");
 
     try (Reader reader = new InputStreamReader(ClassLoader.getSystemResourceAsStream("coffee/coffee-script.js"), UTF_8)) {
-      COFFEE_JS = ((Compilable) nashorn).compile(reader);
-      CONTEXT = nashorn.getBindings(ScriptContext.ENGINE_SCOPE);
+      coffeeToJs = ((Compilable) nashorn).compile(reader);
+      bindings = nashorn.getBindings(ENGINE_SCOPE);
     } catch (IOException | ScriptException e) {
       throw new IllegalStateException(e);
     }
@@ -38,8 +39,8 @@ class CoffeeCompiler {
 
   public synchronized String compile(String source) throws IOException {
     try {
-      CONTEXT.put("coffeeScriptSource", source);
-      return COFFEE_JS.eval(CONTEXT).toString();
+      bindings.put("coffeeScriptSource", source);
+      return coffeeToJs.eval(bindings).toString();
     } catch (ScriptException e) {
       throw new IOException("Unable to compile coffee", e);
     }

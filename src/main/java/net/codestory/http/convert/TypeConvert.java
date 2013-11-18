@@ -55,10 +55,11 @@ public class TypeConvert {
   public static Object convert(Context context, Class<?> type) {
     if (type.isAssignableFrom(Context.class)) {
       return context;
-    } else if (type.isAssignableFrom(Map.class)) {
-      return context.getKeyValues();
     }
-    return convert(context.getKeyValues(), type);
+    if (type.isAssignableFrom(Map.class)) {
+      return context.keyValues();
+    }
+    return convert(context.keyValues(), type);
   }
 
   public static <T> T convert(String value, Class<T> type) {

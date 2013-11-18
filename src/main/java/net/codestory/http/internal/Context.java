@@ -31,11 +31,11 @@ public class Context {
     this.query = request.getQuery();
   }
 
-  public Cookie getCookie(String name) {
+  public Cookie cookie(String name) {
     return request.getCookie(name);
   }
 
-  public List<Cookie> getCookies() {
+  public List<Cookie> cookies() {
     return request.getCookies();
   }
 
@@ -59,15 +59,15 @@ public class Context {
     return query.getBoolean(name);
   }
 
-  public Map<String, String> getKeyValues() {
+  public Map<String, String> keyValues() {
     return query;
   }
 
-  public Request getRequest() {
+  public Request request() {
     return request;
   }
 
-  public byte[] getPayload() {
+  public byte[] payload() {
     try {
       return InputStreams.readBytes(request.getInputStream());
     } catch (IOException e) {

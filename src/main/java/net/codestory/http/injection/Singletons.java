@@ -25,6 +25,7 @@ public class Singletons {
     this.singletons = new HashMap<>();
   }
 
+  @SuppressWarnings("unchecked")
   public synchronized <T> T get(Class<T> type) {
     // Fast path
     Object singleton = singletons.get(type);
@@ -36,6 +37,7 @@ public class Singletons {
     return _get(type, new HashSet<>());
   }
 
+  @SuppressWarnings("unchecked")
   private <T> T _get(Class<T> type, Set<Class<?>> seenTypes) {
     if (!seenTypes.add(type)) {
       throw new IllegalStateException("Cycle in dependencies for " + type);
@@ -66,6 +68,7 @@ public class Singletons {
     return instance;
   }
 
+  @SuppressWarnings("unchecked")
   private static <T> Constructor<T> getConstructor(Class<T> type) {
     try {
       return type.getDeclaredConstructor();

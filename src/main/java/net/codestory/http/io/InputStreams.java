@@ -26,7 +26,7 @@ public class InputStreams {
   }
 
   public static byte[] readBytes(InputStream from) throws IOException {
-    return read(from, ByteArrayOutputStream::toByteArray);
+    return read(from, (bytes) -> bytes.toByteArray());
   }
 
   public static String readString(InputStream from, Charset charset) throws IOException {

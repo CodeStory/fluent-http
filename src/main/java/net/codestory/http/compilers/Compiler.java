@@ -39,15 +39,15 @@ public enum Compiler {
     }
   },
   MARKDOWN {
-    private final Configuration configuration = Configuration.builder()
+    private final Supplier<Configuration> configuration = memoize(() -> Configuration.builder()
         .forceExtentedProfile()
         .registerPlugins(new TablePlugin(), new YumlPlugin(), new WebSequencePlugin(), new IncludePlugin(), new FormulaPlugin())
         .setDecorator(new ExtDecorator())
-        .setCodeBlockEmitter(new CodeBlockEmitter()).build();
+        .setCodeBlockEmitter(new CodeBlockEmitter()).build());
 
     @Override
     String doCompile(Path path, String markdown) throws IOException {
-      return Processor.process(markdown, configuration);
+      return Processor.process(markdown, configuration.get());
     }
   },
   LESS {

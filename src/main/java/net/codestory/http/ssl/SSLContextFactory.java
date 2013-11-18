@@ -40,17 +40,17 @@ public class SSLContextFactory {
     return context;
   }
 
-  private static KeyManager[] getKeyManagers(KeyStore keyStore) throws Exception {
+  private static KeyManager[] getKeyManagers(KeyStore keyStore) throws NoSuchAlgorithmException, UnrecoverableKeyException, KeyStoreException {
     KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
     kmf.init(keyStore, new char[0]);
     return kmf.getKeyManagers();
   }
 
-  private static X509Certificate generateCertificateFromDER(byte[] data) throws Exception {
+  private static X509Certificate generateCertificateFromDER(byte[] data) throws CertificateException {
     return (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate(new ByteArrayInputStream(data));
   }
 
-  private static RSAPrivateKey generatePrivateKeyFromDER(byte[] data) throws Exception {
+  private static RSAPrivateKey generatePrivateKeyFromDER(byte[] data) throws NoSuchAlgorithmException, InvalidKeySpecException {
     return (RSAPrivateKey) KeyFactory.getInstance("RSA").generatePrivate(new PKCS8EncodedKeySpec(data));
   }
 }
