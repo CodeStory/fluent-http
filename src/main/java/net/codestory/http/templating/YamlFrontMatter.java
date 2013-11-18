@@ -72,6 +72,6 @@ public class YamlFrontMatter {
     if (header == null) {
       return Collections.emptyMap();
     }
-    return YamlParser.INSTANCE.parse(header);
+    return YamlParser.INSTANCE.parseMap(header);
   }
 }

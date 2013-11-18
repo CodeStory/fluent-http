@@ -10,6 +10,7 @@
  + Cookies read write
  + Access a la request
  + Basic auth
+ + Site class thread safety
 
 # Deploy on Maven Central
 

@@ -30,6 +30,7 @@ public class Site {
   private static Site INSTANCE = new Site();
 
   private Map<String, Object> yaml;
+  private Map<String, Object> data;
   private Map<String, List<Map<String, Object>>> tags;
   private Map<String, List<Map<String, Object>>> categories;
   private List<Map<String, Object>> pages;
@@ -70,14 +71,34 @@ public class Site {
 
   public List<Map<String, Object>> getPages() {
     if (pages == null) {
-      pages = Resources.list().stream().map(Site::pathToMap).collect(Collectors.toList());
+      pages = Resources.list().stream()
+          .filter(path -> !path.startsWith("_"))
+          .map(Site::pathToMap)
+          .collect(Collectors.toList());
     }
     return pages;
+  }
+
+  public Map<String, Object> getData() {
+    if (data == null) {
+      data = Resources.list().stream()
+          .filter(path -> path.startsWith("_data/"))
+          .collect(Collectors.toMap(path -> Strings.substringBeforeLast(Paths.get(path).getFileName().toString(), "."), path -> readYaml(path)));
+    }
+    return data;
   }
 
   private static Map<String, Object> pathToMap(String path) {
     try {
       return YamlFrontMatter.parse(Paths.get(path)).getVariables();
+    } catch (IOException e) {
+      throw new IllegalStateException("Unable to read file: " + path, e);
+    }
+  }
+
+  private static Object readYaml(String path) {
+    try {
+      return YamlParser.INSTANCE.parse(Resources.read(Paths.get(path), UTF_8));
     } catch (IOException e) {
       throw new IllegalStateException("Unable to read file: " + path, e);
     }
@@ -110,7 +131,7 @@ public class Site {
     }
 
     try {
-      return YamlParser.INSTANCE.parse(Resources.read(configPath, UTF_8));
+      return YamlParser.INSTANCE.parseMap(Resources.read(configPath, UTF_8));
     } catch (IOException e) {
       throw new IllegalStateException("Unable to read " + configFile, e);
     }

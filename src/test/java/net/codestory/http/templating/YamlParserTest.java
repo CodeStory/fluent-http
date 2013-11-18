@@ -15,9 +15,14 @@
  */
 package net.codestory.http.templating;
 
+import static java.nio.charset.StandardCharsets.*;
 import static org.assertj.core.api.Assertions.*;
 
+import java.io.*;
+import java.nio.file.*;
 import java.util.*;
+
+import net.codestory.http.io.*;
 
 import org.junit.*;
 
@@ -25,9 +30,17 @@ public class YamlParserTest {
   YamlParser parser = YamlParser.INSTANCE;
 
   @Test
-  public void parse() {
-    Map<String, Object> variables = parser.parse("name: Bob");
+  public void parse_map() {
+    Map<String, Object> variables = parser.parseMap("name: Bob");
 
     assertThat(variables).hasSize(1).containsEntry("name", "Bob");
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  public void parse() throws IOException {
+    List<Object> list = (List<Object>) parser.parse(Resources.read(Paths.get("_data", "members.yml"), UTF_8));
+
+    assertThat(list).hasSize(3);
   }
 }

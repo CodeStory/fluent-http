@@ -23,10 +23,15 @@ public enum YamlParser {
   INSTANCE;
 
   @SuppressWarnings("unchecked")
-  public Map<String, Object> parse(String content) {
-    Map<String, Object> variables = (Map<String, Object>) createYaml().load(content);
+  public Map<String, Object> parseMap(String content) {
+    Map<String, Object> variables = (Map<String, Object>) parse(content);
 
     return variables != null ? variables : new HashMap<>();
+  }
+
+  @SuppressWarnings("unchecked")
+  public Object parse(String content) {
+    return createYaml().load(content);
   }
 
   // Not thread-safe
