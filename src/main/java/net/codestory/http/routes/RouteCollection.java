@@ -21,9 +21,11 @@ import static net.codestory.http.routes.Match.*;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.function.*;
 
 import net.codestory.http.annotations.*;
 import net.codestory.http.filters.*;
+import net.codestory.http.injection.*;
 import net.codestory.http.payload.*;
 
 import org.simpleframework.http.*;
@@ -31,39 +33,62 @@ import org.simpleframework.http.*;
 public class RouteCollection implements Routes {
   private final Deque<Route> routes;
   private final Deque<Filter> filters;
+  private IocAdapter iocAdapter = new Singletons();
 
   public RouteCollection() {
     this.routes = new LinkedList<>();
     this.filters = new LinkedList<>();
   }
 
+  public void setIocAdapter(IocAdapter iocAdapter) {
+    this.iocAdapter = iocAdapter;
+  }
+
+
+  @Override
+  public void add(Class<?> resourceType) {
+    addResource("", resourceType, () -> getIocAdapter().get(resourceType));
+  }
+
+  @Override
+  public void add(String urlPrefix, Class<?> resourceType) {
+    addResource(urlPrefix, resourceType, () -> getIocAdapter().get(resourceType));
+  }
+
   @Override
   public void add(Object resource) {
-    add("", resource);
+    addResource("", resource.getClass(), () -> resource);
   }
 
   @Override
   public void add(String urlPrefix, Object resource) {
+    addResource(urlPrefix, resource.getClass(), () -> resource);
+  }
+
+  private IocAdapter getIocAdapter() {
+    return iocAdapter;
+  }
+
+  private void addResource(String urlPrefix, Class<?> type, Supplier<Object> resource) {
     // Hack to support Mockito Spies
-    Class<?> type = resource.getClass();
-    if (resource.getClass().getName().contains("EnhancerByMockito")) {
+    if (type.getName().contains("EnhancerByMockito")) {
       type = type.getSuperclass();
     }
 
     for (Method method : type.getMethods()) {
       for (Get get : method.getDeclaredAnnotationsByType(Get.class)) {
-        add("GET", method, resource, urlPrefix + get.value());
+        addResource("GET", method, resource, urlPrefix + get.value());
       }
       for (Post post : method.getDeclaredAnnotationsByType(Post.class)) {
-        add("POST", method, resource, urlPrefix + post.value());
+        addResource("POST", method, resource, urlPrefix + post.value());
       }
       for (Put put : method.getDeclaredAnnotationsByType(Put.class)) {
-        add("PUT", method, resource, urlPrefix + put.value());
+        addResource("PUT", method, resource, urlPrefix + put.value());
       }
     }
   }
 
-  private void add(String httpMethod, Method method, Object resource, String uriPattern) {
+  private void addResource(String httpMethod, Method method, Supplier<Object> resource, String uriPattern) {
     int methodParamsCount = method.getParameterCount();
     int uriParamsCount = paramsCount(uriPattern);
 

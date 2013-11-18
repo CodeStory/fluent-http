@@ -16,10 +16,17 @@
 package net.codestory.http.routes;
 
 import net.codestory.http.filters.*;
+import net.codestory.http.injection.*;
 import net.codestory.http.payload.*;
 
 public interface Routes {
   void filter(Filter filter);
+
+  void setIocAdapter(IocAdapter iocAdapter);
+
+  void add(Class<?> resource);
+
+  void add(String urlPrefix, Class<?> resource);
 
   void add(Object resource);
 

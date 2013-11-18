@@ -42,11 +42,6 @@ public class WebServer {
   private RoutesProvider routesProvider;
   private int port;
 
-  public WebServer(Configuration configuration) {
-    this();
-    configure(configuration);
-  }
-
   public WebServer() {
     try {
       server = new ContainerServer(this::handle);

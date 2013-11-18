@@ -26,6 +26,7 @@ import java.util.*;
 
 import net.codestory.http.annotations.*;
 import net.codestory.http.errors.*;
+import net.codestory.http.injection.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.templating.*;
@@ -266,7 +267,15 @@ public class WebServerTest {
 
   @Test
   public void supports_spied_resources() {
-    server.configure(routes -> routes.add(spy(new TestResource())));
+    server.configure(routes -> {
+      routes.add(TestResource.class);
+      routes.setIocAdapter(new Singletons() {
+        @Override
+        protected <T> T postProcess(T instance) {
+          return spy(instance);
+        }
+      });
+    });
 
     get("/").produces("HELLO");
   }
@@ -335,7 +344,7 @@ public class WebServerTest {
     get("/testTags").produces("<p>\nscala\n\njava, scala\n</p>\n<p>\nscala\n</p>");
   }
 
-  static class TestResource {
+  public static class TestResource {
     @Get("/")
     public String hello() {
       return "HELLO";

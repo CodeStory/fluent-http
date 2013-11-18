@@ -16,14 +16,15 @@
 package net.codestory.http.routes;
 
 import java.lang.reflect.*;
+import java.util.function.*;
 
 import net.codestory.http.convert.*;
 
 class ReflectionRoute implements AnyRoute {
-  private final Object resource;
+  private final Supplier<Object> resource;
   private final Method method;
 
-  ReflectionRoute(Object resource, Method method) {
+  ReflectionRoute(Supplier<Object> resource, Method method) {
     this.resource = resource;
     this.method = method;
   }
@@ -31,10 +32,12 @@ class ReflectionRoute implements AnyRoute {
   @Override
   public Object body(String[] pathParameters) {
     try {
+      Object target = resource.get();
       Object[] arguments = TypeConvert.convert(pathParameters, method.getParameterTypes());
 
       method.setAccessible(true);
-      Object payload = method.invoke(resource, arguments);
+
+      Object payload = method.invoke(target, arguments);
 
       return (payload == null) ? "" : payload;
     } catch (Exception e) {

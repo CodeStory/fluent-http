@@ -18,7 +18,7 @@ package net.codestory.http.injection;
 import java.lang.reflect.*;
 import java.util.*;
 
-public class Singletons {
+public class Singletons implements IocAdapter {
   private final Map<Class<?>, Object> singletons;
 
   public Singletons() {
@@ -26,6 +26,7 @@ public class Singletons {
   }
 
   @SuppressWarnings("unchecked")
+  @Override
   public synchronized <T> T get(Class<T> type) {
     // Fast path
     Object singleton = singletons.get(type);
