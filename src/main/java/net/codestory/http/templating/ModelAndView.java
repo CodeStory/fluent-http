@@ -24,24 +24,28 @@ public class ModelAndView {
     this.model = model;
   }
 
+  public static ModelAndView of(String view, Model model) {
+    return new ModelAndView(view, model);
+  }
+
   public static ModelAndView of(String view) {
-    return new ModelAndView(view, Model.of());
+    return of(view, Model.of());
   }
 
   public static ModelAndView of(String view, String key, Object value) {
-    return new ModelAndView(view, Model.of(key, value));
+    return of(view, Model.of(key, value));
   }
 
   public static ModelAndView of(String view, String k1, Object v1, String k2, Object v2) {
-    return new ModelAndView(view, Model.of(k1, v1, k2, v2));
+    return of(view, Model.of(k1, v1, k2, v2));
   }
 
   public static ModelAndView of(String view, String k1, Object v1, String k2, Object v2, String k3, Object v3) {
-    return new ModelAndView(view, Model.of(k1, v1, k2, v2, k3, v3));
+    return of(view, Model.of(k1, v1, k2, v2, k3, v3));
   }
 
   public static ModelAndView of(String view, String k1, Object v1, String k2, Object v2, String k3, Object v3, String k4, Object v4) {
-    return new ModelAndView(view, Model.of(k1, v1, k2, v2, k3, v3, k4, v4));
+    return of(view, Model.of(k1, v1, k2, v2, k3, v3, k4, v4));
   }
 
   public String view() {

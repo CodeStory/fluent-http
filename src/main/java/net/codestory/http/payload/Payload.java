@@ -150,6 +150,9 @@ public class Payload {
     if (content instanceof InputStream) {
       return forInputStream((InputStream) content);
     }
+    if (content instanceof ModelAndView) {
+      return forModelAndView((ModelAndView) content);
+    }
 
     return TypeConvert.toByteArray(content);
   }
@@ -160,6 +163,10 @@ public class Payload {
 
   private static byte[] forInputStream(InputStream stream) throws IOException {
     return InputStreams.readBytes(stream);
+  }
+
+  private static byte[] forModelAndView(ModelAndView modelAndView) throws IOException {
+    return forString(new Template(modelAndView.view()).render(modelAndView.model()));
   }
 
   private static byte[] forPath(Path path) throws IOException {
