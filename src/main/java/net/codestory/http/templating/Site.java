@@ -16,10 +16,12 @@
 package net.codestory.http.templating;
 
 import static java.nio.charset.StandardCharsets.*;
+import static net.codestory.http.misc.MemoizingSupplier.*;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import net.codestory.http.io.*;
@@ -29,63 +31,71 @@ import com.github.jknack.handlebars.*;
 public class Site {
   private static Site INSTANCE = new Site();
 
-  private Map<String, Object> yaml;
-  private Map<String, Object> data;
-  private Map<String, List<Map<String, Object>>> tags;
-  private Map<String, List<Map<String, Object>>> categories;
-  private List<Map<String, Object>> pages;
+  private Supplier<Map<String, Object>> yaml;
+  private Supplier<Map<String, Object>> data;
+  private Supplier<List<Map<String, Object>>> pages;
+  private Supplier<Map<String, List<Map<String, Object>>>> tags;
+  private Supplier<Map<String, List<Map<String, Object>>>> categories;
 
   private Site() {
-    // Private constructor
-  }
+    yaml = memoize(() -> loadYamlConfig("_config.yml"));
 
-  public static Site get() {
-    if (Boolean.getBoolean("PROD_MODE")) {
-      return INSTANCE;
-    }
+    data = memoize(() -> Resources.list()
+        .stream()
+        .filter(path -> path.startsWith("_data/"))
+        .collect(Collectors.toMap(path -> Strings.substringBeforeLast(Paths.get(path).getFileName().toString(), "."), path -> readYaml(path))));
 
-    return new Site();
-  }
+    pages = memoize(() -> Resources.list()
+        .stream()
+        .filter(path -> !path.startsWith("_"))
+        .map(Site::pathToMap)
+        .collect(Collectors.<Map<String, Object>>toList())
+    );
 
-  public Map<String, List<Map<String, Object>>> getTags() {
-    if (tags == null) {
-      tags = new TreeMap<>();
-
+    tags = memoize(() -> {
+      Map<String, List<Map<String, Object>>> tags = new TreeMap<>();
       for (Map<String, Object> page : getPages()) {
         for (String tag : tags(page)) {
           tags.computeIfAbsent(tag, key -> new ArrayList<Map<String, Object>>()).add(page);
         }
       }
-    }
+      return tags;
+    });
 
-    return tags;
+    categories = memoize(() -> {
+      Map<String, List<Map<String, Object>>> sorted = getPages()
+          .stream()
+          .collect(Collectors.groupingBy(Site::category, TreeMap::new, Collectors.toList()));
+      return sorted;
+    });
   }
 
-  public Map<String, List<Map<String, Object>>> getCategories() {
-    if (categories == null) {
-      Map<String, List<Map<String, Object>>> notSorted = getPages().stream().collect(Collectors.groupingBy(Site::category));
-      categories = new TreeMap<>(notSorted);
-    }
-    return categories;
+  public static Site get() {
+    return Boolean.getBoolean("PROD_MODE") ? INSTANCE : new Site();
   }
 
-  public List<Map<String, Object>> getPages() {
-    if (pages == null) {
-      pages = Resources.list().stream()
-          .filter(path -> !path.startsWith("_"))
-          .map(Site::pathToMap)
-          .collect(Collectors.toList());
-    }
-    return pages;
+  private Map<String, Object> configYaml() {
+    return yaml.get();
+  }
+
+  public Object get(String key) {
+    return yaml.get().get(key);
   }
 
   public Map<String, Object> getData() {
-    if (data == null) {
-      data = Resources.list().stream()
-          .filter(path -> path.startsWith("_data/"))
-          .collect(Collectors.toMap(path -> Strings.substringBeforeLast(Paths.get(path).getFileName().toString(), "."), path -> readYaml(path)));
-    }
-    return data;
+    return data.get();
+  }
+
+  public List<Map<String, Object>> getPages() {
+    return pages.get();
+  }
+
+  public Map<String, List<Map<String, Object>>> getTags() {
+    return tags.get();
+  }
+
+  public Map<String, List<Map<String, Object>>> getCategories() {
+    return categories.get();
   }
 
   private static Map<String, Object> pathToMap(String path) {
@@ -110,17 +120,6 @@ public class Site {
 
   private static String[] tags(Map<String, Object> page) {
     return page.getOrDefault("tags", "").toString().trim().split("\\s*,\\s*");
-  }
-
-  public Object get(String key) {
-    return configYaml().get(key);
-  }
-
-  private Map<String, Object> configYaml() {
-    if (yaml == null) {
-      yaml = loadYamlConfig("_config.yml");
-    }
-    return yaml;
   }
 
   @SuppressWarnings("unchecked")

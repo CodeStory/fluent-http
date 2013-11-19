@@ -6,7 +6,6 @@
  + Javadoc
  + Object mapper custom
  + Basic auth
- + Site class thread safety
 
 # Deploy on Maven Central
 
