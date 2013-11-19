@@ -5,8 +5,6 @@
  + Set ContenType on xml using yaml
  + Javadoc
  + Object mapper custom
- + ModelAndView dans Payload
- + Cookies read write
  + Access a la request
  + Basic auth
  + Site class thread safety
