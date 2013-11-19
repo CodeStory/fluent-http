@@ -36,7 +36,7 @@ public class TypeConvert {
 
     converted[0] = convert(context, types[0]);
     for (int i = 0; i < values.length; i++) {
-      converted[i + 1] = convert(values[i], types[i]);
+      converted[i + 1] = convert(values[i], types[i + 1]);
     }
 
     return converted;

@@ -292,6 +292,11 @@ public class WebServerTest {
         public String create() {
           return "CREATED";
         }
+
+        @Post("/order/:id")
+        public String order(Order order, String id) {
+          return "order " + id + " : " + order.quantity + "x" + order.name;
+        }
       });
     });
 
@@ -300,6 +305,7 @@ public class WebServerTest {
     post("/action").produces("Done POST");
     get("/action").produces("Done GET");
     post("/person").produces("CREATED");
+    post("/order/12", "name", "Book", "quantity", "42").produces("order 12 : 42xBook");
     post("/get").produces(405);
     post("/index.html").produces(405);
     post("/unknown").produces(404);
@@ -369,5 +375,10 @@ public class WebServerTest {
   static class Human {
     String firstName;
     String lastName;
+  }
+
+  static class Order {
+    String name;
+    int quantity;
   }
 }
