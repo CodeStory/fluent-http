@@ -55,4 +55,8 @@ public class ModelAndView {
   public Model model() {
     return model;
   }
+
+  public Object get(String key) {
+    return model.get(key);
+  }
 }

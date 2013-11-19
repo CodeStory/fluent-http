@@ -28,6 +28,10 @@ public class Model {
     return keyValues;
   }
 
+  public Object get(String key) {
+    return keyValues.get(key);
+  }
+
   public static Model of() {
     return new Model();
   }
