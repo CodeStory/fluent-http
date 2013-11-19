@@ -130,13 +130,6 @@ public class WebServer {
   void handle(Request request, Response response) {
     try {
       applyRoutes(request, response);
-    } catch(NotFoundException nfe) {
-        try {
-            errorPage(404, null).writeTo(response);
-        } catch (IOException ioe) {
-            System.out.println("Unable to server an error page " + ioe);
-            ioe.printStackTrace();
-        }
     } catch (Exception e) {
       e.printStackTrace();
       onError(e, response);
