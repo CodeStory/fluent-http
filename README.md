@@ -5,7 +5,6 @@
  + Set ContenType on xml using yaml
  + Javadoc
  + Object mapper custom
- + Guice adapter
  + ModelAndView dans Payload
  + Cookies read write
  + Access a la request
