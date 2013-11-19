@@ -204,11 +204,11 @@ public class WebServerTest {
       routes.get("/section/", Model.of("name", "Bob"));
     });
 
-    get("/pageYaml").produces("<div>_PREFIX_TEXT_SUFFIX_</div>");
-    get("/hello/Joe").produces("Hello Joe");
-    get("/bye").produces("<p><strong>Good Bye</strong></p>");
-    get("/1variable").produces("text/html", "Hello Toto");
-    get("/section/").produces("text/html", "Hello Bob");
+    get("/pageYaml").produces("text/html", "<div>_PREFIX_TEXT_SUFFIX_</div>");
+    get("/hello/Joe").produces("text/plain", "Hello Joe");
+    get("/bye").produces("text/html", "<p><strong>Good Bye</strong></p>");
+    get("/1variable").produces("text/plain", "Hello Toto");
+    get("/section/").produces("text/plain", "Hello Bob");
   }
 
   @Test

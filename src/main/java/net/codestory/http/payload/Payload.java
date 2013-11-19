@@ -129,7 +129,8 @@ public class Payload {
       return "application/octet-stream";
     }
     if (content instanceof ModelAndView) {
-      return "text/html"; // Temp
+      Path path = Resources.findExistingPath(((ModelAndView) content).view());
+      return ContentTypes.get(path);
     }
     return "application/json";
   }
