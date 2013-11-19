@@ -24,10 +24,12 @@ import org.simpleframework.http.*;
 
 public class Context {
   private final Request request;
+  private final Response response;
   private final Query query;
 
-  public Context(Request request) {
+  public Context(Request request, Response response) {
     this.request = request;
+    this.response = response;
     this.query = request.getQuery();
   }
 

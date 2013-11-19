@@ -26,7 +26,7 @@ class RouteWrapper extends AbstractRouteWrapper {
   }
 
   @Override
-  protected Object body(Request request, String[] parameters) {
+  protected Object body(Request request, Response response, String[] parameters) {
     return route.body(parameters);
   }
 }

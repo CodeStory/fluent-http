@@ -5,7 +5,6 @@
  + Set ContenType on xml using yaml
  + Javadoc
  + Object mapper custom
- + Access a la request
  + Basic auth
  + Site class thread safety
 

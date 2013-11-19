@@ -48,7 +48,7 @@ abstract class AbstractRouteWrapper implements Route {
     }
 
     String[] parameters = uriParser.params(uri, request.getQuery());
-    Object body = body(request, parameters);
+    Object body = body(request, response, parameters);
 
     if (body instanceof Model) {
       body = ModelAndView.of(uri, (Model) body);
@@ -60,5 +60,5 @@ abstract class AbstractRouteWrapper implements Route {
     return OK;
   }
 
-  protected abstract Object body(Request request, String[] parameters);
+  protected abstract Object body(Request request, Response response, String[] parameters);
 }

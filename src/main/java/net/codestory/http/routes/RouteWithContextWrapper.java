@@ -28,7 +28,7 @@ class RouteWithContextWrapper extends AbstractRouteWrapper {
   }
 
   @Override
-  protected Object body(Request request, String[] parameters) {
-    return route.body(new Context(request), parameters);
+  protected Object body(Request request, Response response, String[] parameters) {
+    return route.body(new Context(request, response), parameters);
   }
 }
