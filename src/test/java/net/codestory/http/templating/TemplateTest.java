@@ -46,6 +46,6 @@ public class TemplateTest {
 
   @Test
   public void site_variables() {
-    assertThat(new Template("useSiteVariables.html").render()).contains("Hello Bob");
+    assertThat(new Template("useSiteVariables.html").render()).contains("Hello, customer Bob wants to buy p1 for parkr");
   }
 }
