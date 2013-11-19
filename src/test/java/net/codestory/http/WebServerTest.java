@@ -344,6 +344,13 @@ public class WebServerTest {
     get("/testTags").produces("<p>\nscala\n\njava, scala\n</p>\n<p>\nscala\n</p>");
   }
 
+  @Test
+  public void cookies() {
+    server.configure(routes -> routes.get("/set", () -> new Payload("").withCookie("id", "Bob")));
+
+    get("/set").producesCookie("id", "Bob");
+  }
+
   public static class TestResource {
     @Get("/")
     public String hello() {

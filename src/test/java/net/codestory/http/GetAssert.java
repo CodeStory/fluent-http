@@ -48,4 +48,8 @@ class GetAssert {
   public void produces(String content) {
     expect.content(containsString(content)).when().get(path);
   }
+
+  public void producesCookie(String name, String value) {
+    expect.cookie(name, value).when().get(path);
+  }
 }

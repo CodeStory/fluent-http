@@ -35,6 +35,7 @@ public class Payload {
   private final Object content;
   private final int code;
   private final Map<String, String> headers;
+  private final List<Cookie> cookies;
 
   public Payload(Object content) {
     this(null, content);
@@ -53,6 +54,7 @@ public class Payload {
     this.content = content;
     this.code = code;
     this.headers = new LinkedHashMap<>();
+    this.cookies = new ArrayList<>();
   }
 
   public static Payload wrap(Object payload) {
@@ -61,6 +63,15 @@ public class Payload {
 
   public Payload withHeader(String key, String value) {
     headers.put(key, value);
+    return this;
+  }
+
+  public Payload withCookie(String name, String value) {
+    return withCookie(new Cookie(name, value, "/", true));
+  }
+
+  public Payload withCookie(Cookie cookie) {
+    cookies.add(cookie);
     return this;
   }
 
@@ -82,6 +93,7 @@ public class Payload {
 
   public void writeTo(Response response) throws IOException {
     headers.entrySet().forEach(entry -> response.setValue(entry.getKey(), entry.getValue()));
+    cookies.forEach(cookie -> response.setCookie(cookie));
 
     response.setCode(code);
 
