@@ -294,7 +294,7 @@ public class WebServerTest {
         }
 
         @Post("/order/:id")
-        public String order(Order order, String id) {
+        public String order(String id, Order order) {
           return "order " + id + " : " + order.quantity + "x" + order.name;
         }
       });

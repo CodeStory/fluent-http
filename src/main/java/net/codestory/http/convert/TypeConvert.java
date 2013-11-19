@@ -31,22 +31,22 @@ public class TypeConvert {
     // static class
   }
 
-  public static Object[] convert(Context context, String[] values, Class<?>[] types) {
-    Object[] converted = new Object[values.length + 1];
+  public static Object[] convert(String[] pathParameters, Context context, Class<?>[] types) {
+    Object[] converted = new Object[pathParameters.length + 1];
 
-    converted[0] = convert(context, types[0]);
-    for (int i = 0; i < values.length; i++) {
-      converted[i + 1] = convert(values[i], types[i + 1]);
+    for (int i = 0; i < pathParameters.length; i++) {
+      converted[i] = convert(pathParameters[i], types[i]);
     }
+    converted[converted.length - 1] = convert(context, types[converted.length - 1]);
 
     return converted;
   }
 
-  public static Object[] convert(String[] values, Class<?>[] types) {
-    Object[] converted = new Object[values.length];
+  public static Object[] convert(String[] pathParameters, Class<?>[] types) {
+    Object[] converted = new Object[pathParameters.length];
 
-    for (int i = 0; i < values.length; i++) {
-      converted[i] = convert(values[i], types[i]);
+    for (int i = 0; i < pathParameters.length; i++) {
+      converted[i] = convert(pathParameters[i], types[i]);
     }
 
     return converted;

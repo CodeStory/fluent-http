@@ -34,7 +34,7 @@ class ReflectionRouteWithContext implements AnyRouteWithContext {
   public Object body(Context context, String[] pathParameters) {
     try {
       Object target = resource.get();
-      Object[] arguments = TypeConvert.convert(context, pathParameters, method.getParameterTypes());
+      Object[] arguments = TypeConvert.convert(pathParameters, context, method.getParameterTypes());
 
       method.setAccessible(true);
       Object payload = method.invoke(target, arguments);
