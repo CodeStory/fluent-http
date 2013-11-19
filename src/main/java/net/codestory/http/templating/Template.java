@@ -41,22 +41,6 @@ public class Template {
     return render(Model.of());
   }
 
-  public String render(String key, Object value) {
-    return render(Model.of(key, value));
-  }
-
-  public String render(String k1, Object v1, String k2, Object v2) {
-    return render(Model.of(k1, v1, k2, v2));
-  }
-
-  public String render(String k1, Object v1, String k2, Object v2, String k3, Object v3) {
-    return render(Model.of(k1, v1, k2, v2, k3, v3));
-  }
-
-  public String render(String k1, Object v1, String k2, Object v2, String k3, Object v3, String k4, Object v4) {
-    return render(Model.of(k1, v1, k2, v2, k3, v3, k4, v4));
-  }
-
   public String render(Model model) {
     return render(model.getKeyValues());
   }

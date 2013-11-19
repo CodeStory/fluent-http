@@ -25,8 +25,8 @@ public class TemplateTest {
   @Test
   public void render() {
     assertThat(new Template("0variable.txt").render()).isEqualTo("0 variables");
-    assertThat(new Template("1variable.txt").render("name", "Bob")).isEqualTo("Hello Bob");
-    assertThat(new Template("2variables.txt").render("verb", "Hello", "name", "Bob")).isEqualTo("Hello Bob");
+    assertThat(new Template("1variable.txt").render(Model.of("name", "Bob"))).isEqualTo("Hello Bob");
+    assertThat(new Template("2variables.txt").render(Model.of("verb", "Hello", "name", "Bob"))).isEqualTo("Hello Bob");
     assertThat(new Template("2variables.txt").render(new HashMap<String, Object>() {{
       put("verb", "Hello");
       put("name", 12);

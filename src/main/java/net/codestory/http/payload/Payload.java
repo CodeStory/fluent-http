@@ -122,11 +122,14 @@ public class Payload {
     if (content instanceof byte[]) {
       return "application/octet-stream";
     }
+    if (content instanceof String) {
+      return "text/html";
+    }
     if (content instanceof InputStream) {
       return "application/octet-stream";
     }
-    if (content instanceof String) {
-      return "text/html";
+    if (content instanceof ModelAndView) {
+      return "text/html"; // Temp
     }
     return "application/json";
   }

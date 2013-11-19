@@ -31,11 +31,11 @@ public class ErrorPage {
 
   public Payload payload() {
     String error = toString(exception);
-
     String filename = filename();
-    String html = new Template(filename).render("ERROR", error);
 
-    return new Payload("text/html", html, code);
+    ModelAndView modelAndView = ModelAndView.of(filename, "ERROR", error);
+
+    return new Payload("text/html", modelAndView, code);
   }
 
   private String filename() {
