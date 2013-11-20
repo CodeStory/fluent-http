@@ -32,7 +32,7 @@ import org.simpleframework.http.*;
 
 public class RouteCollection implements Routes {
   private final Deque<Route> routes;
-  private final Deque<Filter> filters;
+  private final Deque<Supplier<Filter>> filters;
   private IocAdapter iocAdapter = new Singletons();
 
   public RouteCollection() {
@@ -43,7 +43,6 @@ public class RouteCollection implements Routes {
   public void setIocAdapter(IocAdapter iocAdapter) {
     this.iocAdapter = iocAdapter;
   }
-
 
   @Override
   public void add(Class<?> resourceType) {
@@ -257,8 +256,13 @@ public class RouteCollection implements Routes {
   }
 
   @Override
+  public void filter(Class<? extends Filter> resource) {
+    filters.addLast(() -> getIocAdapter().get(resource));
+  }
+
+  @Override
   public void filter(Filter filter) {
-    filters.addLast(filter);
+    filters.addLast(() -> filter);
   }
 
   private void add(String method, String uriPattern, AnyRoute route) {
@@ -281,8 +285,8 @@ public class RouteCollection implements Routes {
       return WRONG_URL;
     }
 
-    for (Filter filter : filters) {
-      if (filter.apply(uri, request, response)) {
+    for (Supplier<Filter> filter : filters) {
+      if (filter.get().apply(uri, request, response)) {
         return OK;
       }
     }

@@ -20,6 +20,8 @@ import net.codestory.http.injection.*;
 import net.codestory.http.payload.*;
 
 public interface Routes {
+  void filter(Class<? extends Filter> resource);
+
   void filter(Filter filter);
 
   void setIocAdapter(IocAdapter iocAdapter);
