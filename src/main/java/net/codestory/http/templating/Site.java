@@ -43,7 +43,7 @@ public class Site {
     data = memoize(() -> Resources.list()
         .stream()
         .filter(path -> path.startsWith("_data/"))
-        .collect(Collectors.toMap(path -> Strings.substringBeforeLast(Paths.get(path).getFileName().toString(), "."), path -> readYaml(path))));
+        .collect(Collectors.toMap(path -> nameWithoutExtension(path), path -> readYaml(path))));
 
     pages = memoize(() -> Resources.list()
         .stream()
@@ -136,16 +136,19 @@ public class Site {
     }
   }
 
+  private static String nameWithoutExtension(String path) {
+    return Strings.substringBeforeLast(Paths.get(path).getFileName().toString(), ".");
+  }
+
   static enum SiteValueResolver implements ValueResolver {
     INSTANCE;
 
     @Override
     public Object resolve(Object context, String name) {
-      Object value = null;
       if (context instanceof Site) {
-        value = ((Site) context).configYaml().get(name);
+        return ((Site) context).configYaml().getOrDefault(name, UNRESOLVED);
       }
-      return value == null ? UNRESOLVED : value;
+      return UNRESOLVED;
     }
 
     @Override

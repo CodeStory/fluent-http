@@ -171,7 +171,6 @@ public class Resources {
 
   private static File fileForClasspath(URL url) {
     String filename = url.getFile();
-
     if ((filename == null) || filename.contains(".jar!")) {
       return null;
     }

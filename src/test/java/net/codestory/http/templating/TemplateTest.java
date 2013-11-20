@@ -17,35 +17,29 @@ package net.codestory.http.templating;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.*;
-
 import org.junit.*;
 
 public class TemplateTest {
   @Test
   public void render() {
-    assertThat(new Template("0variable.txt").render()).isEqualTo("0 variables");
+    assertThat(new Template("0variable.txt").render(Model.of())).isEqualTo("0 variables");
     assertThat(new Template("1variable.txt").render(Model.of("name", "Bob"))).isEqualTo("Hello Bob");
     assertThat(new Template("2variables.txt").render(Model.of("verb", "Hello", "name", "Bob"))).isEqualTo("Hello Bob");
-    assertThat(new Template("2variables.txt").render(new HashMap<String, Object>() {{
-      put("verb", "Hello");
-      put("name", 12);
-    }})).isEqualTo("Hello 12");
   }
 
   @Test
   public void yaml_front_matter() {
-    assertThat(new Template("indexYaml.html").render()).contains("Hello Yaml");
+    assertThat(new Template("indexYaml.html").render(Model.of())).contains("Hello Yaml");
   }
 
   @Test
   public void layout_decorator() {
-    assertThat(new Template("pageYaml.html").render()).contains("PREFIX_LAYOUT<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_LAYOUT");
-    assertThat(new Template("pageYamlWithMarkdownLayout.html").render()).contains("<em>TITLE</em>: PREFIX_MD<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_MD");
+    assertThat(new Template("pageYaml.html").render(Model.of())).contains("PREFIX_LAYOUT<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_LAYOUT");
+    assertThat(new Template("pageYamlWithMarkdownLayout.html").render(Model.of())).contains("<em>TITLE</em>: PREFIX_MD<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_MD");
   }
 
   @Test
   public void site_variables() {
-    assertThat(new Template("useSiteVariables.html").render()).contains("Hello, customer Bob wants to buy p1 for parkr");
+    assertThat(new Template("useSiteVariables.html").render(Model.of())).contains("Hello, customer Bob wants to buy p1 for parkr");
   }
 }

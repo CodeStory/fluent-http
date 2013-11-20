@@ -34,9 +34,9 @@ public class InputStreams {
   }
 
   public static <T> T read(InputStream from, ForBytes<T> transform) throws IOException {
-    try (ByteArrayOutputStream bytes = new ByteArrayOutputStream()) {
-      byte[] buffer = new byte[BUF_SIZE];
+    byte[] buffer = new byte[BUF_SIZE];
 
+    try (ByteArrayOutputStream bytes = new ByteArrayOutputStream()) {
       int count;
       while (-1 != (count = from.read(buffer))) {
         bytes.write(buffer, 0, count);

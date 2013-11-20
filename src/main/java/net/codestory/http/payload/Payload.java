@@ -18,7 +18,6 @@ package net.codestory.http.payload;
 import static java.nio.charset.StandardCharsets.*;
 
 import java.io.*;
-import java.nio.charset.*;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -162,14 +161,14 @@ public class Payload {
   }
 
   private static byte[] forString(String value) {
-    return value.getBytes(StandardCharsets.UTF_8);
+    return value.getBytes(UTF_8);
   }
 
   private static byte[] forInputStream(InputStream stream) throws IOException {
     return InputStreams.readBytes(stream);
   }
 
-  private static byte[] forModelAndView(ModelAndView modelAndView) throws IOException {
+  private static byte[] forModelAndView(ModelAndView modelAndView) {
     return forString(new Template(modelAndView.view()).render(modelAndView.model()));
   }
 
@@ -178,12 +177,12 @@ public class Payload {
       return Resources.readBytes(path);
     }
 
-    if (!ContentTypes.support_templating(path)) {
-      String content = Resources.read(path, UTF_8);
-      String compiled = Compiler.compile(path, content);
-      return forString(compiled);
+    if (ContentTypes.support_templating(path)) {
+      return forModelAndView(ModelAndView.of(path.toString()));
     }
 
-    return forString(new Template(path.toString()).render());
+    String content = Resources.read(path, UTF_8);
+    String compiled = Compiler.compile(path, content);
+    return forString(compiled);
   }
 }

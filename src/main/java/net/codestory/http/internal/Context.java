@@ -69,6 +69,10 @@ public class Context {
     return request;
   }
 
+  public Response response() {
+    return response;
+  }
+
   public byte[] payload() {
     try {
       return InputStreams.readBytes(request.getInputStream());

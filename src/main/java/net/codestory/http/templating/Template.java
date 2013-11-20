@@ -37,23 +37,19 @@ public class Template {
     this.path = existing;
   }
 
-  public String render() {
-    return render(Model.of());
-  }
-
   public String render(Model model) {
     return render(model.getKeyValues());
   }
 
-  public String render(Map<String, Object> keyValues) {
+  String render(Map<String, Object> keyValues) {
     try {
-      YamlFrontMatter parsedTemplate = YamlFrontMatter.parse(path);
-      Map<String, Object> allKeyValues = merge(parsedTemplate.getVariables(), keyValues);
+      YamlFrontMatter yamlFrontMatter = YamlFrontMatter.parse(path);
+      Map<String, Object> allKeyValues = merge(yamlFrontMatter.getVariables(), keyValues);
 
-      String content = Compiler.compile(path, parsedTemplate.getContent());
+      String content = Compiler.compile(path, yamlFrontMatter.getContent());
       String body = HandlebarsCompiler.INSTANCE.compile(content, allKeyValues);
 
-      String layout = (String) parsedTemplate.getVariables().get("layout");
+      String layout = (String) yamlFrontMatter.getVariables().get("layout");
       if (layout == null) {
         return body;
       }
@@ -65,7 +61,8 @@ public class Template {
   }
 
   private static Map<String, Object> merge(Map<String, Object> first, Map<String, Object> second) {
-    Map<String, Object> merged = new HashMap<>(first);
+    Map<String, Object> merged = new HashMap<>();
+    merged.putAll(first);
     merged.putAll(second);
     merged.put("body", "[[body]]");
     return merged;

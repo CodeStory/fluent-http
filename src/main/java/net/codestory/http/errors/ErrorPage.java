@@ -33,9 +33,7 @@ public class ErrorPage {
     String error = toString(exception);
     String filename = filename();
 
-    ModelAndView modelAndView = ModelAndView.of(filename, "ERROR", error);
-
-    return new Payload("text/html", modelAndView, code);
+    return new Payload("text/html", ModelAndView.of(filename, "ERROR", error), code);
   }
 
   private String filename() {
