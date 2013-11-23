@@ -47,7 +47,7 @@ public class Template {
       Map<String, Object> allKeyValues = merge(yamlFrontMatter.getVariables(), keyValues);
 
       String content = Compiler.compile(path, yamlFrontMatter.getContent());
-      String body = HandlebarsCompiler.INSTANCE.compile(content, allKeyValues);
+      String body = new HandlebarsCompiler().compile(content, allKeyValues);
 
       String layout = (String) yamlFrontMatter.getVariables().get("layout");
       if (layout == null) {

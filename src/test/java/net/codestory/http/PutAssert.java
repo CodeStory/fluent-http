@@ -37,7 +37,7 @@ class PutAssert {
     return new PutAssert(path, RestAssured.given().port(WebServerTest.server.port()).body(body).expect());
   }
 
-  public void produces(String content) {
+  void produces(String content) {
     expect.content(containsString(content)).when().put(path);
   }
 }

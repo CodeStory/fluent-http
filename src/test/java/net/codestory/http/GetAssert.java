@@ -33,23 +33,23 @@ class GetAssert {
     return new GetAssert(path);
   }
 
-  public void produces(int code, String contentType, String content) {
+  void produces(int code, String contentType, String content) {
     expect.content(containsString(content)).contentType(contentType).statusCode(code).when().get(path);
   }
 
-  public void produces(int code) {
+  void produces(int code) {
     expect.statusCode(code).when().get(path);
   }
 
-  public void produces(String contentType, String content) {
+  void produces(String contentType, String content) {
     expect.content(containsString(content)).contentType(contentType).when().get(path);
   }
 
-  public void produces(String content) {
+  void produces(String content) {
     expect.content(containsString(content)).when().get(path);
   }
 
-  public void producesCookie(String name, String value) {
+  void producesCookie(String name, String value) {
     expect.cookie(name, value).when().get(path);
   }
 }

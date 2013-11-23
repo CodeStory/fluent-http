@@ -26,14 +26,15 @@ public class AsciidocCompilerTest {
   public void empty() {
     String html = Compiler.compile(Paths.get("empty.asciidoc"), "");
 
-    assertThat(html).isEqualTo("");
+    assertThat(html).isEmpty();
   }
 
   @Test
   public void to_html() {
     String html = Compiler.compile(Paths.get("doc.asciidoc"), "== Title\ntext http://asciidoc.org[AsciiDoc]");
 
-    assertThat(html).contains("<h2 id=\"_title\">Title</h2>");
-    assertThat(html).contains("<p>text <a href=\"http://asciidoc.org\">AsciiDoc</a></p>");
+    assertThat(html)
+        .contains("<h2 id=\"_title\">Title</h2>")
+        .contains("<p>text <a href=\"http://asciidoc.org\">AsciiDoc</a></p>");
   }
 }

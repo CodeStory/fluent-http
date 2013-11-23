@@ -27,16 +27,16 @@ public class FormulaPlugin extends Plugin {
   }
 
   @Override
-  public void emit(StringBuilder out, List<String> lines, Map<String, String> params) {
-    String type = params.getOrDefault("type", "png");
+  public void emit(StringBuilder result, List<String> lines, Map<String, String> parameters) {
+    String type = parameters.getOrDefault("type", "png");
 
-    for (String line : lines) {
-      out.append("<img src=\"http://latex.codecogs.com/")
+    lines.forEach(line -> {
+      result.append("<img src=\"http://latex.codecogs.com/")
           .append(type)
           .append(".download?")
           .append(encode(line))
           .append("\" />");
-    }
+    });
   }
 
   private static String encode(String line) {

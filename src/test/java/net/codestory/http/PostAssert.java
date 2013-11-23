@@ -37,11 +37,11 @@ class PostAssert {
     return new PostAssert(path, RestAssured.given().port(WebServerTest.server.port()).parameters(firstParameterName, firstParameterValue, parameterNameValuePairs).expect());
   }
 
-  public void produces(String content) {
+  void produces(String content) {
     expect.content(containsString(content)).when().post(path);
   }
 
-  public void produces(int statusCode) {
+  void produces(int statusCode) {
     expect.statusCode(statusCode).when().post(path);
   }
 }

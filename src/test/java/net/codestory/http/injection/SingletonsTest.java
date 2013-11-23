@@ -15,18 +15,16 @@
  */
 package net.codestory.http.injection;
 
+import static com.googlecode.catchexception.CatchException.*;
+import static com.googlecode.catchexception.apis.CatchExceptionAssertJ.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.*;
 
 import org.junit.*;
-import org.junit.rules.*;
 
 public class SingletonsTest {
   Singletons singletons = new Singletons();
-
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
 
   @Test
   public void create_instance() {
@@ -59,30 +57,30 @@ public class SingletonsTest {
 
   @Test
   public void fail_without_public_constructor() {
-    thrown.expect(IllegalStateException.class);
+    when(singletons).get(Private.class);
 
-    singletons.get(Private.class);
+    then(caughtException()).isInstanceOf(IllegalStateException.class);
   }
 
   @Test
   public void fail_with_multiple_constructors() {
-    thrown.expect(IllegalStateException.class);
+    when(singletons).get(Multiple.class);
 
-    singletons.get(Multiple.class);
+    then(caughtException()).isInstanceOf(IllegalStateException.class);
   }
 
   @Test
   public void fail_with_invalid_dependency() {
-    thrown.expect(IllegalStateException.class);
+    when(singletons).get(InvalidDependency.class);
 
-    singletons.get(InvalidDependency.class);
+    then(caughtException()).isInstanceOf(IllegalStateException.class);
   }
 
   @Test
   public void fail_with_cycle_dependency() {
-    thrown.expect(IllegalStateException.class);
+    when(singletons).get(Cycle.class);
 
-    singletons.get(Cycle.class);
+    then(caughtException()).isInstanceOf(IllegalStateException.class);
   }
 
   static class Singleton {

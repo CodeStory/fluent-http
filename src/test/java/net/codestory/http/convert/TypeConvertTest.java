@@ -29,13 +29,13 @@ public class TypeConvertTest {
   }
 
   @Test
-  public void convert_integer() {
+  public void to_integer() {
     assertThat(TypeConvert.convert("42", Integer.class)).isEqualTo(42);
     assertThat(TypeConvert.convert("42", int.class)).isEqualTo(42);
   }
 
   @Test
-  public void convert_boolean() {
+  public void to_boolean() {
     assertThat(TypeConvert.convert("true", Boolean.class)).isEqualTo(true);
     assertThat(TypeConvert.convert("true", boolean.class)).isEqualTo(true);
     assertThat(TypeConvert.convert("false", Boolean.class)).isEqualTo(false);
@@ -43,7 +43,7 @@ public class TypeConvertTest {
   }
 
   @Test
-  public void convert_key_values() {
+  public void to_bean() {
     Map<String, String> keyValues = new HashMap<>();
     keyValues.put("name", "joe");
     keyValues.put("age", "42");
@@ -55,7 +55,7 @@ public class TypeConvertTest {
   }
 
   static class Human {
-    public String name;
-    public int age;
+    String name;
+    int age;
   }
 }

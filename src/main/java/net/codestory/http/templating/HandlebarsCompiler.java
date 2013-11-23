@@ -26,9 +26,7 @@ import com.github.jknack.handlebars.context.*;
 import com.github.jknack.handlebars.helper.*;
 import com.github.jknack.handlebars.io.*;
 
-public enum HandlebarsCompiler {
-  INSTANCE;
-
+public class HandlebarsCompiler {
   public String compile(String template, Map<String, Object> variables) throws IOException {
     return handlebars(variables)
         .compileInline(template)
@@ -45,7 +43,7 @@ public enum HandlebarsCompiler {
         .with(new ConcurrentMapTemplateCache())
         .with(new AbstractTemplateLoader() {
           @Override
-          public TemplateSource sourceAt(String location) throws IOException {
+          public TemplateSource sourceAt(String location) {
             return new StringTemplateSource(location, new Template("_includes", location).render(variables));
           }
         });

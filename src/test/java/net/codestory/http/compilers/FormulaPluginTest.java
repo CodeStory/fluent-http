@@ -33,4 +33,15 @@ public class FormulaPluginTest {
 
     assertThat(out.toString()).isEqualTo("<img src=\"http://latex.codecogs.com/png.download?1%2B2\" />");
   }
+
+  @Test
+  public void to_gif() {
+    StringBuilder out = new StringBuilder();
+
+    plugin.emit(out, asList("2+3"), new HashMap<String, String>() {{
+      put("type", "gif");
+    }});
+
+    assertThat(out.toString()).isEqualTo("<img src=\"http://latex.codecogs.com/gif.download?2%2B3\" />");
+  }
 }
