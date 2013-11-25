@@ -31,12 +31,19 @@ public class FormulaPlugin extends Plugin {
     String type = parameters.getOrDefault("type", "png");
 
     lines.forEach(line -> {
-      result.append("<img src=\"http://latex.codecogs.com/")
-          .append(type)
-          .append(".download?")
-          .append(encode(line))
-          .append("\" />");
+      if (!line.trim().isEmpty()) {
+        result.append("<img src=\"http://latex.codecogs.com/")
+            .append(type)
+            .append(".download?")
+            .append(encode(line))
+            .append("\" />");
+      }
     });
+  }
+
+  public static void main(String[] args) throws UnsupportedEncodingException {
+    String toto = "%5Cfrac%7Byour%20score*100%7D%7B%5Cmax_%7Bi%3D1%7D%5En%20people%20served%7D";
+    System.out.println(URLDecoder.decode(toto, "US-ASCII"));
   }
 
   private static String encode(String line) {

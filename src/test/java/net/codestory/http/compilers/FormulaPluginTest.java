@@ -44,4 +44,13 @@ public class FormulaPluginTest {
 
     assertThat(out.toString()).isEqualTo("<img src=\"http://latex.codecogs.com/gif.download?2%2B3\" />");
   }
+
+  @Test
+  public void skip_blank_lines() {
+    StringBuilder out = new StringBuilder();
+
+    plugin.emit(out, asList(" ", "2+3", ""), new HashMap<>());
+
+    assertThat(out.toString()).isEqualTo("<img src=\"http://latex.codecogs.com/png.download?2%2B3\" />");
+  }
 }
