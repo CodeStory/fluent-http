@@ -41,7 +41,7 @@ public enum Compiler {
   MARKDOWN {
     private final Supplier<Configuration> configuration = memoize(() -> Configuration.builder()
         .forceExtentedProfile()
-        .registerPlugins(new TablePlugin(), new YumlPlugin(), new WebSequencePlugin(), new IncludePlugin(), new FormulaPlugin())
+        .registerPlugins(new YumlPlugin(), new WebSequencePlugin(), new IncludePlugin(), new FormulaPlugin(), new TablePlugin())
         .setDecorator(new ExtDecorator())
         .setCodeBlockEmitter(new CodeBlockEmitter()).build());
 

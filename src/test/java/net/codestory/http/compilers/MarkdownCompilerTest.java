@@ -79,9 +79,9 @@ public class MarkdownCompilerTest {
   }
 
   @Test
-  public void formula_as_gif() {
-    String html = Compiler.compile(Paths.get("file.markdown"), "%%% formula type=gif\n(1+2)\n%%%\n");
+  public void table() {
+    String html = Compiler.compile(Paths.get("file.markdown"), "%%% table\nH1|H2|H3\n%%%\n");
 
-    assertThat(html).isEqualTo("<img src=\"http://latex.codecogs.com/gif.download?%281%2B2%29\" />");
+    assertThat(html).isEqualTo("<table>\n<tr><th>H1</th><th>H2</th><th>H3</th></tr>\n</table>\n");
   }
 }
