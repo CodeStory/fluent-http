@@ -48,7 +48,7 @@ public class FormulaPlugin extends Plugin {
 
   private static String encode(String line) {
     try {
-      return URLEncoder.encode(line, "US-ASCII");
+      return URLEncoder.encode(line, "US-ASCII").replace("+", "%20");
     } catch (UnsupportedEncodingException e) {
       return line;
     }

@@ -24,33 +24,35 @@ import org.junit.*;
 
 public class FormulaPluginTest {
   FormulaPlugin plugin = new FormulaPlugin();
+  StringBuilder output = new StringBuilder();
 
   @Test
   public void to_formula_url() {
-    StringBuilder out = new StringBuilder();
+    plugin.emit(output, asList("1+2"), new HashMap<>());
 
-    plugin.emit(out, asList("1+2"), new HashMap<>());
-
-    assertThat(out.toString()).isEqualTo("<img src=\"http://latex.codecogs.com/png.download?1%2B2\" />");
+    assertThat(output.toString()).isEqualTo("<img src=\"http://latex.codecogs.com/png.download?1%2B2\" />");
   }
 
   @Test
   public void to_gif() {
-    StringBuilder out = new StringBuilder();
-
-    plugin.emit(out, asList("2+3"), new HashMap<String, String>() {{
+    plugin.emit(output, asList("2+3"), new HashMap<String, String>() {{
       put("type", "gif");
     }});
 
-    assertThat(out.toString()).isEqualTo("<img src=\"http://latex.codecogs.com/gif.download?2%2B3\" />");
+    assertThat(output.toString()).isEqualTo("<img src=\"http://latex.codecogs.com/gif.download?2%2B3\" />");
   }
 
   @Test
   public void skip_blank_lines() {
-    StringBuilder out = new StringBuilder();
+    plugin.emit(output, asList(" ", "2+3", ""), new HashMap<>());
 
-    plugin.emit(out, asList(" ", "2+3", ""), new HashMap<>());
+    assertThat(output.toString()).isEqualTo("<img src=\"http://latex.codecogs.com/png.download?2%2B3\" />");
+  }
 
-    assertThat(out.toString()).isEqualTo("<img src=\"http://latex.codecogs.com/png.download?2%2B3\" />");
+  @Test
+  public void dont_replace_spaces_with_plus_sign() {
+    plugin.emit(output, asList(" ", "a b", ""), new HashMap<>());
+
+    assertThat(output.toString()).isEqualTo("<img src=\"http://latex.codecogs.com/png.download?a%20b\" />");
   }
 }
