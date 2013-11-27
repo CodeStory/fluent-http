@@ -17,7 +17,6 @@ package net.codestory.http.routes;
 
 import net.codestory.http.filters.*;
 import net.codestory.http.injection.*;
-import net.codestory.http.payload.*;
 
 public interface Routes {
   void filter(Class<? extends Filter> resource);

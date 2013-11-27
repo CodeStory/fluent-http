@@ -61,6 +61,10 @@ public class Context {
     return query.getBoolean(name);
   }
 
+  public String method() {
+    return request.getMethod();
+  }
+
   public Map<String, String> keyValues() {
     return query;
   }

@@ -13,27 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.routes;
+package net.codestory.http.annotations;
 
-import java.lang.reflect.*;
-import java.util.function.*;
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.RetentionPolicy.*;
 
-import net.codestory.http.convert.*;
+import java.lang.annotation.*;
 
-class ReflectionRoute extends AbstractReflectionRoute implements AnyRoute {
-  ReflectionRoute(Supplier<Object> resource, Method method) {
-    super(resource, method);
-  }
-
-  @Override
-  public Object body(String[] pathParameters) {
-    try {
-      Object[] arguments = TypeConvert.convert(pathParameters, method.getParameterTypes());
-
-      return payload(arguments);
-    } catch (Exception e) {
-      throw new IllegalStateException("Unable to apply resource", e);
-    }
-  }
+@Documented
+@Target(METHOD)
+@Retention(RUNTIME)
+public @interface Produces {
+  String value();
 }
-

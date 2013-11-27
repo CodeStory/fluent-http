@@ -167,6 +167,11 @@ public class WebServerTest {
       @Get("/void")
       public void empty() {
       }
+
+      @Get("/voidJson")
+      @Produces("application/json")
+      public void emptyJson() {
+      }
     }));
 
     get("/hello").produces("Hello");
@@ -174,6 +179,7 @@ public class WebServerTest {
     get("/bye/Bob").produces("Good Bye Bob");
     get("/add/22/20").produces("application/json", "42");
     get("/void").produces(200, "text/html", "");
+    get("/voidJson").produces(200, "application/json", "");
   }
 
   @Test

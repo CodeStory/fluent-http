@@ -21,28 +21,19 @@ import java.util.function.*;
 import net.codestory.http.convert.*;
 import net.codestory.http.internal.*;
 
-class ReflectionRouteWithContext implements AnyRouteWithContext {
-  private final Supplier<Object> resource;
-  private final Method method;
-
+class ReflectionRouteWithContext extends AbstractReflectionRoute implements AnyRouteWithContext {
   ReflectionRouteWithContext(Supplier<Object> resource, Method method) {
-    this.resource = resource;
-    this.method = method;
+    super(resource, method);
   }
 
   @Override
   public Object body(Context context, String[] pathParameters) {
     try {
-      Object target = resource.get();
       Object[] arguments = TypeConvert.convert(pathParameters, context, method.getParameterTypes());
 
-      method.setAccessible(true);
-      Object payload = method.invoke(target, arguments);
-
-      return (payload == null) ? "" : payload;
+      return payload(arguments);
     } catch (Exception e) {
       throw new IllegalStateException("Unable to apply resource", e);
     }
   }
 }
-
