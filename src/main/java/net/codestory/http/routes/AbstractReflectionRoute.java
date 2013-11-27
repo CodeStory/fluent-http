@@ -24,10 +24,12 @@ import net.codestory.http.payload.*;
 class AbstractReflectionRoute {
   protected final Supplier<Object> resource;
   protected final Method method;
+  protected final String contentType;
 
   protected AbstractReflectionRoute(Supplier<Object> resource, Method method) {
     this.resource = resource;
     this.method = method;
+    this.contentType = findContentType(method);
   }
 
   protected Object payload(Object[] arguments) throws InvocationTargetException, IllegalAccessException {
@@ -36,7 +38,7 @@ class AbstractReflectionRoute {
     Object response = invoke(method, target, arguments);
     Object payload = emptyIfNull(response);
 
-    return applyAnnotatedContentType(method, payload);
+    return new Payload(contentType, payload);
   }
 
   private static Object invoke(Method method, Object target, Object[] arguments) throws IllegalAccessException, InvocationTargetException {
@@ -48,14 +50,9 @@ class AbstractReflectionRoute {
     return (payload == null) ? "" : payload;
   }
 
-  private static Object applyAnnotatedContentType(Method method, Object payload) {
+  private static String findContentType(Method method) {
     Produces annotation = method.getAnnotation(Produces.class);
-    if (annotation == null) {
-      return payload;
-    }
-
-    String contentType = annotation.value();
-    return new Payload(contentType, payload);
+    return (annotation == null) ? null : annotation.value();
   }
 }
 
