@@ -38,7 +38,7 @@ public class Resources {
     Set<String> paths = new TreeSet<>();
 
     try {
-      if (!Boolean.getBoolean("http.disable.classpath")) {
+      if (new File("target/classes").exists() && !Boolean.getBoolean("http.disable.classpath")) {
         new Reflections(ROOT, new ResourcesScanner()).getResources(name -> true)
             .forEach(resource -> paths.add(relativeName(resource)));
       }
