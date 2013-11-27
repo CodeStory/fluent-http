@@ -74,6 +74,18 @@ public class Payload {
     return this;
   }
 
+  public String rawContentType() {
+    return contentType;
+  }
+
+  public Object rawContent() {
+    return content;
+  }
+
+  public int code() {
+    return code;
+  }
+
   public static Payload seeOther(String url) {
     return new Payload(303).withHeader("Location", url);
   }
@@ -84,10 +96,6 @@ public class Payload {
 
   public static Payload forbidden() {
     return new Payload(403);
-  }
-
-  public int code() {
-    return code;
   }
 
   public void writeTo(Response response) throws IOException {
