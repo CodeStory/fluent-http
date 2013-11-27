@@ -49,15 +49,20 @@ public class Payload {
   }
 
   public Payload(String contentType, Object content, int code) {
-    this.contentType = contentType;
-    this.content = content;
-    this.code = code;
-    this.headers = new LinkedHashMap<>();
-    this.cookies = new ArrayList<>();
-  }
-
-  public static Payload wrap(Object payload) {
-    return (payload instanceof Payload) ? (Payload) payload : new Payload(payload);
+    if (content instanceof Payload) {
+      Payload wrapped = (Payload) content;
+      this.contentType = (null == contentType) ? wrapped.contentType : contentType;
+      this.content = wrapped.content;
+      this.code = wrapped.code;
+      this.headers = new LinkedHashMap<>(wrapped.headers);
+      this.cookies = new ArrayList<>(wrapped.cookies);
+    } else {
+      this.contentType = contentType;
+      this.content = content;
+      this.code = code;
+      this.headers = new LinkedHashMap<>();
+      this.cookies = new ArrayList<>();
+    }
   }
 
   public Payload withHeader(String key, String value) {

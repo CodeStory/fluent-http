@@ -54,7 +54,7 @@ abstract class AbstractRouteWrapper implements Route {
       body = ModelAndView.of(uri, (Model) body);
     }
 
-    Payload payload = Payload.wrap(body);
+    Payload payload = new Payload(body);
     payload.writeTo(response);
 
     return OK;
