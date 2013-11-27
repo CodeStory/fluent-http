@@ -29,6 +29,7 @@ import net.codestory.http.errors.*;
 import net.codestory.http.injection.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
+import net.codestory.http.routes.*;
 import net.codestory.http.templating.*;
 
 import org.junit.*;
@@ -379,10 +380,32 @@ public class WebServerTest {
     get("/random").produces("HELLO");
   }
 
+  @Test
+  public void includes() {
+    server.configure(routes -> {
+      routes.get("/", "MAIN");
+      routes.include(moreRoutes -> moreRoutes.get("/more", "MORE"));
+      routes.include(EvenMoreRoutes.class);
+    });
+
+    get("/").produces("MAIN");
+    get("/more").produces("MORE");
+    get("/evenMore").produces("EVEN_MORE");
+  }
+
   public static class TestResource {
     @Get("/")
     public String hello() {
       return "HELLO";
+    }
+  }
+
+  public static class EvenMoreRoutes implements Configuration {
+    private String response = "EVEN_MORE";
+
+    @Override
+    public void configure(Routes routes) {
+      routes.get("/evenMore", () -> response);
     }
   }
 

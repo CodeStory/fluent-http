@@ -15,13 +15,18 @@
  */
 package net.codestory.http.routes;
 
+import net.codestory.http.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.injection.*;
 
 public interface Routes {
   void setIocAdapter(IocAdapter iocAdapter);
 
-  void filter(Class<? extends Filter> resource);
+  void include(Class<? extends Configuration> configurationClass);
+
+  void include(Configuration configuration);
+
+  void filter(Class<? extends Filter> filterClass);
 
   void filter(Filter filter);
 

@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.*;
 
+import net.codestory.http.*;
 import net.codestory.http.annotations.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.injection.*;
@@ -31,8 +32,8 @@ import net.codestory.http.payload.*;
 import org.simpleframework.http.*;
 
 public class RouteCollection implements Routes {
-  private final Deque<Route> routes;
-  private final Deque<Supplier<Filter>> filters;
+  private final List<Route> routes;
+  private final List<Supplier<Filter>> filters;
   private IocAdapter iocAdapter = new Singletons();
 
   public RouteCollection() {
@@ -45,13 +46,23 @@ public class RouteCollection implements Routes {
   }
 
   @Override
-  public void filter(Class<? extends Filter> resource) {
-    filters.addLast(() -> iocAdapter.get(resource));
+  public void include(Class<? extends Configuration> configurationClass) {
+    iocAdapter.get(configurationClass).configure(this);
+  }
+
+  @Override
+  public void include(Configuration configuration) {
+    configuration.configure(this);
+  }
+
+  @Override
+  public void filter(Class<? extends Filter> filterClass) {
+    filters.add(() -> iocAdapter.get(filterClass));
   }
 
   @Override
   public void filter(Filter filter) {
-    filters.addLast(() -> filter);
+    filters.add(() -> filter);
   }
 
   @Override
