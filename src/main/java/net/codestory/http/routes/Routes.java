@@ -19,11 +19,11 @@ import net.codestory.http.filters.*;
 import net.codestory.http.injection.*;
 
 public interface Routes {
+  void setIocAdapter(IocAdapter iocAdapter);
+
   void filter(Class<? extends Filter> resource);
 
   void filter(Filter filter);
-
-  void setIocAdapter(IocAdapter iocAdapter);
 
   void add(Class<?> resource);
 
@@ -94,4 +94,10 @@ public interface Routes {
   void put(String uriPattern, ThreeParamsRouteWithContext route);
 
   void put(String uriPattern, FourParamsRouteWithContext route);
+
+  void catchAll(Object payload);
+
+  void catchAll(NoParamRoute route);
+
+  void catchAll(NoParamRouteWithContext route);
 }

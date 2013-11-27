@@ -361,6 +361,24 @@ public class WebServerTest {
     get("/set").producesCookie("id", "Bob");
   }
 
+  @Test
+  public void first_route_serves_first() {
+    server.configure(routes -> {
+      routes.get("/", "FIRST");
+      routes.get("/", "SECOND");
+    });
+
+    get("/").produces("FIRST");
+  }
+
+  @Test
+  public void catch_all() {
+    server.configure(routes -> routes.catchAll("HELLO"));
+
+    get("/any").produces("HELLO");
+    get("/random").produces("HELLO");
+  }
+
   public static class TestResource {
     @Get("/")
     public String hello() {

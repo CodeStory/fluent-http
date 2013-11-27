@@ -45,13 +45,23 @@ public class RouteCollection implements Routes {
   }
 
   @Override
+  public void filter(Class<? extends Filter> resource) {
+    filters.addLast(() -> iocAdapter.get(resource));
+  }
+
+  @Override
+  public void filter(Filter filter) {
+    filters.addLast(() -> filter);
+  }
+
+  @Override
   public void add(Class<?> resourceType) {
-    addResource("", resourceType, () -> getIocAdapter().get(resourceType));
+    addResource("", resourceType, () -> iocAdapter.get(resourceType));
   }
 
   @Override
   public void add(String urlPrefix, Class<?> resourceType) {
-    addResource(urlPrefix, resourceType, () -> getIocAdapter().get(resourceType));
+    addResource(urlPrefix, resourceType, () -> iocAdapter.get(resourceType));
   }
 
   @Override
@@ -62,10 +72,6 @@ public class RouteCollection implements Routes {
   @Override
   public void add(String urlPrefix, Object resource) {
     addResource(urlPrefix, resource.getClass(), () -> resource);
-  }
-
-  private IocAdapter getIocAdapter() {
-    return iocAdapter;
   }
 
   private void addResource(String urlPrefix, Class<?> type, Supplier<Object> resource) {
@@ -256,21 +262,26 @@ public class RouteCollection implements Routes {
   }
 
   @Override
-  public void filter(Class<? extends Filter> resource) {
-    filters.addLast(() -> getIocAdapter().get(resource));
+  public void catchAll(Object payload) {
+    catchAll(() -> payload);
   }
 
   @Override
-  public void filter(Filter filter) {
-    filters.addLast(() -> filter);
+  public void catchAll(NoParamRoute route) {
+    routes.add(new CatchAllRoute(route));
+  }
+
+  @Override
+  public void catchAll(NoParamRouteWithContext route) {
+    routes.add(new CatchAllRouteWithContext(route));
   }
 
   private void add(String method, String uriPattern, AnyRoute route) {
-    routes.addFirst(new RouteWrapper(method, uriPattern, route));
+    routes.add(new RouteWrapper(method, uriPattern, route));
   }
 
   private void add(String method, String uriPattern, AnyRouteWithContext route) {
-    routes.addFirst(new RouteWithContextWrapper(method, uriPattern, route));
+    routes.add(new RouteWithContextWrapper(method, uriPattern, route));
   }
 
   // TEMP

@@ -19,24 +19,30 @@ import net.codestory.http.internal.*;
 
 import org.simpleframework.http.*;
 
-abstract class AbstractRouteWrapper extends AbstractRoute {
-  private final String method;
-  private final UriParser uriParser;
+class CatchAllRouteWithContext extends AbstractRoute {
+  private final AnyRouteWithContext route;
 
-  protected AbstractRouteWrapper(String method, String uriPattern) {
-    this.method = method;
-    this.uriParser = new UriParser(uriPattern);
+  CatchAllRouteWithContext(AnyRouteWithContext route) {
+    this.route = route;
   }
 
+  @Override
+  protected Object body(Request request, Response response, String[] parameters) {
+    return route.body(new Context(request, response), parameters);
+  }
+
+  @Override
   protected boolean matchUri(String uri) {
-    return uriParser.matches(uri);
+    return true;
   }
 
+  @Override
   protected boolean matchMethod(Request request) {
-    return method.equalsIgnoreCase(request.getMethod());
+    return true;
   }
 
+  @Override
   protected String[] parseParameters(String uri, Request request) {
-    return uriParser.params(uri, request.getQuery());
+    return new String[0];
   }
 }
