@@ -21,17 +21,25 @@ import org.simpleframework.http.Response;
 import org.simpleframework.http.Status;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 
 public class BasicAuthFilter implements Filter {
     private final String realm = "codestory";
     private final String uriPrefix;
     private final Map<String, String> users;
+    private final List<String> hashes;
 
     public BasicAuthFilter(String uriPrefix, Map<String, String> users) {
         this.users = users;
         this.uriPrefix = validPrefix(uriPrefix);
+        this.hashes = new ArrayList<>();
+        for (String user: users.keySet()) {
+            byte[] hashByte = new String(user + ":" + users.get(user)).getBytes();
+            hashes.add(" Basic " + new String(Base64.getEncoder().encode(hashByte)));
+        }
     }
 
     private static String validPrefix(String prefix) {
@@ -44,12 +52,9 @@ public class BasicAuthFilter implements Filter {
             return false; // Ignore
         }
         String authorizationHeader = request.getValue("Authorization");
-        if (authorizationHeader != null) {
-            for (String user : users.keySet()) {
-                String hash = " Basic " + new String(Base64.getEncoder().encode(new String(user + ":" + users.get(user)).getBytes()));
-                if (hash.equals(authorizationHeader)) {
-                    return false;
-                }
+        for (String hash : hashes) {
+            if (hash.equals(authorizationHeader)) {
+                return false;
             }
         }
         response.setStatus(Status.UNAUTHORIZED);
