@@ -52,4 +52,8 @@ class GetAssert {
   void producesCookie(String name, String value) {
     expect.cookie(name, value).when().get(path);
   }
+
+  void producesHeader(String name, String value) {
+      expect.header(name,value);
+  }
 }
