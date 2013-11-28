@@ -410,7 +410,7 @@ public class WebServerTest {
         });
 
         get("/").produces(200, "text/html", "Hello World");
-        get("/secure").produces(401, "text/html", "Unauthorized");
+        get("/secure").produces(401);
         get("/secure").producesHeader("WWW-Authenticate","Basic realm=\"codestory\"");
         RestAssured.given().port(server.port())
                 .auth().preemptive().basic("jl", "polka")
@@ -423,7 +423,6 @@ public class WebServerTest {
                 .auth().preemptive().basic("jl", "wrongpassword")
                 .expect()
                     .statusCode(401)
-                    .content(containsString("Unauthorized"))
                 .when()
                     .get("/secure");
     }

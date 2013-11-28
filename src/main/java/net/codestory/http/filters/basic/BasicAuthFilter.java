@@ -58,8 +58,6 @@ public class BasicAuthFilter implements Filter {
             }
         }
         response.setStatus(Status.UNAUTHORIZED);
-        response.setContentType("text/html");
-        response.getPrintStream().print("Unauthorized");
         response.setValue("WWW-Authenticate", "Basic realm=\"" + realm + "\"");
         return true;
     }
