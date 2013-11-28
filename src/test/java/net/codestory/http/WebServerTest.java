@@ -404,27 +404,28 @@ public class WebServerTest {
     @Test
     public void basicAuth() {
         server.configure(routes -> {
-            routes.filter(new BasicAuthFilter("/secure/", of("jl","polka")));
+            routes.filter(new BasicAuthFilter("/secure", "codestory", of("jl","polka")));
             routes.get("/", "Hello World");
             routes.get("/secure", "Secured Hello World");
         });
 
         get("/").produces(200, "text/html", "Hello World");
-        get("/secure/").produces(401, "text/html", "Unauthorized");
-        get("/secure/").producesHeader("WWW-Authenticate","Basic realm=\"codestory\"");
-        RestAssured.given().port(WebServerTest.server.port())
-                .authentication().basic("jl", "polka")
+        get("/secure").produces(401, "text/html", "Unauthorized");
+        get("/secure").producesHeader("WWW-Authenticate","Basic realm=\"codestory\"");
+        RestAssured.given().port(server.port())
+                .auth().preemptive().basic("jl", "polka")
                 .expect()
                     .statusCode(200)
                     .content(containsString("Secured Hello World"))
                 .when()
                     .get("/secure");
-    }
-
-
-    @Test
-    public void should_() {
-
+        RestAssured.given().port(server.port())
+                .auth().preemptive().basic("jl", "wrongpassword")
+                .expect()
+                    .statusCode(401)
+                    .content(containsString("Unauthorized"))
+                .when()
+                    .get("/secure");
     }
 
     public static class TestResource {

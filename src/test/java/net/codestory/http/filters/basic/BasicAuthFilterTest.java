@@ -43,7 +43,7 @@ public class BasicAuthFilterTest {
         request = mock(Request.class);
         Map<String, String> users = new HashMap<>();
         users.put("jl", "polka");
-        filter = new BasicAuthFilter("/secure", users);
+        filter = new BasicAuthFilter("/secure","codestory", users);
     }
 
     @Test
@@ -60,16 +60,29 @@ public class BasicAuthFilterTest {
 
     @Test
     public void should_answer_200_on_authorized_query() throws IOException {
-        when(request.getValue("Authorization")).thenReturn(" Basic amw6cG9sa2E=");
+        when(request.getValue("Authorization")).thenReturn(" Basic amw6cG9sa2E="); // "jl:polka" encoded in base64
         assertThat(filter.apply("/secure/foo", request, response)).isFalse();
     }
 
     @Test
-    public void should_answer_403_on_unauthorized_query() throws IOException {
+    public void should_answer_401_on_unauthorized_query() throws IOException {
         when(request.getValue("Authorization")).thenReturn(" Basic FOOBAR9sa2E=");
         assertThat(filter.apply("/secure/foo", request, response)).isTrue();
         verify(response).setStatus(Status.UNAUTHORIZED);
         verify(response).setValue("WWW-Authenticate", "Basic realm=\"codestory\"");
     }
+
+    @Test
+    public void should_block_all_subsequent_paths() throws IOException {
+        assertThat(filter.apply("/", request, response)).isFalse();
+        assertThat(filter.apply("/foo", request, response)).isFalse();
+        assertThat(filter.apply("/foo/", request, response)).isFalse();
+        assertThat(filter.apply("/foo/secure", request, response)).isFalse();
+        assertThat(filter.apply("/secure", request, response)).isTrue();
+        assertThat(filter.apply("/secure/", request, response)).isTrue();
+        assertThat(filter.apply("/secure/foo", request, response)).isTrue();
+        assertThat(filter.apply("/secure/foo/", request, response)).isTrue();
+    }
+
 
 }

@@ -27,23 +27,21 @@ import java.util.List;
 import java.util.Map;
 
 public class BasicAuthFilter implements Filter {
-    private final String realm = "codestory";
     private final String uriPrefix;
+    private final String realm;
     private final Map<String, String> users;
     private final List<String> hashes;
 
-    public BasicAuthFilter(String uriPrefix, Map<String, String> users) {
+    public BasicAuthFilter(String uriPrefix, String realm, Map<String, String> users) {
+        this.realm = realm;
         this.users = users;
-        this.uriPrefix = validPrefix(uriPrefix);
+        this.uriPrefix = uriPrefix;
         this.hashes = new ArrayList<>();
-        for (String user: users.keySet()) {
+        for (String user : users.keySet()) {
             byte[] hashByte = new String(user + ":" + users.get(user)).getBytes();
-            hashes.add(" Basic " + new String(Base64.getEncoder().encode(hashByte)));
+            String hash = new String(Base64.getEncoder().encode(hashByte));
+            hashes.add("Basic " + hash);
         }
-    }
-
-    private static String validPrefix(String prefix) {
-        return prefix.endsWith("/") ? prefix : prefix + "/";
     }
 
     @Override
@@ -52,9 +50,11 @@ public class BasicAuthFilter implements Filter {
             return false; // Ignore
         }
         String authorizationHeader = request.getValue("Authorization");
-        for (String hash : hashes) {
-            if (hash.equals(authorizationHeader)) {
-                return false;
+        if (authorizationHeader != null) {
+            for (String hash : hashes) {
+                if (hash.equals(authorizationHeader.trim())) {
+                    return false;
+                }
             }
         }
         response.setStatus(Status.UNAUTHORIZED);
