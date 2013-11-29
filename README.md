@@ -2,10 +2,11 @@
 
  + Supporter les coffee et less pré-générés
  + Supporter les templates pré-générés
- + Set ContenType on xml using yaml
+ + Set ContentType on xml using yaml
  + Javadoc
  + Object mapper custom
- + Basic auth
+ + ~~Basic auth~~
+ + Delete
 
 # Deploy on Maven Central
 
