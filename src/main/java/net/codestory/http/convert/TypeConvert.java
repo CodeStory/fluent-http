@@ -24,15 +24,15 @@ import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
 
 public class TypeConvert {
-  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
+  private static ObjectMapper OBJECT_MAPPER = new ObjectMapper()
       .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
 
   private TypeConvert() {
     // static class
   }
 
-  public static void registerModule(Module module) {
-      OBJECT_MAPPER.registerModule(module);
+  public static void overrideMapper(ObjectMapper mapper) {
+      OBJECT_MAPPER = mapper;
   }
 
   public static Object[] convert(String[] pathParameters, Context context, Class<?>[] types) {
