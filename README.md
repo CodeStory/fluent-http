@@ -4,8 +4,9 @@
  + Supporter les templates pré-générés
  + Set ContentType on xml using yaml
  + Javadoc
- + Object mapper custom
+ + ~~Object mapper custom~~
  + ~~Basic auth~~
+ + ~~Custom HandleBar Mapper~~
  + Delete
 
 # Deploy on Maven Central
