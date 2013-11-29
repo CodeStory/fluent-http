@@ -31,6 +31,10 @@ public class TypeConvert {
     // static class
   }
 
+  public static void registerModule(Module module) {
+      OBJECT_MAPPER.registerModule(module);
+  }
+
   public static Object[] convert(String[] pathParameters, Context context, Class<?>[] types) {
     Object[] converted = new Object[pathParameters.length + 1];
 
