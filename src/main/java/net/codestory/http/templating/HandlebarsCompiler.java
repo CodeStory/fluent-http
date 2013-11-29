@@ -40,6 +40,7 @@ public class HandlebarsCompiler {
         .registerHelpers(new EachReverseHelperSource())
         .registerHelpers(new EachValueHelperSource())
         .registerHelpers(StringHelpers.class)
+        .registerHelpers(findHandleBarHelper())
         .with(new ConcurrentMapTemplateCache())
         .with(new AbstractTemplateLoader() {
           @Override
@@ -49,7 +50,17 @@ public class HandlebarsCompiler {
         });
   }
 
-  private static Context context(Map<String, Object> variables) {
+    private static Object findHandleBarHelper() {
+        try {
+            String handleBarHelperClassName = (String) Site.get().get("handleBarHelper");
+            System.out.println("Loading external HandleBar helper class " + handleBarHelperClassName);
+            return Class.forName(handleBarHelperClassName).newInstance();
+        } catch (Exception e) {
+            return NopRegister.class;
+        }
+    }
+
+    private static Context context(Map<String, Object> variables) {
     return Context.newBuilder(null)
         .resolver(
             MapValueResolver.INSTANCE,
@@ -60,4 +71,7 @@ public class HandlebarsCompiler {
         .combine(variables)
         .build();
   }
+
+    private static class NopRegister {
+    }
 }
