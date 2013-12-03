@@ -85,7 +85,7 @@ public interface Fluent<T> extends Iterable<T> {
   @SuppressWarnings("unchecked")
   public default <R> Fluent<R> filter(Class<R> type) {
     requireNonNull(type);
-    return (Fluent<R>) filter(type::isInstance);
+    return (Fluent<R>) filter(value -> type.isInstance(value));
   }
 
   public default long size() {
@@ -321,7 +321,11 @@ public interface Fluent<T> extends Iterable<T> {
 
   public default <V, L extends List<V>> Fluent<V> flatMap(Function<? super T, L> toList) {
     requireNonNull(toList);
-    return () -> stream().flatMap(toList.andThen(l -> l.stream()));
+    return () -> {
+      Function<? super L, Stream<V>> toStream = l -> l.stream();
+      Function<? super T, Stream<V>> toListAndThenToStream = toList.andThen(toStream);
+      return stream().flatMap(toListAndThenToStream);
+    };
   }
 
   public default Fluent<T> substream(long startInclusive) {
