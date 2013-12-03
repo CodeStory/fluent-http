@@ -17,6 +17,7 @@ package net.codestory.http.convert;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.io.*;
 import java.util.*;
 
 import org.junit.*;
@@ -24,22 +25,22 @@ import org.junit.*;
 public class TypeConvertTest {
   @Test
   public void dont_convert() {
-    assertThat(TypeConvert.convert("TEXT", String.class)).isEqualTo("TEXT");
-    assertThat(TypeConvert.convert("TEXT", Object.class)).isEqualTo("TEXT");
+    assertThat(TypeConvert.fromString("TEXT", String.class)).isEqualTo("TEXT");
+    assertThat(TypeConvert.fromString("TEXT", Object.class)).isEqualTo("TEXT");
   }
 
   @Test
   public void to_integer() {
-    assertThat(TypeConvert.convert("42", Integer.class)).isEqualTo(42);
-    assertThat(TypeConvert.convert("42", int.class)).isEqualTo(42);
+    assertThat(TypeConvert.fromString("42", Integer.class)).isEqualTo(42);
+    assertThat(TypeConvert.fromString("42", int.class)).isEqualTo(42);
   }
 
   @Test
   public void to_boolean() {
-    assertThat(TypeConvert.convert("true", Boolean.class)).isEqualTo(true);
-    assertThat(TypeConvert.convert("true", boolean.class)).isEqualTo(true);
-    assertThat(TypeConvert.convert("false", Boolean.class)).isEqualTo(false);
-    assertThat(TypeConvert.convert("false", boolean.class)).isEqualTo(false);
+    assertThat(TypeConvert.fromString("true", Boolean.class)).isEqualTo(true);
+    assertThat(TypeConvert.fromString("true", boolean.class)).isEqualTo(true);
+    assertThat(TypeConvert.fromString("false", Boolean.class)).isEqualTo(false);
+    assertThat(TypeConvert.fromString("false", boolean.class)).isEqualTo(false);
   }
 
   @Test
@@ -48,10 +49,18 @@ public class TypeConvertTest {
     keyValues.put("name", "joe");
     keyValues.put("age", "42");
 
-    Human human = TypeConvert.convert(keyValues, Human.class);
+    Human human = TypeConvert.fromKeyValues(keyValues, Human.class);
 
     assertThat(human.name).isEqualTo("joe");
     assertThat(human.age).isEqualTo(42);
+  }
+
+  @Test
+  public void json_to_bean() throws IOException {
+    Human human = TypeConvert.fromJson("{\"name\":\"jack\",\"age\":31}", Human.class);
+
+    assertThat(human.name).isEqualTo("jack");
+    assertThat(human.age).isEqualTo(31);
   }
 
   static class Human {

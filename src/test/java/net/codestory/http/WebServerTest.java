@@ -314,6 +314,7 @@ public class WebServerTest {
     get("/action").produces("Done GET");
     post("/person").produces("CREATED");
     post("/order/12", "name", "Book", "quantity", "42").produces("order 12 : 42xBook");
+    post("/order/12", "{\"name\":\"foo\",\"quantity\":42}").produces("order 12 : 42xfoo");
     post("/get").produces(405);
     post("/index.html").produces(405);
     post("/unknown").produces(404);
@@ -321,11 +322,20 @@ public class WebServerTest {
 
   @Test
   public void support_put() {
-    server.configure(routes -> routes.put("/put", () -> "Done"));
-    server.configure(routes -> routes.put("/putText", (Context context) -> context.payload()));
+    server.configure(routes -> {
+      routes.put("/put", () -> "Done");
+      routes.put("/putText", (Context context) -> context.payload());
+      routes.add(new Object() {
+        @Put("/order/:id")
+        public String order(String id, Order order) {
+          return "order " + id + " : " + order.quantity + "x" + order.name;
+        }
+      });
+    });
 
     put("/put").produces("Done");
     put("/putText", "PAYLOAD").produces("PAYLOAD");
+    put("/order/12", "{\"name\":\"foo\",\"quantity\":42}").produces("order 12 : 42xfoo");
   }
 
   @Test

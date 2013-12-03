@@ -15,6 +15,7 @@
  */
 package net.codestory.http.convert;
 
+import java.io.*;
 import java.util.*;
 
 import net.codestory.http.internal.*;
@@ -35,11 +36,11 @@ public class TypeConvert {
     OBJECT_MAPPER = mapper;
   }
 
-  public static Object[] convert(String[] pathParameters, Context context, Class<?>[] types) {
+  public static Object[] convert(String[] pathParameters, Context context, Class<?>[] types) throws IOException {
     Object[] converted = new Object[pathParameters.length + 1];
 
     for (int i = 0; i < pathParameters.length; i++) {
-      converted[i] = convert(pathParameters[i], types[i]);
+      converted[i] = fromString(pathParameters[i], types[i]);
     }
     converted[converted.length - 1] = convert(context, types[converted.length - 1]);
 
@@ -50,31 +51,45 @@ public class TypeConvert {
     Object[] converted = new Object[pathParameters.length];
 
     for (int i = 0; i < pathParameters.length; i++) {
-      converted[i] = convert(pathParameters[i], types[i]);
+      converted[i] = fromString(pathParameters[i], types[i]);
     }
 
     return converted;
   }
 
-  public static Object convert(Context context, Class<?> type) {
+  public static Object convert(Context context, Class<?> type) throws IOException {
     if (type.isAssignableFrom(Context.class)) {
       return context;
     }
     if (type.isAssignableFrom(Map.class)) {
       return context.keyValues();
     }
-    return convert(context.keyValues(), type);
+    if (isUrlEncodedForm(context)) {
+      return fromKeyValues(context.keyValues(), type);
+    }
+
+    String json = context.request().getContent();
+    return fromJson(json, type);
   }
 
-  public static <T> T convert(String value, Class<T> type) {
+  public static <T> T fromJson(String json, Class<T> type) throws IOException {
+    return OBJECT_MAPPER.readValue(json, type);
+  }
+
+  public static <T> T fromString(String value, Class<T> type) {
     return OBJECT_MAPPER.convertValue(value, type);
   }
 
-  public static <T> T convert(Map<String, String> keyValues, Class<T> type) {
+  public static <T> T fromKeyValues(Map<String, String> keyValues, Class<T> type) {
     return OBJECT_MAPPER.convertValue(keyValues, type);
   }
 
   public static byte[] toByteArray(Object value) throws JsonProcessingException {
     return OBJECT_MAPPER.writer().writeValueAsBytes(value);
+  }
+
+  private static boolean isUrlEncodedForm(Context context) {
+    String contentType = context.getHeader("Content-Type");
+    return (contentType != null) && (contentType.contains("application/x-www-form-urlencoded"));
   }
 }

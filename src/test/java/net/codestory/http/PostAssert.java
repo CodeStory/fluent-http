@@ -37,6 +37,10 @@ class PostAssert {
     return new PostAssert(path, RestAssured.given().port(WebServerTest.server.port()).parameters(firstParameterName, firstParameterValue, parameterNameValuePairs).expect());
   }
 
+  static PostAssert post(String path, String body) {
+    return new PostAssert(path, RestAssured.given().port(WebServerTest.server.port()).body(body).expect());
+  }
+
   void produces(String content) {
     expect.content(containsString(content)).when().post(path);
   }

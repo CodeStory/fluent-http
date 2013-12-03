@@ -31,6 +31,8 @@ class ReflectionRoute extends AbstractReflectionRoute implements AnyRoute {
       Object[] arguments = TypeConvert.convert(pathParameters, method.getParameterTypes());
 
       return payload(arguments);
+    } catch (RuntimeException e) {
+      throw e;
     } catch (Exception e) {
       throw new IllegalStateException("Unable to apply resource", e);
     }

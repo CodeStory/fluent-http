@@ -21,6 +21,8 @@ import java.util.function.*;
 import net.codestory.http.convert.*;
 import net.codestory.http.internal.*;
 
+import com.github.rjeschke.txtmark.*;
+
 class ReflectionRouteWithContext extends AbstractReflectionRoute implements AnyRouteWithContext {
   ReflectionRouteWithContext(Supplier<Object> resource, Method method) {
     super(resource, method);
@@ -32,6 +34,8 @@ class ReflectionRouteWithContext extends AbstractReflectionRoute implements AnyR
       Object[] arguments = TypeConvert.convert(pathParameters, context, method.getParameterTypes());
 
       return payload(arguments);
+    } catch (RuntimeException e) {
+      throw e;
     } catch (Exception e) {
       throw new IllegalStateException("Unable to apply resource", e);
     }

@@ -61,6 +61,14 @@ public class Context {
     return query.getBoolean(name);
   }
 
+  public String getHeader(String name) {
+    return request.getValue(name);
+  }
+
+  public List<String> getHeaders(String name) {
+    return request.getValues(name);
+  }
+
   public String method() {
     return request.getMethod();
   }
