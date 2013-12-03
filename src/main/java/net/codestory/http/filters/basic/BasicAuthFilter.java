@@ -15,7 +15,6 @@
  */
 package net.codestory.http.filters.basic;
 
-import java.io.*;
 import java.util.*;
 
 import net.codestory.http.filters.*;
@@ -25,36 +24,35 @@ import org.simpleframework.http.*;
 public class BasicAuthFilter implements Filter {
   private final String uriPrefix;
   private final String realm;
-  private final Map<String, String> users;
   private final List<String> hashes;
 
   public BasicAuthFilter(String uriPrefix, String realm, Map<String, String> users) {
-    this.realm = realm;
-    this.users = users;
     this.uriPrefix = uriPrefix;
+    this.realm = realm;
     this.hashes = new ArrayList<>();
-    for (String user : users.keySet()) {
-      byte[] hashByte = new String(user + ":" + users.get(user)).getBytes();
-      String hash = new String(Base64.getEncoder().encode(hashByte));
+
+    users.entrySet().forEach((entry) -> {
+      String user = entry.getKey();
+      String password = entry.getValue();
+      String hash = Base64.getEncoder().encodeToString((user + ":" + password).getBytes());
+
       hashes.add("Basic " + hash);
-    }
+    });
   }
 
   @Override
-  public boolean apply(String uri, Request request, Response response) throws IOException {
+  public boolean apply(String uri, Request request, Response response) {
     if (!uri.startsWith(uriPrefix)) {
       return false; // Ignore
     }
+
     String authorizationHeader = request.getValue("Authorization");
-    if (authorizationHeader != null) {
-      for (String hash : hashes) {
-        if (hash.equals(authorizationHeader.trim())) {
-          return false;
-        }
-      }
+    if ((authorizationHeader == null) || !hashes.contains(authorizationHeader.trim())) {
+      response.setStatus(Status.UNAUTHORIZED);
+      response.setValue("WWW-Authenticate", "Basic realm=\"" + realm + "\"");
+      return true;
     }
-    response.setStatus(Status.UNAUTHORIZED);
-    response.setValue("WWW-Authenticate", "Basic realm=\"" + realm + "\"");
-    return true;
+
+    return false;
   }
 }

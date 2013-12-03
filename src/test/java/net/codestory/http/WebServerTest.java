@@ -20,7 +20,6 @@ import static java.nio.charset.StandardCharsets.*;
 import static net.codestory.http.GetAssert.*;
 import static net.codestory.http.PostAssert.*;
 import static net.codestory.http.PutAssert.*;
-import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
 import java.io.*;
@@ -37,8 +36,6 @@ import net.codestory.http.templating.*;
 
 import org.junit.*;
 import org.junit.contrib.java.lang.system.*;
-
-import com.jayway.restassured.*;
 
 public class WebServerTest {
   @ClassRule
@@ -408,19 +405,8 @@ public class WebServerTest {
     get("/").produces(200, "text/html", "Hello World");
     get("/secure").produces(401);
     get("/secure").producesHeader("WWW-Authenticate", "Basic realm=\"codestory\"");
-    RestAssured.given().port(server.port())
-        .auth().preemptive().basic("jl", "polka")
-        .expect()
-        .statusCode(200)
-        .content(containsString("Secured Hello World"))
-        .when()
-        .get("/secure");
-    RestAssured.given().port(server.port())
-        .auth().preemptive().basic("jl", "wrongpassword")
-        .expect()
-        .statusCode(401)
-        .when()
-        .get("/secure");
+    get("/secure").withAuth("jl", "polka").produces(200, "text/html", "Secured Hello World");
+    get("/secure").withAuth("jl", "wrongpassword").produces(401);
   }
 
   public static class TestResource {

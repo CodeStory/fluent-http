@@ -25,12 +25,20 @@ class GetAssert {
   private final ResponseSpecification expect;
 
   private GetAssert(String path) {
+    this(path, RestAssured.given().port(WebServerTest.server.port()).expect());
+  }
+
+  private GetAssert(String path, ResponseSpecification expect) {
     this.path = path;
-    this.expect = RestAssured.given().port(WebServerTest.server.port()).expect();
+    this.expect = expect;
   }
 
   static GetAssert get(String path) {
     return new GetAssert(path);
+  }
+
+  GetAssert withAuth(String login, String password) {
+    return new GetAssert(path, expect.request().auth().preemptive().basic(login, password).expect());
   }
 
   void produces(int code, String contentType, String content) {
