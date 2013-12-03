@@ -7,7 +7,7 @@
  + ~~Object mapper custom~~
  + ~~Basic auth~~
  + ~~Custom HandleBar Mapper~~
- + Delete
+ + ~~Delete~~
 
 # CI
 

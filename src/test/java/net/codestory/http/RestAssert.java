@@ -65,6 +65,11 @@ class RestAssert {
     return new RestAssert((given) -> given.body(body), request -> request.post(path));
   }
 
+  // DELETE
+  static RestAssert delete(String path) {
+    return new RestAssert((given) -> given, request -> request.delete(path));
+  }
+
   // Assertions
   void produces(String content) {
     then.content(containsString(content));

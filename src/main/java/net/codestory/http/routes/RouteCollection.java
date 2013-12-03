@@ -273,6 +273,31 @@ public class RouteCollection implements Routes {
   }
 
   @Override
+  public void delete(String uriPattern, NoParamRoute route) {
+    add("DELETE", checkParametersCount(uriPattern, 0), route);
+  }
+
+  @Override
+  public void delete(String uriPattern, OneParamRoute route) {
+    add("DELETE", checkParametersCount(uriPattern, 1), route);
+  }
+
+  @Override
+  public void delete(String uriPattern, TwoParamsRoute route) {
+    add("DELETE", checkParametersCount(uriPattern, 2), route);
+  }
+
+  @Override
+  public void delete(String uriPattern, ThreeParamsRoute route) {
+    add("DELETE", checkParametersCount(uriPattern, 3), route);
+  }
+
+  @Override
+  public void delete(String uriPattern, FourParamsRoute route) {
+    add("DELETE", checkParametersCount(uriPattern, 4), route);
+  }
+
+  @Override
   public void catchAll(Object payload) {
     catchAll(() -> payload);
   }

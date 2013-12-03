@@ -417,6 +417,15 @@ public class WebServerTest {
     getWithAuth("/secure", "jl", "wrongpassword").produces(401);
   }
 
+  @Test
+  public void support_delete() {
+    server.configure(routes -> {
+      routes.delete("/", () -> "Hello World");
+    });
+
+    delete("/").produces(200, "text/html", "Hello World");
+  }
+
   public static class TestResource {
     @Get("/")
     public String hello() {
