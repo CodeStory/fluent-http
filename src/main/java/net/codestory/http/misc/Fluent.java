@@ -194,13 +194,6 @@ public interface Fluent<T> extends Iterable<T> {
     return () -> stream().limit(limitSize);
   }
 
-  public default Fluent<T> skip(int numberToSkip) {
-    if (numberToSkip < 0) {
-      throw new IllegalArgumentException("number to skip cannot be negative");
-    }
-    return () -> stream().substream(numberToSkip);
-  }
-
   public default Fluent<T> cycle() {
     return () -> Stream.generate(() -> stream()).flatMap(s -> s);
   }
@@ -326,14 +319,6 @@ public interface Fluent<T> extends Iterable<T> {
       Function<? super T, Stream<V>> toListAndThenToStream = toList.andThen(toStream);
       return stream().flatMap(toListAndThenToStream);
     };
-  }
-
-  public default Fluent<T> substream(long startInclusive) {
-    return () -> stream().substream(startInclusive);
-  }
-
-  public default Fluent<T> substream(long startInclusive, long endExclusive) {
-    return () -> stream().substream(startInclusive, endExclusive);
   }
 
   public default Fluent<T> sorted() {
