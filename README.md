@@ -9,6 +9,10 @@
  + ~~Custom HandleBar Mapper~~
  + Delete
 
+# CI
+
+[![Build Status](https://api.travis-ci.org/CodeStory/code-story-http.png)](https://api.travis-ci.org/CodeStory/code-story-http.png)
+
 # Deploy on Maven Central
 
 Build the release :
