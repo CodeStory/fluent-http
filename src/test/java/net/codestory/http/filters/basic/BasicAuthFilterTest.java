@@ -15,74 +15,70 @@
  */
 package net.codestory.http.filters.basic;
 
-import net.codestory.http.filters.Filter;
-import org.junit.Before;
-import org.junit.Test;
-import org.simpleframework.http.Request;
-import org.simpleframework.http.Response;
-import org.simpleframework.http.Status;
-
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.io.*;
+import java.util.*;
+
+import net.codestory.http.filters.*;
+
+import org.junit.*;
+import org.simpleframework.http.*;
+
 public class BasicAuthFilterTest {
-    private Response response;
-    private Request request;
-    private Filter filter;
+  private Response response;
+  private Request request;
+  private Filter filter;
 
-    @Before
-    public void init() throws IOException {
-        response = mock(Response.class);
-        PrintStream printStream = mock(PrintStream.class);
-        when(response.getPrintStream()).thenReturn(printStream);
-        request = mock(Request.class);
-        Map<String, String> users = new HashMap<>();
-        users.put("jl", "polka");
-        filter = new BasicAuthFilter("/secure","codestory", users);
-    }
+  @Before
+  public void init() throws IOException {
+    response = mock(Response.class);
+    PrintStream printStream = mock(PrintStream.class);
+    when(response.getPrintStream()).thenReturn(printStream);
+    request = mock(Request.class);
+    Map<String, String> users = new HashMap<>();
+    users.put("jl", "polka");
+    filter = new BasicAuthFilter("/secure", "codestory", users);
+  }
 
-    @Test
-    public void should_not_treat_non_secured_path() throws IOException {
-        assertThat(filter.apply("/foo", request, response)).isFalse();
-    }
+  @Test
+  public void should_not_treat_non_secured_path() throws IOException {
+    assertThat(filter.apply("/foo", request, response)).isFalse();
+  }
 
-    @Test
-    public void should_answser_401_on_non_authenticated_query() throws IOException {
-        assertThat(filter.apply("/secure/foo", request, response)).isTrue();
-        verify(response).setStatus(Status.UNAUTHORIZED);
-        verify(response).setValue("WWW-Authenticate", "Basic realm=\"codestory\"");
-    }
+  @Test
+  public void should_answser_401_on_non_authenticated_query() throws IOException {
+    assertThat(filter.apply("/secure/foo", request, response)).isTrue();
+    verify(response).setStatus(Status.UNAUTHORIZED);
+    verify(response).setValue("WWW-Authenticate", "Basic realm=\"codestory\"");
+  }
 
-    @Test
-    public void should_answer_200_on_authorized_query() throws IOException {
-        when(request.getValue("Authorization")).thenReturn(" Basic amw6cG9sa2E="); // "jl:polka" encoded in base64
-        assertThat(filter.apply("/secure/foo", request, response)).isFalse();
-    }
+  @Test
+  public void should_answer_200_on_authorized_query() throws IOException {
+    when(request.getValue("Authorization")).thenReturn(" Basic amw6cG9sa2E="); // "jl:polka" encoded in base64
+    assertThat(filter.apply("/secure/foo", request, response)).isFalse();
+  }
 
-    @Test
-    public void should_answer_401_on_unauthorized_query() throws IOException {
-        when(request.getValue("Authorization")).thenReturn(" Basic FOOBAR9sa2E=");
-        assertThat(filter.apply("/secure/foo", request, response)).isTrue();
-        verify(response).setStatus(Status.UNAUTHORIZED);
-        verify(response).setValue("WWW-Authenticate", "Basic realm=\"codestory\"");
-    }
+  @Test
+  public void should_answer_401_on_unauthorized_query() throws IOException {
+    when(request.getValue("Authorization")).thenReturn(" Basic FOOBAR9sa2E=");
+    assertThat(filter.apply("/secure/foo", request, response)).isTrue();
+    verify(response).setStatus(Status.UNAUTHORIZED);
+    verify(response).setValue("WWW-Authenticate", "Basic realm=\"codestory\"");
+  }
 
-    @Test
-    public void should_block_all_subsequent_paths() throws IOException {
-        assertThat(filter.apply("/", request, response)).isFalse();
-        assertThat(filter.apply("/foo", request, response)).isFalse();
-        assertThat(filter.apply("/foo/", request, response)).isFalse();
-        assertThat(filter.apply("/foo/secure", request, response)).isFalse();
-        assertThat(filter.apply("/secure", request, response)).isTrue();
-        assertThat(filter.apply("/secure/", request, response)).isTrue();
-        assertThat(filter.apply("/secure/foo", request, response)).isTrue();
-        assertThat(filter.apply("/secure/foo/", request, response)).isTrue();
-    }
+  @Test
+  public void should_block_all_subsequent_paths() throws IOException {
+    assertThat(filter.apply("/", request, response)).isFalse();
+    assertThat(filter.apply("/foo", request, response)).isFalse();
+    assertThat(filter.apply("/foo/", request, response)).isFalse();
+    assertThat(filter.apply("/foo/secure", request, response)).isFalse();
+    assertThat(filter.apply("/secure", request, response)).isTrue();
+    assertThat(filter.apply("/secure/", request, response)).isTrue();
+    assertThat(filter.apply("/secure/foo", request, response)).isTrue();
+    assertThat(filter.apply("/secure/foo/", request, response)).isTrue();
+  }
 
 
 }

@@ -54,6 +54,6 @@ class GetAssert {
   }
 
   void producesHeader(String name, String value) {
-      expect.header(name,value);
+    expect.header(name, value);
   }
 }

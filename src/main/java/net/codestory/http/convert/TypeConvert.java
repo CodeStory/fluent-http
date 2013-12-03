@@ -32,7 +32,7 @@ public class TypeConvert {
   }
 
   public static void overrideMapper(ObjectMapper mapper) {
-      OBJECT_MAPPER = mapper;
+    OBJECT_MAPPER = mapper;
   }
 
   public static Object[] convert(String[] pathParameters, Context context, Class<?>[] types) {

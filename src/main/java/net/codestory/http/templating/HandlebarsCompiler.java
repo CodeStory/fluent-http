@@ -50,17 +50,17 @@ public class HandlebarsCompiler {
         });
   }
 
-    private static Object findHandleBarHelper() {
-        try {
-            String handleBarHelperClassName = (String) Site.get().get("handleBarHelper");
-            System.out.println("Loading external HandleBar helper class " + handleBarHelperClassName);
-            return Class.forName(handleBarHelperClassName).newInstance();
-        } catch (Exception e) {
-            return NopRegister.class;
-        }
+  private static Object findHandleBarHelper() {
+    try {
+      String handleBarHelperClassName = (String) Site.get().get("handleBarHelper");
+      System.out.println("Loading external HandleBar helper class " + handleBarHelperClassName);
+      return Class.forName(handleBarHelperClassName).newInstance();
+    } catch (Exception e) {
+      return NopRegister.class;
     }
+  }
 
-    private static Context context(Map<String, Object> variables) {
+  private static Context context(Map<String, Object> variables) {
     return Context.newBuilder(null)
         .resolver(
             MapValueResolver.INSTANCE,
@@ -72,6 +72,6 @@ public class HandlebarsCompiler {
         .build();
   }
 
-    private static class NopRegister {
-    }
+  private static class NopRegister {
+  }
 }
