@@ -17,9 +17,7 @@ package net.codestory.http;
 
 import static com.google.inject.internal.util.$ImmutableMap.*;
 import static java.nio.charset.StandardCharsets.*;
-import static net.codestory.http.GetAssert.*;
-import static net.codestory.http.PostAssert.*;
-import static net.codestory.http.PutAssert.*;
+import static net.codestory.http.RestAssert.*;
 import static org.mockito.Mockito.*;
 
 import java.io.*;
@@ -415,8 +413,8 @@ public class WebServerTest {
     get("/").produces(200, "text/html", "Hello World");
     get("/secure").produces(401);
     get("/secure").producesHeader("WWW-Authenticate", "Basic realm=\"codestory\"");
-    get("/secure").withAuth("jl", "polka").produces(200, "text/html", "Secured Hello World");
-    get("/secure").withAuth("jl", "wrongpassword").produces(401);
+    getWithAuth("/secure", "jl", "polka").produces(200, "text/html", "Secured Hello World");
+    getWithAuth("/secure", "jl", "wrongpassword").produces(401);
   }
 
   public static class TestResource {
