@@ -38,6 +38,7 @@ public class ContentTypes {
         return "text/css";
       case ".js":
       case ".coffee":
+      case ".litcoffee":
         return "application/javascript";
       case ".zip":
         return "application/zip";
@@ -82,6 +83,7 @@ public class ContentTypes {
       case ".map":
       case ".js":
       case ".coffee":
+      case ".litcoffee":
         return false;
       default:
         return true;

@@ -41,6 +41,7 @@ public class ContentTypesTest {
     assertThat(get(Paths.get("image.png"))).isEqualTo("image/png");
     assertThat(get(Paths.get("script.js"))).isEqualTo("application/javascript");
     assertThat(get(Paths.get("script.coffee"))).isEqualTo("application/javascript");
+    assertThat(get(Paths.get("script.litcoffee"))).isEqualTo("application/javascript");
     assertThat(get(Paths.get("unknown"))).isEqualTo("text/plain");
   }
 
@@ -62,6 +63,7 @@ public class ContentTypesTest {
     assertThat(support_templating(Paths.get("image.png"))).isFalse();
     assertThat(support_templating(Paths.get("script.js"))).isFalse();
     assertThat(support_templating(Paths.get("script.coffee"))).isFalse();
+    assertThat(support_templating(Paths.get("script.litcoffee"))).isFalse();
     assertThat(support_templating(Paths.get("unknown"))).isFalse();
   }
 
@@ -83,6 +85,7 @@ public class ContentTypesTest {
     assertThat(is_binary(Paths.get("image.png"))).isTrue();
     assertThat(is_binary(Paths.get("script.js"))).isFalse();
     assertThat(is_binary(Paths.get("script.coffee"))).isFalse();
+    assertThat(is_binary(Paths.get("script.litcoffee"))).isFalse();
     assertThat(is_binary(Paths.get("unknown"))).isTrue();
   }
 }
