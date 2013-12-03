@@ -51,12 +51,15 @@ public class HandlebarsCompiler {
   }
 
   private static Object findHandleBarHelper() {
-    try {
-      String handleBarHelperClassName = (String) Site.get().get("handleBarHelper");
-      System.out.println("Loading external HandleBar helper class " + handleBarHelperClassName);
-      return Class.forName(handleBarHelperClassName).newInstance();
-    } catch (Exception e) {
+    String helperClassName = (String) Site.get().get("handleBarHelper");
+    if (helperClassName == null) {
       return NopRegister.class;
+    }
+    try {
+      System.out.println("Loading external HandleBar helper class " + helperClassName);
+      return Class.forName(helperClassName).newInstance();
+    } catch (Exception e) {
+      throw new IllegalStateException("Unable to register " + helperClassName);
     }
   }
 
