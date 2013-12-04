@@ -15,6 +15,7 @@
  */
 package net.codestory.http.routes;
 
+import static java.util.Arrays.*;
 import static net.codestory.http.internal.UriParser.*;
 import static net.codestory.http.routes.Match.*;
 
@@ -92,15 +93,10 @@ public class RouteCollection implements Routes {
     }
 
     for (Method method : type.getMethods()) {
-      for (Get get : method.getDeclaredAnnotationsByType(Get.class)) {
-        addResource("GET", method, resource, urlPrefix + get.value());
-      }
-      for (Post post : method.getDeclaredAnnotationsByType(Post.class)) {
-        addResource("POST", method, resource, urlPrefix + post.value());
-      }
-      for (Put put : method.getDeclaredAnnotationsByType(Put.class)) {
-        addResource("PUT", method, resource, urlPrefix + put.value());
-      }
+      stream(method.getDeclaredAnnotationsByType(Get.class)).forEach(get -> addResource("GET", method, resource, urlPrefix + get.value()));
+      stream(method.getDeclaredAnnotationsByType(Post.class)).forEach(post -> addResource("POST", method, resource, urlPrefix + post.value()));
+      stream(method.getDeclaredAnnotationsByType(Put.class)).forEach(put -> addResource("PUT", method, resource, urlPrefix + put.value()));
+      stream(method.getDeclaredAnnotationsByType(Delete.class)).forEach(delete -> addResource("DELETE", method, resource, urlPrefix + delete.value()));
     }
   }
 
