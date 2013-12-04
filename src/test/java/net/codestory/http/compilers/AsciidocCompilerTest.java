@@ -26,7 +26,7 @@ public class AsciidocCompilerTest {
   public void empty() {
     String html = Compiler.compile(Paths.get("empty.asciidoc"), "");
 
-    assertThat(html).isEmpty();
+    assertThat(html).isEqualTo("\n");
   }
 
   @Test

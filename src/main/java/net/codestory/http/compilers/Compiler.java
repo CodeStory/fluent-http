@@ -22,7 +22,6 @@ import java.nio.file.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 
-import org.asciidoctor.*;
 import org.markdown4j.*;
 
 import com.github.rjeschke.txtmark.*;
@@ -71,9 +70,11 @@ public enum Compiler {
     }
   },
   ASCIIDOC {
+    private final Supplier<AsciidocCompiler> asciidocCompiler = memoize(AsciidocCompiler::new);
+
     @Override
     String doCompile(Path path, String asciidoc) throws IOException {
-      return Asciidoctor.Factory.create().render(asciidoc, new Options());
+      return asciidocCompiler.get().compile(asciidoc);
     }
   },
   NONE {

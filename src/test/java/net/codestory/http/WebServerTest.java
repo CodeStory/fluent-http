@@ -420,10 +420,17 @@ public class WebServerTest {
   @Test
   public void support_delete() {
     server.configure(routes -> {
-      routes.delete("/", () -> "Hello World");
+      routes.delete("/delete", () -> "From route");
+      routes.add(new Object() {
+        @Delete("/deleteFromResource")
+        public String delete() {
+          return "From resource";
+        }
+      });
     });
 
-    delete("/").produces(200, "text/html", "Hello World");
+    delete("/delete").produces(200, "text/html", "From route");
+    delete("/deleteFromResource").produces(200, "text/html", "From resource");
   }
 
   public static class TestResource {
