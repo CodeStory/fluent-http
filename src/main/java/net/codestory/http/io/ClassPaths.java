@@ -46,15 +46,7 @@ class ClassPaths {
       // Ignore
     }
 
-    try {
-      if (name.contains(".jar")) {
-        return forJarInputDir(url);
-      }
-    } catch (Throwable e) {
-      // Ignore
-    }
-
-    throw new IllegalStateException("unknown url format" + name);
+    return Collections.emptyList();
   }
 
   private static File getFile(URL url) {
@@ -157,21 +149,6 @@ class ClassPaths {
         String filepath = child.getPath().replace("\\", "/");
         if (filepath.startsWith(rootPath)) {
           files.add(filepath.substring(rootPath.length() + 1));
-        }
-      }
-    }
-
-    return files;
-  }
-
-  private static List<String> forJarInputDir(URL url) throws IOException {
-    List<String> files = new ArrayList<>();
-
-    try (JarInputStream entries = new JarInputStream(url.openConnection().getInputStream())) {
-      ZipEntry entry;
-      while (null != (entry = entries.getNextEntry())) {
-        if (!entry.isDirectory()) {
-          files.add(entry.getName());
         }
       }
     }
