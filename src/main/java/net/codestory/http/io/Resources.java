@@ -24,9 +24,6 @@ import java.util.*;
 
 import net.codestory.http.types.*;
 
-import org.reflections.*;
-import org.reflections.scanners.*;
-
 public class Resources {
   private static final String ROOT = "app";
 
@@ -39,8 +36,7 @@ public class Resources {
 
     try {
       if (new File("target/classes").exists() && !Boolean.getBoolean("http.disable.classpath")) {
-        new Reflections(ROOT, new ResourcesScanner()).getResources(name -> true)
-            .forEach(resource -> paths.add(relativeName(resource)));
+        new ClasspathScanner().getResources(ROOT).forEach(resource -> paths.add(relativeName(resource)));
       }
 
       if (!Boolean.getBoolean("http.disable.filesystem")) {

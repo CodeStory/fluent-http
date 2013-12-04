@@ -21,8 +21,6 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import javax.annotation.*;
-
 @FunctionalInterface
 public interface Fluent<T> extends Iterable<T> {
   Stream<T> stream();
@@ -127,11 +125,11 @@ public interface Fluent<T> extends Iterable<T> {
     return join("");
   }
 
-  public default boolean contains(@Nullable Object element) {
+  public default boolean contains(Object element) {
     return stream().anyMatch(Predicate.isEqual(element));
   }
 
-  public default int indexOf(@Nullable Object element) {
+  public default int indexOf(Object element) {
     int index = 0;
     for (T value : this) {
       if (Objects.equals(value, element)) {
