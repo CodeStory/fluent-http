@@ -15,8 +15,13 @@
  */
 package net.codestory.http.io;
 
+import static java.nio.file.Files.*;
+import static net.codestory.http.io.FileVisitors.*;
+import static net.codestory.http.io.Resources.*;
+
 import java.io.*;
 import java.net.*;
+import java.nio.file.*;
 import java.util.*;
 import java.util.jar.*;
 import java.util.zip.*;
@@ -127,32 +132,15 @@ class ClassPaths {
     return files;
   }
 
-  private static List<String> forSystemDir(File file) {
+  private static List<String> forSystemDir(File file) throws IOException {
     if (file == null || !file.exists()) {
       return Collections.emptyList();
     }
 
-    Deque<File> stack = new ArrayDeque<>();
-    stack.add(file);
+    Path parent = file.toPath();
 
     List<String> files = new ArrayList<>();
-
-    while (!stack.isEmpty()) {
-      File child = stack.pop();
-      if (child.isDirectory()) {
-        File[] children = child.listFiles();
-        if (children != null) {
-          Collections.addAll(stack, children);
-        }
-      } else {
-        String rootPath = file.getPath().replace("\\", "/");
-        String filepath = child.getPath().replace("\\", "/");
-        if (filepath.startsWith(rootPath)) {
-          files.add(filepath.substring(rootPath.length() + 1));
-        }
-      }
-    }
-
+    walkFileTree(parent, onFile(path -> files.add(relativePath(parent, path))));
     return files;
   }
 }

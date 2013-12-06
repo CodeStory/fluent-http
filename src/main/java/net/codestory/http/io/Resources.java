@@ -15,11 +15,13 @@
  */
 package net.codestory.http.io;
 
+import static java.nio.file.Files.*;
+import static net.codestory.http.io.FileVisitors.*;
+
 import java.io.*;
 import java.net.*;
 import java.nio.charset.*;
 import java.nio.file.*;
-import java.nio.file.attribute.*;
 import java.util.*;
 
 import net.codestory.http.types.*;
@@ -34,19 +36,15 @@ public class Resources {
   public static Set<String> list() {
     Set<String> paths = new TreeSet<>();
 
+    Path parentPath = Paths.get(ROOT);
+
     try {
       if (new File("target/classes").exists() && !Boolean.getBoolean("http.disable.classpath")) {
-        new ClasspathScanner().getResources(ROOT).forEach(resource -> paths.add(relativeName(resource)));
+        new ClasspathScanner().getResources(ROOT).forEach(resource -> paths.add(relativePath(parentPath, Paths.get(resource))));
       }
 
       if (!Boolean.getBoolean("http.disable.filesystem")) {
-        Files.walkFileTree(Paths.get(ROOT), new SimpleFileVisitor<Path>() {
-          @Override
-          public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-            paths.add(relativeName(file.toString()));
-            return FileVisitResult.CONTINUE;
-          }
-        });
+        walkFileTree(Paths.get(ROOT), onFile(path -> paths.add(relativePath(parentPath, path))));
       }
     } catch (IOException e) {
       // Ignore
@@ -57,8 +55,8 @@ public class Resources {
     return paths;
   }
 
-  private static String relativeName(String path) {
-    return Strings.substringAfter(path, ROOT + '/');
+  public static String relativePath(Path parent, Path path) {
+    return parent.relativize(path).toString();
   }
 
   public static boolean isPublic(Path path) {

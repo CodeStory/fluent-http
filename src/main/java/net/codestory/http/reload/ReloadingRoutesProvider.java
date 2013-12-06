@@ -15,9 +15,11 @@
  */
 package net.codestory.http.reload;
 
+import static java.nio.file.Files.*;
+import static net.codestory.http.io.FileVisitors.*;
+
 import java.io.*;
 import java.nio.file.*;
-import java.nio.file.attribute.*;
 import java.util.concurrent.atomic.*;
 
 import net.codestory.http.*;
@@ -64,18 +66,14 @@ class ReloadingRoutesProvider implements RoutesProvider {
     try {
       WatchService watcher = path.getFileSystem().newWatchService();
 
-      Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
-        @Override
-        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attr) throws IOException {
-          dir.register(watcher, new WatchEvent.Kind[]{
-              StandardWatchEventKinds.ENTRY_CREATE,
-              StandardWatchEventKinds.ENTRY_MODIFY,
-              StandardWatchEventKinds.ENTRY_DELETE},
-              SensitivityWatchEventModifier.HIGH);
+      walkFileTree(path, onDirectory(dir -> {
+        dir.register(watcher, new WatchEvent.Kind[]{
+            StandardWatchEventKinds.ENTRY_CREATE,
+            StandardWatchEventKinds.ENTRY_MODIFY,
+            StandardWatchEventKinds.ENTRY_DELETE},
+            SensitivityWatchEventModifier.HIGH);
+      }));
 
-          return FileVisitResult.CONTINUE;
-        }
-      });
       return watcher;
     } catch (IOException e) {
       throw new IllegalStateException("Unable to watch folder " + path);
