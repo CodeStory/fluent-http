@@ -30,7 +30,7 @@ import com.github.sommeri.less4j.core.*;
 
 public enum Compiler {
   COFFEE {
-    private final Supplier<CoffeeCompiler> coffeeCompiler = memoize(CoffeeCompiler::new);
+    private final Supplier<CoffeeCompiler> coffeeCompiler = memoize(() -> new CoffeeCompiler());
 
     @Override
     String doCompile(Path path, String coffee) throws IOException {
@@ -70,7 +70,7 @@ public enum Compiler {
     }
   },
   ASCIIDOC {
-    private final Supplier<AsciidocCompiler> asciidocCompiler = memoize(AsciidocCompiler::new);
+    private final Supplier<AsciidocCompiler> asciidocCompiler = memoize(() -> new AsciidocCompiler());
 
     @Override
     String doCompile(Path path, String asciidoc) throws IOException {

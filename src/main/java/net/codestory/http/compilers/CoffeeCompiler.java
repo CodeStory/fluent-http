@@ -15,34 +15,15 @@
  */
 package net.codestory.http.compilers;
 
-import static java.nio.charset.StandardCharsets.*;
-import static javax.script.ScriptContext.*;
-
-import java.io.*;
-
 import javax.script.*;
 
-class CoffeeCompiler {
-  private final CompiledScript coffeeToJs;
-  private final Bindings bindings;
-
+class CoffeeCompiler extends AbstractNashornCompiler {
   public CoffeeCompiler() {
-    ScriptEngine nashorn = new ScriptEngineManager().getEngineByName("nashorn");
-
-    try (Reader reader = new InputStreamReader(ClassLoader.getSystemResourceAsStream("coffee/coffee-script.js"), UTF_8)) {
-      coffeeToJs = ((Compilable) nashorn).compile(reader);
-      bindings = nashorn.getBindings(ENGINE_SCOPE);
-    } catch (IOException | ScriptException e) {
-      throw new IllegalStateException(e);
-    }
+    super("coffee/coffee-script.js");
   }
 
-  public synchronized String compile(String source) throws IOException {
-    try {
-      bindings.put("coffeeScriptSource", source);
-      return coffeeToJs.eval(bindings).toString();
-    } catch (ScriptException e) {
-      throw new IOException("Unable to compile coffee", e);
-    }
+  @Override
+  protected void setBindings(Bindings bindings, String source) {
+    bindings.put("coffeeScriptSource", source);
   }
 }

@@ -15,34 +15,15 @@
  */
 package net.codestory.http.compilers;
 
-import static java.nio.charset.StandardCharsets.*;
-import static javax.script.ScriptContext.*;
-
-import java.io.*;
-
 import javax.script.*;
 
-class AsciidocCompiler {
-  private final CompiledScript coffeeToJs;
-  private final Bindings bindings;
-
+class AsciidocCompiler extends AbstractNashornCompiler {
   public AsciidocCompiler() {
-    ScriptEngine nashorn = new ScriptEngineManager().getEngineByName("nashorn");
-
-    try (Reader reader = new InputStreamReader(ClassLoader.getSystemResourceAsStream("coffee/opal_asciidoctor.js"), UTF_8)) {
-      coffeeToJs = ((Compilable) nashorn).compile(reader);
-      bindings = nashorn.getBindings(ENGINE_SCOPE);
-    } catch (IOException | ScriptException e) {
-      throw new IllegalStateException(e);
-    }
+    super("asciidoc/opal_asciidoctor.js");
   }
 
-  public synchronized String compile(String source) throws IOException {
-    try {
-      bindings.put("asciidocSource", source);
-      return coffeeToJs.eval(bindings).toString();
-    } catch (ScriptException e) {
-      throw new IOException("Unable to compile coffee", e);
-    }
+  @Override
+  protected void setBindings(Bindings bindings, String source) {
+    bindings.put("asciidocSource", source);
   }
 }
