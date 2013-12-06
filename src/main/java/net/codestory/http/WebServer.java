@@ -171,7 +171,7 @@ public class WebServer {
     try {
       errorPage.writeTo(response);
     } catch (IOException error) {
-      System.out.println("Unable to server an error page " + error);
+      System.out.println("Unable to serve an error page " + error);
       error.printStackTrace();
     }
   }
