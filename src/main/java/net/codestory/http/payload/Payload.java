@@ -135,7 +135,7 @@ public class Payload {
       return "application/octet-stream";
     }
     if (content instanceof String) {
-      return "text/html";
+      return "text/html;charset=UTF-8";
     }
     if (content instanceof InputStream) {
       return "application/octet-stream";
@@ -144,7 +144,7 @@ public class Payload {
       Path path = Resources.findExistingPath(((ModelAndView) content).view());
       return ContentTypes.get(path);
     }
-    return "application/json";
+    return "application/json;charset=UTF-8";
   }
 
   byte[] getData() throws IOException {

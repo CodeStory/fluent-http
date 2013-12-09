@@ -31,7 +31,7 @@ public class PayloadTest {
 
     assertThat(payload.code()).isEqualTo(200);
     assertThat(payload.getData()).isEqualTo("Hello".getBytes(UTF_8));
-    assertThat(payload.getContentType()).isEqualTo("text/html");
+    assertThat(payload.getContentType()).isEqualTo("text/html;charset=UTF-8");
   }
 
   @Test
@@ -49,7 +49,7 @@ public class PayloadTest {
     Payload payload = new Payload(new Person("NAME", 42));
 
     assertThat(payload.getData()).isEqualTo("{\"name\":\"NAME\",\"age\":42}".getBytes(UTF_8));
-    assertThat(payload.getContentType()).isEqualTo("application/json");
+    assertThat(payload.getContentType()).isEqualTo("application/json;charset=UTF-8");
   }
 
   @Test
