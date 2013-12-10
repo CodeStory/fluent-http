@@ -34,32 +34,36 @@ public class HandlebarsCompiler {
   }
 
   private static Handlebars handlebars(Map<String, Object> variables) {
-    return new Handlebars()
-        .startDelimiter("[[")
-        .endDelimiter("]]")
-        .registerHelpers(new EachReverseHelperSource())
-        .registerHelpers(new EachValueHelperSource())
-        .registerHelpers(StringHelpers.class)
-        .registerHelpers(findHandleBarHelper())
-        .with(new ConcurrentMapTemplateCache())
-        .with(new AbstractTemplateLoader() {
-          @Override
-          public TemplateSource sourceAt(String location) {
-            return new StringTemplateSource(location, new Template("_includes", location).render(variables));
-          }
-        });
+      Handlebars handlebars = new Handlebars()
+              .startDelimiter("[[")
+              .endDelimiter("]]")
+              .registerHelpers(new EachReverseHelperSource())
+              .registerHelpers(new EachValueHelperSource())
+              .registerHelpers(StringHelpers.class)
+              .with(new ConcurrentMapTemplateCache())
+              .with(new AbstractTemplateLoader() {
+                  @Override
+                  public TemplateSource sourceAt(String location) {
+                      return new StringTemplateSource(location, new Template("_includes", location).render(variables));
+                  }
+              });
+      if (isThereACustomHandleBarHelperToLoad()) {
+        handlebars.registerHelpers(findHandleBarHelpers());
+      }
+      return handlebars;
   }
 
-  private static Object findHandleBarHelper() {
+  private static boolean isThereACustomHandleBarHelperToLoad() {
+      return null != Site.get().get("handleBarHelper");
+  }
+
+
+  private static Class<?> findHandleBarHelpers() {
     String helperClassName = (String) Site.get().get("handleBarHelper");
-    if (helperClassName == null) {
-      return NopRegister.class;
-    }
     try {
-      System.out.println("Loading external HandleBar helper class " + helperClassName);
-      return Class.forName(helperClassName).newInstance();
+        return Class.forName(helperClassName);
     } catch (Exception e) {
-      throw new IllegalStateException("Unable to register " + helperClassName);
+        throw new IllegalStateException("Unable to register " + helperClassName);
     }
   }
 
