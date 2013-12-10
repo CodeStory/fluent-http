@@ -19,6 +19,9 @@ import static java.nio.charset.StandardCharsets.*;
 
 import java.io.*;
 import java.nio.file.Path;
+import java.text.*;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import net.codestory.http.compilers.Compiler;
@@ -105,6 +108,8 @@ public class Payload {
 
   public void writeTo(Response response) throws IOException {
     headers.entrySet().forEach(entry -> response.setValue(entry.getKey(), entry.getValue()));
+    addHeadersForContent(response);
+
     cookies.forEach(cookie -> response.setCookie(cookie));
 
     response.setCode(code);
@@ -171,6 +176,19 @@ public class Payload {
     }
 
     return TypeConvert.toByteArray(content);
+  }
+
+  void addHeadersForContent(Response response) {
+    if (content instanceof Path) {
+      addLastModifiedHeader(((Path) content).toFile(), response);
+    } else if (content instanceof File) {
+      addLastModifiedHeader((File) content, response);
+    }
+  }
+
+  private void addLastModifiedHeader(File file, Response response) {
+    String lastModified = DateTimeFormatter.RFC_1123_DATE_TIME.format(ZonedDateTime.ofInstant(Instant.ofEpochMilli(file.lastModified()), ZoneOffset.systemDefault()));
+    response.setValue("Last-Modified", lastModified);
   }
 
   private static byte[] forString(String value) {

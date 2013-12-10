@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.io.*;
+import java.nio.file.*;
 
 import org.junit.*;
 import org.simpleframework.http.*;
@@ -104,6 +105,17 @@ public class PayloadTest {
     verify(response).setCode(301);
     verify(response).setContentLength(0);
     verifyNoMoreInteractions(response);
+  }
+
+  @Test
+  public void last_modified() throws IOException {
+    Response response = mock(Response.class);
+    when(response.getOutputStream()).thenReturn(new ByteArrayOutputStream());
+
+    Payload payload = new Payload(Paths.get("hello.md"));
+    payload.writeTo(response);
+
+    verify(response).setValue(eq("Last-Modified"), anyString());
   }
 
   static class Person {
