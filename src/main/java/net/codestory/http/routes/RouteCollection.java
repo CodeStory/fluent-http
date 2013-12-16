@@ -17,7 +17,6 @@ package net.codestory.http.routes;
 
 import static java.util.Arrays.*;
 import static net.codestory.http.internal.UriParser.*;
-import static net.codestory.http.routes.Match.*;
 
 import java.io.*;
 import java.lang.reflect.Method;
@@ -322,36 +321,35 @@ public class RouteCollection implements Routes {
     routes.add(new SourceMapRoute());
   }
 
-  public Match apply(Request request, Response response) throws IOException {
+  public Payload apply(Request request, Response response) throws IOException {
     String uri = request.getPath().getPath();
     if (uri == null) {
-      return WRONG_URL;
+      return Payload.notFound();
     }
+
+    PayloadSupplier payloadSupplier = () -> {
+      Payload bestMatch = Payload.notFound();
+
+      for (Route route : routes) {
+        Payload match = route.apply(uri, request, response);
+        if (!match.isError()) {
+          return match;
+        }
+
+        if (match.isBetter(bestMatch)) {
+          bestMatch = match;
+        }
+      }
+
+      return bestMatch;
+    };
 
     for (Supplier<Filter> filter : filters) {
-      if (filter.get().apply(uri, request, response)) {
-        return OK;
-      }
+      PayloadSupplier nextFilter = payloadSupplier;
+      payloadSupplier = () -> filter.get().apply(uri, request, response, nextFilter);
     }
 
-    Match bestMatch = WRONG_URL;
-
-    for (Route route : routes) {
-      Match match = route.apply(uri, request, response);
-      if (match == OK) {
-        return OK;
-      }
-      if (match.isBetter(bestMatch)) {
-        bestMatch = match;
-      }
-    }
-
-    if (bestMatch == TRY_WITH_LEADING_SLASH) {
-      Payload.seeOther(uri + "/").writeTo(response);
-      return OK;
-    }
-
-    return bestMatch;
+    return payloadSupplier.get();
   }
 
   private static String checkParametersCount(String uriPattern, int count) {

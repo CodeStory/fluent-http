@@ -15,14 +15,17 @@
  */
 package net.codestory.http.filters.log;
 
+import java.io.*;
+
 import net.codestory.http.filters.*;
+import net.codestory.http.payload.*;
 
 import org.simpleframework.http.*;
 
 public class LogRequestFilter implements Filter {
   @Override
-  public boolean apply(String uri, Request request, Response response) {
+  public Payload apply(String uri, Request request, Response response, PayloadSupplier nextFilter) throws IOException {
     System.out.println(uri);
-    return false;
+    return nextFilter.get();
   }
 }

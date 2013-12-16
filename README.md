@@ -4,10 +4,6 @@
  + Supporter les templates pré-générés
  + Set ContentType on xml using yaml
  + Javadoc
- + ~~Object mapper custom~~
- + ~~Basic auth~~
- + ~~Custom HandleBar Mapper~~
- + ~~Delete~~
  + handle logs properly rather than 'sysouting' like a pig ;)
  + PROD_MODE is not really convenient. It forces to have more complex prod script
  + PROD_MODE and app.port should be also environement variables

@@ -15,8 +15,6 @@
  */
 package net.codestory.http;
 
-import static net.codestory.http.routes.Match.*;
-
 import java.io.*;
 import java.net.*;
 import java.nio.file.Path;
@@ -26,7 +24,6 @@ import net.codestory.http.errors.*;
 import net.codestory.http.filters.log.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.reload.*;
-import net.codestory.http.routes.*;
 import net.codestory.http.ssl.*;
 
 import org.simpleframework.http.*;
@@ -137,7 +134,13 @@ public class WebServer {
       applyRoutes(request, response);
     } catch (Exception e) {
       e.printStackTrace();
-      onError(e, response);
+      try {
+        Payload errorPage = onError(e);
+        errorPage.writeTo(response);
+      } catch (IOException error) {
+        System.out.println("Unable to serve an error page " + error);
+        error.printStackTrace();
+      }
     } finally {
       try {
         response.close();
@@ -148,32 +151,28 @@ public class WebServer {
   }
 
   protected void applyRoutes(Request request, Response response) throws IOException {
-    Match match = routesProvider.get().apply(request, response);
-    if (match != OK) {
-      onPageNotFound(match, response);
+    Payload payload = routesProvider.get().apply(request, response);
+    if (payload.isError()) {
+      Payload errorPage = onPageNotFound(payload);
+      errorPage.writeTo(response);
+    } else {
+      payload.writeTo(response);
     }
   }
 
-  protected void onPageNotFound(Match match, Response response) {
-    int code = match == WRONG_METHOD ? 405 : 404;
-    onError(code, null, response);
+  protected Payload onPageNotFound(Payload payload) {
+    return onError(payload.code(), null);
   }
 
-  protected void onError(Exception e, Response response) {
+  protected Payload onError(Exception e) {
     int code = (e instanceof HttpException) ? ((HttpException) e).code() : 500;
-    onError(code, e, response);
+    return onError(code, e);
   }
 
-  protected void onError(int code, Exception e, Response response) {
+  protected Payload onError(int code, Exception e) {
     Exception shownError = devMode() ? e : null;
 
-    Payload errorPage = errorPage(code, shownError);
-    try {
-      errorPage.writeTo(response);
-    } catch (IOException error) {
-      System.out.println("Unable to serve an error page " + error);
-      error.printStackTrace();
-    }
+    return errorPage(code, shownError);
   }
 
   protected Payload errorPage(int code, Exception e) {

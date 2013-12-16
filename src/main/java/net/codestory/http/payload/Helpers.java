@@ -18,16 +18,32 @@ package net.codestory.http.payload;
 import net.codestory.http.templating.*;
 
 public interface Helpers {
-  public default Payload seeOther(String url) {
+  public static Payload ok() {
+    return Payload.ok();
+  }
+
+  public static Payload movedPermanently(String url) {
+    return Payload.movedPermanently(url);
+  }
+
+  public static Payload seeOther(String url) {
     return Payload.seeOther(url);
   }
 
-  public default Payload movedPermanently(String url) {
-    return Payload.movedPermanently(url);
+  public static Payload unauthorized(String realm) {
+    return Payload.unauthorized(realm);
   }
 
   public static Payload forbidden() {
     return Payload.forbidden();
+  }
+
+  public static Payload notFound() {
+    return Payload.notFound();
+  }
+
+  public static Payload methodNotAllowed() {
+    return Payload.methodNotAllowed();
   }
 
   public default Site site() {

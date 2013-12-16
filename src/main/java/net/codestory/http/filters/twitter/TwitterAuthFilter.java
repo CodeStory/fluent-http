@@ -19,6 +19,7 @@ import java.io.*;
 import java.net.*;
 
 import net.codestory.http.filters.*;
+import net.codestory.http.payload.*;
 
 import org.simpleframework.http.*;
 import org.simpleframework.http.Query;
@@ -52,10 +53,9 @@ public class TwitterAuthFilter implements Filter {
     return new TwitterAuthenticator(twitterFactory);
   }
 
-  @Override
-  public boolean apply(String uri, Request request, Response response) throws IOException {
+  public Payload apply(String uri, Request request, Response response, PayloadSupplier nextFilter) throws IOException {
     if (!uri.startsWith(uriPrefix)) {
-      return false; // Ignore
+      return nextFilter.get(); // Ignore
     }
 
     if (uri.equals(uriPrefix + "authenticate")) {
@@ -67,44 +67,31 @@ public class TwitterAuthFilter implements Filter {
 
         user = twitterAuthenticator.authenticate(oauth_token, oauth_verifier);
       } catch (Exception e) {
-        response.setCode(403);
-        return true;
+        return Payload.forbidden();
       }
 
-      response.setCookie(new Cookie("userId", user.id.toString(), "/", true));
-      response.setCookie(new Cookie("screenName", user.screenName, "/", true));
-      response.setCookie(new Cookie("userPhoto", user.imageUrl, "/", true));
-      response.setValue("Location", uriPrefix);
-      response.setCode(303);
-      response.setContentLength(0);
-
-      return true;
+      return Payload.seeOther("/")
+          .withCookie(new Cookie("userId", user.id.toString(), "/", true))
+          .withCookie(new Cookie("screenName", user.screenName, "/", true))
+          .withCookie(new Cookie("userPhoto", user.imageUrl, "/", true));
     }
 
     if (uri.equals(uriPrefix + "logout")) {
-      response.setCookie(new Cookie("userId", "", "/", false));
-      response.setCookie(new Cookie("screenName", "", "/", false));
-      response.setCookie(new Cookie("userPhoto", "", "/", false));
-      response.setValue("Location", "/");
-      response.setCode(303);
-      response.setContentLength(0);
-
-      return true;
+      return Payload.seeOther("/")
+          .withCookie(new Cookie("userId", "", "/", false))
+          .withCookie(new Cookie("screenName", "", "/", false))
+          .withCookie(new Cookie("userPhoto", "", "/", false));
     }
 
     Cookie userId = request.getCookie("userId");
     if ((userId != null) && !userId.getValue().isEmpty()) {
-      return false; // Authenticated
+      return nextFilter.get(); // Authenticated
     }
 
     String host = request.getValue("Host");
     String callbackUri = ((host == null) ? siteUri : "http://" + host) + uriPrefix + "authenticate";
     URI authenticateURI = twitterAuthenticator.getAuthenticateURI(callbackUri);
 
-    response.setValue("Location", authenticateURI.toString());
-    response.setCode(303);
-    response.setContentLength(0);
-
-    return true;
+    return Payload.seeOther(authenticateURI.toString());
   }
 }

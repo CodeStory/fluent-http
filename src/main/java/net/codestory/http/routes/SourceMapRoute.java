@@ -16,7 +16,6 @@
 package net.codestory.http.routes;
 
 import static java.nio.charset.StandardCharsets.*;
-import static net.codestory.http.routes.Match.*;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -31,27 +30,26 @@ import org.simpleframework.http.*;
 
 class SourceMapRoute implements Route {
   @Override
-  public Match apply(String uri, Request request, Response response) throws IOException {
+  public Payload apply(String uri, Request request, Response response) throws IOException {
     if (!uri.endsWith(".css.map")) {
-      return WRONG_URL;
+      return Payload.notFound();
     }
 
     Path pathMap = Paths.get(uri);
     Path pathLess = Paths.get(Strings.substringBeforeLast(uri, ".css.map") + ".less");
 
     if (!Resources.isPublic(pathLess)) {
-      return WRONG_URL;
+      return Payload.notFound();
     }
 
     if (!"GET".equalsIgnoreCase(request.getMethod())) {
-      return WRONG_METHOD;
+      return Payload.methodNotAllowed();
     }
 
     String contentType = ContentTypes.get(pathMap);
     String less = Resources.read(pathLess, UTF_8);
     String map = Compiler.compile(pathMap, less);
 
-    new Payload(contentType, map).writeTo(response);
-    return OK;
+    return new Payload(contentType, map);
   }
 }

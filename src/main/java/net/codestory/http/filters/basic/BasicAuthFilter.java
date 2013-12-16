@@ -15,9 +15,11 @@
  */
 package net.codestory.http.filters.basic;
 
+import java.io.*;
 import java.util.*;
 
 import net.codestory.http.filters.*;
+import net.codestory.http.payload.*;
 
 import org.simpleframework.http.*;
 
@@ -41,18 +43,18 @@ public class BasicAuthFilter implements Filter {
   }
 
   @Override
-  public boolean apply(String uri, Request request, Response response) {
+  public Payload apply(String uri, Request request, Response response, PayloadSupplier nextFilter) throws IOException {
     if (!uri.startsWith(uriPrefix)) {
-      return false; // Ignore
+      return nextFilter.get(); // Ignore
     }
 
     String authorizationHeader = request.getValue("Authorization");
     if ((authorizationHeader == null) || !hashes.contains(authorizationHeader.trim())) {
       response.setStatus(Status.UNAUTHORIZED);
       response.setValue("WWW-Authenticate", "Basic realm=\"" + realm + "\"");
-      return true;
+      return Payload.unauthorized(realm);
     }
 
-    return false;
+    return nextFilter.get();
   }
 }

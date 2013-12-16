@@ -19,9 +19,8 @@ import static java.nio.charset.StandardCharsets.*;
 
 import java.io.*;
 import java.nio.file.Path;
-import java.text.*;
 import java.time.*;
-import java.time.format.DateTimeFormatter;
+import java.time.format.*;
 import java.util.*;
 
 import net.codestory.http.compilers.Compiler;
@@ -90,20 +89,58 @@ public class Payload {
     return content;
   }
 
+  public Map<String, String> headers() {
+    return headers;
+  }
+
   public int code() {
     return code;
   }
 
-  public static Payload seeOther(String url) {
-    return new Payload(303).withHeader("Location", url);
+  public boolean isError() {
+    return (code >= 400) && (code <= 599);
+  }
+
+  public static Payload ok() {
+    return new Payload(200);
   }
 
   public static Payload movedPermanently(String url) {
     return new Payload(301).withHeader("Location", url);
   }
 
+  public static Payload seeOther(String url) {
+    return new Payload(303).withHeader("Location", url);
+  }
+
+  public static Payload unauthorized(String realm) {
+    return new Payload(401).withHeader("WWW-Authenticate", "Basic realm=\"" + realm + "\"");
+  }
+
   public static Payload forbidden() {
     return new Payload(403);
+  }
+
+  public static Payload notFound() {
+    return new Payload(404);
+  }
+
+  public static Payload methodNotAllowed() {
+    return new Payload(405);
+  }
+
+  public boolean isBetter(Payload other) {
+    // WTF?
+    if (200 == code) {
+      return other.code() != 200;
+    }
+    if (405 == code) {
+      return (other.code() != 200) && (other.code() != 405);
+    }
+    if (303 == code) {
+      return (other.code() != 200) && (other.code() != 405) && (other.code() != 303);
+    }
+    return false;
   }
 
   public void writeTo(Response response) throws IOException {

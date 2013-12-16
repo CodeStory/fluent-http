@@ -15,8 +15,6 @@
  */
 package net.codestory.http.routes;
 
-import static net.codestory.http.routes.Match.*;
-
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.*;
@@ -30,21 +28,20 @@ class StaticRoute implements Route {
   protected static final Path NOT_FOUND = Paths.get("");
 
   @Override
-  public Match apply(String uri, Request request, Response response) throws IOException {
+  public Payload apply(String uri, Request request, Response response) throws IOException {
     Path path = path(uri);
     if (path == NOT_FOUND) {
       if (!uri.endsWith("/") && (path(uri + "/") != NOT_FOUND)) {
-        return TRY_WITH_LEADING_SLASH;
+        return Payload.seeOther(uri + "/");
       }
-      return WRONG_URL;
+      return Payload.notFound();
     }
 
     if (!"GET".equalsIgnoreCase(request.getMethod())) {
-      return WRONG_METHOD;
+      return Payload.methodNotAllowed();
     }
 
-    new Payload(path).writeTo(response);
-    return OK;
+    return new Payload(path);
   }
 
   protected Path path(String uri) {

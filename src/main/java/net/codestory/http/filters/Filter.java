@@ -17,10 +17,12 @@ package net.codestory.http.filters;
 
 import java.io.*;
 
+import net.codestory.http.payload.*;
+
 import org.simpleframework.http.*;
 
 @FunctionalInterface
 public interface Filter {
-  boolean apply(String uri, Request request, Response response) throws IOException;
+  Payload apply(String uri, Request request, Response response, PayloadSupplier nextFilter) throws IOException;
 }
 

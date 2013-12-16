@@ -16,6 +16,7 @@
 package net.codestory.http.payload;
 
 import static java.nio.charset.StandardCharsets.*;
+import static net.codestory.http.routes.Match.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -116,6 +117,34 @@ public class PayloadTest {
     payload.writeTo(response);
 
     verify(response).setValue(eq("Last-Modified"), anyString());
+  }
+
+  @Test
+  public void better() {
+    Payload ok = Payload.ok();
+    Payload wrongMethod = Payload.methodNotAllowed();
+    Payload redirect = Payload.seeOther("/");
+    Payload notFound = Payload.notFound();
+
+    assertThat(ok.isBetter(ok)).isFalse();
+    assertThat(ok.isBetter(wrongMethod)).isTrue();
+    assertThat(ok.isBetter(redirect)).isTrue();
+    assertThat(ok.isBetter(notFound)).isTrue();
+
+    assertThat(wrongMethod.isBetter(ok)).isFalse();
+    assertThat(wrongMethod.isBetter(wrongMethod)).isFalse();
+    assertThat(wrongMethod.isBetter(redirect)).isTrue();
+    assertThat(wrongMethod.isBetter(notFound)).isTrue();
+
+    assertThat(redirect.isBetter(ok)).isFalse();
+    assertThat(redirect.isBetter(wrongMethod)).isFalse();
+    assertThat(redirect.isBetter(redirect)).isFalse();
+    assertThat(redirect.isBetter(notFound)).isTrue();
+
+    assertThat(notFound.isBetter(ok)).isFalse();
+    assertThat(notFound.isBetter(wrongMethod)).isFalse();
+    assertThat(notFound.isBetter(redirect)).isFalse();
+    assertThat(notFound.isBetter(notFound)).isFalse();
   }
 
   static class Person {

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.routes;
+package net.codestory.http.filters;
 
 import java.io.*;
 
@@ -22,7 +22,7 @@ import net.codestory.http.payload.*;
 import org.simpleframework.http.*;
 
 @FunctionalInterface
-public interface Route {
-  Payload apply(String uri, Request request, Response response) throws IOException;
+public interface PayloadSupplier {
+  Payload get() throws IOException;
 }
 

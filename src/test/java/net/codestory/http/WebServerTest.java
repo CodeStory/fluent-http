@@ -244,15 +244,11 @@ public class WebServerTest {
     server.configure(routes -> {
       routes.get("/", "NOT FILTERED");
       routes.get("/other", "OTHER");
-      routes.filter((uri, request, response) -> {
+      routes.filter((uri, request, response, nextFilter) -> {
         if ("/".equals(uri)) {
-          response.setValue("Content-Type", "text/html");
-          response.setContentLength(8);
-          response.setCode(200);
-          response.getPrintStream().append("FILTERED");
-          return true;
+          return new Payload("text/html", "FILTERED");
         }
-        return false;
+        return nextFilter.get();
       });
     });
 

@@ -15,8 +15,6 @@
  */
 package net.codestory.http.routes;
 
-import static net.codestory.http.routes.Match.*;
-
 import java.io.*;
 
 import net.codestory.http.payload.*;
@@ -26,16 +24,16 @@ import org.simpleframework.http.*;
 
 abstract class AbstractRoute implements Route {
   @Override
-  public Match apply(String uri, Request request, Response response) throws IOException {
+  public Payload apply(String uri, Request request, Response response) throws IOException {
     if (!matchUri(uri)) {
       if (!uri.endsWith("/") && matchUri(uri + "/")) {
-        return TRY_WITH_LEADING_SLASH;
+        return Payload.seeOther(uri + "/");
       }
-      return WRONG_URL;
+      return Payload.notFound();
     }
 
     if (!matchMethod(request)) {
-      return WRONG_METHOD;
+      return Payload.methodNotAllowed();
     }
 
     String[] parameters = parseParameters(uri, request);
@@ -45,10 +43,7 @@ abstract class AbstractRoute implements Route {
       body = ModelAndView.of(uri, (Model) body);
     }
 
-    Payload payload = new Payload(body);
-    payload.writeTo(response);
-
-    return OK;
+    return new Payload(body);
   }
 
   protected abstract Object body(Request request, Response response, String[] parameters);
