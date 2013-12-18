@@ -58,24 +58,27 @@ public class WebServerTest {
 
   @Test
   public void not_found() {
-    server.configure(routes -> routes.get("/error", () -> {
-      throw new NotFoundException();
-    }));
+    server.configure(routes -> routes.
+        get("/error", () -> {
+          throw new NotFoundException();
+        }).
+        get("/notfound", Payload.notFound()));
 
-    get("/notfound").produces(404, "text/html", "Page not found");
+    get("/unknown").produces(404, "text/html", "Page not found");
     get("/error").produces(404, "text/html", "Page not found");
+    get("/notfound").produces(404, "text/html", "Page not found");
   }
 
   @Test
   public void content_types() {
     server.configure(routes -> routes.
-        get("/index", "Hello").
+        get("/index", "Index").
         get("/text", new Payload("text/plain", "TEXT")).
         get("/html", new Payload("text/html", "<body>HTML</body>")).
         get("/raw", "RAW".getBytes(UTF_8)).
         get("/json", new Person("NAME", 42)));
 
-    get("/index").produces("text/html", "Hello");
+    get("/index").produces("text/html", "Index");
     get("/text").produces("text/plain", "TEXT");
     get("/html").produces("text/html", "HTML");
     get("/raw").produces("application/octet-stream", "RAW");
