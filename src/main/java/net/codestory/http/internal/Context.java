@@ -23,14 +23,20 @@ import net.codestory.http.io.*;
 import org.simpleframework.http.*;
 
 public class Context {
+  private final String uri;
   private final Request request;
   private final Response response;
   private final Query query;
 
-  public Context(Request request, Response response) {
+  public Context(String uri, Request request, Response response) {
+    this.uri = uri;
     this.request = request;
     this.response = response;
     this.query = request.getQuery();
+  }
+
+  public String uri() {
+    return uri;
   }
 
   public Cookie cookie(String name) {

@@ -328,7 +328,7 @@ public class RouteCollection implements Routes {
       return Payload.notFound();
     }
 
-    final Context context = new Context(request, response);
+    final Context context = new Context(uri, request, response);
 
     PayloadSupplier payloadSupplier = () -> {
       Payload bestMatch = Payload.notFound();
