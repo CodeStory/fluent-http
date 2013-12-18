@@ -19,9 +19,8 @@ import java.io.*;
 import java.util.*;
 
 import net.codestory.http.filters.*;
+import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
-
-import org.simpleframework.http.*;
 
 public class BasicAuthFilter implements Filter {
   private final String uriPrefix;
@@ -43,15 +42,13 @@ public class BasicAuthFilter implements Filter {
   }
 
   @Override
-  public Payload apply(String uri, Request request, Response response, PayloadSupplier nextFilter) throws IOException {
+  public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
     if (!uri.startsWith(uriPrefix)) {
       return nextFilter.get(); // Ignore
     }
 
-    String authorizationHeader = request.getValue("Authorization");
+    String authorizationHeader = context.get("Authorization");
     if ((authorizationHeader == null) || !hashes.contains(authorizationHeader.trim())) {
-      response.setStatus(Status.UNAUTHORIZED);
-      response.setValue("WWW-Authenticate", "Basic realm=\"" + realm + "\"");
       return Payload.unauthorized(realm);
     }
 

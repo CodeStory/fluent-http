@@ -18,13 +18,12 @@ package net.codestory.http.filters.log;
 import java.io.*;
 
 import net.codestory.http.filters.*;
+import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
-
-import org.simpleframework.http.*;
 
 public class LogRequestFilter implements Filter {
   @Override
-  public Payload apply(String uri, Request request, Response response, PayloadSupplier nextFilter) throws IOException {
+  public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
     System.out.println(uri);
     return nextFilter.get();
   }

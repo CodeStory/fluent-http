@@ -17,6 +17,7 @@ package net.codestory.http.routes;
 
 import java.io.*;
 
+import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.templating.*;
 
@@ -24,7 +25,7 @@ import org.simpleframework.http.*;
 
 abstract class AbstractRoute implements Route {
   @Override
-  public Payload apply(String uri, Request request, Response response) throws IOException {
+  public Payload apply(String uri, Context context) throws IOException {
     if (!matchUri(uri)) {
       if (!uri.endsWith("/") && matchUri(uri + "/")) {
         return Payload.seeOther(uri + "/");
@@ -32,13 +33,13 @@ abstract class AbstractRoute implements Route {
       return Payload.notFound();
     }
 
-    if (!matchMethod(request)) {
+    if (!matchMethod(context)) {
       return Payload.methodNotAllowed();
     }
 
-    String[] parameters = parseParameters(uri, request);
+    String[] parameters = parseParameters(uri, context);
 
-    Object body = body(request, response, parameters);
+    Object body = body(context, parameters);
     if (body instanceof Model) {
       body = ModelAndView.of(uri, (Model) body);
     }
@@ -46,11 +47,11 @@ abstract class AbstractRoute implements Route {
     return new Payload(body);
   }
 
-  protected abstract Object body(Request request, Response response, String[] parameters);
+  protected abstract Object body(Context context, String[] parameters);
 
   protected abstract boolean matchUri(String uri);
 
-  protected abstract boolean matchMethod(Request request);
+  protected abstract boolean matchMethod(Context context);
 
-  protected abstract String[] parseParameters(String uri, Request request);
+  protected abstract String[] parseParameters(String uri, Context context);
 }

@@ -18,19 +18,17 @@ package net.codestory.http.routes;
 import static java.nio.charset.StandardCharsets.*;
 
 import java.io.*;
-import java.nio.file.Path;
 import java.nio.file.*;
 
 import net.codestory.http.compilers.Compiler;
+import net.codestory.http.internal.*;
 import net.codestory.http.io.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.types.*;
 
-import org.simpleframework.http.*;
-
 class SourceMapRoute implements Route {
   @Override
-  public Payload apply(String uri, Request request, Response response) throws IOException {
+  public Payload apply(String uri, Context context) throws IOException {
     if (!uri.endsWith(".css.map")) {
       return Payload.notFound();
     }
@@ -42,7 +40,7 @@ class SourceMapRoute implements Route {
       return Payload.notFound();
     }
 
-    if (!"GET".equalsIgnoreCase(request.getMethod())) {
+    if (!"GET".equalsIgnoreCase(context.method())) {
       return Payload.methodNotAllowed();
     }
 

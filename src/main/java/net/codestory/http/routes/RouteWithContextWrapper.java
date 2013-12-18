@@ -17,8 +17,6 @@ package net.codestory.http.routes;
 
 import net.codestory.http.internal.*;
 
-import org.simpleframework.http.*;
-
 class RouteWithContextWrapper extends AbstractRouteWrapper {
   private final AnyRouteWithContext route;
 
@@ -28,7 +26,7 @@ class RouteWithContextWrapper extends AbstractRouteWrapper {
   }
 
   @Override
-  protected Object body(Request request, Response response, String[] parameters) {
-    return route.body(new Context(request, response), parameters);
+  protected Object body(Context context, String[] parameters) {
+    return route.body(context, parameters);
   }
 }

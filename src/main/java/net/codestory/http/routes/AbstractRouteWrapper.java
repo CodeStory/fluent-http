@@ -17,8 +17,6 @@ package net.codestory.http.routes;
 
 import net.codestory.http.internal.*;
 
-import org.simpleframework.http.*;
-
 abstract class AbstractRouteWrapper extends AbstractRoute {
   private final String method;
   private final UriParser uriParser;
@@ -32,11 +30,11 @@ abstract class AbstractRouteWrapper extends AbstractRoute {
     return uriParser.matches(uri);
   }
 
-  protected boolean matchMethod(Request request) {
-    return method.equalsIgnoreCase(request.getMethod());
+  protected boolean matchMethod(Context context) {
+    return method.equalsIgnoreCase(context.method());
   }
 
-  protected String[] parseParameters(String uri, Request request) {
-    return uriParser.params(uri, request.getQuery());
+  protected String[] parseParameters(String uri, Context context) {
+    return uriParser.params(uri, context.request().getQuery());
   }
 }

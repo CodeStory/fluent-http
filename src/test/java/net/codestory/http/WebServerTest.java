@@ -244,7 +244,7 @@ public class WebServerTest {
     server.configure(routes -> {
       routes.get("/", "NOT FILTERED");
       routes.get("/other", "OTHER");
-      routes.filter((uri, request, response, nextFilter) -> {
+      routes.filter((uri, context, nextFilter) -> {
         if ("/".equals(uri)) {
           return new Payload("text/html", "FILTERED");
         }

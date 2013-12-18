@@ -22,23 +22,21 @@ import java.io.*;
 import java.util.*;
 
 import net.codestory.http.filters.*;
+import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
 
 import org.junit.*;
-import org.simpleframework.http.*;
 
 public class BasicAuthFilterTest {
   private BasicAuthFilter filter;
 
   private Payload next = Payload.ok();
   private PayloadSupplier nextFilter = () -> next;
-  private Response response;
-  private Request request;
+  private Context context;
 
   @Before
   public void init() throws IOException {
-    response = mock(Response.class);
-    request = mock(Request.class);
+    context = mock(Context.class);
 
     Map<String, String> users = new HashMap<>();
     users.put("jl", "polka");
@@ -47,14 +45,14 @@ public class BasicAuthFilterTest {
 
   @Test
   public void skip_non_secured_path() throws IOException {
-    Payload payload = filter.apply("/foo", request, response, nextFilter);
+    Payload payload = filter.apply("/foo", context, nextFilter);
 
     assertThat(payload).isSameAs(next);
   }
 
   @Test
   public void answer_401_on_non_authenticated_query() throws IOException {
-    Payload payload = filter.apply("/secure/foo", request, response, nextFilter);
+    Payload payload = filter.apply("/secure/foo", context, nextFilter);
 
     assertThat(payload.code()).isEqualTo(401);
     assertThat(payload.headers()).containsEntry("WWW-Authenticate", "Basic realm=\"codestory\"");
@@ -62,18 +60,18 @@ public class BasicAuthFilterTest {
 
   @Test
   public void authorized_query() throws IOException {
-    when(request.getValue("Authorization")).thenReturn(" Basic amw6cG9sa2E="); // "jl:polka" encoded in base64
+    when(context.get("Authorization")).thenReturn(" Basic amw6cG9sa2E="); // "jl:polka" encoded in base64
 
-    Payload payload = filter.apply("/secure/foo", request, response, nextFilter);
+    Payload payload = filter.apply("/secure/foo", context, nextFilter);
 
     assertThat(payload).isSameAs(next);
   }
 
   @Test
   public void answer_401_on_unauthorized_query() throws IOException {
-    when(request.getValue("Authorization")).thenReturn(" Basic FOOBAR9sa2E=");
+    when(context.get("Authorization")).thenReturn(" Basic FOOBAR9sa2E=");
 
-    Payload payload = filter.apply("/secure/foo", request, response, nextFilter);
+    Payload payload = filter.apply("/secure/foo", context, nextFilter);
 
     assertThat(payload.code()).isEqualTo(401);
     assertThat(payload.headers()).containsEntry("WWW-Authenticate", "Basic realm=\"codestory\"");
@@ -81,13 +79,13 @@ public class BasicAuthFilterTest {
 
   @Test
   public void block_all_subsequent_paths() throws IOException {
-    assertThat(filter.apply("/", request, response, nextFilter).code()).isEqualTo(200);
-    assertThat(filter.apply("/foo", request, response, nextFilter).code()).isEqualTo(200);
-    assertThat(filter.apply("/foo/", request, response, nextFilter).code()).isEqualTo(200);
-    assertThat(filter.apply("/foo/secure", request, response, nextFilter).code()).isEqualTo(200);
-    assertThat(filter.apply("/secure", request, response, nextFilter).code()).isEqualTo(401);
-    assertThat(filter.apply("/secure/", request, response, nextFilter).code()).isEqualTo(401);
-    assertThat(filter.apply("/secure/foo", request, response, nextFilter).code()).isEqualTo(401);
-    assertThat(filter.apply("/secure/foo/", request, response, nextFilter).code()).isEqualTo(401);
+    assertThat(filter.apply("/", context, nextFilter).code()).isEqualTo(200);
+    assertThat(filter.apply("/foo", context, nextFilter).code()).isEqualTo(200);
+    assertThat(filter.apply("/foo/", context, nextFilter).code()).isEqualTo(200);
+    assertThat(filter.apply("/foo/secure", context, nextFilter).code()).isEqualTo(200);
+    assertThat(filter.apply("/secure", context, nextFilter).code()).isEqualTo(401);
+    assertThat(filter.apply("/secure/", context, nextFilter).code()).isEqualTo(401);
+    assertThat(filter.apply("/secure/foo", context, nextFilter).code()).isEqualTo(401);
+    assertThat(filter.apply("/secure/foo/", context, nextFilter).code()).isEqualTo(401);
   }
 }

@@ -16,19 +16,17 @@
 package net.codestory.http.routes;
 
 import java.io.*;
-import java.nio.file.Path;
 import java.nio.file.*;
 
+import net.codestory.http.internal.*;
 import net.codestory.http.io.*;
 import net.codestory.http.payload.*;
-
-import org.simpleframework.http.*;
 
 class StaticRoute implements Route {
   protected static final Path NOT_FOUND = Paths.get("");
 
   @Override
-  public Payload apply(String uri, Request request, Response response) throws IOException {
+  public Payload apply(String uri, Context context) throws IOException {
     Path path = path(uri);
     if (path == NOT_FOUND) {
       if (!uri.endsWith("/") && (path(uri + "/") != NOT_FOUND)) {
@@ -37,7 +35,7 @@ class StaticRoute implements Route {
       return Payload.notFound();
     }
 
-    if (!"GET".equalsIgnoreCase(request.getMethod())) {
+    if (!"GET".equalsIgnoreCase(context.method())) {
       return Payload.methodNotAllowed();
     }
 

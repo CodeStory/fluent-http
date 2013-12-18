@@ -27,6 +27,7 @@ import net.codestory.http.*;
 import net.codestory.http.annotations.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.injection.*;
+import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
 
 import org.simpleframework.http.*;
@@ -327,11 +328,13 @@ public class RouteCollection implements Routes {
       return Payload.notFound();
     }
 
+    final Context context = new Context(request, response);
+
     PayloadSupplier payloadSupplier = () -> {
       Payload bestMatch = Payload.notFound();
 
       for (Route route : routes) {
-        Payload match = route.apply(uri, request, response);
+        Payload match = route.apply(uri, context);
         if (!match.isError()) {
           return match;
         }
@@ -346,7 +349,7 @@ public class RouteCollection implements Routes {
 
     for (Supplier<Filter> filter : filters) {
       PayloadSupplier nextFilter = payloadSupplier;
-      payloadSupplier = () -> filter.get().apply(uri, request, response, nextFilter);
+      payloadSupplier = () -> filter.get().apply(uri, context, nextFilter);
     }
 
     return payloadSupplier.get();

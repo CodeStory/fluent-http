@@ -19,6 +19,7 @@ import java.io.*;
 import java.net.*;
 
 import net.codestory.http.filters.*;
+import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
 
 import org.simpleframework.http.*;
@@ -53,7 +54,7 @@ public class TwitterAuthFilter implements Filter {
     return new TwitterAuthenticator(twitterFactory);
   }
 
-  public Payload apply(String uri, Request request, Response response, PayloadSupplier nextFilter) throws IOException {
+  public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
     if (!uri.startsWith(uriPrefix)) {
       return nextFilter.get(); // Ignore
     }
@@ -61,9 +62,8 @@ public class TwitterAuthFilter implements Filter {
     if (uri.equals(uriPrefix + "authenticate")) {
       User user;
       try {
-        Query query = request.getQuery();
-        String oauth_token = query.get("oauth_token");
-        String oauth_verifier = query.get("oauth_verifier");
+        String oauth_token = context.get("oauth_token");
+        String oauth_verifier = context.get("oauth_verifier");
 
         user = twitterAuthenticator.authenticate(oauth_token, oauth_verifier);
       } catch (Exception e) {
@@ -83,12 +83,12 @@ public class TwitterAuthFilter implements Filter {
           .withCookie(new Cookie("userPhoto", "", "/", false));
     }
 
-    Cookie userId = request.getCookie("userId");
+    Cookie userId = context.cookie("userId");
     if ((userId != null) && !userId.getValue().isEmpty()) {
       return nextFilter.get(); // Authenticated
     }
 
-    String host = request.getValue("Host");
+    String host = context.get("Host");
     String callbackUri = ((host == null) ? siteUri : "http://" + host) + uriPrefix + "authenticate";
     URI authenticateURI = twitterAuthenticator.getAuthenticateURI(callbackUri);
 

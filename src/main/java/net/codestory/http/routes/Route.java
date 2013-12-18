@@ -17,12 +17,11 @@ package net.codestory.http.routes;
 
 import java.io.*;
 
+import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
-
-import org.simpleframework.http.*;
 
 @FunctionalInterface
 public interface Route {
-  Payload apply(String uri, Request request, Response response) throws IOException;
+  Payload apply(String uri, Context context) throws IOException;
 }
 

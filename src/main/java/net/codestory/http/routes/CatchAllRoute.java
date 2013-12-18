@@ -15,7 +15,7 @@
  */
 package net.codestory.http.routes;
 
-import org.simpleframework.http.*;
+import net.codestory.http.internal.*;
 
 class CatchAllRoute extends AbstractRoute {
   private final AnyRoute route;
@@ -25,7 +25,7 @@ class CatchAllRoute extends AbstractRoute {
   }
 
   @Override
-  protected Object body(Request request, Response response, String[] parameters) {
+  protected Object body(Context context, String[] parameters) {
     return route.body(parameters);
   }
 
@@ -35,12 +35,12 @@ class CatchAllRoute extends AbstractRoute {
   }
 
   @Override
-  protected boolean matchMethod(Request request) {
+  protected boolean matchMethod(Context context) {
     return true;
   }
 
   @Override
-  protected String[] parseParameters(String uri, Request request) {
+  protected String[] parseParameters(String uri, Context context) {
     return new String[0];
   }
 }
