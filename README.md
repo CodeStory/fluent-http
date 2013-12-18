@@ -6,7 +6,7 @@
  + Javadoc
  + handle logs properly rather than 'sysouting' like a pig ;)
  + PROD_MODE is not really convenient. It forces to have more complex prod script
- + PROD_MODE and app.port should be also environement variables
+ + PROD_MODE and app.port should be also environment variables
  + Add some sort of http standard log
 
 # CI
