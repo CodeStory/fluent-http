@@ -20,99 +20,99 @@ import net.codestory.http.filters.*;
 import net.codestory.http.injection.*;
 
 public interface Routes {
-  void setIocAdapter(IocAdapter iocAdapter);
+  Routes setIocAdapter(IocAdapter iocAdapter);
 
-  void include(Class<? extends Configuration> configurationClass);
+  Routes include(Class<? extends Configuration> configurationClass);
 
-  void include(Configuration configuration);
+  Routes include(Configuration configuration);
 
-  void filter(Class<? extends Filter> filterClass);
+  Routes filter(Class<? extends Filter> filterClass);
 
-  void filter(Filter filter);
+  Routes filter(Filter filter);
 
-  void add(Class<?> resource);
+  Routes add(Class<?> resource);
 
-  void add(String urlPrefix, Class<?> resource);
+  Routes add(String urlPrefix, Class<?> resource);
 
-  void add(Object resource);
+  Routes add(Object resource);
 
-  void add(String urlPrefix, Object resource);
+  Routes add(String urlPrefix, Object resource);
 
-  void get(String uriPattern, Object payload);
+  Routes get(String uriPattern, Object payload);
 
-  void get(String uriPattern, NoParamRoute route);
+  Routes get(String uriPattern, NoParamRoute route);
 
-  void get(String uriPattern, OneParamRoute route);
+  Routes get(String uriPattern, OneParamRoute route);
 
-  void get(String uriPattern, TwoParamsRoute route);
+  Routes get(String uriPattern, TwoParamsRoute route);
 
-  void get(String uriPattern, ThreeParamsRoute route);
+  Routes get(String uriPattern, ThreeParamsRoute route);
 
-  void get(String uriPattern, FourParamsRoute route);
+  Routes get(String uriPattern, FourParamsRoute route);
 
-  void get(String uriPattern, NoParamRouteWithContext route);
+  Routes get(String uriPattern, NoParamRouteWithContext route);
 
-  void get(String uriPattern, OneParamRouteWithContext route);
+  Routes get(String uriPattern, OneParamRouteWithContext route);
 
-  void get(String uriPattern, TwoParamsRouteWithContext route);
+  Routes get(String uriPattern, TwoParamsRouteWithContext route);
 
-  void get(String uriPattern, ThreeParamsRouteWithContext route);
+  Routes get(String uriPattern, ThreeParamsRouteWithContext route);
 
-  void get(String uriPattern, FourParamsRouteWithContext route);
+  Routes get(String uriPattern, FourParamsRouteWithContext route);
 
-  void post(String uriPattern, NoParamRoute route);
+  Routes post(String uriPattern, NoParamRoute route);
 
-  void post(String uriPattern, OneParamRoute route);
+  Routes post(String uriPattern, OneParamRoute route);
 
-  void post(String uriPattern, TwoParamsRoute route);
+  Routes post(String uriPattern, TwoParamsRoute route);
 
-  void post(String uriPattern, ThreeParamsRoute route);
+  Routes post(String uriPattern, ThreeParamsRoute route);
 
-  void post(String uriPattern, FourParamsRoute route);
+  Routes post(String uriPattern, FourParamsRoute route);
 
-  void post(String uriPattern, NoParamRouteWithContext route);
+  Routes post(String uriPattern, NoParamRouteWithContext route);
 
-  void post(String uriPattern, OneParamRouteWithContext route);
+  Routes post(String uriPattern, OneParamRouteWithContext route);
 
-  void post(String uriPattern, TwoParamsRouteWithContext route);
+  Routes post(String uriPattern, TwoParamsRouteWithContext route);
 
-  void post(String uriPattern, ThreeParamsRouteWithContext route);
+  Routes post(String uriPattern, ThreeParamsRouteWithContext route);
 
-  void post(String uriPattern, FourParamsRouteWithContext route);
+  Routes post(String uriPattern, FourParamsRouteWithContext route);
 
-  void put(String uriPattern, NoParamRoute route);
+  Routes put(String uriPattern, NoParamRoute route);
 
-  void put(String uriPattern, OneParamRoute route);
+  Routes put(String uriPattern, OneParamRoute route);
 
-  void put(String uriPattern, TwoParamsRoute route);
+  Routes put(String uriPattern, TwoParamsRoute route);
 
-  void put(String uriPattern, ThreeParamsRoute route);
+  Routes put(String uriPattern, ThreeParamsRoute route);
 
-  void put(String uriPattern, FourParamsRoute route);
+  Routes put(String uriPattern, FourParamsRoute route);
 
-  void put(String uriPattern, NoParamRouteWithContext route);
+  Routes put(String uriPattern, NoParamRouteWithContext route);
 
-  void put(String uriPattern, OneParamRouteWithContext route);
+  Routes put(String uriPattern, OneParamRouteWithContext route);
 
-  void put(String uriPattern, TwoParamsRouteWithContext route);
+  Routes put(String uriPattern, TwoParamsRouteWithContext route);
 
-  void put(String uriPattern, ThreeParamsRouteWithContext route);
+  Routes put(String uriPattern, ThreeParamsRouteWithContext route);
 
-  void put(String uriPattern, FourParamsRouteWithContext route);
+  Routes put(String uriPattern, FourParamsRouteWithContext route);
 
-  void delete(String uriPattern, NoParamRoute route);
+  Routes delete(String uriPattern, NoParamRoute route);
 
-  void delete(String uriPattern, OneParamRoute route);
+  Routes delete(String uriPattern, OneParamRoute route);
 
-  void delete(String uriPattern, TwoParamsRoute route);
+  Routes delete(String uriPattern, TwoParamsRoute route);
 
-  void delete(String uriPattern, ThreeParamsRoute route);
+  Routes delete(String uriPattern, ThreeParamsRoute route);
 
-  void delete(String uriPattern, FourParamsRoute route);
+  Routes delete(String uriPattern, FourParamsRoute route);
 
-  void catchAll(Object payload);
+  Routes catchAll(Object payload);
 
-  void catchAll(NoParamRoute route);
+  Routes catchAll(NoParamRoute route);
 
-  void catchAll(NoParamRouteWithContext route);
+  Routes catchAll(NoParamRouteWithContext route);
 }

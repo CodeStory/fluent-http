@@ -42,48 +42,57 @@ public class RouteCollection implements Routes {
     this.filters = new LinkedList<>();
   }
 
-  public void setIocAdapter(IocAdapter iocAdapter) {
+  public RouteCollection setIocAdapter(IocAdapter iocAdapter) {
     this.iocAdapter = iocAdapter;
+    return this;
   }
 
   @Override
-  public void include(Class<? extends Configuration> configurationClass) {
+  public RouteCollection include(Class<? extends Configuration> configurationClass) {
     iocAdapter.get(configurationClass).configure(this);
+    return this;
   }
 
   @Override
-  public void include(Configuration configuration) {
+  public RouteCollection include(Configuration configuration) {
     configuration.configure(this);
+    return this;
   }
 
   @Override
-  public void filter(Class<? extends Filter> filterClass) {
+  public RouteCollection filter(Class<? extends Filter> filterClass) {
     filters.add(() -> iocAdapter.get(filterClass));
+    return this;
   }
 
   @Override
-  public void filter(Filter filter) {
+  public RouteCollection filter(Filter filter) {
     filters.add(() -> filter);
+    return this;
   }
 
   @Override
-  public void add(Class<?> resourceType) {
+  public RouteCollection add(Class<?> resourceType) {
     addResource("", resourceType, () -> iocAdapter.get(resourceType));
+    return this;
   }
 
   @Override
-  public void add(String urlPrefix, Class<?> resourceType) {
+  public RouteCollection add(String urlPrefix, Class<?> resourceType) {
     addResource(urlPrefix, resourceType, () -> iocAdapter.get(resourceType));
+    return this;
   }
 
   @Override
-  public void add(Object resource) {
+  public RouteCollection add(Object resource) {
     addResource("", resource.getClass(), () -> resource);
+    return this;
   }
 
   @Override
-  public void add(String urlPrefix, Object resource) {
+  public RouteCollection add(String urlPrefix, Object resource) {
     addResource(urlPrefix, resource.getClass(), () -> resource);
+    return this;
   }
 
   private void addResource(String urlPrefix, Class<?> type, Supplier<Object> resource) {
@@ -114,206 +123,247 @@ public class RouteCollection implements Routes {
   }
 
   @Override
-  public void get(String uriPattern, Object payload) {
+  public RouteCollection get(String uriPattern, Object payload) {
     get(uriPattern, () -> payload);
+    return this;
   }
 
   @Override
-  public void get(String uriPattern, NoParamRoute route) {
+  public RouteCollection get(String uriPattern, NoParamRoute route) {
     add("GET", checkParametersCount(uriPattern, 0), route);
+    return this;
   }
 
   @Override
-  public void get(String uriPattern, OneParamRoute route) {
+  public RouteCollection get(String uriPattern, OneParamRoute route) {
     add("GET", checkParametersCount(uriPattern, 1), route);
+    return this;
   }
 
   @Override
-  public void get(String uriPattern, TwoParamsRoute route) {
+  public RouteCollection get(String uriPattern, TwoParamsRoute route) {
     add("GET", checkParametersCount(uriPattern, 2), route);
+    return this;
   }
 
   @Override
-  public void get(String uriPattern, ThreeParamsRoute route) {
+  public RouteCollection get(String uriPattern, ThreeParamsRoute route) {
     add("GET", checkParametersCount(uriPattern, 3), route);
+    return this;
   }
 
   @Override
-  public void get(String uriPattern, FourParamsRoute route) {
+  public RouteCollection get(String uriPattern, FourParamsRoute route) {
     add("GET", checkParametersCount(uriPattern, 4), route);
+    return this;
   }
 
   @Override
-  public void get(String uriPattern, NoParamRouteWithContext route) {
+  public RouteCollection get(String uriPattern, NoParamRouteWithContext route) {
     add("GET", checkParametersCount(uriPattern, 0), route);
+    return this;
   }
 
   @Override
-  public void get(String uriPattern, OneParamRouteWithContext route) {
+  public RouteCollection get(String uriPattern, OneParamRouteWithContext route) {
     add("GET", checkParametersCount(uriPattern, 1), route);
+    return this;
   }
 
   @Override
-  public void get(String uriPattern, TwoParamsRouteWithContext route) {
+  public RouteCollection get(String uriPattern, TwoParamsRouteWithContext route) {
     add("GET", checkParametersCount(uriPattern, 2), route);
+    return this;
   }
 
   @Override
-  public void get(String uriPattern, ThreeParamsRouteWithContext route) {
+  public RouteCollection get(String uriPattern, ThreeParamsRouteWithContext route) {
     add("GET", checkParametersCount(uriPattern, 3), route);
+    return this;
   }
 
   @Override
-  public void get(String uriPattern, FourParamsRouteWithContext route) {
+  public RouteCollection get(String uriPattern, FourParamsRouteWithContext route) {
     add("GET", checkParametersCount(uriPattern, 4), route);
+    return this;
   }
 
   @Override
-  public void post(String uriPattern, NoParamRoute route) {
+  public RouteCollection post(String uriPattern, NoParamRoute route) {
     add("POST", checkParametersCount(uriPattern, 0), route);
+    return this;
   }
 
   @Override
-  public void post(String uriPattern, OneParamRoute route) {
+  public RouteCollection post(String uriPattern, OneParamRoute route) {
     add("POST", checkParametersCount(uriPattern, 1), route);
+    return this;
   }
 
   @Override
-  public void post(String uriPattern, TwoParamsRoute route) {
+  public RouteCollection post(String uriPattern, TwoParamsRoute route) {
     add("POST", checkParametersCount(uriPattern, 2), route);
+    return this;
   }
 
   @Override
-  public void post(String uriPattern, ThreeParamsRoute route) {
+  public RouteCollection post(String uriPattern, ThreeParamsRoute route) {
     add("POST", checkParametersCount(uriPattern, 3), route);
+    return this;
   }
 
   @Override
-  public void post(String uriPattern, FourParamsRoute route) {
+  public RouteCollection post(String uriPattern, FourParamsRoute route) {
     add("POST", checkParametersCount(uriPattern, 4), route);
+    return this;
   }
 
   @Override
-  public void post(String uriPattern, NoParamRouteWithContext route) {
+  public RouteCollection post(String uriPattern, NoParamRouteWithContext route) {
     add("POST", checkParametersCount(uriPattern, 0), route);
+    return this;
   }
 
   @Override
-  public void post(String uriPattern, OneParamRouteWithContext route) {
+  public RouteCollection post(String uriPattern, OneParamRouteWithContext route) {
     add("POST", checkParametersCount(uriPattern, 1), route);
+    return this;
   }
 
   @Override
-  public void post(String uriPattern, TwoParamsRouteWithContext route) {
+  public RouteCollection post(String uriPattern, TwoParamsRouteWithContext route) {
     add("POST", checkParametersCount(uriPattern, 2), route);
+    return this;
   }
 
   @Override
-  public void post(String uriPattern, ThreeParamsRouteWithContext route) {
+  public RouteCollection post(String uriPattern, ThreeParamsRouteWithContext route) {
     add("POST", checkParametersCount(uriPattern, 3), route);
+    return this;
   }
 
   @Override
-  public void post(String uriPattern, FourParamsRouteWithContext route) {
+  public RouteCollection post(String uriPattern, FourParamsRouteWithContext route) {
     add("POST", checkParametersCount(uriPattern, 4), route);
+    return this;
   }
 
   @Override
-  public void put(String uriPattern, NoParamRoute route) {
+  public RouteCollection put(String uriPattern, NoParamRoute route) {
     add("PUT", checkParametersCount(uriPattern, 0), route);
+    return this;
   }
 
   @Override
-  public void put(String uriPattern, OneParamRoute route) {
+  public RouteCollection put(String uriPattern, OneParamRoute route) {
     add("PUT", checkParametersCount(uriPattern, 1), route);
+    return this;
   }
 
   @Override
-  public void put(String uriPattern, TwoParamsRoute route) {
+  public RouteCollection put(String uriPattern, TwoParamsRoute route) {
     add("PUT", checkParametersCount(uriPattern, 2), route);
+    return this;
   }
 
   @Override
-  public void put(String uriPattern, ThreeParamsRoute route) {
+  public RouteCollection put(String uriPattern, ThreeParamsRoute route) {
     add("PUT", checkParametersCount(uriPattern, 3), route);
+    return this;
   }
 
   @Override
-  public void put(String uriPattern, FourParamsRoute route) {
+  public RouteCollection put(String uriPattern, FourParamsRoute route) {
     add("PUT", checkParametersCount(uriPattern, 4), route);
+    return this;
   }
 
   @Override
-  public void put(String uriPattern, NoParamRouteWithContext route) {
+  public RouteCollection put(String uriPattern, NoParamRouteWithContext route) {
     add("PUT", checkParametersCount(uriPattern, 0), route);
+    return this;
   }
 
   @Override
-  public void put(String uriPattern, OneParamRouteWithContext route) {
+  public RouteCollection put(String uriPattern, OneParamRouteWithContext route) {
     add("PUT", checkParametersCount(uriPattern, 1), route);
+    return this;
   }
 
   @Override
-  public void put(String uriPattern, TwoParamsRouteWithContext route) {
+  public RouteCollection put(String uriPattern, TwoParamsRouteWithContext route) {
     add("PUT", checkParametersCount(uriPattern, 2), route);
+    return this;
   }
 
   @Override
-  public void put(String uriPattern, ThreeParamsRouteWithContext route) {
+  public RouteCollection put(String uriPattern, ThreeParamsRouteWithContext route) {
     add("PUT", checkParametersCount(uriPattern, 3), route);
+    return this;
   }
 
   @Override
-  public void put(String uriPattern, FourParamsRouteWithContext route) {
+  public RouteCollection put(String uriPattern, FourParamsRouteWithContext route) {
     add("PUT", checkParametersCount(uriPattern, 4), route);
+    return this;
   }
 
   @Override
-  public void delete(String uriPattern, NoParamRoute route) {
+  public RouteCollection delete(String uriPattern, NoParamRoute route) {
     add("DELETE", checkParametersCount(uriPattern, 0), route);
+    return this;
   }
 
   @Override
-  public void delete(String uriPattern, OneParamRoute route) {
+  public RouteCollection delete(String uriPattern, OneParamRoute route) {
     add("DELETE", checkParametersCount(uriPattern, 1), route);
+    return this;
   }
 
   @Override
-  public void delete(String uriPattern, TwoParamsRoute route) {
+  public RouteCollection delete(String uriPattern, TwoParamsRoute route) {
     add("DELETE", checkParametersCount(uriPattern, 2), route);
+    return this;
   }
 
   @Override
-  public void delete(String uriPattern, ThreeParamsRoute route) {
+  public RouteCollection delete(String uriPattern, ThreeParamsRoute route) {
     add("DELETE", checkParametersCount(uriPattern, 3), route);
+    return this;
   }
 
   @Override
-  public void delete(String uriPattern, FourParamsRoute route) {
+  public RouteCollection delete(String uriPattern, FourParamsRoute route) {
     add("DELETE", checkParametersCount(uriPattern, 4), route);
+    return this;
   }
 
   @Override
-  public void catchAll(Object payload) {
+  public RouteCollection catchAll(Object payload) {
     catchAll(() -> payload);
+    return this;
   }
 
   @Override
-  public void catchAll(NoParamRoute route) {
+  public RouteCollection catchAll(NoParamRoute route) {
     routes.add(new CatchAllRoute(route));
+    return this;
   }
 
   @Override
-  public void catchAll(NoParamRouteWithContext route) {
+  public RouteCollection catchAll(NoParamRouteWithContext route) {
     routes.add(new CatchAllRouteWithContext(route));
+    return this;
   }
 
-  private void add(String method, String uriPattern, AnyRoute route) {
+  private RouteCollection add(String method, String uriPattern, AnyRoute route) {
     routes.add(new RouteWrapper(method, uriPattern, route));
+    return this;
   }
 
-  private void add(String method, String uriPattern, AnyRouteWithContext route) {
+  private RouteCollection add(String method, String uriPattern, AnyRouteWithContext route) {
     routes.add(new RouteWithContextWrapper(method, uriPattern, route));
+    return this;
   }
 
   // TEMP

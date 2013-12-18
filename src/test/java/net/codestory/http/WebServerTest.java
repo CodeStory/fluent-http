@@ -38,6 +38,7 @@ import org.junit.contrib.java.lang.system.*;
 public class WebServerTest {
   @ClassRule
   public static RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties("PROD_MODE");
+
   static WebServer server = new WebServer() {
     @Override
     protected boolean devMode() {
@@ -73,11 +74,12 @@ public class WebServerTest {
   @Test
   public void content_types() {
     server.configure(routes -> {
-      routes.get("/index", "Hello");
-      routes.get("/text", new Payload("text/plain", "TEXT"));
-      routes.get("/html", new Payload("text/html", "<body>HTML</body>"));
-      routes.get("/raw", "RAW".getBytes(UTF_8));
-      routes.get("/json", new Person("NAME", 42));
+      routes.
+          get("/index", "Hello").
+          get("/text", new Payload("text/plain", "TEXT")).
+          get("/html", new Payload("text/html", "<body>HTML</body>")).
+          get("/raw", "RAW".getBytes(UTF_8)).
+          get("/json", new Person("NAME", 42));
     });
 
     get("/index").produces("text/html", "Hello");
@@ -90,10 +92,11 @@ public class WebServerTest {
   @Test
   public void request_params() {
     server.configure(routes -> {
-      routes.get("/hello/:name", (String name) -> "Hello " + name);
-      routes.get("/other/:name", (String name) -> "Other " + name);
-      routes.get("/say/:what/how/:loud", (String what, String loud) -> what + " " + loud);
-      routes.get("/:one/:two/:three", (String one, String two, String three) -> one + " " + two + " " + three);
+      routes.
+          get("/hello/:name", (String name) -> "Hello " + name).
+          get("/other/:name", (String name) -> "Other " + name).
+          get("/say/:what/how/:loud", (String what, String loud) -> what + " " + loud).
+          get("/:one/:two/:three", (String one, String two, String three) -> one + " " + two + " " + three);
     });
 
     get("/hello/Dave").produces("Hello Dave");
@@ -106,14 +109,15 @@ public class WebServerTest {
   @Test
   public void query_params() {
     server.configure(routes -> {
-      routes.get("/index", "Hello");
-      routes.get("/hello?name=:name", (String name) -> "Hello " + name);
-      routes.add(new Object() {
-        @Get("/keyValues")
-        public String keyValues(Map<String, String> keyValues) {
-          return keyValues.toString();
-        }
-      });
+      routes.
+          get("/index", "Hello").
+          get("/hello?name=:name", (String name) -> "Hello " + name).
+          add(new Object() {
+            @Get("/keyValues")
+            public String keyValues(Map<String, String> keyValues) {
+              return keyValues.toString();
+            }
+          });
     });
 
     get("/index?query=useless").produces("Hello");
@@ -204,10 +208,11 @@ public class WebServerTest {
   @Test
   public void templates() {
     server.configure(routes -> {
-      routes.get("/hello/:name", (String name) -> ModelAndView.of("1variable.txt", "name", name));
-      routes.get("/bye", () -> ModelAndView.of("goodbye"));
-      routes.get("/1variable", Model.of("name", "Toto"));
-      routes.get("/section/", Model.of("name", "Bob"));
+      routes.
+          get("/hello/:name", (String name) -> ModelAndView.of("1variable.txt", "name", name)).
+          get("/bye", () -> ModelAndView.of("goodbye")).
+          get("/1variable", Model.of("name", "Toto")).
+          get("/section/", Model.of("name", "Bob"));
     });
 
     get("/pageYaml").produces("text/html", "<div>_PREFIX_TEXT_SUFFIX_</div>");
@@ -227,9 +232,10 @@ public class WebServerTest {
   @Test
   public void redirect() {
     server.configure(routes -> {
-      routes.get("/", Payload.seeOther("/login"));
-      routes.get("/login", "LOGIN");
-      routes.get("/dynamic/", "Dynamic");
+      routes.
+          get("/", Payload.seeOther("/login")).
+          get("/login", "LOGIN").
+          get("/dynamic/", "Dynamic");
     });
 
     get("/").produces("LOGIN");
@@ -242,14 +248,15 @@ public class WebServerTest {
   @Test
   public void filter() {
     server.configure(routes -> {
-      routes.get("/", "NOT FILTERED");
-      routes.get("/other", "OTHER");
-      routes.filter((uri, context, nextFilter) -> {
-        if ("/".equals(uri)) {
-          return new Payload("text/html", "FILTERED");
-        }
-        return nextFilter.get();
-      });
+      routes.
+          get("/", "NOT FILTERED").
+          get("/other", "OTHER").
+          filter((uri, context, nextFilter) -> {
+            if ("/".equals(uri)) {
+              return new Payload("text/html", "FILTERED");
+            }
+            return nextFilter.get();
+          });
     });
 
     get("/").produces("FILTERED");
@@ -268,13 +275,14 @@ public class WebServerTest {
   @Test
   public void supports_spied_resources() {
     server.configure(routes -> {
-      routes.add(TestResource.class);
-      routes.setIocAdapter(new Singletons() {
-        @Override
-        protected <T> T postProcess(T instance) {
-          return spy(instance);
-        }
-      });
+      routes.
+          add(TestResource.class).
+          setIocAdapter(new Singletons() {
+            @Override
+            protected <T> T postProcess(T instance) {
+              return spy(instance);
+            }
+          });
     });
 
     get("/").produces("HELLO");
@@ -283,23 +291,24 @@ public class WebServerTest {
   @Test
   public void support_post() {
     server.configure(routes -> {
-      routes.post("/post", () -> "Done");
-      routes.get("/get", () -> "Done");
-      routes.get("/action", () -> "Done GET");
-      routes.post("/action", () -> "Done POST");
-      routes.post("/post/:who", (String who) -> "Done " + who);
-      routes.add(new Object() {
-        @Post("/person")
-        @Post("/person_alt")
-        public String create() {
-          return "CREATED";
-        }
+      routes.
+          post("/post", () -> "Done").
+          get("/get", () -> "Done").
+          get("/action", () -> "Done GET").
+          post("/action", () -> "Done POST").
+          post("/post/:who", (String who) -> "Done " + who).
+          add(new Object() {
+            @Post("/person")
+            @Post("/person_alt")
+            public String create() {
+              return "CREATED";
+            }
 
-        @Post("/order/:id")
-        public String order(String id, Order order) {
-          return "order " + id + " : " + order.quantity + "x" + order.name;
-        }
-      });
+            @Post("/order/:id")
+            public String order(String id, Order order) {
+              return "order " + id + " : " + order.quantity + "x" + order.name;
+            }
+          });
     });
 
     post("/post").produces("Done");
@@ -317,14 +326,15 @@ public class WebServerTest {
   @Test
   public void support_put() {
     server.configure(routes -> {
-      routes.put("/put", () -> "Done");
-      routes.put("/putText", (Context context) -> context.payload());
-      routes.add(new Object() {
-        @Put("/order/:id")
-        public String order(String id, Order order) {
-          return "order " + id + " : " + order.quantity + "x" + order.name;
-        }
-      });
+      routes.
+          put("/put", () -> "Done").
+          put("/putText", (Context context) -> context.payload()).
+          add(new Object() {
+            @Put("/order/:id")
+            public String order(String id, Order order) {
+              return "order " + id + " : " + order.quantity + "x" + order.name;
+            }
+          });
     });
 
     put("/put").produces("Done");
@@ -335,19 +345,20 @@ public class WebServerTest {
   @Test
   public void postForm() {
     server.configure(routes -> {
-      routes.post("/postForm", (Context context) -> "CREATED " + context.get("firstName") + " " + context.get("lastName"));
-      routes.add(new Object() {
-        @Post("/postFormResource")
-        public String create(Map<String, String> keyValues) {
-          return "CREATED " + keyValues.get("firstName") + " " + keyValues.get("lastName");
-        }
-      });
-      routes.add(new Object() {
-        @Post("/postBean")
-        public String create(Human human) {
-          return "CREATED " + human.firstName + " " + human.lastName;
-        }
-      });
+      routes.
+          post("/postForm", (Context context) -> "CREATED " + context.get("firstName") + " " + context.get("lastName")).
+          add(new Object() {
+            @Post("/postFormResource")
+            public String create(Map<String, String> keyValues) {
+              return "CREATED " + keyValues.get("firstName") + " " + keyValues.get("lastName");
+            }
+          }).
+          add(new Object() {
+            @Post("/postBean")
+            public String create(Human human) {
+              return "CREATED " + human.firstName + " " + human.lastName;
+            }
+          });
     });
 
     post("/postForm", "firstName", "John", "lastName", "Doe").produces("CREATED John Doe");
@@ -370,8 +381,9 @@ public class WebServerTest {
   @Test
   public void first_route_serves_first() {
     server.configure(routes -> {
-      routes.get("/", "FIRST");
-      routes.get("/", "SECOND");
+      routes.
+          get("/", "FIRST").
+          get("/", "SECOND");
     });
 
     get("/").produces("FIRST");
@@ -388,9 +400,10 @@ public class WebServerTest {
   @Test
   public void includes() {
     server.configure(routes -> {
-      routes.get("/", "MAIN");
-      routes.include(moreRoutes -> moreRoutes.get("/more", "MORE"));
-      routes.include(EvenMoreRoutes.class);
+      routes.
+          get("/", "MAIN").
+          include(moreRoutes -> moreRoutes.get("/more", "MORE")).
+          include(EvenMoreRoutes.class);
     });
 
     get("/").produces("MAIN");
@@ -401,9 +414,10 @@ public class WebServerTest {
   @Test
   public void basicAuth() {
     server.configure(routes -> {
-      routes.filter(new BasicAuthFilter("/secure", "codestory", of("jl", "polka")));
-      routes.get("/", "Hello World");
-      routes.get("/secure", "Secured Hello World");
+      routes.
+          filter(new BasicAuthFilter("/secure", "codestory", of("jl", "polka"))).
+          get("/", "Hello World").
+          get("/secure", "Secured Hello World");
     });
 
     get("/").produces(200, "text/html", "Hello World");
@@ -416,13 +430,14 @@ public class WebServerTest {
   @Test
   public void support_delete() {
     server.configure(routes -> {
-      routes.delete("/delete", () -> "From route");
-      routes.add(new Object() {
-        @Delete("/deleteFromResource")
-        public String delete() {
-          return "From resource";
-        }
-      });
+      routes.
+          delete("/delete", () -> "From route").
+          add(new Object() {
+            @Delete("/deleteFromResource")
+            public String delete() {
+              return "From resource";
+            }
+          });
     });
 
     delete("/delete").produces(200, "text/html", "From route");
