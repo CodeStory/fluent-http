@@ -34,23 +34,26 @@ public class HandlebarsCompiler {
   }
 
   private static Handlebars handlebars(Map<String, Object> variables) {
-    Handlebars handlebars = new Handlebars()
-        .startDelimiter("[[")
-        .endDelimiter("]]")
-        .registerHelpers(new EachReverseHelperSource())
-        .registerHelpers(new EachValueHelperSource())
-        .registerHelpers(StringHelpers.class)
-        .with(new ConcurrentMapTemplateCache())
-        .with(new AbstractTemplateLoader() {
-          @Override
-          public TemplateSource sourceAt(String location) {
-            return new StringTemplateSource(location, new Template("_includes", location).render(variables));
-          }
-        });
+    Handlebars hb = new Handlebars();
+
+    hb.startDelimiter("[[");
+    hb.endDelimiter("]]");
+    hb.registerHelpers(new EachReverseHelperSource());
+    hb.registerHelpers(new EachValueHelperSource());
+    hb.registerHelpers(StringHelpers.class);
+    hb.with(new ConcurrentMapTemplateCache());
+    hb.with(new AbstractTemplateLoader() {
+      @Override
+      public TemplateSource sourceAt(String location) {
+        return new StringTemplateSource(location, new Template("_includes", location).render(variables));
+      }
+    });
+
     if (isThereACustomHandleBarHelperToLoad()) {
-      handlebars.registerHelpers(findHandleBarHelpers());
+      hb.registerHelpers(findHandleBarHelpers());
     }
-    return handlebars;
+
+    return hb;
   }
 
   private static boolean isThereACustomHandleBarHelperToLoad() {
