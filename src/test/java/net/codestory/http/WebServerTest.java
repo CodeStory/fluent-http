@@ -64,9 +64,9 @@ public class WebServerTest {
         }).
         get("/notfound", Payload.notFound()));
 
-    get("/unknown").produces(404, "text/html", "Page not found");
     get("/error").produces(404, "text/html", "Page not found");
     get("/notfound").produces(404, "text/html", "Page not found");
+    get("/undefined").produces(404, "text/html", "Page not found");
   }
 
   @Test
@@ -89,13 +89,11 @@ public class WebServerTest {
   public void request_params() {
     server.configure(routes -> routes.
         get("/hello/:name", (String name) -> "Hello " + name).
-        get("/other/:name", (String name) -> "Other " + name).
         get("/say/:what/how/:loud", (String what, String loud) -> what + " " + loud).
         get("/:one/:two/:three", (String one, String two, String three) -> one + " " + two + " " + three));
 
     get("/hello/Dave").produces("Hello Dave");
     get("/hello/John Doe").produces("Hello John Doe");
-    get("/other/Joe").produces("Other Joe");
     get("/say/HI/how/LOUD").produces("HI LOUD");
     get("/ONE/TWO/THREE").produces("ONE TWO THREE");
   }
@@ -393,8 +391,7 @@ public class WebServerTest {
         get("/secure", "Private"));
 
     get("/").produces(200, "text/html", "Public");
-    get("/secure").produces(401);
-    get("/secure").producesHeader("WWW-Authenticate", "Basic realm=\"codestory\"");
+    get("/secure").produces(401).producesHeader("WWW-Authenticate", "Basic realm=\"codestory\"");
     getWithAuth("/secure", "jl", "polka").produces(200, "text/html", "Private");
     getWithAuth("/secure", "jl", "wrongpassword").produces(401);
   }

@@ -71,27 +71,33 @@ class RestAssert {
   }
 
   // Assertions
-  void produces(String content) {
+  RestAssert produces(String content) {
     then.content(containsString(content));
+    return this;
   }
 
-  void produces(String contentType, String content) {
+  RestAssert produces(String contentType, String content) {
     then.content(containsString(content)).contentType(contentType);
+    return this;
   }
 
-  void produces(int code, String contentType, String content) {
+  RestAssert produces(int code, String contentType, String content) {
     then.content(containsString(content)).contentType(contentType).statusCode(code);
+    return this;
   }
 
-  void produces(int code) {
+  RestAssert produces(int code) {
     then.statusCode(code);
+    return this;
   }
 
-  void producesCookie(String name, String value) {
+  RestAssert producesCookie(String name, String value) {
     then.cookie(name, value);
+    return this;
   }
 
-  void producesHeader(String name, String value) {
+  RestAssert producesHeader(String name, String value) {
     then.header(name, value);
+    return this;
   }
 }
