@@ -389,13 +389,13 @@ public class WebServerTest {
   public void basicAuth() {
     server.configure(routes -> routes.
         filter(new BasicAuthFilter("/secure", "codestory", of("jl", "polka"))).
-        get("/", "Hello World").
-        get("/secure", "Secured Hello World"));
+        get("/", "Public").
+        get("/secure", "Private"));
 
-    get("/").produces(200, "text/html", "Hello World");
+    get("/").produces(200, "text/html", "Public");
     get("/secure").produces(401);
     get("/secure").producesHeader("WWW-Authenticate", "Basic realm=\"codestory\"");
-    getWithAuth("/secure", "jl", "polka").produces(200, "text/html", "Secured Hello World");
+    getWithAuth("/secure", "jl", "polka").produces(200, "text/html", "Private");
     getWithAuth("/secure", "jl", "wrongpassword").produces(401);
   }
 

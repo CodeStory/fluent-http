@@ -72,12 +72,22 @@ public class Payload {
     return this;
   }
 
+  public Payload withHeaders(Map<String, String> headers) {
+    this.headers.putAll(headers);
+    return this;
+  }
+
   public Payload withCookie(String name, String value) {
     return withCookie(new Cookie(name, value, "/", true));
   }
 
   public Payload withCookie(Cookie cookie) {
     cookies.add(cookie);
+    return this;
+  }
+
+  public Payload withCookies(List<Cookie> cookies) {
+    cookies.addAll(cookies);
     return this;
   }
 
@@ -91,6 +101,10 @@ public class Payload {
 
   public Map<String, String> headers() {
     return headers;
+  }
+
+  public List<Cookie> cookies() {
+    return cookies;
   }
 
   public int code() {

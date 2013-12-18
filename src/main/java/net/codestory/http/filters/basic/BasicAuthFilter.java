@@ -47,7 +47,7 @@ public class BasicAuthFilter implements Filter {
       return nextFilter.get(); // Ignore
     }
 
-    String authorizationHeader = context.get("Authorization");
+    String authorizationHeader = context.getHeader("Authorization");
     if ((authorizationHeader == null) || !hashes.contains(authorizationHeader.trim())) {
       return Payload.unauthorized(realm);
     }

@@ -21,11 +21,11 @@ import net.codestory.http.payload.*;
 import net.codestory.http.templating.*;
 
 public class ErrorPage {
-  private final int code;
+  private final Payload payload;
   private final Exception exception;
 
-  public ErrorPage(int code, Exception exception) {
-    this.code = code;
+  public ErrorPage(Payload payload, Exception exception) {
+    this.payload = payload;
     this.exception = exception;
   }
 
@@ -33,11 +33,13 @@ public class ErrorPage {
     String error = toString(exception);
     String filename = filename();
 
-    return new Payload("text/html", ModelAndView.of(filename, "ERROR", error), code);
+    return new Payload("text/html", ModelAndView.of(filename, "ERROR", error), payload.code())
+        .withHeaders(payload.headers())
+        .withCookies(payload.cookies());
   }
 
   private String filename() {
-    return code == 404 ? "404.html" : "500.html";
+    return payload.code() == 404 ? "404.html" : "500.html";
   }
 
   private static String toString(Exception error) {

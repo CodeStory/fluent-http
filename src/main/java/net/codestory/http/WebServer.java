@@ -153,30 +153,24 @@ public class WebServer {
   protected void applyRoutes(Request request, Response response) throws IOException {
     Payload payload = routesProvider.get().apply(request, response);
     if (payload.isError()) {
-      Payload errorPage = onPageNotFound(payload);
-      errorPage.writeTo(response);
-    } else {
-      payload.writeTo(response);
+      payload = onError(payload);
     }
+
+    payload.writeTo(response);
   }
 
-  protected Payload onPageNotFound(Payload payload) {
-    return onError(payload.code(), null);
+  protected Payload onError(Payload payload) {
+    return onError(payload, null);
   }
 
   protected Payload onError(Exception e) {
     int code = (e instanceof HttpException) ? ((HttpException) e).code() : 500;
-    return onError(code, e);
+    return onError(new Payload(code), e);
   }
 
-  protected Payload onError(int code, Exception e) {
+  protected Payload onError(Payload payload, Exception e) {
     Exception shownError = devMode() ? e : null;
-
-    return errorPage(code, shownError);
-  }
-
-  protected Payload errorPage(int code, Exception e) {
-    return new ErrorPage(code, e).payload();
+    return new ErrorPage(payload, shownError).payload();
   }
 
   protected boolean devMode() {
