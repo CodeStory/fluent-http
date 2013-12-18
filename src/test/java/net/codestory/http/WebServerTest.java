@@ -39,12 +39,7 @@ public class WebServerTest {
   @ClassRule
   public static RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties("PROD_MODE");
 
-  static WebServer server = new WebServer() {
-    @Override
-    protected boolean devMode() {
-      return false;
-    }
-  };
+  static WebServer server = new WebServer();
 
   @BeforeClass
   public static void prodMode() {
