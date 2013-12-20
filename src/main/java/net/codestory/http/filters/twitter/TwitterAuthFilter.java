@@ -23,7 +23,6 @@ import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
 
 import org.simpleframework.http.*;
-import org.simpleframework.http.Query;
 
 import twitter4j.*;
 import twitter4j.conf.*;

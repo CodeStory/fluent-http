@@ -16,7 +16,6 @@
 package net.codestory.http.payload;
 
 import static java.nio.charset.StandardCharsets.*;
-import static net.codestory.http.routes.Match.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

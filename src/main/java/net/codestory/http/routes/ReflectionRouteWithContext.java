@@ -21,8 +21,6 @@ import java.util.function.*;
 import net.codestory.http.convert.*;
 import net.codestory.http.internal.*;
 
-import com.github.rjeschke.txtmark.*;
-
 class ReflectionRouteWithContext extends AbstractReflectionRoute implements AnyRouteWithContext {
   ReflectionRouteWithContext(Supplier<Object> resource, Method method) {
     super(resource, method);

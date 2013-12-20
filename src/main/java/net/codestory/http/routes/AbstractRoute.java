@@ -21,8 +21,6 @@ import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.templating.*;
 
-import org.simpleframework.http.*;
-
 abstract class AbstractRoute implements Route {
   @Override
   public Payload apply(String uri, Context context) throws IOException {

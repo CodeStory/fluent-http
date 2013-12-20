@@ -19,8 +19,6 @@ import java.io.*;
 
 import net.codestory.http.payload.*;
 
-import org.simpleframework.http.*;
-
 @FunctionalInterface
 public interface PayloadSupplier {
   Payload get() throws IOException;
