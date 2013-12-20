@@ -48,7 +48,7 @@ public class Site {
     pages = memoize(() -> Resources.list()
         .stream()
         .filter(path -> !path.startsWith("_"))
-        .map(Site::pathToMap)
+        .map((path) -> Site.pathToMap(path))
         .collect(Collectors.<Map<String, Object>>toList())
     );
 
@@ -65,7 +65,7 @@ public class Site {
     categories = memoize(() -> {
       Map<String, List<Map<String, Object>>> sorted = getPages()
           .stream()
-          .collect(Collectors.groupingBy(Site::category, TreeMap::new, Collectors.toList()));
+          .collect(Collectors.groupingBy((page) -> Site.category(page), TreeMap::new, Collectors.toList()));
       return sorted;
     });
   }

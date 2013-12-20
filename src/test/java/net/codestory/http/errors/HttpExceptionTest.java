@@ -21,7 +21,7 @@ import org.junit.*;
 
 public class HttpExceptionTest {
   @Test
-  public void page_not_found() {
+  public void not_found() {
     HttpException error = new NotFoundException();
 
     assertThat(error.code()).isEqualTo(404);

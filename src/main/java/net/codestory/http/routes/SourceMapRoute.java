@@ -33,9 +33,7 @@ class SourceMapRoute implements Route {
       return Payload.notFound();
     }
 
-    Path pathMap = Paths.get(uri);
     Path pathLess = Paths.get(Strings.substringBeforeLast(uri, ".css.map") + ".less");
-
     if (!Resources.isPublic(pathLess)) {
       return Payload.notFound();
     }
@@ -44,6 +42,7 @@ class SourceMapRoute implements Route {
       return Payload.methodNotAllowed();
     }
 
+    Path pathMap = Paths.get(uri);
     String contentType = ContentTypes.get(pathMap);
     String less = Resources.read(pathLess, UTF_8);
     String map = Compiler.compile(pathMap, less);

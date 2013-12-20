@@ -29,13 +29,13 @@ class ReflectionRouteWithContext extends AbstractReflectionRoute implements AnyR
   @Override
   public Object body(Context context, String[] pathParameters) {
     try {
-      Object[] arguments = TypeConvert.convert(pathParameters, context, method.getParameterTypes());
+      Object[] arguments = TypeConvert.convert(context, pathParameters, method.getParameterTypes());
 
       return payload(arguments);
     } catch (RuntimeException e) {
       throw e;
     } catch (Exception e) {
-      throw new IllegalStateException("Unable to apply resource", e);
+      throw new IllegalStateException("Unable to apply route", e);
     }
   }
 }

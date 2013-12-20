@@ -36,7 +36,7 @@ public class TypeConvert {
     OBJECT_MAPPER = mapper;
   }
 
-  public static Object[] convert(String[] pathParameters, Context context, Class<?>[] types) throws IOException {
+  public static Object[] convert(Context context, String[] pathParameters, Class<?>[] types) throws IOException {
     Object[] converted = new Object[pathParameters.length + 1];
 
     for (int i = 0; i < pathParameters.length; i++) {

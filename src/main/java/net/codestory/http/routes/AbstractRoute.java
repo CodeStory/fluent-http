@@ -25,10 +25,10 @@ abstract class AbstractRoute implements Route {
   @Override
   public Payload apply(String uri, Context context) throws IOException {
     if (!matchUri(uri)) {
-      if (!uri.endsWith("/") && matchUri(uri + "/")) {
-        return Payload.seeOther(uri + "/");
+      if (uri.endsWith("/") || !matchUri(uri + "/")) {
+        return Payload.notFound();
       }
-      return Payload.notFound();
+      return Payload.seeOther(uri + "/");
     }
 
     if (!matchMethod(context)) {

@@ -155,7 +155,6 @@ public class WebServer {
     if (payload.isError()) {
       payload = onError(payload);
     }
-
     payload.writeTo(response);
   }
 

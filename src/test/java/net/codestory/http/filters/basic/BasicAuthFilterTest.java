@@ -32,12 +32,10 @@ public class BasicAuthFilterTest {
 
   private Payload next = Payload.ok();
   private PayloadSupplier nextFilter = () -> next;
-  private Context context;
+  private Context context = mock(Context.class);
 
   @Before
-  public void init() throws IOException {
-    context = mock(Context.class);
-
+  public void create_filter() {
     Map<String, String> users = new HashMap<>();
     users.put("jl", "polka");
     filter = new BasicAuthFilter("/secure", "codestory", users);

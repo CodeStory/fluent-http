@@ -29,10 +29,10 @@ class StaticRoute implements Route {
   public Payload apply(String uri, Context context) throws IOException {
     Path path = path(uri);
     if (path == NOT_FOUND) {
-      if (!uri.endsWith("/") && (path(uri + "/") != NOT_FOUND)) {
-        return Payload.seeOther(uri + "/");
+      if (uri.endsWith("/") || (path(uri + "/") == NOT_FOUND)) {
+        return Payload.notFound();
       }
-      return Payload.notFound();
+      return Payload.seeOther(uri + "/");
     }
 
     if (!"GET".equalsIgnoreCase(context.method())) {
