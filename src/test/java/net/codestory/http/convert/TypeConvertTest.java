@@ -37,10 +37,10 @@ public class TypeConvertTest {
 
   @Test
   public void to_boolean() {
-    assertThat(TypeConvert.fromString("true", Boolean.class)).isEqualTo(true);
-    assertThat(TypeConvert.fromString("true", boolean.class)).isEqualTo(true);
-    assertThat(TypeConvert.fromString("false", Boolean.class)).isEqualTo(false);
-    assertThat(TypeConvert.fromString("false", boolean.class)).isEqualTo(false);
+    assertThat(TypeConvert.fromString("true", Boolean.class)).isTrue();
+    assertThat(TypeConvert.fromString("true", boolean.class)).isTrue();
+    assertThat(TypeConvert.fromString("false", Boolean.class)).isFalse();
+    assertThat(TypeConvert.fromString("false", boolean.class)).isFalse();
   }
 
   @Test
