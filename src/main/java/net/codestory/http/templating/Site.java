@@ -25,6 +25,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.codestory.http.io.*;
+import net.codestory.http.misc.*;
 
 import com.github.jknack.handlebars.*;
 
@@ -71,7 +72,7 @@ public class Site {
   }
 
   public static Site get() {
-    return Boolean.getBoolean("PROD_MODE") ? INSTANCE : new Site();
+    return Env.devMode() ? new Site() : INSTANCE;
   }
 
   private Map<String, Object> configYaml() {

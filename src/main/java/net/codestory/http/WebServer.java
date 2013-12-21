@@ -23,6 +23,7 @@ import java.util.*;
 import net.codestory.http.errors.*;
 import net.codestory.http.filters.log.*;
 import net.codestory.http.internal.*;
+import net.codestory.http.misc.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.reload.*;
 import net.codestory.http.ssl.*;
@@ -83,7 +84,7 @@ public class WebServer {
   }
 
   private static int overrideWithCloudbeesPort(int port) {
-    return Integer.parseInt(System.getProperty("app.port", "" + port));
+    return Env.overriddenPort(port);
   }
 
   public WebServer start(int port) {
@@ -179,6 +180,6 @@ public class WebServer {
   }
 
   protected boolean devMode() {
-    return !Boolean.getBoolean("PROD_MODE");
+    return Env.devMode();
   }
 }

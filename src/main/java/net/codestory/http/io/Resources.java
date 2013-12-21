@@ -24,6 +24,7 @@ import java.nio.charset.*;
 import java.nio.file.*;
 import java.util.*;
 
+import net.codestory.http.misc.*;
 import net.codestory.http.types.*;
 
 public class Resources {
@@ -39,11 +40,11 @@ public class Resources {
     Path parentPath = Paths.get(ROOT);
 
     try {
-      if (new File("target/classes").exists() && !Boolean.getBoolean("http.disable.classpath")) {
+      if (new File("target/classes").exists() && !Env.disableClassPath()) {
         new ClasspathScanner().getResources(ROOT).forEach(resource -> paths.add(relativePath(parentPath, Paths.get(resource))));
       }
 
-      if (!Boolean.getBoolean("http.disable.filesystem")) {
+      if (!Env.disableFilesystem()) {
         walkFileTree(Paths.get(ROOT), onFile(path -> paths.add(relativePath(parentPath, path))));
       }
     } catch (IOException e) {
