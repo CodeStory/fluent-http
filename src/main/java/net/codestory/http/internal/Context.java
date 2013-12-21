@@ -28,8 +28,8 @@ public class Context {
   private final Response response;
   private final Query query;
 
-  public Context(String uri, Request request, Response response) {
-    this.uri = uri;
+  public Context(Request request, Response response) {
+    this.uri = request.getPath().getPath();
     this.request = request;
     this.response = response;
     this.query = request.getQuery();

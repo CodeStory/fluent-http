@@ -131,25 +131,17 @@ public class WebServer {
   }
 
   void handle(Request request, Response response) {
-    String uri = request.getPath().getPath();
-    Context context = new Context(uri, request, response);
+    Context context = new Context(request, response);
 
     try {
       applyRoutes(context);
     } catch (Exception e) {
-      e.printStackTrace();
-      try {
-        Payload errorPage = onError(e);
-        errorPage.writeTo(context);
-      } catch (IOException error) {
-        System.out.println("Unable to serve an error page " + error);
-        error.printStackTrace();
-      }
+      handleServerError(context, e);
     } finally {
       try {
         response.close();
       } catch (IOException e) {
-        e.printStackTrace();
+        // Ignore
       }
     }
   }
@@ -157,21 +149,31 @@ public class WebServer {
   protected void applyRoutes(Context context) throws IOException {
     Payload payload = routesProvider.get().apply(context);
     if (payload.isError()) {
-      payload = onError(payload);
+      payload = errorPage(payload);
     }
     payload.writeTo(context);
   }
 
-  protected Payload onError(Payload payload) {
-    return onError(payload, null);
+  protected void handleServerError(Context context, Exception e) {
+    e.printStackTrace();
+    try {
+      errorPage(e).writeTo(context);
+    } catch (IOException error) {
+      System.out.println("Unable to serve an error page " + error);
+      error.printStackTrace();
+    }
   }
 
-  protected Payload onError(Exception e) {
+  protected Payload errorPage(Payload payload) {
+    return errorPage(payload, null);
+  }
+
+  protected Payload errorPage(Exception e) {
     int code = (e instanceof HttpException) ? ((HttpException) e).code() : 500;
-    return onError(new Payload(code), e);
+    return errorPage(new Payload(code), e);
   }
 
-  protected Payload onError(Payload payload, Exception e) {
+  protected Payload errorPage(Payload payload, Exception e) {
     Exception shownError = devMode() ? e : null;
     return new ErrorPage(payload, shownError).payload();
   }
