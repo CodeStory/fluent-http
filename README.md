@@ -2,7 +2,6 @@
 
  + Supporter les coffee et less pré-générés
  + Supporter les templates pré-générés
- + Set ContentType on xml using yaml
  + Javadoc
  + handle logs properly rather than 'sysouting' like a pig ;)
  + PROD_MODE is not really convenient. It forces to have more complex prod script
