@@ -25,6 +25,7 @@ import java.util.*;
 
 import net.codestory.http.compilers.Compiler;
 import net.codestory.http.convert.*;
+import net.codestory.http.internal.*;
 import net.codestory.http.io.*;
 import net.codestory.http.templating.*;
 import net.codestory.http.types.*;
@@ -157,17 +158,18 @@ public class Payload {
     return false;
   }
 
-  public void writeTo(Response response) throws IOException {
+  public void writeTo(Context context) throws IOException {
+    Response response = context.response();
+
     headers.entrySet().forEach(entry -> response.setValue(entry.getKey(), entry.getValue()));
     addHeadersForContent(response);
-
     cookies.forEach(cookie -> response.setCookie(cookie));
-
     response.setCode(code);
 
-    byte[] data = getData();
+    String uri = context.uri();
+    byte[] data = getData(uri);
     if (data != null) {
-      response.setValue("Content-Type", getContentType());
+      response.setValue("Content-Type", getContentType(uri));
       response.setContentLength(data.length);
       response.getOutputStream().write(data);
     } else {
@@ -175,7 +177,7 @@ public class Payload {
     }
   }
 
-  String getContentType() {
+  String getContentType(String uri) {
     if (contentType != null) {
       return contentType;
     }
@@ -200,10 +202,14 @@ public class Payload {
       Path path = Resources.findExistingPath(((ModelAndView) content).view());
       return ContentTypes.get(path);
     }
+    if (content instanceof Model) {
+      Path path = Resources.findExistingPath(uri);
+      return ContentTypes.get(path);
+    }
     return "application/json;charset=UTF-8";
   }
 
-  byte[] getData() throws IOException {
+  byte[] getData(String uri) throws IOException {
     if (content == null) {
       return null;
     }
@@ -224,6 +230,9 @@ public class Payload {
     }
     if (content instanceof ModelAndView) {
       return forModelAndView((ModelAndView) content);
+    }
+    if (content instanceof Model) {
+      return forModelAndView(ModelAndView.of(uri, (Model) content));
     }
 
     return TypeConvert.toByteArray(content);

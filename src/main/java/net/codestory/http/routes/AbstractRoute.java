@@ -19,7 +19,6 @@ import java.io.*;
 
 import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
-import net.codestory.http.templating.*;
 
 abstract class AbstractRoute implements Route {
   @Override
@@ -38,9 +37,6 @@ abstract class AbstractRoute implements Route {
     String[] parameters = parseParameters(uri, context);
 
     Object body = body(context, parameters);
-    if (body instanceof Model) {
-      body = ModelAndView.of(uri, (Model) body);
-    }
 
     return new Payload(body);
   }

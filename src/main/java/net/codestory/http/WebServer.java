@@ -22,6 +22,7 @@ import java.util.*;
 
 import net.codestory.http.errors.*;
 import net.codestory.http.filters.log.*;
+import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.reload.*;
 import net.codestory.http.ssl.*;
@@ -130,13 +131,16 @@ public class WebServer {
   }
 
   void handle(Request request, Response response) {
+    String uri = request.getPath().getPath();
+    Context context = new Context(uri, request, response);
+
     try {
-      applyRoutes(request, response);
+      applyRoutes(context);
     } catch (Exception e) {
       e.printStackTrace();
       try {
         Payload errorPage = onError(e);
-        errorPage.writeTo(response);
+        errorPage.writeTo(context);
       } catch (IOException error) {
         System.out.println("Unable to serve an error page " + error);
         error.printStackTrace();
@@ -150,12 +154,12 @@ public class WebServer {
     }
   }
 
-  protected void applyRoutes(Request request, Response response) throws IOException {
-    Payload payload = routesProvider.get().apply(request, response);
+  protected void applyRoutes(Context context) throws IOException {
+    Payload payload = routesProvider.get().apply(context);
     if (payload.isError()) {
       payload = onError(payload);
     }
-    payload.writeTo(response);
+    payload.writeTo(context);
   }
 
   protected Payload onError(Payload payload) {

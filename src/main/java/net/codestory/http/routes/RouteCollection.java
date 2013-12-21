@@ -19,7 +19,7 @@ import static java.util.Arrays.*;
 import static net.codestory.http.internal.UriParser.*;
 
 import java.io.*;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -29,8 +29,6 @@ import net.codestory.http.filters.*;
 import net.codestory.http.injection.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
-
-import org.simpleframework.http.*;
 
 public class RouteCollection implements Routes {
   private final List<Route> routes;
@@ -372,13 +370,11 @@ public class RouteCollection implements Routes {
     routes.add(new SourceMapRoute());
   }
 
-  public Payload apply(Request request, Response response) throws IOException {
-    String uri = request.getPath().getPath();
+  public Payload apply(Context context) throws IOException {
+    String uri = context.uri();
     if (uri == null) {
       return Payload.notFound();
     }
-
-    final Context context = new Context(uri, request, response);
 
     PayloadSupplier payloadSupplier = () -> {
       Payload bestMatch = Payload.notFound();

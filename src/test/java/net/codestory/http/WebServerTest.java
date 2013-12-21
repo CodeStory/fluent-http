@@ -166,6 +166,18 @@ public class WebServerTest {
       @Produces("application/json")
       public void emptyJson() {
       }
+
+      @Get("/1variable")
+      @Produces("text/html")
+      public Model helloBob() {
+        return Model.of("name", "Bob");
+      }
+
+      @Get("/helloJoe")
+      @Produces("text/html")
+      public ModelAndView helloJoe() {
+        return ModelAndView.of("1variable", "name", "Joe");
+      }
     }));
 
     get("/hello").produces("Hello");
@@ -174,6 +186,8 @@ public class WebServerTest {
     get("/add/22/20").produces("application/json", "42");
     get("/void").produces(200, "text/html", "");
     get("/voidJson").produces(200, "application/json", "");
+    get("/1variable").produces(200, "text/html", "Hello Bob");
+    get("/helloJoe").produces(200, "text/html", "Hello Joe");
   }
 
   @Test
