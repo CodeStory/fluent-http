@@ -39,6 +39,10 @@ class RestAssert {
     return new RestAssert(request -> request.get(path));
   }
 
+  static RestAssert getWithHeader(String path, String name, String value) {
+    return new RestAssert(given -> given.header(name, value), request -> request.get(path));
+  }
+
   static RestAssert getWithAuth(String path, String login, String password) {
     return new RestAssert(given -> given.auth().preemptive().basic(login, password), request -> request.get(path));
   }

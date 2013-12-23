@@ -35,7 +35,7 @@ import org.simpleframework.http.*;
 public class Payload {
   private final String contentType;
   private final Object content;
-  private final int code;
+  private int code;
   private final Map<String, String> headers;
   private final List<Cookie> cookies;
 
@@ -92,6 +92,11 @@ public class Payload {
     return this;
   }
 
+  public Payload withCode(int code) {
+    this.code = code;
+    return this;
+  }
+
   public String rawContentType() {
     return contentType;
   }
@@ -110,6 +115,10 @@ public class Payload {
 
   public int code() {
     return code;
+  }
+
+  public boolean isSuccess() {
+    return (code >= 200) && (code <= 299);
   }
 
   public boolean isError() {
@@ -177,7 +186,7 @@ public class Payload {
     }
   }
 
-  String getContentType(String uri) {
+  public String getContentType(String uri) {
     if (contentType != null) {
       return contentType;
     }
@@ -209,7 +218,7 @@ public class Payload {
     return "application/json;charset=UTF-8";
   }
 
-  byte[] getData(String uri) throws IOException {
+  public byte[] getData(String uri) throws IOException {
     if (content == null) {
       return null;
     }

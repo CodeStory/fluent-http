@@ -26,8 +26,10 @@ import java.util.*;
 import net.codestory.http.annotations.*;
 import net.codestory.http.errors.*;
 import net.codestory.http.filters.basic.*;
+import net.codestory.http.filters.etag.*;
 import net.codestory.http.injection.*;
 import net.codestory.http.internal.*;
+import net.codestory.http.misc.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.routes.*;
 import net.codestory.http.templating.*;
@@ -423,6 +425,17 @@ public class WebServerTest {
 
     delete("/delete").produces(200, "text/html", "From route");
     delete("/deleteFromResource").produces(200, "text/html", "From resource");
+  }
+
+  @Test
+  public void etag_filter() {
+    server.configure(routes -> routes.
+        filter(EtagFilter.class).
+        get("/", "Hello World")
+    );
+
+    get("/").produces(200, "text/html", "Hello World");
+    getWithHeader("/", "If-None-Match", Md5.of("Hello World".getBytes(UTF_8))).produces(302);
   }
 
   public static class TestResource {
