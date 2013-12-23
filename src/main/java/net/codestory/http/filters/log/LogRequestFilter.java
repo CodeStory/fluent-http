@@ -21,10 +21,14 @@ import net.codestory.http.filters.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
 
+import org.slf4j.*;
+
 public class LogRequestFilter implements Filter {
+  private final static Logger LOG = LoggerFactory.getLogger(LogRequestFilter.class);
+
   @Override
   public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
-    System.out.println(uri);
+    LOG.info(uri);
     return nextFilter.get();
   }
 }

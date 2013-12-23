@@ -32,10 +32,13 @@ import org.simpleframework.http.*;
 import org.simpleframework.http.core.*;
 import org.simpleframework.transport.*;
 import org.simpleframework.transport.connect.*;
+import org.slf4j.*;
 
 import javax.net.ssl.*;
 
 public class WebServer {
+  private final static Logger LOG = LoggerFactory.getLogger(WebServer.class);
+
   private final Server server;
   private final SocketConnection connection;
   private RoutesProvider routesProvider;
@@ -77,7 +80,7 @@ public class WebServer {
         start(port);
         return this;
       } catch (Exception e) {
-        System.err.println("Unable to bind server: " + e);
+        LOG.error("Unable to bind server", e);
       }
     }
     throw new IllegalStateException("Unable to start server");
@@ -103,7 +106,7 @@ public class WebServer {
 
       connection.connect(new InetSocketAddress(this.port), context);
 
-      System.out.println("Server started on port " + this.port);
+      LOG.info("Server started on port {}", this.port);
     } catch (Exception e) {
       throw new IllegalStateException("Unable to bind the web server on port " + this.port, e);
     }
@@ -156,8 +159,7 @@ public class WebServer {
     try {
       errorPage(e).writeTo(context);
     } catch (IOException error) {
-      System.out.println("Unable to serve an error page " + error);
-      error.printStackTrace();
+      LOG.warn("Unable to serve an error page", error);
     }
   }
 

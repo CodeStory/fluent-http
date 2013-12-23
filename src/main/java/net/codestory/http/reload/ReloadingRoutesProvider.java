@@ -25,9 +25,13 @@ import java.util.concurrent.atomic.*;
 import net.codestory.http.*;
 import net.codestory.http.routes.*;
 
+import org.slf4j.*;
+
 import com.sun.nio.file.*;
 
 class ReloadingRoutesProvider implements RoutesProvider {
+  private final static Logger LOG = LoggerFactory.getLogger(ReloadingRoutesProvider.class);
+
   private final Configuration configuration;
   private final AtomicBoolean dirty;
   private RouteCollection routes;
@@ -41,7 +45,7 @@ class ReloadingRoutesProvider implements RoutesProvider {
   @Override
   public synchronized RouteCollection get() {
     if (dirty.get()) {
-      System.out.println("Reloading configuration...");
+      LOG.info("Reloading configuration...");
 
       routes = new RouteCollection();
       configuration.configure(routes);
