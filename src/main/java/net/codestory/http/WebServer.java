@@ -83,10 +83,6 @@ public class WebServer {
     throw new IllegalStateException("Unable to start server");
   }
 
-  private static int overrideWithCloudbeesPort(int port) {
-    return Env.overriddenPort(port);
-  }
-
   public WebServer start(int port) {
     return startWithContext(port, null);
   }
@@ -103,7 +99,7 @@ public class WebServer {
 
   private WebServer startWithContext(int port, SSLContext context) {
     try {
-      this.port = overrideWithCloudbeesPort(port);
+      this.port = Env.overriddenPort(port);
 
       connection.connect(new InetSocketAddress(this.port), context);
 
