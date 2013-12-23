@@ -16,39 +16,43 @@
 package net.codestory.http.misc;
 
 public class Env {
+  private static final String APP_PORT = "app.port";
+  private static final String DISABLE_CLASSPATH = "http.disable.classpath";
+  private static final String DISABLE_FILESYSTEM = "http.disable.filesystem";
+  private static final String PROD_MODE = "PROD_MODE";
+
   private Env() {
     // Static class
   }
 
   public static boolean devMode() {
-    return getBoolean("PROD_MODE", false);
-  }
-
-  public static boolean disableClassPath() {
-    return getBoolean("http.disable.classpath", false);
-  }
-
-  public static boolean disableFilesystem() {
-    return getBoolean("http.disable.filesystem", false);
+    return getBoolean(PROD_MODE, false);
   }
 
   public static int overriddenPort(int port) {
-    return Env.getInt("app.port", port);
+    return getInt(APP_PORT, port);
   }
 
-  private static String get(String name, String defaultValue) {
-    String env = System.getenv(name);
-    if (env != null) {
-      return env;
-    }
-    return System.getProperty(name, defaultValue);
+  public static boolean disableClassPath() {
+    return getBoolean(DISABLE_CLASSPATH, false);
   }
 
-  private static boolean getBoolean(String name, boolean defaultValue) {
-    return Boolean.parseBoolean(Env.get(name, Boolean.toString(defaultValue)));
+  public static boolean disableFilesystem() {
+    return getBoolean(DISABLE_FILESYSTEM, false);
   }
 
-  private static int getInt(String name, int defaultValue) {
-    return Integer.parseInt(Env.get(name, Integer.toString(defaultValue)));
+  private static String get(String propertyName) {
+    String env = System.getenv(propertyName);
+    return (env != null) ? env : System.getProperty(propertyName);
+  }
+
+  private static boolean getBoolean(String propertyName, boolean defaultValue) {
+    String value = get(propertyName);
+    return (value == null) ? defaultValue : Boolean.parseBoolean(value);
+  }
+
+  private static int getInt(String propertyName, int defaultValue) {
+    String value = get(propertyName);
+    return (value == null) ? defaultValue : Integer.parseInt(value);
   }
 }
