@@ -6,6 +6,8 @@
  + handle logs properly rather than 'sysouting' like a pig ;)
  + PROD_MODE is not really convenient. It forces to have more complex prod script
  + Add some sort of http standard log
+ + Cleanup Payload
+ + Make Payload immutable?
 
 # CI
 
