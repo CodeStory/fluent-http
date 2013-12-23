@@ -41,11 +41,6 @@ public class FormulaPlugin extends Plugin {
     });
   }
 
-  public static void main(String[] args) throws UnsupportedEncodingException {
-    String toto = "%5Cfrac%7Byour%20score*100%7D%7B%5Cmax_%7Bi%3D1%7D%5En%20people%20served%7D";
-    System.out.println(URLDecoder.decode(toto, "US-ASCII"));
-  }
-
   private static String encode(String line) {
     try {
       return URLEncoder.encode(line, "US-ASCII").replace("+", "%20");
