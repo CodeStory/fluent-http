@@ -16,11 +16,11 @@
 package net.codestory.http.payload;
 
 import static java.nio.charset.StandardCharsets.*;
+import static java.time.format.DateTimeFormatter.*;
 
 import java.io.*;
 import java.nio.file.Path;
 import java.time.*;
-import java.time.format.*;
 import java.util.*;
 
 import net.codestory.http.compilers.Compiler;
@@ -251,7 +251,7 @@ public class Payload {
     return TypeConvert.toByteArray(content);
   }
 
-  void addHeadersForContent(Response response) {
+  private void addHeadersForContent(Response response) {
     if (content instanceof Path) {
       addLastModifiedHeader(((Path) content).toFile(), response);
     } else if (content instanceof File) {
@@ -260,8 +260,7 @@ public class Payload {
   }
 
   private void addLastModifiedHeader(File file, Response response) {
-    String lastModified = DateTimeFormatter.RFC_1123_DATE_TIME.format(ZonedDateTime.ofInstant(Instant.ofEpochMilli(file.lastModified()), ZoneOffset.systemDefault()));
-    response.setValue("Last-Modified", lastModified);
+    response.setValue("Last-Modified", RFC_1123_DATE_TIME.format(ZonedDateTime.ofInstant(Instant.ofEpochMilli(file.lastModified()), ZoneOffset.systemDefault())));
   }
 
   private static byte[] forString(String value) {
