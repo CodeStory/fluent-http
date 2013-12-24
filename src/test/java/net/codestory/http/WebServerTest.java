@@ -438,6 +438,12 @@ public class WebServerTest {
     getWithHeader("/", "If-None-Match", Md5.of("Hello World".getBytes(UTF_8))).produces(304);
   }
 
+  @Test
+  public void webJars() {
+    get("/webjars/bootstrap/3.0.3/css/bootstrap.min.css").produces(200, "text/css", "Bootstrap v3.0.3");
+    get("/webjars/bootstrap/3.0.3/js/bootstrap.min.js").produces(200, "application/javascript", "Bootstrap v3.0.3");
+  }
+
   public static class TestResource {
     @Get("/")
     public String hello() {

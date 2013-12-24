@@ -15,18 +15,51 @@
  */
 package net.codestory.http.routes;
 
+import static java.time.ZonedDateTime.*;
+import static java.time.format.DateTimeFormatter.*;
+
 import java.io.*;
+import java.net.*;
 import java.nio.file.*;
 
 import net.codestory.http.internal.*;
 import net.codestory.http.io.*;
 import net.codestory.http.payload.*;
+import net.codestory.http.types.*;
 
 class StaticRoute implements Route {
   protected static final Path NOT_FOUND = Paths.get("");
 
   @Override
   public Payload apply(String uri, Context context) throws IOException {
+    if (uri.startsWith("/webjars/")) {
+      return serverFromWebjar(uri, context);
+    }
+    return serveFromApp(uri, context);
+  }
+
+  private Payload serverFromWebjar(String uri, Context context) throws IOException {
+    URL classpathUrl = ClassLoader.getSystemResource("META-INF/resources" + uri);
+    if (classpathUrl == null) {
+      return Payload.notFound();
+    }
+
+    if (context.getHeader("if-modified-since") != null) {
+      return Payload.notModified();
+    }
+
+    try (InputStream stream = classpathUrl.openStream()) {
+      String contentType = ContentTypes.get(Paths.get(uri));
+      byte[] data = InputStreams.readBytes(stream);
+
+      return new Payload(contentType, data)
+          .withHeader("cache-control", "public, max-age=31536000")
+          .withHeader("last-modified", RFC_1123_DATE_TIME.format(now().minusMonths(1L)))
+          .withHeader("expires", RFC_1123_DATE_TIME.format(now().plusWeeks(1L)));
+    }
+  }
+
+  private Payload serveFromApp(String uri, Context context) {
     Path path = path(uri);
     if (path == NOT_FOUND) {
       if (uri.endsWith("/") || (path(uri + "/") == NOT_FOUND)) {
