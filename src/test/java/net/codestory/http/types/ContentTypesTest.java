@@ -25,24 +25,24 @@ import org.junit.*;
 public class ContentTypesTest {
   @Test
   public void find_content_type_from_extension() {
-    assertThat(get(Paths.get("index.html"))).isEqualTo("text/html");
-    assertThat(get(Paths.get("data.xml"))).isEqualTo("application/xml");
-    assertThat(get(Paths.get("style.css"))).isEqualTo("text/css");
-    assertThat(get(Paths.get("style.less"))).isEqualTo("text/css");
-    assertThat(get(Paths.get("style.css.map"))).isEqualTo("text/plain");
-    assertThat(get(Paths.get("text.md"))).isEqualTo("text/html");
-    assertThat(get(Paths.get("text.markdown"))).isEqualTo("text/html");
-    assertThat(get(Paths.get("text.asciidoc"))).isEqualTo("text/html");
-    assertThat(get(Paths.get("text.txt"))).isEqualTo("text/plain");
+    assertThat(get(Paths.get("index.html"))).isEqualTo("text/html;charset=UTF-8");
+    assertThat(get(Paths.get("data.xml"))).isEqualTo("application/xml;charset=UTF-8");
+    assertThat(get(Paths.get("style.css"))).isEqualTo("text/css;charset=UTF-8");
+    assertThat(get(Paths.get("style.less"))).isEqualTo("text/css;charset=UTF-8");
+    assertThat(get(Paths.get("style.css.map"))).isEqualTo("text/plain;charset=UTF-8");
+    assertThat(get(Paths.get("text.md"))).isEqualTo("text/html;charset=UTF-8");
+    assertThat(get(Paths.get("text.markdown"))).isEqualTo("text/html;charset=UTF-8");
+    assertThat(get(Paths.get("text.asciidoc"))).isEqualTo("text/html;charset=UTF-8");
+    assertThat(get(Paths.get("text.txt"))).isEqualTo("text/plain;charset=UTF-8");
     assertThat(get(Paths.get("text.zip"))).isEqualTo("application/zip");
     assertThat(get(Paths.get("image.gif"))).isEqualTo("image/gif");
     assertThat(get(Paths.get("image.jpeg"))).isEqualTo("image/jpeg");
     assertThat(get(Paths.get("image.jpg"))).isEqualTo("image/jpeg");
     assertThat(get(Paths.get("image.png"))).isEqualTo("image/png");
-    assertThat(get(Paths.get("script.js"))).isEqualTo("application/javascript");
-    assertThat(get(Paths.get("script.coffee"))).isEqualTo("application/javascript");
-    assertThat(get(Paths.get("script.litcoffee"))).isEqualTo("application/javascript");
-    assertThat(get(Paths.get("unknown"))).isEqualTo("text/plain");
+    assertThat(get(Paths.get("script.js"))).isEqualTo("application/javascript;charset=UTF-8");
+    assertThat(get(Paths.get("script.coffee"))).isEqualTo("application/javascript;charset=UTF-8");
+    assertThat(get(Paths.get("script.litcoffee"))).isEqualTo("application/javascript;charset=UTF-8");
+    assertThat(get(Paths.get("unknown"))).isEqualTo("text/plain;charset=UTF-8");
   }
 
   @Test

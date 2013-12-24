@@ -30,16 +30,16 @@ public class ContentTypes {
       case ".md":
       case ".markdown":
       case ".asciidoc":
-        return "text/html";
+        return "text/html;charset=UTF-8";
       case ".xml":
-        return "application/xml";
+        return "application/xml;charset=UTF-8";
       case ".css":
       case ".less":
-        return "text/css";
+        return "text/css;charset=UTF-8";
       case ".js":
       case ".coffee":
       case ".litcoffee":
-        return "application/javascript";
+        return "application/javascript;charset=UTF-8";
       case ".zip":
         return "application/zip";
       case ".gif":
@@ -50,7 +50,7 @@ public class ContentTypes {
       case ".png":
         return "image/png";
       default:
-        return "text/plain";
+        return "text/plain;charset=UTF-8";
     }
   }
 
