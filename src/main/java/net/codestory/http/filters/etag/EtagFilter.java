@@ -29,20 +29,22 @@ public class EtagFilter implements Filter {
     if (payload == null) {
       return null;
     }
+
     byte[] data = payload.getData(uri); // TODO: Visibility and double compute
     if (data == null) {
       return payload;
     }
+
     if (!payload.isSuccess()) {
       return payload;
     }
 
     String previousEtag = context.getHeader("If-None-Match");
     String currentEtag = Md5.of(data);
-
-    if (!currentEtag.equals(previousEtag)) {
-      return payload.withHeader("ETag", currentEtag);
+    if (currentEtag.equals(previousEtag)) {
+      return Payload.notModified();
     }
-    return payload.withCode(302);
+
+    return payload.withHeader("ETag", currentEtag);
   }
 }

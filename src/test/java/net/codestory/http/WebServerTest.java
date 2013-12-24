@@ -435,7 +435,7 @@ public class WebServerTest {
     );
 
     get("/").produces(200, "text/html", "Hello World");
-    getWithHeader("/", "If-None-Match", Md5.of("Hello World".getBytes(UTF_8))).produces(302);
+    getWithHeader("/", "If-None-Match", Md5.of("Hello World".getBytes(UTF_8))).produces(304);
   }
 
   public static class TestResource {

@@ -44,7 +44,7 @@ public class EtagFilterTest {
 
     Payload payload = filter.apply("/", context, () -> new Payload("Hello"));
 
-    assertThat(payload.code()).isEqualTo(302);
+    assertThat(payload.code()).isEqualTo(304);
     assertThat(payload.headers().get("ETag")).isNull();
   }
 

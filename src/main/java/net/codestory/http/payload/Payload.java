@@ -137,6 +137,10 @@ public class Payload {
     return new Payload(303).withHeader("Location", url);
   }
 
+  public static Payload notModified() {
+    return new Payload(304);
+  }
+
   public static Payload unauthorized(String realm) {
     return new Payload(401).withHeader("WWW-Authenticate", "Basic realm=\"" + realm + "\"");
   }

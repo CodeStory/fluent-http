@@ -30,6 +30,10 @@ public interface Helpers {
     return Payload.seeOther(url);
   }
 
+  public static Payload notModified() {
+    return Payload.notModified();
+  }
+
   public static Payload unauthorized(String realm) {
     return Payload.unauthorized(realm);
   }
