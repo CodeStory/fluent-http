@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>[[title]]</title>
+  [[#if style]]
+  <link rel="stylesheet" href="[[style]]">
+  [[/if]]
+  [[#each styles]]
+  <link rel="stylesheet" href="[[.]]">
+  [[/each]]
+</head>
+<body>
+[[body]]
+</body>
+</html>
