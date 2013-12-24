@@ -1,4 +1,4 @@
-## TODO
+# TODO
 
  + Supporter les coffee et less pré-générés
  + Supporter les templates pré-générés
@@ -12,6 +12,10 @@
 
 [![Build Status](https://api.travis-ci.org/CodeStory/code-story-http.png)](https://api.travis-ci.org/CodeStory/code-story-http.png)
 
+# Generate missing licenses
+
+	mvn license:format
+
 # Deploy on Maven Central
 
 Build the release :
@@ -20,6 +24,6 @@ Build the release :
 	mvn release:prepare
 	mvn release:perform
 
-Go to https://oss.sonatype.org/, log in, go to **Staging Repositories**, close the *netcode-story-XXXX* repository then release it.
+Go to [https://oss.sonatype.org/](https://oss.sonatype.org/), log in, go to **Staging Repositories**, close the *netcode-story-XXXX* repository then release it.
 Synchro to Maven Central is done hourly.
 
