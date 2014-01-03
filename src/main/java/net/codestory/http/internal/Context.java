@@ -43,6 +43,31 @@ public class Context {
     return request.getCookie(name);
   }
 
+  public String cookieValue(String name) {
+    Cookie cookie = cookie(name);
+    return (cookie == null) ? null : cookie.getValue();
+  }
+
+  public String cookieValue(String name, String defaultValue) {
+    String value = cookieValue(name);
+    return (value == null) ? defaultValue : value;
+  }
+
+  public int cookieValue(String name, int defaultValue) {
+    String value = cookieValue(name);
+    return (value == null) ? defaultValue : Integer.parseInt(value);
+  }
+
+  public long cookieValue(String name, long defaultValue) {
+    String value = cookieValue(name);
+    return (value == null) ? defaultValue : Long.parseLong(value);
+  }
+
+  public boolean cookieValue(String name, boolean defaultValue) {
+    String value = cookieValue(name);
+    return (value == null) ? defaultValue : Boolean.parseBoolean(value);
+  }
+
   public List<Cookie> cookies() {
     return request.getCookies();
   }

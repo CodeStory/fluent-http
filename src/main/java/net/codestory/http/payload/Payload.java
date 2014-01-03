@@ -78,6 +78,18 @@ public class Payload {
     return this;
   }
 
+  public Payload withCookie(String name, int value) {
+    return withCookie(name, Integer.toString(value));
+  }
+
+  public Payload withCookie(String name, long value) {
+    return withCookie(name, Long.toString(value));
+  }
+
+  public Payload withCookie(String name, boolean value) {
+    return withCookie(name, Boolean.toString(value));
+  }
+
   public Payload withCookie(String name, String value) {
     return withCookie(new Cookie(name, value, "/", true));
   }
