@@ -7,6 +7,7 @@
  + Add some sort of http standard log
  + Cleanup Payload
  + Make Payload immutable?
+ + Store json in cookies
 
 # CI
 
