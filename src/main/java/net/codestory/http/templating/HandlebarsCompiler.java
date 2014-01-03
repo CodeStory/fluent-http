@@ -76,6 +76,7 @@ public class HandlebarsCompiler {
             MapValueResolver.INSTANCE,
             JavaBeanValueResolver.INSTANCE,
             FieldValueResolver.INSTANCE,
+            MethodValueResolver.INSTANCE,
             Site.SiteValueResolver.INSTANCE)
         .combine("site", Site.get())
         .combine(variables)

@@ -69,10 +69,17 @@ public class HandlebarsCompilerTest {
   }
 
   @Test
-  public void java_method() throws IOException {
+  public void java_getter_method() throws IOException {
     String result = compiler.compile("[[bean.fullDescription]]", map("bean", new JavaBean("Bob", 12)));
 
     assertThat(result).isEqualTo("Bob-12");
+  }
+
+  @Test
+  public void java_plain_method() throws IOException {
+    String result = compiler.compile("[[bean.description]]", map("bean", new JavaBean("Bob", 12)));
+
+    assertThat(result).isEqualTo("Bob");
   }
 
   @Test
@@ -150,6 +157,10 @@ public class HandlebarsCompilerTest {
 
     public String getFullDescription() {
       return name + "-" + age;
+    }
+
+    public String description() {
+      return name;
     }
   }
 }
