@@ -15,6 +15,8 @@
  */
 package net.codestory.http.payload;
 
+import java.net.*;
+
 import net.codestory.http.templating.*;
 
 public interface Helpers {
@@ -22,12 +24,28 @@ public interface Helpers {
     return Payload.ok();
   }
 
+  public static Payload created() {
+    return Payload.created();
+  }
+
   public static Payload movedPermanently(String url) {
     return Payload.movedPermanently(url);
   }
 
-  public static Payload seeOther(String url) {
-    return Payload.seeOther(url);
+  public static Payload seeOther(String uri) {
+    return Payload.seeOther(uri);
+  }
+
+  public static Payload seeOther(URI uri) {
+    return Payload.seeOther(uri);
+  }
+
+  public static Payload temporaryRedirect(String uri) {
+    return Payload.temporaryRedirect(uri);
+  }
+
+  public static Payload temporaryRedirect(URI uri) {
+    return Payload.temporaryRedirect(uri);
   }
 
   public static Payload notModified() {

@@ -19,6 +19,7 @@ import static java.nio.charset.StandardCharsets.*;
 import static java.time.format.DateTimeFormatter.*;
 
 import java.io.*;
+import java.net.*;
 import java.nio.file.Path;
 import java.time.*;
 import java.util.*;
@@ -141,12 +142,28 @@ public class Payload {
     return new Payload(200);
   }
 
+  public static Payload created() {
+    return new Payload(201);
+  }
+
   public static Payload movedPermanently(String url) {
     return new Payload(301).withHeader("Location", url);
   }
 
-  public static Payload seeOther(String url) {
-    return new Payload(303).withHeader("Location", url);
+  public static Payload seeOther(String uri) {
+    return new Payload(303).withHeader("Location", uri);
+  }
+
+  public static Payload seeOther(URI uri) {
+    return seeOther(uri.toString());
+  }
+
+  public static Payload temporaryRedirect(String uri) {
+    return new Payload(307).withHeader("Location", uri);
+  }
+
+  public static Payload temporaryRedirect(URI uri) {
+    return temporaryRedirect(uri.toString());
   }
 
   public static Payload notModified() {
