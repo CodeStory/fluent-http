@@ -26,7 +26,5 @@ Synchro to Maven Central is done hourly.
  + Add some sort of http standard log
  + Cleanup Payload class. Make Payload immutable?
  + Cors support
- + Work behing proxy
  + Principal
  + monitoring
-

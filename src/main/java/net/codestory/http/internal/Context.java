@@ -119,6 +119,11 @@ public class Context {
     return query;
   }
 
+  public String getClientAddress() {
+    String forwarded = getHeader("X-Forwarded-For");
+    return (forwarded != null) ? forwarded : request.getClientAddress().toString();
+  }
+
   public Request request() {
     return request;
   }
