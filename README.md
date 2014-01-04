@@ -1,17 +1,3 @@
-# TODO
-
- + Supporter les coffee et less pré-générés
- + Supporter les templates pré-générés
- + Javadoc
- + PROD_MODE is not really convenient. It forces to have more complex prod script
- + Add some sort of http standard log
- + Cleanup Payload class. Make Payload immutable?
- + Store json in cookies
- + Cors support
- + Work behing proxy
- + Principal
- + monitoring
-
 # CI
 
 [![Build Status](https://api.travis-ci.org/CodeStory/code-story-http.png)](https://api.travis-ci.org/CodeStory/code-story-http.png)
@@ -30,3 +16,18 @@ Build the release :
 
 Go to [https://oss.sonatype.org/](https://oss.sonatype.org/), log in, go to **Staging Repositories**, close the *netcode-story-XXXX* repository then release it.
 Synchro to Maven Central is done hourly.
+
+# TODO
+
+ + Supporter les coffee et less pré-générés
+ + Supporter les templates pré-générés
+ + Javadoc
+ + PROD_MODE is not really convenient. It forces to have more complex prod script
+ + Add some sort of http standard log
+ + Cleanup Payload class. Make Payload immutable?
+ + Store json in cookies
+ + Cors support
+ + Work behing proxy
+ + Principal
+ + monitoring
+
