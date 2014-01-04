@@ -18,25 +18,24 @@ package net.codestory.http.internal;
 import java.io.*;
 import java.util.*;
 
+import net.codestory.http.convert.*;
 import net.codestory.http.io.*;
 
 import org.simpleframework.http.*;
 
 public class Context {
-  private final String uri;
   private final Request request;
   private final Response response;
   private final Query query;
 
   public Context(Request request, Response response) {
-    this.uri = request.getPath().getPath();
     this.request = request;
     this.response = response;
     this.query = request.getQuery();
   }
 
   public String uri() {
-    return uri;
+    return request.getPath().getPath();
   }
 
   public Cookie cookie(String name) {
@@ -46,6 +45,18 @@ public class Context {
   public String cookieValue(String name) {
     Cookie cookie = cookie(name);
     return (cookie == null) ? null : cookie.getValue();
+  }
+
+  @SuppressWarnings("unchecked")
+  public <T> T cookieValue(String name, T defaultValue) throws IOException {
+    T value = cookieValue(name, (Class<T>) defaultValue.getClass());
+    return (value == null) ? defaultValue : value;
+  }
+
+  @SuppressWarnings("unchecked")
+  public <T> T cookieValue(String name, Class<T> type) throws IOException {
+    String value = cookieValue(name);
+    return (value == null) ? null : TypeConvert.fromJson(value, type);
   }
 
   public String cookieValue(String name, String defaultValue) {
