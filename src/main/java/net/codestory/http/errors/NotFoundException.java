@@ -19,4 +19,11 @@ public class NotFoundException extends HttpException {
   public NotFoundException() {
     super(404);
   }
+
+  public static <T> T notFoundIfNull(T value) {
+    if (value != null) {
+      return value;
+    }
+    throw new NotFoundException();
+  }
 }
