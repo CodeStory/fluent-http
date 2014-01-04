@@ -156,6 +156,17 @@ public class PayloadTest {
     assertThat(notFound.isBetter(notFound)).isFalse();
   }
 
+  @Test
+  public void json_cookie() {
+    Payload payload = Payload.ok();
+
+    payload.withCookie("person", new Person("Bob", 42));
+
+    Cookie cookie = payload.cookies().get(0);
+    assertThat(cookie.getName()).isEqualTo("person");
+    assertThat(cookie.getValue()).isEqualTo("{\"name\":\"Bob\",\"age\":42}");
+  }
+
   static class Person {
     String name;
     int age;

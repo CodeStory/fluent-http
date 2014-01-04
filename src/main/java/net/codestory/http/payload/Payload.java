@@ -95,6 +95,10 @@ public class Payload {
     return withCookie(new Cookie(name, value, "/", true));
   }
 
+  public Payload withCookie(String name, Object value) {
+    return withCookie(name, TypeConvert.toJson(value));
+  }
+
   public Payload withCookie(Cookie cookie) {
     cookies.add(cookie);
     return this;

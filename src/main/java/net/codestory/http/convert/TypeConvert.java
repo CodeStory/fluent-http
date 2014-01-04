@@ -84,8 +84,20 @@ public class TypeConvert {
     return OBJECT_MAPPER.convertValue(keyValues, type);
   }
 
-  public static byte[] toByteArray(Object value) throws JsonProcessingException {
-    return OBJECT_MAPPER.writer().writeValueAsBytes(value);
+  public static byte[] toByteArray(Object value) {
+    try {
+      return OBJECT_MAPPER.writer().writeValueAsBytes(value);
+    } catch (JsonProcessingException e) {
+      throw new IllegalArgumentException("Unable to serialize to json", e);
+    }
+  }
+
+  public static String toJson(Object value) {
+    try {
+      return OBJECT_MAPPER.writer().writeValueAsString(value);
+    } catch (JsonProcessingException e) {
+      throw new IllegalArgumentException("Unable to serialize to json", e);
+    }
   }
 
   private static boolean isUrlEncodedForm(Context context) {
