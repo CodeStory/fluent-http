@@ -1,8 +1,22 @@
-# CI
+# Code-Story Http
+
+This is the simplest fastest full fledged http server we could come up with.
+
+# Build status
 
 [![Build Status](https://api.travis-ci.org/CodeStory/code-story-http.png)](https://api.travis-ci.org/CodeStory/code-story-http.png)
 
-# Generate missing licenses
+# Build instructions
+
+Prerequisites
+- Java 1.8
+- Apache Maven 3
+
+Build the project
+
+    mvn verify
+
+## Generate missing licenses
 
 	mvn license:format
 
