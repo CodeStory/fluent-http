@@ -34,7 +34,7 @@ class ReflectionRouteWithContext extends AbstractReflectionRoute implements AnyR
       return payload(arguments);
     } catch (RuntimeException e) {
       throw e;
-    } catch (Exception e) {
+    } catch (Throwable e) {
       throw new IllegalStateException("Unable to apply route", e);
     }
   }

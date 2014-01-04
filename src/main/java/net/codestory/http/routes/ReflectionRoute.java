@@ -33,7 +33,7 @@ class ReflectionRoute extends AbstractReflectionRoute implements AnyRoute {
       return payload(arguments);
     } catch (RuntimeException e) {
       throw e;
-    } catch (Exception e) {
+    } catch (Throwable e) {
       throw new IllegalStateException("Unable to apply route", e);
     }
   }

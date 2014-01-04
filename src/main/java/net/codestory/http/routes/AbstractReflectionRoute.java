@@ -32,7 +32,7 @@ class AbstractReflectionRoute {
     this.contentType = findContentType(method);
   }
 
-  protected Object payload(Object[] arguments) throws InvocationTargetException, IllegalAccessException {
+  protected Object payload(Object[] arguments) throws Throwable {
     Object target = resource.get();
 
     Object response = invoke(method, target, arguments);
@@ -41,9 +41,14 @@ class AbstractReflectionRoute {
     return new Payload(contentType, payload);
   }
 
-  private static Object invoke(Method method, Object target, Object[] arguments) throws IllegalAccessException, InvocationTargetException {
+  private static Object invoke(Method method, Object target, Object[] arguments) throws Throwable {
     method.setAccessible(true);
-    return method.invoke(target, arguments);
+
+    try {
+      return method.invoke(target, arguments);
+    } catch (InvocationTargetException e) {
+      throw e.getCause();
+    }
   }
 
   private static Object emptyIfNull(Object payload) {

@@ -180,6 +180,11 @@ public class WebServerTest {
       public ModelAndView helloJoe() {
         return ModelAndView.of("1variable", "name", "Joe");
       }
+
+      @Get("/notFound")
+      public void notFound() {
+        throw new NotFoundException();
+      }
     }));
 
     get("/hello").produces("Hello");
@@ -190,6 +195,7 @@ public class WebServerTest {
     get("/voidJson").produces(200, "application/json", "");
     get("/1variable").produces(200, "text/html", "Hello Bob");
     get("/helloJoe").produces(200, "text/html", "Hello Joe");
+    get("/notFound").produces(404);
   }
 
   @Test
