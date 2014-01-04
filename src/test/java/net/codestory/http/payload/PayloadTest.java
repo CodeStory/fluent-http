@@ -81,7 +81,7 @@ public class PayloadTest {
     payload.writeTo(context);
 
     verify(response).setValue("Location", "/url");
-    verify(response).setCode(303);
+    verify(response).setStatus(Status.getStatus(303));
     verify(response).setContentLength(0);
     verifyNoMoreInteractions(response);
   }
@@ -95,7 +95,7 @@ public class PayloadTest {
     Payload payload = Payload.forbidden();
     payload.writeTo(context);
 
-    verify(response).setCode(403);
+    verify(response).setStatus(Status.getStatus(403));
     verify(response).setContentLength(0);
     verifyNoMoreInteractions(response);
   }
@@ -110,7 +110,7 @@ public class PayloadTest {
     payload.writeTo(context);
 
     verify(response).setValue("Location", "/url");
-    verify(response).setCode(301);
+    verify(response).setStatus(Status.getStatus(301));
     verify(response).setContentLength(0);
     verifyNoMoreInteractions(response);
   }
