@@ -206,7 +206,7 @@ public class Payload {
     headers.entrySet().forEach(entry -> response.setValue(entry.getKey(), entry.getValue()));
     addHeadersForContent(response);
     cookies.forEach(cookie -> response.setCookie(cookie));
-    response.setCode(code);
+    response.setStatus(Status.getStatus(code));
 
     String uri = context.uri();
     byte[] data = getData(uri);
