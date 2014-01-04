@@ -155,7 +155,10 @@ public class WebServer {
   }
 
   protected void handleServerError(Context context, Exception e) {
-    e.printStackTrace();
+    if (!(e instanceof HttpException)) {
+      e.printStackTrace();
+    }
+
     try {
       errorPage(e).writeTo(context);
     } catch (IOException error) {
