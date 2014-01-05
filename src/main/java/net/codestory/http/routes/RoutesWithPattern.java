@@ -34,26 +34,6 @@ public class RoutesWithPattern {
     return this;
   }
 
-  public RoutesWithPattern get(OneParamRoute route) {
-    routes.get(currentUriPattern, route);
-    return this;
-  }
-
-  public RoutesWithPattern get(TwoParamsRoute route) {
-    routes.get(currentUriPattern, route);
-    return this;
-  }
-
-  public RoutesWithPattern get(ThreeParamsRoute route) {
-    routes.get(currentUriPattern, route);
-    return this;
-  }
-
-  public RoutesWithPattern get(FourParamsRoute route) {
-    routes.get(currentUriPattern, route);
-    return this;
-  }
-
   public RoutesWithPattern get(NoParamRouteWithContext route) {
     routes.get(currentUriPattern, route);
     return this;
@@ -80,26 +60,6 @@ public class RoutesWithPattern {
   }
 
   public RoutesWithPattern post(NoParamRoute route) {
-    routes.post(currentUriPattern, route);
-    return this;
-  }
-
-  public RoutesWithPattern post(OneParamRoute route) {
-    routes.post(currentUriPattern, route);
-    return this;
-  }
-
-  public RoutesWithPattern post(TwoParamsRoute route) {
-    routes.post(currentUriPattern, route);
-    return this;
-  }
-
-  public RoutesWithPattern post(ThreeParamsRoute route) {
-    routes.post(currentUriPattern, route);
-    return this;
-  }
-
-  public RoutesWithPattern post(FourParamsRoute route) {
     routes.post(currentUriPattern, route);
     return this;
   }
@@ -134,26 +94,6 @@ public class RoutesWithPattern {
     return this;
   }
 
-  public RoutesWithPattern put(OneParamRoute route) {
-    routes.put(currentUriPattern, route);
-    return this;
-  }
-
-  public RoutesWithPattern put(TwoParamsRoute route) {
-    routes.put(currentUriPattern, route);
-    return this;
-  }
-
-  public RoutesWithPattern put(ThreeParamsRoute route) {
-    routes.put(currentUriPattern, route);
-    return this;
-  }
-
-  public RoutesWithPattern put(FourParamsRoute route) {
-    routes.put(currentUriPattern, route);
-    return this;
-  }
-
   public RoutesWithPattern put(NoParamRouteWithContext route) {
     routes.put(currentUriPattern, route);
     return this;
@@ -180,26 +120,6 @@ public class RoutesWithPattern {
   }
 
   public RoutesWithPattern delete(NoParamRoute route) {
-    routes.delete(currentUriPattern, route);
-    return this;
-  }
-
-  public RoutesWithPattern delete(OneParamRoute route) {
-    routes.delete(currentUriPattern, route);
-    return this;
-  }
-
-  public RoutesWithPattern delete(TwoParamsRoute route) {
-    routes.delete(currentUriPattern, route);
-    return this;
-  }
-
-  public RoutesWithPattern delete(ThreeParamsRoute route) {
-    routes.delete(currentUriPattern, route);
-    return this;
-  }
-
-  public RoutesWithPattern delete(FourParamsRoute route) {
     routes.delete(currentUriPattern, route);
     return this;
   }

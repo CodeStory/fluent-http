@@ -133,30 +133,6 @@ public class RouteCollection implements Routes {
   }
 
   @Override
-  public RouteCollection get(String uriPattern, OneParamRoute route) {
-    add("GET", checkParametersCount(uriPattern, 1), route);
-    return this;
-  }
-
-  @Override
-  public RouteCollection get(String uriPattern, TwoParamsRoute route) {
-    add("GET", checkParametersCount(uriPattern, 2), route);
-    return this;
-  }
-
-  @Override
-  public RouteCollection get(String uriPattern, ThreeParamsRoute route) {
-    add("GET", checkParametersCount(uriPattern, 3), route);
-    return this;
-  }
-
-  @Override
-  public RouteCollection get(String uriPattern, FourParamsRoute route) {
-    add("GET", checkParametersCount(uriPattern, 4), route);
-    return this;
-  }
-
-  @Override
   public RouteCollection get(String uriPattern, NoParamRouteWithContext route) {
     add("GET", checkParametersCount(uriPattern, 0), route);
     return this;
@@ -189,30 +165,6 @@ public class RouteCollection implements Routes {
   @Override
   public RouteCollection post(String uriPattern, NoParamRoute route) {
     add("POST", checkParametersCount(uriPattern, 0), route);
-    return this;
-  }
-
-  @Override
-  public RouteCollection post(String uriPattern, OneParamRoute route) {
-    add("POST", checkParametersCount(uriPattern, 1), route);
-    return this;
-  }
-
-  @Override
-  public RouteCollection post(String uriPattern, TwoParamsRoute route) {
-    add("POST", checkParametersCount(uriPattern, 2), route);
-    return this;
-  }
-
-  @Override
-  public RouteCollection post(String uriPattern, ThreeParamsRoute route) {
-    add("POST", checkParametersCount(uriPattern, 3), route);
-    return this;
-  }
-
-  @Override
-  public RouteCollection post(String uriPattern, FourParamsRoute route) {
-    add("POST", checkParametersCount(uriPattern, 4), route);
     return this;
   }
 
@@ -253,30 +205,6 @@ public class RouteCollection implements Routes {
   }
 
   @Override
-  public RouteCollection put(String uriPattern, OneParamRoute route) {
-    add("PUT", checkParametersCount(uriPattern, 1), route);
-    return this;
-  }
-
-  @Override
-  public RouteCollection put(String uriPattern, TwoParamsRoute route) {
-    add("PUT", checkParametersCount(uriPattern, 2), route);
-    return this;
-  }
-
-  @Override
-  public RouteCollection put(String uriPattern, ThreeParamsRoute route) {
-    add("PUT", checkParametersCount(uriPattern, 3), route);
-    return this;
-  }
-
-  @Override
-  public RouteCollection put(String uriPattern, FourParamsRoute route) {
-    add("PUT", checkParametersCount(uriPattern, 4), route);
-    return this;
-  }
-
-  @Override
   public RouteCollection put(String uriPattern, NoParamRouteWithContext route) {
     add("PUT", checkParametersCount(uriPattern, 0), route);
     return this;
@@ -309,30 +237,6 @@ public class RouteCollection implements Routes {
   @Override
   public RouteCollection delete(String uriPattern, NoParamRoute route) {
     add("DELETE", checkParametersCount(uriPattern, 0), route);
-    return this;
-  }
-
-  @Override
-  public RouteCollection delete(String uriPattern, OneParamRoute route) {
-    add("DELETE", checkParametersCount(uriPattern, 1), route);
-    return this;
-  }
-
-  @Override
-  public RouteCollection delete(String uriPattern, TwoParamsRoute route) {
-    add("DELETE", checkParametersCount(uriPattern, 2), route);
-    return this;
-  }
-
-  @Override
-  public RouteCollection delete(String uriPattern, ThreeParamsRoute route) {
-    add("DELETE", checkParametersCount(uriPattern, 3), route);
-    return this;
-  }
-
-  @Override
-  public RouteCollection delete(String uriPattern, FourParamsRoute route) {
-    add("DELETE", checkParametersCount(uriPattern, 4), route);
     return this;
   }
 

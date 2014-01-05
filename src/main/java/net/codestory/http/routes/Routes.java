@@ -42,14 +42,6 @@ public interface Routes {
 
   Routes get(String uriPattern, NoParamRoute route);
 
-  Routes get(String uriPattern, OneParamRoute route);
-
-  Routes get(String uriPattern, TwoParamsRoute route);
-
-  Routes get(String uriPattern, ThreeParamsRoute route);
-
-  Routes get(String uriPattern, FourParamsRoute route);
-
   Routes get(String uriPattern, NoParamRouteWithContext route);
 
   Routes get(String uriPattern, OneParamRouteWithContext route);
@@ -61,14 +53,6 @@ public interface Routes {
   Routes get(String uriPattern, FourParamsRouteWithContext route);
 
   Routes post(String uriPattern, NoParamRoute route);
-
-  Routes post(String uriPattern, OneParamRoute route);
-
-  Routes post(String uriPattern, TwoParamsRoute route);
-
-  Routes post(String uriPattern, ThreeParamsRoute route);
-
-  Routes post(String uriPattern, FourParamsRoute route);
 
   Routes post(String uriPattern, NoParamRouteWithContext route);
 
@@ -82,14 +66,6 @@ public interface Routes {
 
   Routes put(String uriPattern, NoParamRoute route);
 
-  Routes put(String uriPattern, OneParamRoute route);
-
-  Routes put(String uriPattern, TwoParamsRoute route);
-
-  Routes put(String uriPattern, ThreeParamsRoute route);
-
-  Routes put(String uriPattern, FourParamsRoute route);
-
   Routes put(String uriPattern, NoParamRouteWithContext route);
 
   Routes put(String uriPattern, OneParamRouteWithContext route);
@@ -101,14 +77,6 @@ public interface Routes {
   Routes put(String uriPattern, FourParamsRouteWithContext route);
 
   Routes delete(String uriPattern, NoParamRoute route);
-
-  Routes delete(String uriPattern, OneParamRoute route);
-
-  Routes delete(String uriPattern, TwoParamsRoute route);
-
-  Routes delete(String uriPattern, ThreeParamsRoute route);
-
-  Routes delete(String uriPattern, FourParamsRoute route);
 
   Routes delete(String uriPattern, NoParamRouteWithContext route);
 

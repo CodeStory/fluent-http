@@ -28,7 +28,6 @@ import net.codestory.http.errors.*;
 import net.codestory.http.filters.basic.*;
 import net.codestory.http.filters.etag.*;
 import net.codestory.http.injection.*;
-import net.codestory.http.internal.*;
 import net.codestory.http.misc.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.routes.*;
@@ -90,9 +89,9 @@ public class WebServerTest {
   @Test
   public void request_params() {
     server.configure(routes -> routes.
-        get("/hello/:name", (String name) -> "Hello " + name).
-        get("/say/:what/how/:loud", (String what, String loud) -> what + " " + loud).
-        get("/:one/:two/:three", (String one, String two, String three) -> one + " " + two + " " + three));
+        get("/hello/:name", (context, name) -> "Hello " + name).
+        get("/say/:what/how/:loud", (context, what, loud) -> what + " " + loud).
+        get("/:one/:two/:three", (context, one, two, three) -> one + " " + two + " " + three));
 
     get("/hello/Dave").produces("Hello Dave");
     get("/hello/John Doe").produces("Hello John Doe");
@@ -104,7 +103,7 @@ public class WebServerTest {
   public void query_params() {
     server.configure(routes -> routes.
         get("/index", "Hello").
-        get("/hello?name=:name", (String name) -> "Hello " + name).
+        get("/hello?name=:name", (context, name) -> "Hello " + name).
         add(new Object() {
           @Get("/keyValues")
           public String keyValues(Map<String, String> keyValues) {
@@ -220,7 +219,7 @@ public class WebServerTest {
   @Test
   public void templates() {
     server.configure(routes -> routes.
-        get("/hello/:name", (String name) -> ModelAndView.of("1variable.txt", "name", name)).
+        get("/hello/:name", (context, name) -> ModelAndView.of("1variable.txt", "name", name)).
         get("/bye", () -> ModelAndView.of("goodbye")).
         get("/1variable", Model.of("name", "Toto")).
         get("/section/", Model.of("name", "Bob")));
@@ -299,7 +298,7 @@ public class WebServerTest {
         get("/get", () -> "Done").
         get("/action", () -> "Done GET").
         post("/action", () -> "Done POST").
-        post("/post/:who", (String who) -> "Done " + who).
+        post("/post/:who", (context, who) -> "Done " + who).
         add(new Object() {
           @Post("/person")
           @Post("/person_alt")
@@ -329,7 +328,7 @@ public class WebServerTest {
   public void support_put() {
     server.configure(routes -> routes.
         put("/put", () -> "Done").
-        put("/putText", (Context context) -> context.payload()).
+        put("/putText", (context) -> context.payload()).
         add(new Object() {
           @Put("/order/:id")
           public String order(String id, Order order) {
@@ -345,7 +344,8 @@ public class WebServerTest {
   @Test
   public void postForm() {
     server.configure(routes -> routes.
-        post("/postForm", (Context context) -> "CREATED " + context.get("firstName") + " " + context.get("lastName")).
+        post("/postForm", (context) -> "CREATED " + context.get("firstName") + " " + context.get("lastName")).
+        post("/postForm", (context) -> "CREATED " + context.get("firstName") + " " + context.get("lastName")).
         add(new Object() {
           @Post("/postFormResource")
           public String create(Map<String, String> keyValues) {

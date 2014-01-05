@@ -25,7 +25,7 @@ public class RouteCollectionTest {
 
   @Test
   public void fail_with_too_many_params() {
-    when(routeCollection).get("/", (String param) -> "");
+    when(routeCollection).get("/", (context, param) -> "");
 
     then(caughtException())
         .isInstanceOf(IllegalArgumentException.class)
@@ -34,7 +34,7 @@ public class RouteCollectionTest {
 
   @Test
   public void fail_with_too_few_params() {
-    when(routeCollection).get("/:one/:two/:three", (String one, String two) -> "");
+    when(routeCollection).get("/:one/:two/:three", (context, one, two) -> "");
 
     then(caughtException())
         .isInstanceOf(IllegalArgumentException.class)
