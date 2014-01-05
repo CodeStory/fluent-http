@@ -15,6 +15,7 @@
  */
 package net.codestory.http.routes;
 
+import static net.codestory.http.misc.Fluent.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.lang.reflect.*;
@@ -25,23 +26,15 @@ import org.junit.*;
 public class RoutesWithPatternTest {
   @Test
   public void has_all_methods() {
-    List<Method> methodsWithExplicitUri = new ArrayList<>();
-    for (Method method : Routes.class.getDeclaredMethods()) {
-      if (method.getParameterCount() > 1) {
-        if (method.getParameterTypes()[0].isAssignableFrom(String.class)) {
-          if (!method.getName().equals("add")) {
-            methodsWithExplicitUri.add(method);
-          }
-        }
-      }
-    }
+    List<Method> methodsWithExplicitUri = of(Routes.class.getDeclaredMethods())
+        .filter(method -> method.getParameterCount() > 1)
+        .filter(method -> method.getParameterTypes()[0].isAssignableFrom(String.class))
+        .exclude(method -> method.getName().equals("add"))
+        .toList();
 
-    List<Method> methodsWithImplicitUri = new ArrayList<>();
-    for (Method method : RoutesWithPattern.class.getDeclaredMethods()) {
-      if (!method.getName().equals("with")) {
-        methodsWithImplicitUri.add(method);
-      }
-    }
+    List<Method> methodsWithImplicitUri = of(RoutesWithPattern.class.getDeclaredMethods())
+        .exclude(method -> method.getName().equals("with"))
+        .toList();
 
     assertThat(methodsWithExplicitUri).hasSameSizeAs(methodsWithImplicitUri);
   }
