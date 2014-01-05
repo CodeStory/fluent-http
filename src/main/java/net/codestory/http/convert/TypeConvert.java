@@ -36,7 +36,7 @@ public class TypeConvert {
     OBJECT_MAPPER = mapper;
   }
 
-  public static Object[] convert(Context context, String[] pathParameters, Class<?>[] types) throws IOException {
+  public static Object[] convert(Context context, String[] pathParameters, Class<?>[] types) {
     Object[] converted = new Object[pathParameters.length + 1];
 
     for (int i = 0; i < pathParameters.length; i++) {
@@ -57,23 +57,34 @@ public class TypeConvert {
     return converted;
   }
 
-  public static Object convert(Context context, Class<?> type) throws IOException {
+  @SuppressWarnings("unchecked")
+  public static <T> T convert(Context context, Class<T> type) {
     if (type.isAssignableFrom(Context.class)) {
-      return context;
+      return (T) context;
     }
     if (type.isAssignableFrom(Map.class)) {
-      return context.keyValues();
+      return (T) context.keyValues();
     }
     if (isUrlEncodedForm(context)) {
       return fromKeyValues(context.keyValues(), type);
     }
 
-    String json = context.request().getContent();
+    String json;
+    try {
+      json = context.request().getContent();
+    } catch (IOException e) {
+      throw new IllegalArgumentException("Unable read request content", e);
+    }
+
     return fromJson(json, type);
   }
 
-  public static <T> T fromJson(String json, Class<T> type) throws IOException {
-    return OBJECT_MAPPER.readValue(json, type);
+  public static <T> T fromJson(String json, Class<T> type) {
+    try {
+      return OBJECT_MAPPER.readValue(json, type);
+    } catch (IOException e) {
+      throw new IllegalArgumentException("Unable to parse json", e);
+    }
   }
 
   public static <T> T fromString(String value, Class<T> type) {

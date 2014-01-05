@@ -18,8 +18,6 @@ package net.codestory.http.internal;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import java.io.*;
-
 import org.junit.*;
 import org.simpleframework.http.*;
 
@@ -53,7 +51,7 @@ public class ContextTest {
   }
 
   @Test
-  public void json_cookie_json_by_type() throws IOException {
+  public void json_cookie_json_by_type() {
     when(request.getCookie("name")).thenReturn(new Cookie("name", "{\"name\": \"Bob\", \"quantity\": 42}"));
 
     Order order = context.cookieValue("name", Order.class);
@@ -63,7 +61,7 @@ public class ContextTest {
   }
 
   @Test
-  public void json_cookie_default_value() throws IOException {
+  public void json_cookie_default_value() {
     Order order = context.cookieValue("name", new Order());
 
     assertThat(order.name).isNull();
@@ -71,7 +69,7 @@ public class ContextTest {
   }
 
   @Test
-  public void json_cookie() throws IOException {
+  public void json_cookie() {
     when(request.getCookie("name")).thenReturn(new Cookie("name", "{\"name\": \"Joe\", \"quantity\": 12}"));
 
     Order order = context.cookieValue("name", new Order());

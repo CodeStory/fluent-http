@@ -17,7 +17,6 @@ package net.codestory.http.convert;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.io.*;
 import java.util.*;
 
 import org.junit.*;
@@ -56,7 +55,7 @@ public class TypeConvertTest {
   }
 
   @Test
-  public void json_to_bean() throws IOException {
+  public void json_to_bean() {
     Human human = TypeConvert.fromJson("{\"name\":\"jack\",\"age\":31}", Human.class);
 
     assertThat(human.name).isEqualTo("jack");

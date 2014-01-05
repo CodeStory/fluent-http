@@ -48,13 +48,13 @@ public class Context {
   }
 
   @SuppressWarnings("unchecked")
-  public <T> T cookieValue(String name, T defaultValue) throws IOException {
+  public <T> T cookieValue(String name, T defaultValue) {
     T value = cookieValue(name, (Class<T>) defaultValue.getClass());
     return (value == null) ? defaultValue : value;
   }
 
   @SuppressWarnings("unchecked")
-  public <T> T cookieValue(String name, Class<T> type) throws IOException {
+  public <T> T cookieValue(String name, Class<T> type) {
     String value = cookieValue(name);
     return (value == null) ? null : TypeConvert.fromJson(value, type);
   }
@@ -138,5 +138,9 @@ public class Context {
     } catch (IOException e) {
       throw new IllegalStateException("Unable to read payload", e);
     }
+  }
+
+  public <T> T payload(Class<T> type) {
+    return TypeConvert.convert(this, type);
   }
 }
