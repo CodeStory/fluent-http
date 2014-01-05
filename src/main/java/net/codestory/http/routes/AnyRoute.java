@@ -15,9 +15,7 @@
  */
 package net.codestory.http.routes;
 
-import net.codestory.http.payload.*;
-
 @FunctionalInterface
-interface AnyRoute extends Helpers {
+interface AnyRoute {
   Object body(String[] pathParameters);
 }

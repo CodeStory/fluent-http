@@ -15,10 +15,9 @@
  */
 package net.codestory.http;
 
-import net.codestory.http.payload.*;
 import net.codestory.http.routes.*;
 
 @FunctionalInterface
-public interface Configuration extends Helpers {
+public interface Configuration {
   void configure(Routes routes);
 }
