@@ -110,6 +110,16 @@ public interface Routes {
 
   Routes delete(String uriPattern, FourParamsRoute route);
 
+  Routes delete(String uriPattern, NoParamRouteWithContext route);
+
+  Routes delete(String uriPattern, OneParamRouteWithContext route);
+
+  Routes delete(String uriPattern, TwoParamsRouteWithContext route);
+
+  Routes delete(String uriPattern, ThreeParamsRouteWithContext route);
+
+  Routes delete(String uriPattern, FourParamsRouteWithContext route);
+
   Routes catchAll(Object payload);
 
   Routes catchAll(NoParamRoute route);
