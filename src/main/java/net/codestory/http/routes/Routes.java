@@ -125,4 +125,6 @@ public interface Routes {
   Routes catchAll(NoParamRoute route);
 
   Routes catchAll(NoParamRouteWithContext route);
+
+  RoutesWithPattern with(String uriPattern);
 }

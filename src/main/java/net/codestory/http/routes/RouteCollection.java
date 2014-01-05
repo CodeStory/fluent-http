@@ -384,6 +384,11 @@ public class RouteCollection implements Routes {
     return this;
   }
 
+  @Override
+  public RoutesWithPattern with(String uriPattern) {
+    return new RoutesWithPattern(this, uriPattern);
+  }
+
   private RouteCollection add(String method, String uriPattern, AnyRoute route) {
     routes.add(new RouteWrapper(method, uriPattern, route));
     return this;

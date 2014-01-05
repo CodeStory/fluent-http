@@ -450,6 +450,23 @@ public class WebServerTest {
     get("/webjars/bootstrap/3.0.3/js/bootstrap.min.js").produces(200, "application/javascript", "Bootstrap v3.0.3");
   }
 
+  @Test
+  public void multiple_routes_same_uri() {
+    server.configure(routes -> routes
+        .with("/").
+            get(() -> "Index GET").
+            post(() -> "Index POST")
+        .with("/action").
+            get(() -> "Action GET").
+            post(() -> "Action POST")
+    );
+
+    get("/").produces("Index GET");
+    post("/").produces("Index POST");
+    get("/action").produces("Action GET");
+    post("/action").produces("Action POST");
+  }
+
   public static class TestResource {
     @Get("/")
     public String hello() {
