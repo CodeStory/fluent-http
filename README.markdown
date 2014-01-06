@@ -150,7 +150,88 @@ Will be rendered as:
 
 ## Layouting
 
-TODO
+Like in [Jekyll](http://jekyllrb.com/), pages can be decorated with a layout. The name of the layout should be configured
+in the Yaml Front Matter section.
+
+For example, given this `app/_layouts/default.html` file:
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <body>
+    [[body]]
+    </body>
+    </html>
+
+and this `app/index.md` file:
+
+    Hello World
+
+A request to `/` will give this result:
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <body>
+    <p>Hello World</p>
+    </body>
+    </html>
+
+A layout file can be a `.html`, `.md`, `.markdown`, `.txt` or `.asciidoc` file. It should be put in `app/_layouts` folder.
+The layout name used in the Yaml Front Matter section can omit the layout file extension.
+Layouts are recursive, ie a layout file can have a layout.
+
+A layout can use variables defined in the rendered file. Here's an example with an html title:
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <title>[[title]]</title>
+    </head>
+    <body>
+      [[body]]
+    </body>
+    </html>
+
+and this `app/index.md` file:
+
+    ---
+    title: Greeting
+    ---
+    Hello World
+
+A request to `/` will give this result:
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <title>Greeting</title>
+    </head>
+    <body>
+      <p>Hello World</p>
+    </body>
+    </html>
+
+## Webjars
+
+We also support [WebJars](http://www.webjars.org/) to server static assets.
+Just add a maven dependency to a WebJar and reference the static resource in your pages with the `/webjars/` suffix.
+
+Here's an example with Bootstrap:
+
+    <dependency>
+      <groupId>org.webjars</groupId>
+      <artifactId>bootstrap</artifactId>
+      <version>3.0.3</version>
+    </dependency>
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <link rel="stylesheet" href="/webjars/bootstrap/3.0.3/css/bootstrap.min.css">
+    </head>
+    <body>
+      <p>Hello World</p>
+    </body>
+    </html>
 
 ## Dynamic pages
 
@@ -217,10 +298,6 @@ TODO
 TODO
 
 ## Etag
-
-TODO
-
-## Webjars
 
 TODO
 
