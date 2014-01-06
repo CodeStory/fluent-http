@@ -366,7 +366,7 @@ public class WebServerTest {
 
   @Test
   public void site_variables() {
-    get("/testTags").produces("<p>\nscala\n\njava, scala\n</p>\n<p>\nscala\n</p>");
+    get("/testTags").produces("<p>scala</p>\n<p>java, scala</p>\n<p>scala</p>");
   }
 
   @Test

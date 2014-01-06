@@ -42,4 +42,9 @@ public class TemplateTest {
   public void site_variables() {
     assertThat(new Template("useSiteVariables.html").render(Model.of())).contains("Hello, customer Bob wants to buy p1 for parkr");
   }
+
+  @Test
+  public void markdown_list() {
+    assertThat(new Template("list.md").render(Model.of())).contains("<ul>\n<li><p>Doc</p>\n</li>\n<li><p>Grumpy</p>\n</li>\n<li><p>Happy</p>\n</li>\n</ul>");
+  }
 }

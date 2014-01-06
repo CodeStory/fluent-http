@@ -44,17 +44,18 @@ public class Template {
   String render(Map<String, Object> keyValues) {
     try {
       YamlFrontMatter yamlFrontMatter = YamlFrontMatter.parse(path);
-      Map<String, Object> allKeyValues = merge(yamlFrontMatter.getVariables(), keyValues);
 
-      String content = Compiler.compile(path, yamlFrontMatter.getContent());
+      String content = yamlFrontMatter.getContent();
+      Map<String, Object> variables = yamlFrontMatter.getVariables();
+      Map<String, Object> allKeyValues = merge(variables, keyValues);
+
       String body = new HandlebarsCompiler().compile(content, allKeyValues);
-
-      String layout = (String) yamlFrontMatter.getVariables().get("layout");
-      if (layout == null) {
-        return body;
+      String layout = (String) variables.get("layout");
+      if (layout != null) {
+        body = new Template("_layouts", layout).render(allKeyValues).replace("[[body]]", body);
       }
 
-      return new Template("_layouts", layout).render(allKeyValues).replace("[[body]]", body);
+      return Compiler.compile(path, body);
     } catch (IOException e) {
       throw new IllegalStateException("Unable to render template", e);
     }
