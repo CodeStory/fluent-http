@@ -35,6 +35,7 @@ public class ContentTypesTest {
     assertThat(get(Paths.get("text.asciidoc"))).isEqualTo("text/html;charset=UTF-8");
     assertThat(get(Paths.get("text.txt"))).isEqualTo("text/plain;charset=UTF-8");
     assertThat(get(Paths.get("text.zip"))).isEqualTo("application/zip");
+    assertThat(get(Paths.get("text.gz"))).isEqualTo("application/gzip");
     assertThat(get(Paths.get("image.gif"))).isEqualTo("image/gif");
     assertThat(get(Paths.get("image.jpeg"))).isEqualTo("image/jpeg");
     assertThat(get(Paths.get("image.jpg"))).isEqualTo("image/jpeg");
@@ -57,6 +58,7 @@ public class ContentTypesTest {
     assertThat(support_templating(Paths.get("text.txt"))).isTrue();
     assertThat(support_templating(Paths.get("style.css.map"))).isFalse();
     assertThat(support_templating(Paths.get("text.zip"))).isFalse();
+    assertThat(support_templating(Paths.get("text.gz"))).isFalse();
     assertThat(support_templating(Paths.get("image.gif"))).isFalse();
     assertThat(support_templating(Paths.get("image.jpeg"))).isFalse();
     assertThat(support_templating(Paths.get("image.jpg"))).isFalse();
@@ -79,6 +81,7 @@ public class ContentTypesTest {
     assertThat(is_binary(Paths.get("text.asciidoc"))).isFalse();
     assertThat(is_binary(Paths.get("text.txt"))).isFalse();
     assertThat(is_binary(Paths.get("text.zip"))).isTrue();
+    assertThat(is_binary(Paths.get("text.gz"))).isTrue();
     assertThat(is_binary(Paths.get("image.gif"))).isTrue();
     assertThat(is_binary(Paths.get("image.jpeg"))).isTrue();
     assertThat(is_binary(Paths.get("image.jpg"))).isTrue();

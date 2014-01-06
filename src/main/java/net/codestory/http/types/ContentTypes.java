@@ -42,6 +42,8 @@ public class ContentTypes {
         return "application/javascript;charset=UTF-8";
       case ".zip":
         return "application/zip";
+      case ".gz":
+        return "application/gzip";
       case ".gif":
         return "image/gif";
       case ".jpeg":
