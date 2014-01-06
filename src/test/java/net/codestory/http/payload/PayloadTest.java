@@ -28,12 +28,14 @@ import org.junit.*;
 import org.simpleframework.http.*;
 
 public class PayloadTest {
+  private Context context = mock(Context.class);
+
   @Test
   public void support_string() throws IOException {
     Payload payload = new Payload("Hello");
 
     assertThat(payload.code()).isEqualTo(200);
-    assertThat(payload.getData("/")).isEqualTo("Hello".getBytes(UTF_8));
+    assertThat(payload.getData("/", context)).isEqualTo("Hello".getBytes(UTF_8));
     assertThat(payload.getContentType("/")).isEqualTo("text/html;charset=UTF-8");
   }
 
@@ -43,7 +45,7 @@ public class PayloadTest {
 
     Payload payload = new Payload(bytes);
 
-    assertThat(payload.getData("/")).isSameAs(bytes);
+    assertThat(payload.getData("/", context)).isSameAs(bytes);
     assertThat(payload.getContentType("/")).isEqualTo("application/octet-stream");
   }
 
@@ -51,7 +53,7 @@ public class PayloadTest {
   public void support_bean_to_json() throws IOException {
     Payload payload = new Payload(new Person("NAME", 42));
 
-    assertThat(payload.getData("/")).isEqualTo("{\"name\":\"NAME\",\"age\":42}".getBytes(UTF_8));
+    assertThat(payload.getData("/", context)).isEqualTo("{\"name\":\"NAME\",\"age\":42}".getBytes(UTF_8));
     assertThat(payload.getContentType("/")).isEqualTo("application/json;charset=UTF-8");
   }
 
@@ -59,7 +61,7 @@ public class PayloadTest {
   public void support_custom_content_type() throws IOException {
     Payload payload = new Payload("text/plain", "Hello");
 
-    assertThat(payload.getData("/")).isEqualTo("Hello".getBytes(UTF_8));
+    assertThat(payload.getData("/", context)).isEqualTo("Hello".getBytes(UTF_8));
     assertThat(payload.getContentType("/")).isEqualTo("text/plain");
   }
 
@@ -67,7 +69,7 @@ public class PayloadTest {
   public void support_stream() throws IOException {
     Payload payload = new Payload("text/plain", new ByteArrayInputStream("Hello".getBytes()));
 
-    assertThat(payload.getData("/")).isEqualTo("Hello".getBytes(UTF_8));
+    assertThat(payload.getData("/", context)).isEqualTo("Hello".getBytes(UTF_8));
     assertThat(payload.getContentType("/")).isEqualTo("text/plain");
   }
 

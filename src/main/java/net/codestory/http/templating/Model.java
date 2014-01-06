@@ -52,6 +52,17 @@ public class Model {
     return of().add(k1, v1).add(k2, v2).add(k3, v3).add(k4, v4);
   }
 
+  public Model merge(Model model) {
+    return merge(model.keyValues);
+  }
+
+  public Model merge(Map<String, Object> moreKeyValues) {
+    Model merged = new Model();
+    merged.keyValues.putAll(keyValues);
+    merged.keyValues.putAll(moreKeyValues);
+    return merged;
+  }
+
   private Model add(String key, Object value) {
     keyValues.put(key, value);
     return this;

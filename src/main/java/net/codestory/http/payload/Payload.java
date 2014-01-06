@@ -213,7 +213,7 @@ public class Payload {
     response.setStatus(Status.getStatus(code));
 
     String uri = context.uri();
-    byte[] data = getData(uri);
+    byte[] data = getData(uri, context);
     if (data != null) {
       response.setValue("Content-Type", getContentType(uri));
       response.setContentLength(data.length);
@@ -255,15 +255,15 @@ public class Payload {
     return "application/json;charset=UTF-8";
   }
 
-  public byte[] getData(String uri) throws IOException {
+  public byte[] getData(String uri, Context context) throws IOException {
     if (content == null) {
       return null;
     }
     if (content instanceof File) {
-      return forPath(((File) content).toPath());
+      return forPath(((File) content).toPath(), context);
     }
     if (content instanceof Path) {
-      return forPath((Path) content);
+      return forPath((Path) content, context);
     }
     if (content instanceof byte[]) {
       return (byte[]) content;
@@ -275,10 +275,10 @@ public class Payload {
       return forInputStream((InputStream) content);
     }
     if (content instanceof ModelAndView) {
-      return forModelAndView((ModelAndView) content);
+      return forModelAndView((ModelAndView) content, context);
     }
     if (content instanceof Model) {
-      return forModelAndView(ModelAndView.of(uri, (Model) content));
+      return forModelAndView(ModelAndView.of(uri, (Model) content), context);
     }
 
     return TypeConvert.toByteArray(content);
@@ -304,17 +304,32 @@ public class Payload {
     return InputStreams.readBytes(stream);
   }
 
-  private static byte[] forModelAndView(ModelAndView modelAndView) {
-    return forString(new Template(modelAndView.view()).render(modelAndView.model()));
+  private static byte[] forModelAndView(ModelAndView modelAndView, Context context) {
+    String view = modelAndView.view();
+
+    Model model = modelAndView.model();
+    model = model.merge(Model.of("cookies", cookieValues(context)));
+
+    String html = new Template(view).render(model);
+
+    return forString(html);
   }
 
-  private static byte[] forPath(Path path) throws IOException {
+  private static Map<String, String> cookieValues(Context context) {
+    Map<String, String> keyValues = new HashMap<>();
+    for (Cookie cookie : context.cookies()) {
+      keyValues.put(cookie.getName(), cookie.getValue());
+    }
+    return keyValues;
+  }
+
+  private static byte[] forPath(Path path, Context context) throws IOException {
     if (ContentTypes.is_binary(path)) {
       return Resources.readBytes(path);
     }
 
     if (ContentTypes.support_templating(path)) {
-      return forModelAndView(ModelAndView.of(path.toString()));
+      return forModelAndView(ModelAndView.of(path.toString()), context);
     }
 
     String content = Resources.read(path, UTF_8);

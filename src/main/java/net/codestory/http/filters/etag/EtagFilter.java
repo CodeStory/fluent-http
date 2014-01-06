@@ -30,7 +30,7 @@ public class EtagFilter implements Filter {
       return null;
     }
 
-    byte[] data = payload.getData(uri); // TODO: Visibility and double compute
+    byte[] data = payload.getData(uri, context); // TODO: Visibility and double compute
     if (data == null) {
       return payload;
     }
