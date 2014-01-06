@@ -14,11 +14,15 @@ Prerequisites
 
 Build the project
 
-    mvn verify
+```bash
+mvn verify
+```
 
 ## Generate missing licenses
 
-    mvn license:format
+```bash
+mvn license:format
+```
 
 # Usage
 
@@ -28,38 +32,46 @@ One of our goals was to make it as easy as possible to start with.
 
 Release versions are deployed on Maven Central:
 
-    <dependency>
-      <groupId>net.code-story</groupId>
-      <artifactId>http</artifactId>
-      <version>1.27</version>
-    </dependency>
+```xml
+<dependency>
+  <groupId>net.code-story</groupId>
+  <artifactId>http</artifactId>
+  <version>1.27</version>
+</dependency>
+```
 
 ## Hello World
 
 Starting a web server that responds `Hello World` on `/` uri is as simple as that:
 
-    import net.codestory.http.*;
+```java
+import net.codestory.http.*;
 
-    public class HelloWorld {
-      public static void main(String[] args) {
-        new WebServer(routes -> routes.get("/", "Hello World")).start(8080);
-      }
-    }
+public class HelloWorld {
+  public static void main(String[] args) {
+    new WebServer(routes -> routes.get("/", "Hello World")).start(8080);
+  }
+}
+```
 
 Adding more routes is not hard either:
 
-    new WebServer(routes -> routes.
-        get("/", "Hello World").
-        get("/Test", "Test").
-        get("/OtherTest", "Other Test")
-    ).start(8080);
+```java
+new WebServer(routes -> routes.
+    get("/", "Hello World").
+    get("/Test", "Test").
+    get("/OtherTest", "Other Test")
+).start(8080);
+```
 
 ## Path parameters
 
 Routes can have path parameters:
 
-    get("/hello/:who", (context, name) -> "Hello " + name)
-    get("/add/:first/to/:second", (context, first, second) -> Integer.parseInt(first) + Integer.parseInt(second))
+```java
+get("/hello/:who", (context, name) -> "Hello " + name)
+get("/add/:first/to/:second", (context, first, second) -> Integer.parseInt(first) + Integer.parseInt(second))
+```
 
 Notice that path parameters have to be of type `String`. For other kinds, we'll see later how it can be achieved.
 
@@ -69,27 +81,33 @@ When a web server is started. It automatically treats files found in `app` folde
 is searched first on the classpath and then in the working directory.
 So the simplest way to start a web server is in fact:
 
-    import net.codestory.http.*;
+```java
+import net.codestory.http.*;
 
-    public class HelloWorld {
-      public static void main(String[] args) {
-        new WebServer().start(8080);
-      }
-    }
+public class HelloWorld {
+  public static void main(String[] args) {
+    new WebServer().start(8080);
+  }
+}
+```
 
 ## Random port
 
 Instead of providing a fixed port, you can also let the web server find a tcp port available.
 
-    int port = new WebServer().startOnRandomPort().port();
+```java
+int port = new WebServer().startOnRandomPort().port();
+```
 
 This is specially helpful for integration tests running in parallel. Not that the way it finds a port available is
 bulletproof on every OS. It chooses a random port, tries to start the web server and retries with a different port
 in case of error. This is much more reliable than the usual technique that relies on:
 
-    ServerSocket serverSocket = new ServerSocket(0);
-		int port = serverSocket.getLocalPort();
-		serverSocket.close();
+```java
+ServerSocket serverSocket = new ServerSocket(0);
+int port = serverSocket.getLocalPort();
+serverSocket.close();
+```
 
 ## NOHTML (Not Only HTML)
 
@@ -116,37 +134,45 @@ The web server recognizes html files but not only. It is also able to transform 
 Static pages can use Yaml Front Matter as in [Jekyll](http://jekyllrb.com/docs/frontmatter/). For example this `index.md`
 file:
 
-    ---
-    greeting: Hello
-    to: World
-    ---
-    [[greeting]] [[to]]
+```markdown
+---
+greeting: Hello
+to: World
+---
+[[greeting]] [[to]]
+```
 
 Will be rendered as:
 
-    <p>Hello World</p>
+```html
+<p>Hello World</p>
+```
 
 ## Handlebars
 
 To make Yaml Front Matter even more useful, static pages can use [HandleBar](http://handlebarsjs.com/) template engine.
 
-    ---
-    names: [Doc, Grumpy, Happy]
-    ---
-    [[#each names]]
-     - [[.]]
-    [[/each]]
+```markdown
+---
+names: [Doc, Grumpy, Happy]
+---
+[[#each names]]
+ - [[.]]
+[[/each]]
+```
 
 Will be rendered as:
 
-    <ul>
-    <li><p>Doc</p>
-    </li>
-    <li><p>Grumpy</p>
-    </li>
-    <li><p>Happy</p>
-    </li>
-    </ul>
+```html
+<ul>
+<li><p>Doc</p>
+</li>
+<li><p>Grumpy</p>
+</li>
+<li><p>Happy</p>
+</li>
+</ul>
+```
 
 ## Layouting
 
@@ -155,25 +181,31 @@ in the Yaml Front Matter section.
 
 For example, given this `app/_layouts/default.html` file:
 
-    <!DOCTYPE html>
-    <html lang="en">
-    <body>
-    [[body]]
-    </body>
-    </html>
+```html
+<!DOCTYPE html>
+<html lang="en">
+<body>
+[[body]]
+</body>
+</html>
+```
 
 and this `app/index.md` file:
 
-    Hello World
+```markdown
+Hello World
+```
 
 A request to `/` will give this result:
 
-    <!DOCTYPE html>
-    <html lang="en">
-    <body>
-    <p>Hello World</p>
-    </body>
-    </html>
+```html
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<p>Hello World</p>
+</body>
+</html>
+```
 
 A layout file can be a `.html`, `.md`, `.markdown`, `.txt` or `.asciidoc` file. It should be put in `app/_layouts` folder.
 The layout name used in the Yaml Front Matter section can omit the layout file extension.
@@ -181,34 +213,40 @@ Layouts are recursive, ie a layout file can have a layout.
 
 A layout can use variables defined in the rendered file. Here's an example with an html title:
 
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <title>[[title]]</title>
-    </head>
-    <body>
-      [[body]]
-    </body>
-    </html>
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>[[title]]</title>
+</head>
+<body>
+  [[body]]
+</body>
+</html>
+```
 
 and this `app/index.md` file:
 
-    ---
-    title: Greeting
-    ---
-    Hello World
+```markdown
+---
+title: Greeting
+---
+Hello World
+```
 
 A request to `/` will give this result:
 
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <title>Greeting</title>
-    </head>
-    <body>
-      <p>Hello World</p>
-    </body>
-    </html>
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Greeting</title>
+</head>
+<body>
+  <p>Hello World</p>
+</body>
+</html>
+```
 
 ## Webjars
 
@@ -217,21 +255,25 @@ Just add a maven dependency to a WebJar and reference the static resource in you
 
 Here's an example with Bootstrap:
 
-    <dependency>
-      <groupId>org.webjars</groupId>
-      <artifactId>bootstrap</artifactId>
-      <version>3.0.3</version>
-    </dependency>
+```xml
+<dependency>
+  <groupId>org.webjars</groupId>
+  <artifactId>bootstrap</artifactId>
+  <version>3.0.3</version>
+</dependency>
+```
 
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <link rel="stylesheet" href="/webjars/bootstrap/3.0.3/css/bootstrap.min.css">
-    </head>
-    <body>
-      <p>Hello World</p>
-    </body>
-    </html>
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="/webjars/bootstrap/3.0.3/css/bootstrap.min.css">
+</head>
+<body>
+  <p>Hello World</p>
+</body>
+</html>
+```
 
 ## Dynamic pages
 
@@ -305,9 +347,11 @@ TODO
 
 Build the release:
 
-	  mvn release:clean
-	  mvn release:prepare
-	  mvn release:perform
+```bash
+mvn release:clean
+mvn release:prepare
+mvn release:perform
+```
 
 Go to [https://oss.sonatype.org/](https://oss.sonatype.org/), log in, go to **Staging Repositories**, close the *netcode-story-XXXX* repository then release it.
 Synchro to Maven Central is done hourly.
