@@ -69,11 +69,38 @@ new WebServer(routes -> routes.
 Routes can have path parameters:
 
 ```java
-get("/hello/:who", (context, name) -> "Hello " + name)
-get("/add/:first/to/:second", (context, first, second) -> Integer.parseInt(first) + Integer.parseInt(second))
+routes.get("/hello/:who", (context, name) -> "Hello " + name);
+routes.get("/add/:first/to/:second", (context, first, second) -> Integer.parseInt(first) + Integer.parseInt(second));
 ```
 
-Notice that path parameters have to be of type `String`. For other kinds, we'll see later how it can be achieved.
+Notice that path parameters have to be of type `String`.
+
+## Resources
+
+The notation with lambdas is very compact but cannot support path parameters of type other than `String`. So we've added
+the notion of resource, in a way similar to jaxb.
+
+```java
+routes.add(new CalculationResource());
+
+public class CalculationResource {
+  @Get("/add/:first/to/:second")
+  public int add(int first, int second) {
+    return first + second;
+  }
+}
+```
+
+Each method annotated with `@Get` is a route. The method can have any name. The number of parameters must match the uri
+pattern. Parameters names are not important but it's a good practice to match the uri placeholders. The conversion between
+path parameters and method parameters is done with [Jackson](http://jackson.codehaus.org/).
+
+We can also let the web server take care of the resource instantiation. It will create a singleton for each resource,
+and recursively inject dependencies as singletons. It's a kind of poor's man DI framework.
+
+```java
+routes.add(CalculationResource.class);
+```
 
 ## Static pages
 
@@ -248,6 +275,16 @@ A request to `/` will give this result:
 </html>
 ```
 
+## Site variables
+
+In addition to the variables defined in the Yaml Front Matter section, some site-wide variables are available.
+
+ - All variables defined in the `app/_config.yml` file
+ - `site.data` is a map of every file in `app/_data/` parsed and indexed by its file name (without extension)
+ - `site.pages` is a list of all static pages in `app/`. Each entry is a map containing all variables in the file's YFM section, plus `content`, `path` and `name` variables.
+ - `site.tags` is a map of every tag defined in static pages YMF sections. For each tag, there's the list of the pages with this tag. Pages can have multiple tags.
+ - `site.categories`is a map of every category defined in static pages YMF sections. For each category, there's the list of the pages with this category. Pages can have one or zero category.
+
 ## Webjars
 
 We also support [WebJars](http://www.webjars.org/) to server static assets.
@@ -277,13 +314,142 @@ Here's an example with Bootstrap:
 
 ## Dynamic pages
 
-TODO
+Ok, so its easy to mimic the behavior of a static website generated with Jekyll. But what about dynamic pages. Turns
+out it's heady too.
+
+Let's create a `hello.md` page with an unbound variable.
+
+```markdown
+Hello [[name]]
+```
+
+If we query `/hello`, the name will be replaced with an empty string since nowhere does it say what its value is. The solution
+is to override the default route to `/hello` as is:
+
+```java
+routes.get("/hello", Model.of("name", "Bob");
+```
+
+Now, when the pages is rendered, `[[name]]` will be replaced server-side with `Bob`.
+
+If not specified, the name of the page (ie. the view) to render for a given uri is guessed after the uri. Files are
+looked up in this order: `uri`, `uri.html`, `uri.md`, `uri.markdown`, `uri.txt` then `uri.asciidoc`. Most of the time
+it will *just work*, but the view can of course be overridden:
+
+```java
+routes.get("/hello/:whom", (context, whom) -> ModelAndView.of("greeting", "name", whom);
+```
+
+## Return types
+
+A route can return any Object, the server will try to guess what to do with it:
+
+ - `java.lang.String` is interpreted as inline html with content type `text/html;charset=UTF-8`.
+ - `byte[]` is interpreted as `application/octet-stream`.
+ - `java.io.InputStream` is interpreted as `application/octet-stream`.
+ - `java.io.File` is interpreted as a static file. The content type is guessed from file's extension.
+ - `java.nio.file.Path` is interpreted as a static file. The content type is guessed from file's extension.
+ - `Model` is interpreted as a template which name is guessed, rendered with given variables. The content type is
+ guessed from file's extension.
+ - `ModelAndView` is interpreted as a template with given name, rendered with given variables. The content type is
+ guessed from file's extension.
+ - `void` is empty content.
+ - any other type is serialized to json with content type `application/json;charset=UTF-8`.
 
 ## POST
 
-TODO
+Now that the website is dynamic, we might also want to post data. We support `GET`, `POST`, `PUT` and `DELETE` methods.
+Here's how one would post data.
 
-## Resources
+```java
+routes.post("/person", (context) -> {
+  String name = context.get("name");
+  int age = context.getInteger("age");
+
+  Person person = new Person(name, age);
+  // do something
+
+  return Payload.created();
+});
+```
+
+It's even easier to let [Jackson](http://jackson.codehaus.org/) do the mapping between form parameters and Java Beans.
+
+```java
+routes.post("/person", (context) -> {
+  Person person = context.payload(Person.class);
+  // do something
+
+  return Payload.created();
+});
+```
+
+Using the annotated resource syntax, it's even simpler:
+
+```java
+public class PersonResource {
+  @Post("/person")
+  public void create(Person person) {
+    repository.add(person);
+  }
+}
+```
+
+Multiple methods can be used for the same uri:
+
+```java
+public class PersonResource {
+  @Get("/person/:id")
+  public Model show(String id) {
+    return Model.of("person", repository.find(id));
+  }
+
+  @Put("/person/:id")
+  public void update(String id, Person person) {
+    repository.update(person);
+  }
+}
+```
+
+Same goes for the lambda syntax:
+
+```java
+routes.
+  get("/person/:id", (context, id) -> Model.of("person", repository.find(id))).
+  put("/person/:id", (context, id) -> {
+    Person person = context.payload(Person.class);
+    repository.update(person);
+
+    return Payload.created();
+  });
+}
+```
+
+Or to avoid duplication:
+
+```java
+routes
+  .with("/person/:id").
+    get((context, id) -> Model.of("person", repository.find(id))).
+    put((context, id) -> {
+      Person person = context.payload(Person.class);
+      repository.update(person);
+
+      return Payload.created();
+    });
+}
+```
+
+## SSL
+
+Starting the web server in SSL mode is very easy. You need a certificate file (`.crt`) and a private key file (`.der`),
+That's it. No need to import anything in a stupid keystore. It cannot be easier!
+
+```java
+new Webserver().startSSL(9443, Paths.get("server.crt"), Paths.get("server.der"));
+```
+
+## Errors
 
 TODO
 
@@ -295,11 +461,78 @@ TODO
 
 TODO
 
-## Errors
+## Payload
 
 TODO
 
 ## Filters
+
+Cross-cutting behaviors can be implemented with filters. For example, one can log every request to the server
+with this filter:
+
+```java
+routes.filter((uri, context, next) -> {
+  System.out.println(uri);
+  return next.get();
+})
+```
+
+A filter can be defined in its own class:
+
+```java
+routes.filter(LogRequestFilter.class);
+
+public class LogRequestFilter implements Filter {
+  @Override
+  public Payload apply(String uri, Context context, PayloadSupplier next) throws IOException {
+    System.out.println(uri);
+    return next.get();
+  }
+}
+```
+
+A filter can either pass to the next filter/route by returning `next.get()` or it can totally bypass the chain of
+filters/routes by returning its own Payload. For example, a Basic Authentication filter would look like:
+
+```java
+public class BasicAuthFilter implements Filter {
+  private final String uriPrefix;
+  private final String realm;
+  private final List<String> hashes;
+
+  public BasicAuthFilter(String uriPrefix, String realm, Map<String, String> users) {
+    this.uriPrefix = uriPrefix;
+    this.realm = realm;
+    this.hashes = new ArrayList<>();
+
+    users.entrySet().forEach((entry) -> {
+      String user = entry.getKey();
+      String password = entry.getValue();
+      String hash = Base64.getEncoder().encodeToString((user + ":" + password).getBytes());
+
+      hashes.add("Basic " + hash);
+    });
+  }
+
+  @Override
+  public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
+    if (!uri.startsWith(uriPrefix)) {
+      return nextFilter.get(); // Ignore
+    }
+
+    String authorizationHeader = context.getHeader("Authorization");
+    if ((authorizationHeader == null) || !hashes.contains(authorizationHeader.trim())) {
+      return Payload.unauthorized(realm);
+    }
+
+    return nextFilter.get();
+  }
+}
+```
+
+Both `BasicAuthFilter` and `LogRequestFilter` are pre-packaged filters that you can use in your applications.
+
+## Twitter Auth
 
 TODO
 
@@ -307,35 +540,11 @@ TODO
 
 TODO
 
-## With syntax
-
-TODO
-
-## Basic Auth
-
-TODO
-
-## Twitter Auth
-
-TODO
-
-## SSL
-
-TODO
-
 ## Markdown extensions
 
 TODO (Formulas, Tables, ...)
 
-## Site variables
-
-TODO
-
 ## HandleBars extensions
-
-TODO
-
-## Manual payload
 
 TODO
 
