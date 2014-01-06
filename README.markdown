@@ -105,6 +105,7 @@ The web server recognizes html files but not only. It is also able to transform 
  + Coffeescript (`.coffee` or `litcoffee`) -> Javascript
  + Zip (`.zip`)
  + Gz (`.gz`)
+ + Pdf (`.pdf`)
  + Gif (`.gif`)
  + Jpeg (`.jpeg` or `jpg`)
  + Png (`.png`)

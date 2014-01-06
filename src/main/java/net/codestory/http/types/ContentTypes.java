@@ -44,6 +44,8 @@ public class ContentTypes {
         return "application/zip";
       case ".gz":
         return "application/gzip";
+      case ".pdf":
+        return "application/pdf";
       case ".gif":
         return "image/gif";
       case ".jpeg":
