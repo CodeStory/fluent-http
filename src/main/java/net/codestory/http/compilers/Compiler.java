@@ -105,7 +105,7 @@ public enum Compiler {
       return LESS;
     } else if (name.endsWith(".css.map")) {
       return LESS_MAP;
-    } else if (name.endsWith(".coffee")) {
+    } else if (name.endsWith(".coffee") || name.endsWith(".litcoffee")) {
       return COFFEE;
     } else if (name.endsWith(".md") || name.endsWith(".markdown")) {
       return MARKDOWN;
