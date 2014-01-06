@@ -216,6 +216,14 @@ TODO
 
 TODO
 
+## Etag
+
+TODO
+
+## Webjars
+
+TODO
+
 # Deploy on Maven Central
 
 Build the release:
