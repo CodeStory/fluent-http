@@ -53,6 +53,14 @@ public class ContentTypes {
         return "image/jpeg";
       case ".png":
         return "image/png";
+      case ".svg":
+        return "image/svg+xml";
+      case ".eot":
+        return "application/vnd.ms-fontobject";
+      case ".ttf":
+        return "application/x-font-ttf";
+      case ".woff":
+        return "application/x-font-woff";
       default:
         return "text/plain;charset=UTF-8";
     }
@@ -88,6 +96,7 @@ public class ContentTypes {
       case ".js":
       case ".coffee":
       case ".litcoffee":
+      case ".svg":
         return false;
       default:
         return true;

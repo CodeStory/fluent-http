@@ -41,6 +41,10 @@ public class ContentTypesTest {
     assertThat(get(Paths.get("image.jpeg"))).isEqualTo("image/jpeg");
     assertThat(get(Paths.get("image.jpg"))).isEqualTo("image/jpeg");
     assertThat(get(Paths.get("image.png"))).isEqualTo("image/png");
+    assertThat(get(Paths.get("font.svg"))).isEqualTo("image/svg+xml");
+    assertThat(get(Paths.get("font.eot"))).isEqualTo("application/vnd.ms-fontobject");
+    assertThat(get(Paths.get("font.ttf"))).isEqualTo("application/x-font-ttf");
+    assertThat(get(Paths.get("font.woff"))).isEqualTo("application/x-font-woff");
     assertThat(get(Paths.get("script.js"))).isEqualTo("application/javascript;charset=UTF-8");
     assertThat(get(Paths.get("script.coffee"))).isEqualTo("application/javascript;charset=UTF-8");
     assertThat(get(Paths.get("script.litcoffee"))).isEqualTo("application/javascript;charset=UTF-8");
@@ -65,6 +69,10 @@ public class ContentTypesTest {
     assertThat(support_templating(Paths.get("image.jpeg"))).isFalse();
     assertThat(support_templating(Paths.get("image.jpg"))).isFalse();
     assertThat(support_templating(Paths.get("image.png"))).isFalse();
+    assertThat(support_templating(Paths.get("font.svg"))).isFalse();
+    assertThat(support_templating(Paths.get("font.eot"))).isFalse();
+    assertThat(support_templating(Paths.get("font.ttf"))).isFalse();
+    assertThat(support_templating(Paths.get("font.woff"))).isFalse();
     assertThat(support_templating(Paths.get("script.js"))).isFalse();
     assertThat(support_templating(Paths.get("script.coffee"))).isFalse();
     assertThat(support_templating(Paths.get("script.litcoffee"))).isFalse();
@@ -89,6 +97,10 @@ public class ContentTypesTest {
     assertThat(is_binary(Paths.get("image.jpeg"))).isTrue();
     assertThat(is_binary(Paths.get("image.jpg"))).isTrue();
     assertThat(is_binary(Paths.get("image.png"))).isTrue();
+    assertThat(is_binary(Paths.get("font.svg"))).isFalse();
+    assertThat(is_binary(Paths.get("font.eot"))).isTrue();
+    assertThat(is_binary(Paths.get("font.ttf"))).isTrue();
+    assertThat(is_binary(Paths.get("font.woof"))).isTrue();
     assertThat(is_binary(Paths.get("script.js"))).isFalse();
     assertThat(is_binary(Paths.get("script.coffee"))).isFalse();
     assertThat(is_binary(Paths.get("script.litcoffee"))).isFalse();
