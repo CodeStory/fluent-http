@@ -580,14 +580,13 @@ Synchro to Maven Central is done hourly.
  + Remplacer Simple par un Servlet Filter qui fonctionne par defaut sur un Jetty Http
  + Fonctionnement en mode war
  + Meilleurs headers pour mise en cache
- + ETAG activé par défaut
  + If-Modified-since activé par défaut
  + Laisser le Compiler Cache donner le last modified
  + Gzip
  + Content negociation
  + Context.getBean(Class<T> type)
  + Payload method a la jersey (tag, type, cache, lastmodified, expires)
- + Gere la mise en cache, les etag, les last modified dans Payload
+ + Gere les last modified dans Payload
  + Rendre les URI absolues si ca n'est pas le cas
  + Accelerer le startup
  + Auto reload meme sans les lambda avec capture de variables locales
@@ -600,5 +599,4 @@ Synchro to Maven Central is done hourly.
  + Local storage
  + File upload
  + head
- + Noter une ressource comme immutable. Ou pur une reference donnée
- +
+ + Noter une ressource comme immutable. Ou pour une reference donnée

@@ -28,7 +28,14 @@ import org.junit.*;
 import org.simpleframework.http.*;
 
 public class PayloadTest {
-  private Context context = mock(Context.class);
+  Context context = mock(Context.class);
+  Response response = mock(Response.class);
+
+  @Before
+  public void setupContext() throws IOException {
+    when(context.response()).thenReturn(response);
+    when(response.getOutputStream()).thenReturn(new ByteArrayOutputStream());
+  }
 
   @Test
   public void support_string() throws IOException {
@@ -75,55 +82,38 @@ public class PayloadTest {
 
   @Test
   public void redirect() throws IOException {
-    Context context = mock(Context.class);
-    Response response = mock(Response.class);
-    when(context.response()).thenReturn(response);
-
     Payload payload = Payload.seeOther("/url");
     payload.writeTo(context);
 
     verify(response).setValue("Location", "/url");
-    verify(response).setStatus(Status.getStatus(303));
+    verify(response).setStatus(Status.SEE_OTHER);
     verify(response).setContentLength(0);
     verifyNoMoreInteractions(response);
   }
 
   @Test
   public void forbidden() throws IOException {
-    Context context = mock(Context.class);
-    Response response = mock(Response.class);
-    when(context.response()).thenReturn(response);
-
     Payload payload = Payload.forbidden();
     payload.writeTo(context);
 
-    verify(response).setStatus(Status.getStatus(403));
+    verify(response).setStatus(Status.FORBIDDEN);
     verify(response).setContentLength(0);
     verifyNoMoreInteractions(response);
   }
 
   @Test
   public void permanent_move() throws IOException {
-    Context context = mock(Context.class);
-    Response response = mock(Response.class);
-    when(context.response()).thenReturn(response);
-
     Payload payload = Payload.movedPermanently("/url");
     payload.writeTo(context);
 
     verify(response).setValue("Location", "/url");
-    verify(response).setStatus(Status.getStatus(301));
+    verify(response).setStatus(Status.MOVED_PERMANENTLY);
     verify(response).setContentLength(0);
     verifyNoMoreInteractions(response);
   }
 
   @Test
   public void last_modified() throws IOException {
-    Context context = mock(Context.class);
-    Response response = mock(Response.class);
-    when(context.response()).thenReturn(response);
-    when(response.getOutputStream()).thenReturn(new ByteArrayOutputStream());
-
     Payload payload = new Payload(Paths.get("hello.md"));
     payload.writeTo(context);
 
@@ -167,6 +157,25 @@ public class PayloadTest {
     Cookie cookie = payload.cookies().get(0);
     assertThat(cookie.getName()).isEqualTo("person");
     assertThat(cookie.getValue()).isEqualTo("{\"name\":\"Bob\",\"age\":42}");
+  }
+
+  @Test
+  public void etag() throws IOException {
+    Payload payload = new Payload("Hello");
+    payload.writeTo(context);
+
+    verify(response).setStatus(Status.OK);
+    verify(response).setValue("ETag", "8b1a9953c4611296a827abf8c47804d7");
+  }
+
+  @Test
+  public void not_modified() throws IOException {
+    when(context.getHeader("If-None-Match")).thenReturn("8b1a9953c4611296a827abf8c47804d7");
+
+    Payload payload = new Payload("Hello");
+    payload.writeTo(context);
+
+    verify(response).setStatus(Status.NOT_MODIFIED);
   }
 
   static class Person {

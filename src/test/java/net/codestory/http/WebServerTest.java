@@ -26,7 +26,6 @@ import java.util.*;
 import net.codestory.http.annotations.*;
 import net.codestory.http.errors.*;
 import net.codestory.http.filters.basic.*;
-import net.codestory.http.filters.etag.*;
 import net.codestory.http.injection.*;
 import net.codestory.http.misc.*;
 import net.codestory.http.payload.*;
@@ -436,7 +435,6 @@ public class WebServerTest {
   @Test
   public void etag_filter() {
     server.configure(routes -> routes.
-        filter(EtagFilter.class).
         get("/", "Hello World")
     );
 

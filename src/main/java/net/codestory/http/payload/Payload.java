@@ -24,10 +24,11 @@ import java.nio.file.Path;
 import java.time.*;
 import java.util.*;
 
-import net.codestory.http.compilers.Compilers;
+import net.codestory.http.compilers.*;
 import net.codestory.http.convert.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.io.*;
+import net.codestory.http.misc.*;
 import net.codestory.http.templating.*;
 import net.codestory.http.types.*;
 
@@ -210,17 +211,33 @@ public class Payload {
     headers.entrySet().forEach(entry -> response.setValue(entry.getKey(), entry.getValue()));
     addHeadersForContent(response);
     cookies.forEach(cookie -> response.setCookie(cookie));
-    response.setStatus(Status.getStatus(code));
 
     String uri = context.uri();
     byte[] data = getData(uri, context);
-    if (data != null) {
-      response.setValue("Content-Type", getContentType(uri));
-      response.setContentLength(data.length);
-      response.getOutputStream().write(data);
-    } else {
+    if (data == null) {
+      response.setStatus(Status.getStatus(code));
       response.setContentLength(0);
+      return;
     }
+
+    String type = getContentType(uri);
+    response.setValue("Content-Type", type);
+
+    String etag = etag(data);
+    String previousEtag = context.getHeader("If-None-Match");
+    if (etag.equals(previousEtag)) {
+      response.setStatus(Status.NOT_MODIFIED);
+      return;
+    }
+
+    response.setStatus(Status.getStatus(code));
+    response.setValue("ETag", etag);
+    response.setContentLength(data.length);
+    response.getOutputStream().write(data);
+  }
+
+  private static String etag(byte[] data) {
+    return Md5.of(data);
   }
 
   public String getContentType(String uri) {
