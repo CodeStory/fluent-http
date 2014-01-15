@@ -578,7 +578,6 @@ Synchro to Maven Central is done hourly.
  + If-Modified-since activé par défaut
  + Laisser le Compiler Cache donner le last modified
  + Gzip
- + Context.getBean(Class<T> type)
  + Gere les last modified dans Payload
  + Auto reload meme sans les lambda avec capture de variables locales
  + Streaming

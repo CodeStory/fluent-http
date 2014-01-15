@@ -26,6 +26,7 @@ import net.codestory.http.internal.*;
 import net.codestory.http.misc.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.reload.*;
+import net.codestory.http.routes.*;
 import net.codestory.http.ssl.*;
 
 import org.simpleframework.http.*;
@@ -137,10 +138,11 @@ public class WebServer {
   }
 
   void handle(Request request, Response response) {
-    Context context = new Context(request, response);
+    RouteCollection routes = routesProvider.get();
+    Context context = new Context(request, response, routes.getIocAdapter());
 
     try {
-      applyRoutes(context);
+      applyRoutes(routes, context);
     } catch (Exception e) {
       handleServerError(context, e);
     } finally {
@@ -152,8 +154,8 @@ public class WebServer {
     }
   }
 
-  protected void applyRoutes(Context context) throws IOException {
-    Payload payload = routesProvider.get().apply(context);
+  protected void applyRoutes(RouteCollection routeCollection, Context context) throws IOException {
+    Payload payload = routeCollection.apply(context);
     if (payload.isError()) {
       payload = errorPage(payload);
     }

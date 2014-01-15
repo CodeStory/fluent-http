@@ -18,14 +18,17 @@ package net.codestory.http.internal;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import net.codestory.http.injection.*;
+
 import org.junit.*;
 import org.simpleframework.http.*;
 
 public class ContextTest {
   Request request = mock(Request.class);
   Response response = mock(Response.class);
+  IocAdapter iocAdapter = mock(IocAdapter.class);
 
-  Context context = new Context(request, response);
+  Context context = new Context(request, response, iocAdapter);
 
   @Test
   public void missing_cookie() {
@@ -78,8 +81,21 @@ public class ContextTest {
     assertThat(order.quantity).isEqualTo(12);
   }
 
+  @Test
+  public void create_bean() {
+    Service expectedService = new Service();
+    when(iocAdapter.get(Service.class)).thenReturn(expectedService);
+
+    Service actualService = context.getBean(Service.class);
+
+    assertThat(actualService).isSameAs(expectedService);
+  }
+
   static class Order {
     String name;
     int quantity;
+  }
+
+  static class Service {
   }
 }

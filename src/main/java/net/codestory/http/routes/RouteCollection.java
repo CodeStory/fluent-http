@@ -341,6 +341,10 @@ public class RouteCollection implements Routes {
     return payloadSupplier.get();
   }
 
+  public IocAdapter getIocAdapter() {
+    return iocAdapter;
+  }
+
   private static String checkParametersCount(String uriPattern, int count) {
     if (paramsCount(uriPattern) != count) {
       String error = (count == 1) ? "1 parameter" : count + " parameters";

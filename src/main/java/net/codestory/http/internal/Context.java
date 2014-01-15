@@ -21,6 +21,7 @@ import java.io.*;
 import java.util.*;
 
 import net.codestory.http.convert.*;
+import net.codestory.http.injection.*;
 import net.codestory.http.io.*;
 
 import org.simpleframework.http.*;
@@ -28,11 +29,13 @@ import org.simpleframework.http.*;
 public class Context {
   private final Request request;
   private final Response response;
+  private final IocAdapter iocAdapter;
   private final Query query;
 
-  public Context(Request request, Response response) {
+  public Context(Request request, Response response, IocAdapter iocAdapter) {
     this.request = request;
     this.response = response;
+    this.iocAdapter = iocAdapter;
     this.query = request.getQuery();
   }
 
@@ -144,5 +147,9 @@ public class Context {
 
   public <T> T payload(Class<T> type) {
     return TypeConvert.convert(this, type);
+  }
+
+  public <T> T getBean(Class<T> type) {
+    return iocAdapter.get(type);
   }
 }
