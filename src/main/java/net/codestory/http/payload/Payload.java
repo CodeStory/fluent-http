@@ -18,7 +18,7 @@ package net.codestory.http.payload;
 import static java.nio.charset.StandardCharsets.*;
 import static java.time.format.DateTimeFormatter.*;
 import static net.codestory.http.constants.Headers.*;
-import static net.codestory.http.constants.Methods.HEAD;
+import static net.codestory.http.constants.Methods.*;
 
 import java.io.*;
 import java.net.*;
@@ -27,7 +27,6 @@ import java.time.*;
 import java.util.*;
 
 import net.codestory.http.compilers.*;
-import net.codestory.http.constants.*;
 import net.codestory.http.convert.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.io.*;

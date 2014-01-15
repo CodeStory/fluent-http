@@ -26,7 +26,6 @@ import java.util.function.*;
 
 import net.codestory.http.*;
 import net.codestory.http.annotations.*;
-import net.codestory.http.constants.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.injection.*;
 import net.codestory.http.internal.*;

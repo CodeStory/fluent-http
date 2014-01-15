@@ -15,7 +15,7 @@
  */
 package net.codestory.http.internal;
 
-import static net.codestory.http.constants.Headers.X_FORWARDED_FOR;
+import static net.codestory.http.constants.Headers.*;
 
 import java.io.*;
 import java.util.*;

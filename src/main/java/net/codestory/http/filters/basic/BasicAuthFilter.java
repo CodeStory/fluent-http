@@ -15,7 +15,7 @@
  */
 package net.codestory.http.filters.basic;
 
-import static net.codestory.http.constants.Headers.AUTHORIZATION;
+import static net.codestory.http.constants.Headers.*;
 
 import java.io.*;
 import java.util.*;
