@@ -56,6 +56,11 @@ class RestAssert {
     return new RestAssert(given -> given.body(body), request -> request.put(path));
   }
 
+  // HEAD
+  static RestAssert head(String path) {
+    return new RestAssert(request -> request.head(path));
+  }
+
   // POST
   static RestAssert post(String path) {
     return new RestAssert(request -> request.post(path));

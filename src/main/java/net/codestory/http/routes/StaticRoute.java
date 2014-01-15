@@ -39,6 +39,10 @@ class StaticRoute implements Route {
   }
 
   private Payload serverFromWebjar(String uri, Context context) throws IOException {
+    if (!"GET".equalsIgnoreCase(context.method()) && !"HEAD".equalsIgnoreCase(context.method())) {
+      return Payload.methodNotAllowed();
+    }
+
     URL classpathUrl = ClassLoader.getSystemResource("META-INF/resources" + uri);
     if (classpathUrl == null) {
       return Payload.notFound();
@@ -68,7 +72,7 @@ class StaticRoute implements Route {
       return Payload.seeOther(uri + "/");
     }
 
-    if (!"GET".equalsIgnoreCase(context.method())) {
+    if (!"GET".equalsIgnoreCase(context.method()) && !"HEAD".equalsIgnoreCase(context.method())) {
       return Payload.methodNotAllowed();
     }
 

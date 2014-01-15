@@ -178,6 +178,18 @@ public class PayloadTest {
     verify(response).setStatus(Status.NOT_MODIFIED);
   }
 
+  @Test
+  public void head() throws IOException {
+    when(context.method()).thenReturn("HEAD");
+
+    Payload payload = new Payload("Hello");
+    payload.writeTo(context);
+
+    verify(response).setStatus(Status.OK);
+    verify(response, never()).setContentLength(anyInt());
+    verify(response, never()).getOutputStream();
+  }
+
   static class Person {
     String name;
     int age;

@@ -587,7 +587,6 @@ Synchro to Maven Central is done hourly.
  + nio
  + new JsonEntity(Object, ObjectMapper)
  + File upload
- + HEAD method
  + OPTIONS method
 
 # TODO Maybe

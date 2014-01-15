@@ -232,8 +232,11 @@ public class Payload {
 
     response.setStatus(Status.getStatus(code));
     response.setValue("ETag", etag);
-    response.setContentLength(data.length);
-    response.getOutputStream().write(data);
+
+    if (!"HEAD".equals(context.method())) {
+      response.setContentLength(data.length);
+      response.getOutputStream().write(data);
+    }
   }
 
   private static String etag(byte[] data) {

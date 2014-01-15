@@ -341,6 +341,13 @@ public class WebServerTest {
   }
 
   @Test
+  public void support_head() {
+    server.configure(routes -> routes.get("/", () -> "Hello"));
+
+    head("/").produces(200);
+  }
+
+  @Test
   public void postForm() {
     server.configure(routes -> routes.
         post("/postForm", (context) -> "CREATED " + context.get("firstName") + " " + context.get("lastName")).
