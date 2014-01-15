@@ -19,7 +19,7 @@ import java.util.*;
 
 import org.markdown4j.*;
 
-public class TablePlugin extends Plugin {
+class TablePlugin extends Plugin {
   public TablePlugin() {
     super("table");
   }
