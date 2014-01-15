@@ -15,12 +15,11 @@
  */
 package net.codestory.http.internal;
 
-import static net.codestory.http.Headers.X_FORWARDED_FOR;
+import static net.codestory.http.constants.Headers.X_FORWARDED_FOR;
 
 import java.io.*;
 import java.util.*;
 
-import net.codestory.http.*;
 import net.codestory.http.convert.*;
 import net.codestory.http.io.*;
 

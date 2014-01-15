@@ -16,11 +16,12 @@
 package net.codestory.http.routes;
 
 import static java.nio.charset.StandardCharsets.*;
+import static net.codestory.http.constants.Methods.*;
 
 import java.io.*;
 import java.nio.file.*;
 
-import net.codestory.http.compilers.Compilers;
+import net.codestory.http.compilers.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.io.*;
 import net.codestory.http.payload.*;
@@ -38,7 +39,7 @@ class SourceMapRoute implements Route {
       return Payload.notFound();
     }
 
-    if (!"GET".equalsIgnoreCase(context.method())) {
+    if (!GET.equalsIgnoreCase(context.method())) {
       return Payload.methodNotAllowed();
     }
 

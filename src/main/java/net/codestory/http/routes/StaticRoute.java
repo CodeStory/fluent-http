@@ -17,13 +17,13 @@ package net.codestory.http.routes;
 
 import static java.time.ZonedDateTime.*;
 import static java.time.format.DateTimeFormatter.*;
-import static net.codestory.http.Headers.*;
+import static net.codestory.http.constants.Headers.*;
+import static net.codestory.http.constants.Methods.*;
 
 import java.io.*;
 import java.net.*;
 import java.nio.file.*;
 
-import net.codestory.http.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.io.*;
 import net.codestory.http.payload.*;
@@ -41,13 +41,13 @@ class StaticRoute implements Route {
   }
 
   private Payload serverFromWebjar(String uri, Context context) throws IOException {
-    if (!"GET".equalsIgnoreCase(context.method()) && !"HEAD".equalsIgnoreCase(context.method())) {
-      return Payload.methodNotAllowed();
-    }
-
     URL classpathUrl = ClassLoader.getSystemResource("META-INF/resources" + uri);
     if (classpathUrl == null) {
       return Payload.notFound();
+    }
+
+    if (!GET.equalsIgnoreCase(context.method()) && !HEAD.equalsIgnoreCase(context.method())) {
+      return Payload.methodNotAllowed();
     }
 
     if (context.getHeader(IF_MODIFIED_SINCE) != null) {
@@ -74,7 +74,7 @@ class StaticRoute implements Route {
       return Payload.seeOther(uri + "/");
     }
 
-    if (!"GET".equalsIgnoreCase(context.method()) && !"HEAD".equalsIgnoreCase(context.method())) {
+    if (!GET.equalsIgnoreCase(context.method()) && !HEAD.equalsIgnoreCase(context.method())) {
       return Payload.methodNotAllowed();
     }
 

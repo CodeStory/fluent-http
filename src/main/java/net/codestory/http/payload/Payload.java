@@ -17,7 +17,8 @@ package net.codestory.http.payload;
 
 import static java.nio.charset.StandardCharsets.*;
 import static java.time.format.DateTimeFormatter.*;
-import static net.codestory.http.Headers.*;
+import static net.codestory.http.constants.Headers.*;
+import static net.codestory.http.constants.Methods.HEAD;
 
 import java.io.*;
 import java.net.*;
@@ -25,8 +26,8 @@ import java.nio.file.Path;
 import java.time.*;
 import java.util.*;
 
-import net.codestory.http.*;
 import net.codestory.http.compilers.*;
+import net.codestory.http.constants.*;
 import net.codestory.http.convert.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.io.*;
@@ -235,7 +236,7 @@ public class Payload {
     response.setStatus(Status.getStatus(code));
     response.setValue(ETAG, etag);
 
-    if (!"HEAD".equals(context.method())) {
+    if (!HEAD.equals(context.method())) {
       response.setContentLength(data.length);
       response.getOutputStream().write(data);
     }

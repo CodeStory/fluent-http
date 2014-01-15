@@ -1,4 +1,4 @@
-package net.codestory.http;
+package net.codestory.http.constants;
 
 public abstract class Headers {
   private Headers() {

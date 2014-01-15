@@ -15,12 +15,11 @@
  */
 package net.codestory.http.filters.basic;
 
-import static net.codestory.http.Headers.AUTHORIZATION;
+import static net.codestory.http.constants.Headers.AUTHORIZATION;
 
 import java.io.*;
 import java.util.*;
 
-import net.codestory.http.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
