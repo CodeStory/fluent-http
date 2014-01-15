@@ -577,3 +577,29 @@ Synchro to Maven Central is done hourly.
  + Principal
  + monitoring
  + Optional Payload?
+ + Remplacer Simple par un Servlet Filter qui fonctionne par defaut sur un Jetty Http
+ + Fonctionnement en mode war
+ + Meilleurs headers pour mise en cache
+ + ETAG activé par défaut
+ + If-Modified-since activé par défaut
+ + Laisser le Compiler Cache donner le last modified
+ + Gzip
+ + Content negociation
+ + Context.getBean(Class<T> type)
+ + Payload method a la jersey (tag, type, cache, lastmodified, expires)
+ + Gere la mise en cache, les etag, les last modified dans Payload
+ + Rendre les URI absolues si ca n'est pas le cas
+ + Accelerer le startup
+ + Auto reload meme sans les lambda avec capture de variables locales
+ + Streaming
+ + nio
+ + Register own compiler
+ + new JsonEntity(Object, ObjectMapper)
+ + Add your own/reuse Servlet filters
+ + Singletons qui utilise les annotations standards
+ + Mode lazy pour les reflections routes (en particulier pour le reload a chaud)
+ + Local storage
+ + File upload
+ + head
+ + Noter une ressource comme immutable. Ou pur une reference donnée
+ + 
