@@ -575,8 +575,6 @@ Synchro to Maven Central is done hourly.
  + Principal
  + monitoring
  + Optional Payload?
- + Fonctionnement en mode war
- + Meilleurs headers pour mise en cache
  + If-Modified-since activé par défaut
  + Laisser le Compiler Cache donner le last modified
  + Gzip
@@ -590,7 +588,7 @@ Synchro to Maven Central is done hourly.
  + new JsonEntity(Object, ObjectMapper)
  + File upload
  + HEAD method
- + Noter une ressource comme immutable. Ou pour une reference donnée
+ + OPTIONS method
 
 # TODO Maybe
 
@@ -600,4 +598,6 @@ Synchro to Maven Central is done hourly.
  + Add your own/reuse Servlet filters
  + Supporter les coffee et less pré-générés
  + Supporter les templates pré-générés
-
+ + Fonctionnement en mode war
+ + TRACE method
+ + CONNECT method
