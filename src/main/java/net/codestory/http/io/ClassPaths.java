@@ -15,12 +15,14 @@
  */
 package net.codestory.http.io;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.*;
 import static net.codestory.http.io.FileVisitors.*;
 import static net.codestory.http.io.Resources.*;
 
 import java.io.*;
 import java.net.*;
+import java.nio.charset.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.jar.*;
@@ -65,7 +67,7 @@ class ClassPaths {
     }
 
     try {
-      String path = URLDecoder.decode(url.getPath(), "UTF-8");
+      String path = URLDecoder.decode(url.getPath(), UTF_8.displayName());
       if (path.contains(".jar!")) {
         path = path.substring(0, path.lastIndexOf(".jar!") + ".jar".length());
       }
