@@ -26,10 +26,6 @@ public interface RoutesProvider {
     return new FixedRoutesProvider(configuration);
   }
 
-  static RoutesProvider empty() {
-    return new NoRoutesProvider();
-  }
-
   static RoutesProvider reloading(Configuration configuration) {
     return new ReloadingRoutesProvider(configuration);
   }

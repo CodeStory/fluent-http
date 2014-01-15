@@ -584,7 +584,6 @@ Synchro to Maven Central is done hourly.
  + Context.getBean(Class<T> type)
  + Gere les last modified dans Payload
  + Payload method a la jersey (tag, type, cache, lastmodified, expires)
- + Accelerer le startup
  + Auto reload meme sans les lambda avec capture de variables locales
  + Streaming
  + nio

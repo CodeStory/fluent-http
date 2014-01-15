@@ -44,25 +44,30 @@ public class WebServer {
   private RoutesProvider routesProvider;
   private int port;
 
-  public WebServer(Configuration configuration) {
-    this();
-    configure(configuration);
+  public WebServer() {
+    this((routes) -> {
+    });
   }
 
-  public WebServer() {
+  public WebServer(Configuration configuration) {
     try {
       server = new ContainerServer(this::handle);
       connection = new SocketConnection(server);
-      reset();
     } catch (IOException e) {
       throw new IllegalStateException("Unable to create http server", e);
     }
+    configure(configuration);
   }
 
   public static void main(String[] args) throws Exception {
-    new WebServer().configure(routes -> {
-      routes.filter(new LogRequestFilter());
-    }).start(8080);
+    long start = System.currentTimeMillis();
+
+    new WebServer(routes -> routes
+        .filter(new LogRequestFilter()))
+        .start(8080);
+
+    long end = System.currentTimeMillis();
+    System.out.println(end - start);
   }
 
   public WebServer configure(Configuration configuration) {
@@ -119,7 +124,8 @@ public class WebServer {
   }
 
   public void reset() {
-    routesProvider = RoutesProvider.empty();
+    configure((routes) -> {
+    });
   }
 
   public void stop() {
