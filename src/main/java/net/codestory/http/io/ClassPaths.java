@@ -15,14 +15,13 @@
  */
 package net.codestory.http.io;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.charset.StandardCharsets.*;
 import static java.nio.file.Files.*;
 import static net.codestory.http.io.FileVisitors.*;
 import static net.codestory.http.io.Resources.*;
 
 import java.io.*;
 import java.net.*;
-import java.nio.charset.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.jar.*;
@@ -139,9 +138,9 @@ class ClassPaths {
       return Collections.emptyList();
     }
 
-    Path parent = file.toPath();
+    final Path parent = file.toPath();
 
-    List<String> files = new ArrayList<>();
+    final List<String> files = new ArrayList<>();
     walkFileTree(parent, onFile(path -> files.add(relativePath(parent, path))));
     return files;
   }
