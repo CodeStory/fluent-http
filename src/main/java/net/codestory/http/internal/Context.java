@@ -15,9 +15,12 @@
  */
 package net.codestory.http.internal;
 
+import static net.codestory.http.Headers.X_FORWARDED_FOR;
+
 import java.io.*;
 import java.util.*;
 
+import net.codestory.http.*;
 import net.codestory.http.convert.*;
 import net.codestory.http.io.*;
 
@@ -120,7 +123,7 @@ public class Context {
   }
 
   public String getClientAddress() {
-    String forwarded = getHeader("X-Forwarded-For");
+    String forwarded = getHeader(X_FORWARDED_FOR);
     return (forwarded != null) ? forwarded : request.getClientAddress().toString();
   }
 

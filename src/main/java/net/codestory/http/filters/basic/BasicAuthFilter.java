@@ -15,9 +15,12 @@
  */
 package net.codestory.http.filters.basic;
 
+import static net.codestory.http.Headers.AUTHORIZATION;
+
 import java.io.*;
 import java.util.*;
 
+import net.codestory.http.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
@@ -47,7 +50,7 @@ public class BasicAuthFilter implements Filter {
       return nextFilter.get(); // Ignore
     }
 
-    String authorizationHeader = context.getHeader("Authorization");
+    String authorizationHeader = context.getHeader(AUTHORIZATION);
     if ((authorizationHeader == null) || !hashes.contains(authorizationHeader.trim())) {
       return Payload.unauthorized(realm);
     }

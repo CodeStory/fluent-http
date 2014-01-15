@@ -17,11 +17,13 @@ package net.codestory.http.routes;
 
 import static java.time.ZonedDateTime.*;
 import static java.time.format.DateTimeFormatter.*;
+import static net.codestory.http.Headers.*;
 
 import java.io.*;
 import java.net.*;
 import java.nio.file.*;
 
+import net.codestory.http.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.io.*;
 import net.codestory.http.payload.*;
@@ -48,7 +50,7 @@ class StaticRoute implements Route {
       return Payload.notFound();
     }
 
-    if (context.getHeader("if-modified-since") != null) {
+    if (context.getHeader(IF_MODIFIED_SINCE) != null) {
       return Payload.notModified();
     }
 
@@ -57,9 +59,9 @@ class StaticRoute implements Route {
       byte[] data = InputStreams.readBytes(stream);
 
       return new Payload(contentType, data)
-          .withHeader("cache-control", "public, max-age=31536000")
-          .withHeader("last-modified", RFC_1123_DATE_TIME.format(now().minusMonths(1L)))
-          .withHeader("expires", RFC_1123_DATE_TIME.format(now().plusWeeks(1L)));
+          .withHeader(CACHE_CONTROL, "public, max-age=31536000")
+          .withHeader(LAST_MODIFIED, RFC_1123_DATE_TIME.format(now().minusMonths(1L)))
+          .withHeader(EXPIRES, RFC_1123_DATE_TIME.format(now().plusWeeks(1L)));
     }
   }
 

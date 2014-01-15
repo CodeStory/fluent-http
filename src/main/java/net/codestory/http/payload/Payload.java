@@ -17,6 +17,7 @@ package net.codestory.http.payload;
 
 import static java.nio.charset.StandardCharsets.*;
 import static java.time.format.DateTimeFormatter.*;
+import static net.codestory.http.Headers.*;
 
 import java.io.*;
 import java.net.*;
@@ -24,6 +25,7 @@ import java.nio.file.Path;
 import java.time.*;
 import java.util.*;
 
+import net.codestory.http.*;
 import net.codestory.http.compilers.*;
 import net.codestory.http.convert.*;
 import net.codestory.http.internal.*;
@@ -152,11 +154,11 @@ public class Payload {
   }
 
   public static Payload movedPermanently(String url) {
-    return new Payload(301).withHeader("Location", url);
+    return new Payload(301).withHeader(LOCATION, url);
   }
 
   public static Payload seeOther(String uri) {
-    return new Payload(303).withHeader("Location", uri);
+    return new Payload(303).withHeader(LOCATION, uri);
   }
 
   public static Payload seeOther(URI uri) {
@@ -164,7 +166,7 @@ public class Payload {
   }
 
   public static Payload temporaryRedirect(String uri) {
-    return new Payload(307).withHeader("Location", uri);
+    return new Payload(307).withHeader(LOCATION, uri);
   }
 
   public static Payload temporaryRedirect(URI uri) {
@@ -176,7 +178,7 @@ public class Payload {
   }
 
   public static Payload unauthorized(String realm) {
-    return new Payload(401).withHeader("WWW-Authenticate", "Basic realm=\"" + realm + "\"");
+    return new Payload(401).withHeader(WWW_AUTHENTICATE, "Basic realm=\"" + realm + "\"");
   }
 
   public static Payload forbidden() {
@@ -221,17 +223,17 @@ public class Payload {
     }
 
     String type = getContentType(uri);
-    response.setValue("Content-Type", type);
+    response.setValue(CONTENT_TYPE, type);
 
     String etag = etag(data);
-    String previousEtag = context.getHeader("If-None-Match");
+    String previousEtag = context.getHeader(IF_NONE_MATCH);
     if (etag.equals(previousEtag)) {
       response.setStatus(Status.NOT_MODIFIED);
       return;
     }
 
     response.setStatus(Status.getStatus(code));
-    response.setValue("ETag", etag);
+    response.setValue(ETAG, etag);
 
     if (!"HEAD".equals(context.method())) {
       response.setContentLength(data.length);
@@ -313,7 +315,7 @@ public class Payload {
   }
 
   private void addLastModifiedHeader(File file, Response response) {
-    response.setValue("Last-Modified", RFC_1123_DATE_TIME.format(ZonedDateTime.ofInstant(Instant.ofEpochMilli(file.lastModified()), ZoneOffset.systemDefault())));
+    response.setValue(LAST_MODIFIED, RFC_1123_DATE_TIME.format(ZonedDateTime.ofInstant(Instant.ofEpochMilli(file.lastModified()), ZoneOffset.systemDefault())));
   }
 
   private static byte[] forString(String value) {
