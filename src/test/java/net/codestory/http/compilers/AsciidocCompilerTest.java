@@ -17,21 +17,24 @@ package net.codestory.http.compilers;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.io.*;
 import java.nio.file.*;
 
 import org.junit.*;
 
 public class AsciidocCompilerTest {
+  AsciidocCompiler compiler = new AsciidocCompiler();
+
   @Test
-  public void empty() {
-    String html = Compiler.compile(Paths.get("empty.asciidoc"), "");
+  public void empty() throws IOException {
+    String html = compiler.compile(Paths.get("empty.asciidoc"), "");
 
     assertThat(html).isEqualTo("\n");
   }
 
   @Test
-  public void to_html() {
-    String html = Compiler.compile(Paths.get("doc.asciidoc"), "== Title\ntext http://asciidoc.org[AsciiDoc]");
+  public void to_html() throws IOException {
+    String html = compiler.compile(Paths.get("doc.asciidoc"), "== Title\ntext http://asciidoc.org[AsciiDoc]");
 
     assertThat(html)
         .contains("<h2 id=\"_title\">Title</h2>")

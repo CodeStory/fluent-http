@@ -15,6 +15,8 @@
  */
 package net.codestory.http.types;
 
+import static net.codestory.http.io.Resources.*;
+
 import java.nio.file.*;
 
 public class ContentTypes {
@@ -76,6 +78,7 @@ public class ContentTypes {
       case ".xml":
       case ".css":
       case ".less":
+      case ".map":
         return true;
       default:
         return false;
@@ -101,11 +104,5 @@ public class ContentTypes {
       default:
         return true;
     }
-  }
-
-  private static String extension(Path path) {
-    String filename = path.toString();
-    int dotIndex = filename.lastIndexOf('.');
-    return dotIndex == -1 ? "" : filename.substring(dotIndex);
   }
 }

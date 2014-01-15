@@ -593,7 +593,6 @@ Synchro to Maven Central is done hourly.
  + Auto reload meme sans les lambda avec capture de variables locales
  + Streaming
  + nio
- + Register own compiler
  + new JsonEntity(Object, ObjectMapper)
  + Add your own/reuse Servlet filters
  + Singletons qui utilise les annotations standards
@@ -602,4 +601,4 @@ Synchro to Maven Central is done hourly.
  + File upload
  + head
  + Noter une ressource comme immutable. Ou pur une reference donnée
- + 
+ +

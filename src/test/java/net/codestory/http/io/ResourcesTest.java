@@ -43,4 +43,15 @@ public class ResourcesTest {
 
     assertThat(list).isEqualTo(ordered);
   }
+
+  @Test
+  public void extension() {
+    assertThat(Resources.extension(Paths.get("file.txt"))).isEqualTo(".txt");
+    assertThat(Resources.extension(Paths.get("file.css.map"))).isEqualTo(".map");
+    assertThat(Resources.extension(Paths.get(".dotfile.ext"))).isEqualTo(".ext");
+
+    assertThat(Resources.extension(Paths.get("file"))).isEmpty();
+    assertThat(Resources.extension(Paths.get(".dotfile"))).isEmpty();
+    assertThat(Resources.extension(Paths.get("."))).isEmpty();
+  }
 }

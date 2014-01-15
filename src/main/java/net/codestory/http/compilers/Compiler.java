@@ -15,104 +15,10 @@
  */
 package net.codestory.http.compilers;
 
-import static net.codestory.http.misc.MemoizingSupplier.*;
-
 import java.io.*;
 import java.nio.file.*;
-import java.util.concurrent.*;
-import java.util.function.*;
 
-import org.markdown4j.*;
-
-import com.github.rjeschke.txtmark.*;
-import com.github.sommeri.less4j.*;
-import com.github.sommeri.less4j.core.*;
-
-public enum Compiler {
-  COFFEE {
-    private final Supplier<CoffeeCompiler> coffeeCompiler = memoize(() -> new CoffeeCompiler());
-
-    @Override
-    String doCompile(Path path, String coffee) throws IOException {
-      return coffeeCompiler.get().compile(coffee);
-    }
-  },
-  MARKDOWN {
-    private final Supplier<Configuration> configuration = memoize(() -> Configuration.builder()
-        .forceExtentedProfile()
-        .registerPlugins(new YumlPlugin(), new WebSequencePlugin(), new IncludePlugin(), new FormulaPlugin(), new TablePlugin())
-        .setDecorator(new ExtDecorator())
-        .setCodeBlockEmitter(new CodeBlockEmitter()).build());
-
-    @Override
-    String doCompile(Path path, String markdown) throws IOException {
-      return Processor.process(markdown, configuration.get());
-    }
-  },
-  LESS {
-    @Override
-    String doCompile(Path path, String less) throws IOException {
-      try {
-        return new ThreadUnsafeLessCompiler().compile(new PathSource(path, less)).getCss();
-      } catch (Less4jException e) {
-        throw new IOException("Unable to compile less", e);
-      }
-    }
-  },
-  LESS_MAP {
-    @Override
-    String doCompile(Path path, String less) throws IOException {
-      try {
-        return new ThreadUnsafeLessCompiler().compile(new PathSource(path, less)).getSourceMap();
-      } catch (Less4jException e) {
-        throw new IOException("Unable to compile less", e);
-      }
-    }
-  },
-  ASCIIDOC {
-    private final Supplier<AsciidocCompiler> asciidocCompiler = memoize(() -> new AsciidocCompiler());
-
-    @Override
-    String doCompile(Path path, String asciidoc) throws IOException {
-      return asciidocCompiler.get().compile(asciidoc);
-    }
-  },
-  NONE {
-    @Override
-    String doCompile(Path path, String content) {
-      return content;
-    }
-  };
-
-  abstract String doCompile(Path path, String content) throws IOException;
-
-  private final static ConcurrentMap<String, String> CACHE = new ConcurrentHashMap<>();
-
-  public static String compile(Path path, String content) {
-    return CACHE.computeIfAbsent(path.toString() + ";" + content, (ignore) -> {
-      try {
-        return compilerForPath(path).doCompile(path, content);
-      } catch (IOException e) {
-        throw new IllegalStateException(e);
-      }
-    });
-  }
-
-  private static Compiler compilerForPath(Path path) {
-    String name = path.toString();
-
-    if (name.endsWith(".less")) {
-      return LESS;
-    } else if (name.endsWith(".css.map")) {
-      return LESS_MAP;
-    } else if (name.endsWith(".coffee") || name.endsWith(".litcoffee")) {
-      return COFFEE;
-    } else if (name.endsWith(".md") || name.endsWith(".markdown")) {
-      return MARKDOWN;
-    } else if (name.endsWith(".asciidoc")) {
-      return ASCIIDOC;
-    }
-
-    return NONE;
-  }
+@FunctionalInterface
+public interface Compiler {
+  String compile(Path path, String source) throws IOException;
 }

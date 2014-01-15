@@ -101,6 +101,15 @@ public class Resources {
     return ROOT + (path.toString().startsWith("/") ? "" : "/") + path;
   }
 
+  public static String extension(Path path) {
+    String filename = path.toString();
+    int dotIndex = filename.lastIndexOf('.');
+    if (dotIndex <= 0) {
+      return "";
+    }
+    return filename.substring(dotIndex);
+  }
+
   private static boolean existsInClassPath(String path) {
     URL url = ClassLoader.getSystemResource(path);
     if (url == null) {

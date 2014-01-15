@@ -15,23 +15,27 @@
  */
 package net.codestory.http.compilers;
 
+import static org.assertj.core.api.Assertions.*;
+
 import java.io.*;
 import java.nio.file.*;
 
-import javax.script.*;
+import org.junit.*;
 
-class AsciidocCompiler extends AbstractNashornCompiler implements Compiler {
-  public AsciidocCompiler() {
-    super("asciidoc/opal_asciidoctor.js");
-  }
+public class LessSourceMapCompilerTest {
+  LessSourceMapCompiler compiler = new LessSourceMapCompiler();
 
-  @Override
-  protected void setBindings(Bindings bindings, String source) {
-    bindings.put("asciidocSource", source);
-  }
+  @Test
+  public void source_map() throws IOException {
+    String css = compiler.compile(Paths.get("/path/file.css.map"), "body { h1 { color: red; } }");
 
-  @Override
-  public String compile(Path path, String source) throws IOException {
-    return compile(source);
+    assertThat(css).isEqualTo("{\n" +
+        "\"version\":3,\n" +
+        "\"file\":\"/path/file.css.css\",\n" +
+        "\"lineCount\":1,\n" +
+        "\"mappings\":\"AAAAA,I,CAAOC;\",\n" +
+        "\"sources\":[\"/path/file.css.map\"],\n" +
+        "\"names\":[\"body\",\"h1\"]\n" +
+        "}\n");
   }
 }

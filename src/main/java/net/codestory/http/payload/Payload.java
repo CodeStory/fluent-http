@@ -24,7 +24,7 @@ import java.nio.file.Path;
 import java.time.*;
 import java.util.*;
 
-import net.codestory.http.compilers.Compiler;
+import net.codestory.http.compilers.Compilers;
 import net.codestory.http.convert.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.io.*;
@@ -333,7 +333,7 @@ public class Payload {
     }
 
     String content = Resources.read(path, UTF_8);
-    String compiled = Compiler.compile(path, content);
+    String compiled = Compilers.INSTANCE.compile(path, content);
     return forString(compiled);
   }
 }

@@ -18,20 +18,23 @@ package net.codestory.http.compilers;
 import java.io.*;
 import java.nio.file.*;
 
-import javax.script.*;
+import org.markdown4j.*;
 
-class AsciidocCompiler extends AbstractNashornCompiler implements Compiler {
-  public AsciidocCompiler() {
-    super("asciidoc/opal_asciidoctor.js");
-  }
+import com.github.rjeschke.txtmark.*;
 
-  @Override
-  protected void setBindings(Bindings bindings, String source) {
-    bindings.put("asciidocSource", source);
+public class MarkdownCompiler implements Compiler {
+  private final Configuration configuration;
+
+  public MarkdownCompiler() {
+    configuration = Configuration.builder()
+        .forceExtentedProfile()
+        .registerPlugins(new YumlPlugin(), new WebSequencePlugin(), new IncludePlugin(), new FormulaPlugin(), new TablePlugin())
+        .setDecorator(new ExtDecorator())
+        .setCodeBlockEmitter(new CodeBlockEmitter()).build();
   }
 
   @Override
   public String compile(Path path, String source) throws IOException {
-    return compile(source);
+    return Processor.process(source, configuration);
   }
 }

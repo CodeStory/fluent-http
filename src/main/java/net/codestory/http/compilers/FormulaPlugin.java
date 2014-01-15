@@ -21,7 +21,7 @@ import java.util.*;
 
 import org.markdown4j.*;
 
-public class FormulaPlugin extends Plugin {
+class FormulaPlugin extends Plugin {
   public FormulaPlugin() {
     super("formula");
   }

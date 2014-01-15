@@ -15,9 +15,12 @@
  */
 package net.codestory.http.compilers;
 
+import java.io.*;
+import java.nio.file.*;
+
 import javax.script.*;
 
-class CoffeeCompiler extends AbstractNashornCompiler {
+class CoffeeCompiler extends AbstractNashornCompiler implements Compiler {
   public CoffeeCompiler() {
     super("coffee/coffee-script.js");
   }
@@ -25,5 +28,10 @@ class CoffeeCompiler extends AbstractNashornCompiler {
   @Override
   protected void setBindings(Bindings bindings, String source) {
     bindings.put("coffeeScriptSource", source);
+  }
+
+  @Override
+  public String compile(Path path, String source) throws IOException {
+    return compile(source);
   }
 }

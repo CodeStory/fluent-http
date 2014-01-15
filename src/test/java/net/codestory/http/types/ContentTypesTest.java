@@ -61,7 +61,7 @@ public class ContentTypesTest {
     assertThat(support_templating(Paths.get("test.markdown"))).isTrue();
     assertThat(support_templating(Paths.get("test.asciidoc"))).isTrue();
     assertThat(support_templating(Paths.get("text.txt"))).isTrue();
-    assertThat(support_templating(Paths.get("style.css.map"))).isFalse();
+    assertThat(support_templating(Paths.get("style.css.map"))).isTrue();
     assertThat(support_templating(Paths.get("text.zip"))).isFalse();
     assertThat(support_templating(Paths.get("text.gz"))).isFalse();
     assertThat(support_templating(Paths.get("text.pdf"))).isFalse();

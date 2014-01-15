@@ -19,7 +19,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
-import net.codestory.http.compilers.Compiler;
+import net.codestory.http.compilers.Compilers;
 import net.codestory.http.io.*;
 
 public class Template {
@@ -55,7 +55,7 @@ public class Template {
         body = new Template("_layouts", layout).render(allKeyValues).replace("[[body]]", body);
       }
 
-      return Compiler.compile(path, body);
+      return Compilers.INSTANCE.compile(path, body);
     } catch (IOException e) {
       throw new IllegalStateException("Unable to render template", e);
     }

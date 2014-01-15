@@ -18,20 +18,16 @@ package net.codestory.http.compilers;
 import java.io.*;
 import java.nio.file.*;
 
-import javax.script.*;
+import com.github.sommeri.less4j.*;
+import com.github.sommeri.less4j.core.*;
 
-class AsciidocCompiler extends AbstractNashornCompiler implements Compiler {
-  public AsciidocCompiler() {
-    super("asciidoc/opal_asciidoctor.js");
-  }
-
-  @Override
-  protected void setBindings(Bindings bindings, String source) {
-    bindings.put("asciidocSource", source);
-  }
-
+class LessSourceMapCompiler implements Compiler {
   @Override
   public String compile(Path path, String source) throws IOException {
-    return compile(source);
+    try {
+      return new ThreadUnsafeLessCompiler().compile(new PathSource(path, source)).getSourceMap();
+    } catch (Less4jException e) {
+      throw new IOException("Unable to compile less", e);
+    }
   }
 }

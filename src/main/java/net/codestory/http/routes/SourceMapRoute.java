@@ -20,7 +20,7 @@ import static java.nio.charset.StandardCharsets.*;
 import java.io.*;
 import java.nio.file.*;
 
-import net.codestory.http.compilers.Compiler;
+import net.codestory.http.compilers.Compilers;
 import net.codestory.http.internal.*;
 import net.codestory.http.io.*;
 import net.codestory.http.payload.*;
@@ -45,7 +45,7 @@ class SourceMapRoute implements Route {
     Path pathMap = Paths.get(uri);
     String contentType = ContentTypes.get(pathMap);
     String less = Resources.read(pathLess, UTF_8);
-    String map = Compiler.compile(pathMap, less);
+    String map = Compilers.INSTANCE.compile(pathMap, less);
 
     return new Payload(contentType, map);
   }
