@@ -40,9 +40,9 @@ import org.simpleframework.http.*;
 public class Payload {
   private final String contentType;
   private final Object content;
-  private int code;
   private final Map<String, String> headers;
   private final List<Cookie> cookies;
+  private int code;
 
   public Payload(Object content) {
     this(null, content);
@@ -61,15 +61,15 @@ public class Payload {
       Payload wrapped = (Payload) content;
       this.contentType = (null == contentType) ? wrapped.contentType : contentType;
       this.content = wrapped.content;
-      this.code = wrapped.code;
       this.headers = new LinkedHashMap<>(wrapped.headers);
       this.cookies = new ArrayList<>(wrapped.cookies);
+      this.code = wrapped.code;
     } else {
       this.contentType = contentType;
       this.content = content;
-      this.code = code;
       this.headers = new LinkedHashMap<>();
       this.cookies = new ArrayList<>();
+      this.code = code;
     }
   }
 
