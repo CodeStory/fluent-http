@@ -578,14 +578,11 @@ Synchro to Maven Central is done hourly.
  + If-Modified-since activé par défaut
  + Laisser le Compiler Cache donner le last modified
  + Gzip
- + Content negociation
  + Context.getBean(Class<T> type)
  + Gere les last modified dans Payload
  + Payload method a la jersey (tag, type, cache, lastmodified, expires)
  + Auto reload meme sans les lambda avec capture de variables locales
  + Streaming
- + nio
- + new JsonEntity(Object, ObjectMapper)
  + File upload
  + OPTIONS method
 
@@ -600,3 +597,4 @@ Synchro to Maven Central is done hourly.
  + Fonctionnement en mode war
  + TRACE method
  + CONNECT method
+ + nio
