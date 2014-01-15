@@ -567,8 +567,6 @@ Synchro to Maven Central is done hourly.
 
 # TODO
 
- + Supporter les coffee et less pré-générés
- + Supporter les templates pré-générés
  + Javadoc
  + PROD_MODE is not really convenient. It forces to have more complex prod script
  + Add some sort of http standard log
@@ -577,7 +575,6 @@ Synchro to Maven Central is done hourly.
  + Principal
  + monitoring
  + Optional Payload?
- + Remplacer Simple par un Servlet Filter qui fonctionne par defaut sur un Jetty Http
  + Fonctionnement en mode war
  + Meilleurs headers pour mise en cache
  + If-Modified-since activé par défaut
@@ -585,18 +582,23 @@ Synchro to Maven Central is done hourly.
  + Gzip
  + Content negociation
  + Context.getBean(Class<T> type)
- + Payload method a la jersey (tag, type, cache, lastmodified, expires)
  + Gere les last modified dans Payload
- + Rendre les URI absolues si ca n'est pas le cas
+ + Payload method a la jersey (tag, type, cache, lastmodified, expires)
  + Accelerer le startup
  + Auto reload meme sans les lambda avec capture de variables locales
  + Streaming
  + nio
  + new JsonEntity(Object, ObjectMapper)
- + Add your own/reuse Servlet filters
- + Singletons qui utilise les annotations standards
- + Mode lazy pour les reflections routes (en particulier pour le reload a chaud)
- + Local storage
  + File upload
- + head
+ + HEAD method
  + Noter une ressource comme immutable. Ou pour une reference donnée
+
+# TODO Maybe
+
+ + Singletons qui utilise les annotations standards
+ + Remplacer Simple par un Servlet Filter qui fonctionne par defaut sur un Jetty Http
+ + Help use local storage
+ + Add your own/reuse Servlet filters
+ + Supporter les coffee et less pré-générés
+ + Supporter les templates pré-générés
+
