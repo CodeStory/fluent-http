@@ -32,14 +32,6 @@ public class Strings {
     return count;
   }
 
-  public static String substringAfter(String in, String what) {
-    int index = in.indexOf(what);
-    if (index == -1) {
-      return "";
-    }
-    return in.substring(index + what.length());
-  }
-
   public static String substringBeforeLast(String in, String what) {
     int index = in.lastIndexOf(what);
     if (index == -1) {
