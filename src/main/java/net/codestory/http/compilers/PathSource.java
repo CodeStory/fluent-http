@@ -58,4 +58,17 @@ class PathSource extends LessSource {
   public String getContent() {
     return content;
   }
+
+  @Override
+  public byte[] getBytes() throws CannotReadFile, FileNotFound {
+    if (!Resources.exists(path)) {
+      throw new FileNotFound();
+    }
+
+    try {
+      return Resources.readBytes(path);
+    } catch (IOException e) {
+      throw new CannotReadFile();
+    }
+  }
 }
