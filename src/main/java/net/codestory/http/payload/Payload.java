@@ -17,14 +17,17 @@ package net.codestory.http.payload;
 
 import static java.nio.charset.StandardCharsets.*;
 import static java.time.format.DateTimeFormatter.*;
+import static net.codestory.http.constants.Encodings.*;
 import static net.codestory.http.constants.Headers.*;
 import static net.codestory.http.constants.Methods.*;
+import static org.simpleframework.http.Status.*;
 
 import java.io.*;
 import java.net.*;
 import java.nio.file.Path;
 import java.time.*;
 import java.util.*;
+import java.util.zip.*;
 
 import net.codestory.http.compilers.*;
 import net.codestory.http.constants.*;
@@ -225,18 +228,28 @@ public class Payload {
 
     String type = getContentType(uri);
     response.setValue(CONTENT_TYPE, type);
+    response.setStatus(Status.getStatus(code));
+
+    if (HEAD.equals(context.method()) || (code == 204) || (code == 304) || ((code >= 100) && (code < 200))) {
+      return;
+    }
 
     String etag = etag(data);
     String previousEtag = context.getHeader(IF_NONE_MATCH);
     if (etag.equals(previousEtag)) {
-      response.setStatus(Status.NOT_MODIFIED);
+      response.setStatus(NOT_MODIFIED);
       return;
     }
-
-    response.setStatus(Status.getStatus(code));
     response.setValue(ETAG, etag);
 
-    if (!HEAD.equals(context.method())) {
+    String acceptEncoding = context.getHeader(ACCEPT_ENCODING);
+    if ((acceptEncoding != null) && acceptEncoding.contains(GZIP)) {
+      response.setValue(CONTENT_ENCODING, GZIP);
+
+      GZIPOutputStream gzip = new GZIPOutputStream(response.getOutputStream());
+      gzip.write(data);
+      gzip.finish();
+    } else {
       response.setContentLength(data.length);
       response.getOutputStream().write(data);
     }

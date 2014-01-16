@@ -577,7 +577,6 @@ Synchro to Maven Central is done hourly.
  + Optional Payload?
  + If-Modified-since activé par défaut
  + Laisser le Compiler Cache donner le last modified
- + Gzip
  + Gere les last modified dans Payload
  + Auto reload meme sans les lambda avec capture de variables locales
  + Streaming
