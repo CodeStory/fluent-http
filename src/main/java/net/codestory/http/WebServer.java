@@ -61,14 +61,9 @@ public class WebServer {
   }
 
   public static void main(String[] args) throws Exception {
-    long start = System.currentTimeMillis();
-
     new WebServer(routes -> routes
         .filter(new LogRequestFilter()))
         .start(8080);
-
-    long end = System.currentTimeMillis();
-    System.out.println(end - start);
   }
 
   public WebServer configure(Configuration configuration) {
