@@ -15,22 +15,24 @@
  */
 package net.codestory.http.routes;
 
-import static java.nio.charset.StandardCharsets.*;
+import static java.time.ZonedDateTime.*;
+import static java.time.format.DateTimeFormatter.*;
+import static net.codestory.http.constants.Headers.*;
 import static net.codestory.http.constants.Methods.*;
 
 import java.io.*;
+import java.net.*;
 import java.nio.file.*;
 
-import net.codestory.http.compilers.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.io.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.types.*;
 
-class SourceMapRoute implements Route {
+class WebJarsRoute implements Route {
   @Override
   public boolean matchUri(String uri) {
-    return uri.endsWith(".css.map") && Resources.isPublic(pathLess(uri));
+    return uri.startsWith("/webjars/") && (getResource(uri) != null);
   }
 
   @Override
@@ -41,16 +43,23 @@ class SourceMapRoute implements Route {
   @Override
   public Object body(Context context) throws IOException {
     String uri = context.uri();
-    Path pathLess = pathLess(uri);
-    Path pathMap = Paths.get(uri);
-    String contentType = ContentTypes.get(pathMap);
-    String less = Resources.read(pathLess, UTF_8);
-    String map = Compilers.INSTANCE.compile(pathMap, less);
+    if (context.getHeader(IF_MODIFIED_SINCE) != null) {
+      return Payload.notModified();
+    }
 
-    return new Payload(contentType, map);
+    URL classpathUrl = getResource(uri);
+    try (InputStream stream = classpathUrl.openStream()) {
+      String contentType = ContentTypes.get(Paths.get(uri));
+      byte[] data = InputStreams.readBytes(stream);
+
+      return new Payload(contentType, data)
+          .withHeader(CACHE_CONTROL, "public, max-age=31536000")
+          .withHeader(LAST_MODIFIED, RFC_1123_DATE_TIME.format(now().minusMonths(1L)))
+          .withHeader(EXPIRES, RFC_1123_DATE_TIME.format(now().plusWeeks(1L)));
+    }
   }
 
-  private static Path pathLess(String uri) {
-    return Paths.get(Strings.substringBeforeLast(uri, ".css.map") + ".less");
+  private static URL getResource(String uri) {
+    return ClassLoader.getSystemResource("META-INF/resources" + uri);
   }
 }

@@ -20,8 +20,28 @@ import java.io.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
 
-@FunctionalInterface
 public interface Route {
-  Payload apply(String uri, Context context) throws IOException;
+  public default Payload apply(String uri, Context context) throws IOException {
+    if (!matchUri(uri)) {
+      if (uri.endsWith("/") || !matchUri(uri + "/")) {
+        return Payload.notFound();
+      }
+      return Payload.seeOther(uri + "/");
+    }
+
+    if (!matchMethod(context)) {
+      return Payload.methodNotAllowed();
+    }
+
+    Object body = body(context);
+
+    return new Payload(body);
+  }
+
+  boolean matchUri(String uri);
+
+  boolean matchMethod(Context context);
+
+  Object body(Context context) throws IOException;
 }
 

@@ -15,70 +15,29 @@
  */
 package net.codestory.http.routes;
 
-import static java.time.ZonedDateTime.*;
-import static java.time.format.DateTimeFormatter.*;
-import static net.codestory.http.constants.Headers.*;
 import static net.codestory.http.constants.Methods.*;
 
-import java.io.*;
-import java.net.*;
 import java.nio.file.*;
 
 import net.codestory.http.internal.*;
 import net.codestory.http.io.*;
-import net.codestory.http.payload.*;
-import net.codestory.http.types.*;
 
 class StaticRoute implements Route {
   protected static final Path NOT_FOUND = Paths.get("");
 
   @Override
-  public Payload apply(String uri, Context context) throws IOException {
-    if (uri.startsWith("/webjars/")) {
-      return serverFromWebjar(uri, context);
-    }
-    return serveFromApp(uri, context);
+  public boolean matchUri(String uri) {
+    return path(uri) != NOT_FOUND;
   }
 
-  private Payload serverFromWebjar(String uri, Context context) throws IOException {
-    URL classpathUrl = ClassLoader.getSystemResource("META-INF/resources" + uri);
-    if (classpathUrl == null) {
-      return Payload.notFound();
-    }
-
-    if (!GET.equalsIgnoreCase(context.method()) && !HEAD.equalsIgnoreCase(context.method())) {
-      return Payload.methodNotAllowed();
-    }
-
-    if (context.getHeader(IF_MODIFIED_SINCE) != null) {
-      return Payload.notModified();
-    }
-
-    try (InputStream stream = classpathUrl.openStream()) {
-      String contentType = ContentTypes.get(Paths.get(uri));
-      byte[] data = InputStreams.readBytes(stream);
-
-      return new Payload(contentType, data)
-          .withHeader(CACHE_CONTROL, "public, max-age=31536000")
-          .withHeader(LAST_MODIFIED, RFC_1123_DATE_TIME.format(now().minusMonths(1L)))
-          .withHeader(EXPIRES, RFC_1123_DATE_TIME.format(now().plusWeeks(1L)));
-    }
+  @Override
+  public boolean matchMethod(Context context) {
+    return GET.equalsIgnoreCase(context.method()) || HEAD.equalsIgnoreCase(context.method());
   }
 
-  private Payload serveFromApp(String uri, Context context) {
-    Path path = path(uri);
-    if (path == NOT_FOUND) {
-      if (uri.endsWith("/") || (path(uri + "/") == NOT_FOUND)) {
-        return Payload.notFound();
-      }
-      return Payload.seeOther(uri + "/");
-    }
-
-    if (!GET.equalsIgnoreCase(context.method()) && !HEAD.equalsIgnoreCase(context.method())) {
-      return Payload.methodNotAllowed();
-    }
-
-    return new Payload(path);
+  @Override
+  public Object body(Context context) {
+    return path(context.uri());
   }
 
   protected Path path(String uri) {

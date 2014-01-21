@@ -306,6 +306,7 @@ public class RouteCollection implements Routes {
 
   // TEMP
   public void addStaticRoutes(boolean cache) {
+    routes.add(new WebJarsRoute());
     routes.add(cache ? new CachedStaticRoute() : new StaticRoute());
     routes.add(new SourceMapRoute());
   }

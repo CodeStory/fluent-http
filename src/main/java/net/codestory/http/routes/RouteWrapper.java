@@ -17,16 +17,29 @@ package net.codestory.http.routes;
 
 import net.codestory.http.internal.*;
 
-class RouteWrapper extends AbstractRouteWrapper {
-  protected final AnyRoute route;
+class RouteWrapper implements Route {
+  private final String method;
+  private final UriParser uriParser;
+  private final AnyRoute route;
 
   RouteWrapper(String method, String uriPattern, AnyRoute route) {
-    super(method, uriPattern);
+    this.method = method;
+    this.uriParser = new UriParser(uriPattern);
     this.route = route;
   }
 
   @Override
-  protected Object body(Context context, String[] parameters) {
-    return route.body(parameters);
+  public boolean matchUri(String uri) {
+    return uriParser.matches(uri);
+  }
+
+  @Override
+  public boolean matchMethod(Context context) {
+    return method.equalsIgnoreCase(context.method());
+  }
+
+  @Override
+  public Object body(Context context) {
+    return route.body(uriParser.params(context.uri(), context.request().getQuery()));
   }
 }

@@ -17,7 +17,7 @@ package net.codestory.http.routes;
 
 import net.codestory.http.internal.*;
 
-class CatchAllRouteWithContext extends AbstractRoute {
+class CatchAllRouteWithContext implements Route {
   private final AnyRouteWithContext route;
 
   CatchAllRouteWithContext(AnyRouteWithContext route) {
@@ -25,22 +25,17 @@ class CatchAllRouteWithContext extends AbstractRoute {
   }
 
   @Override
-  protected Object body(Context context, String[] parameters) {
-    return route.body(context, parameters);
-  }
-
-  @Override
-  protected boolean matchUri(String uri) {
+  public boolean matchUri(String uri) {
     return true;
   }
 
   @Override
-  protected boolean matchMethod(Context context) {
+  public boolean matchMethod(Context context) {
     return true;
   }
 
   @Override
-  protected String[] parseParameters(String uri, Context context) {
-    return new String[0];
+  public Object body(Context context) {
+    return route.body(context, new String[0]);
   }
 }
