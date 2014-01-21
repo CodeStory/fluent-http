@@ -22,12 +22,17 @@ import javax.script.*;
 
 class CoffeeCompiler extends AbstractNashornCompiler implements Compiler {
   public CoffeeCompiler() {
-    super("coffee/coffee-script.js");
+    super("META-INF/resources/webjars/coffee-script/1.6.3/coffee-script.min.js");
   }
 
   @Override
   protected void setBindings(Bindings bindings, String source) {
     bindings.put("coffeeScriptSource", source);
+  }
+
+  @Override
+  protected String decorateScript(String source) {
+    return source + "\nCoffeeScript.compile(coffeeScriptSource, {bare: true});\n";
   }
 
   @Override

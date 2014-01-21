@@ -31,6 +31,11 @@ class AsciidocCompiler extends AbstractNashornCompiler implements Compiler {
   }
 
   @Override
+  protected String decorateScript(String source) {
+    return source + source;
+  }
+
+  @Override
   public String compile(Path path, String source) throws IOException {
     return compile(source);
   }

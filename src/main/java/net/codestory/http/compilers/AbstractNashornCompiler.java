@@ -20,6 +20,8 @@ import static javax.script.ScriptContext.*;
 
 import java.io.*;
 
+import net.codestory.http.io.*;
+
 import javax.script.*;
 
 abstract class AbstractNashornCompiler {
@@ -29,8 +31,9 @@ abstract class AbstractNashornCompiler {
   protected AbstractNashornCompiler(String scriptPath) {
     ScriptEngine nashorn = new ScriptEngineManager().getEngineByName("nashorn");
 
-    try (Reader reader = new InputStreamReader(ClassLoader.getSystemResourceAsStream(scriptPath), UTF_8)) {
-      compiledScript = ((Compilable) nashorn).compile(reader);
+    try (InputStream input = ClassLoader.getSystemResourceAsStream(scriptPath)) {
+      String script = InputStreams.readString(input, UTF_8);
+      compiledScript = ((Compilable) nashorn).compile(decorateScript(script));
       bindings = nashorn.getBindings(ENGINE_SCOPE);
     } catch (IOException | ScriptException e) {
       throw new IllegalStateException(e);
@@ -38,6 +41,8 @@ abstract class AbstractNashornCompiler {
   }
 
   protected abstract void setBindings(Bindings bindings, String source);
+
+  protected abstract String decorateScript(String source);
 
   public synchronized String compile(String source) throws IOException {
     setBindings(bindings, source);
