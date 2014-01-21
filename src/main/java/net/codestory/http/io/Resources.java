@@ -28,6 +28,7 @@ import net.codestory.http.misc.*;
 import net.codestory.http.types.*;
 
 public class Resources {
+  public static final String CLASSES_OUTPUT_DIR = "target/classes/";
   private static final String ROOT = "app";
 
   private Resources() {
@@ -40,7 +41,7 @@ public class Resources {
     Path parentPath = Paths.get(ROOT);
 
     try {
-      if (new File("target/classes").exists() && !Env.disableClassPath()) {
+      if (new File(CLASSES_OUTPUT_DIR).exists() && !Env.disableClassPath()) {
         new ClasspathScanner().getResources(ROOT).forEach(resource -> paths.add(relativePath(parentPath, Paths.get(resource))));
       }
 
@@ -180,7 +181,7 @@ public class Resources {
     }
 
     try {
-      return new File(URLDecoder.decode(filename, "US-ASCII").replace("/target/classes/", "/src/main/resources/"));
+      return new File(URLDecoder.decode(filename, "US-ASCII").replace("/" + CLASSES_OUTPUT_DIR + "/", "/src/main/resources/"));
     } catch (UnsupportedEncodingException e) {
       throw new IllegalArgumentException("Invalid filename classpath: " + url, e);
     }

@@ -23,6 +23,7 @@ import java.nio.file.*;
 import java.util.concurrent.atomic.*;
 
 import net.codestory.http.*;
+import net.codestory.http.io.*;
 import net.codestory.http.routes.*;
 
 import org.slf4j.*;
@@ -39,7 +40,7 @@ class ReloadingRoutesProvider implements RoutesProvider {
   ReloadingRoutesProvider(Configuration configuration) {
     this.configuration = configuration;
     this.dirty = new AtomicBoolean(true);
-    startClassChangeWatcher(Paths.get("target/classes/"));
+    startClassChangeWatcher(Paths.get(Resources.CLASSES_OUTPUT_DIR));
   }
 
   @Override
