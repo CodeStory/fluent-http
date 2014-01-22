@@ -39,22 +39,22 @@ public class RoutesWithPattern {
     return this;
   }
 
-  public RoutesWithPattern get(OneParamRouteWithContext route) {
+  public RoutesWithPattern get(OneParamRoute route) {
     routes.get(currentUriPattern, route);
     return this;
   }
 
-  public RoutesWithPattern get(TwoParamsRouteWithContext route) {
+  public RoutesWithPattern get(TwoParamsRoute route) {
     routes.get(currentUriPattern, route);
     return this;
   }
 
-  public RoutesWithPattern get(ThreeParamsRouteWithContext route) {
+  public RoutesWithPattern get(ThreeParamsRoute route) {
     routes.get(currentUriPattern, route);
     return this;
   }
 
-  public RoutesWithPattern get(FourParamsRouteWithContext route) {
+  public RoutesWithPattern get(FourParamsRoute route) {
     routes.get(currentUriPattern, route);
     return this;
   }
@@ -69,22 +69,22 @@ public class RoutesWithPattern {
     return this;
   }
 
-  public RoutesWithPattern post(OneParamRouteWithContext route) {
+  public RoutesWithPattern post(OneParamRoute route) {
     routes.post(currentUriPattern, route);
     return this;
   }
 
-  public RoutesWithPattern post(TwoParamsRouteWithContext route) {
+  public RoutesWithPattern post(TwoParamsRoute route) {
     routes.post(currentUriPattern, route);
     return this;
   }
 
-  public RoutesWithPattern post(ThreeParamsRouteWithContext route) {
+  public RoutesWithPattern post(ThreeParamsRoute route) {
     routes.post(currentUriPattern, route);
     return this;
   }
 
-  public RoutesWithPattern post(FourParamsRouteWithContext route) {
+  public RoutesWithPattern post(FourParamsRoute route) {
     routes.post(currentUriPattern, route);
     return this;
   }
@@ -99,22 +99,22 @@ public class RoutesWithPattern {
     return this;
   }
 
-  public RoutesWithPattern put(OneParamRouteWithContext route) {
+  public RoutesWithPattern put(OneParamRoute route) {
     routes.put(currentUriPattern, route);
     return this;
   }
 
-  public RoutesWithPattern put(TwoParamsRouteWithContext route) {
+  public RoutesWithPattern put(TwoParamsRoute route) {
     routes.put(currentUriPattern, route);
     return this;
   }
 
-  public RoutesWithPattern put(ThreeParamsRouteWithContext route) {
+  public RoutesWithPattern put(ThreeParamsRoute route) {
     routes.put(currentUriPattern, route);
     return this;
   }
 
-  public RoutesWithPattern put(FourParamsRouteWithContext route) {
+  public RoutesWithPattern put(FourParamsRoute route) {
     routes.put(currentUriPattern, route);
     return this;
   }
@@ -129,22 +129,22 @@ public class RoutesWithPattern {
     return this;
   }
 
-  public RoutesWithPattern delete(OneParamRouteWithContext route) {
+  public RoutesWithPattern delete(OneParamRoute route) {
     routes.delete(currentUriPattern, route);
     return this;
   }
 
-  public RoutesWithPattern delete(TwoParamsRouteWithContext route) {
+  public RoutesWithPattern delete(TwoParamsRoute route) {
     routes.delete(currentUriPattern, route);
     return this;
   }
 
-  public RoutesWithPattern delete(ThreeParamsRouteWithContext route) {
+  public RoutesWithPattern delete(ThreeParamsRoute route) {
     routes.delete(currentUriPattern, route);
     return this;
   }
 
-  public RoutesWithPattern delete(FourParamsRouteWithContext route) {
+  public RoutesWithPattern delete(FourParamsRoute route) {
     routes.delete(currentUriPattern, route);
     return this;
   }

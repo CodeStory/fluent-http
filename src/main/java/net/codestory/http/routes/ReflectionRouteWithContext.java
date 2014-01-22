@@ -21,7 +21,7 @@ import java.util.function.*;
 import net.codestory.http.convert.*;
 import net.codestory.http.internal.*;
 
-class ReflectionRouteWithContext extends AbstractReflectionRoute implements AnyRouteWithContext {
+class ReflectionRouteWithContext extends AbstractReflectionRoute implements AnyRoute {
   ReflectionRouteWithContext(Supplier<Object> resource, Method method) {
     super(resource, method);
   }

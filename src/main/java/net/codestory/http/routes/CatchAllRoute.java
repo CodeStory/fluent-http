@@ -18,9 +18,9 @@ package net.codestory.http.routes;
 import net.codestory.http.internal.*;
 
 class CatchAllRoute implements Route {
-  private final NoParamRoute route;
+  private final AnyRoute route;
 
-  CatchAllRoute(NoParamRoute route) {
+  CatchAllRoute(AnyRoute route) {
     this.route = route;
   }
 
@@ -36,6 +36,6 @@ class CatchAllRoute implements Route {
 
   @Override
   public Object body(Context context) {
-    return route.body();
+    return route.body(context, new String[0]);
   }
 }

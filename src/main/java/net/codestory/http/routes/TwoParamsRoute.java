@@ -18,11 +18,11 @@ package net.codestory.http.routes;
 import net.codestory.http.internal.*;
 
 @FunctionalInterface
-public interface OneParamRouteWithContext extends AnyRouteWithContext {
-  Object body(Context context, String pathParameter);
+public interface TwoParamsRoute extends AnyRoute {
+  Object body(Context context, String pathParameters1, String pathParameters2);
 
   @Override
   default Object body(Context context, String[] pathParameters) {
-    return body(context, pathParameters[0]);
+    return body(context, pathParameters[0], pathParameters[1]);
   }
 }

@@ -15,12 +15,14 @@
  */
 package net.codestory.http.routes;
 
+import net.codestory.http.internal.*;
+
 @FunctionalInterface
 public interface NoParamRoute extends AnyRoute {
   Object body();
 
   @Override
-  default Object body(String[] pathParameters) {
+  default Object body(Context context, String[] pathParameters) {
     return body();
   }
 }

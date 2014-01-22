@@ -15,7 +15,9 @@
  */
 package net.codestory.http.routes;
 
+import net.codestory.http.internal.*;
+
 @FunctionalInterface
 interface AnyRoute {
-  Object body(String[] pathParameters);
+  Object body(Context context, String... pathParameters);
 }

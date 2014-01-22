@@ -17,29 +17,12 @@ package net.codestory.http.routes;
 
 import net.codestory.http.internal.*;
 
-class RouteWithContextWrapper implements Route {
-  private final String method;
-  private final UriParser uriParser;
-  private final AnyRouteWithContext route;
-
-  RouteWithContextWrapper(String method, String uriPattern, AnyRouteWithContext route) {
-    this.method = method;
-    this.uriParser = new UriParser(uriPattern);
-    this.route = route;
-  }
+@FunctionalInterface
+public interface ThreeParamsRoute extends AnyRoute {
+  Object body(Context context, String pathParameter1, String pathParameter2, String pathParameter3);
 
   @Override
-  public boolean matchUri(String uri) {
-    return uriParser.matches(uri);
-  }
-
-  @Override
-  public boolean matchMethod(String method) {
-    return this.method.equalsIgnoreCase(method);
-  }
-
-  @Override
-  public Object body(Context context) {
-    return route.body(context, uriParser.params(context.uri(), context.request().getQuery()));
+  default Object body(Context context, String[] pathParameters) {
+    return body(context, pathParameters[0], pathParameters[1], pathParameters[2]);
   }
 }

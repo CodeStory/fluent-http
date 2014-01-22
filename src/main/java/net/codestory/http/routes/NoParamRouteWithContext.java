@@ -18,7 +18,7 @@ package net.codestory.http.routes;
 import net.codestory.http.internal.*;
 
 @FunctionalInterface
-public interface NoParamRouteWithContext extends AnyRouteWithContext {
+public interface NoParamRouteWithContext extends AnyRoute {
   Object body(Context context);
 
   @Override

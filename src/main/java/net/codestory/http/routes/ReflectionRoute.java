@@ -19,6 +19,7 @@ import java.lang.reflect.*;
 import java.util.function.*;
 
 import net.codestory.http.convert.*;
+import net.codestory.http.internal.*;
 
 class ReflectionRoute extends AbstractReflectionRoute implements AnyRoute {
   ReflectionRoute(Supplier<Object> resource, Method method) {
@@ -26,7 +27,7 @@ class ReflectionRoute extends AbstractReflectionRoute implements AnyRoute {
   }
 
   @Override
-  public Object body(String[] pathParameters) {
+  public Object body(Context context, String[] pathParameters) {
     try {
       Object[] arguments = TypeConvert.convert(pathParameters, method.getParameterTypes());
 
