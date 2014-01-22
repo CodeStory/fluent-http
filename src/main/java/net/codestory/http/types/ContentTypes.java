@@ -63,6 +63,8 @@ public class ContentTypes {
         return "application/x-font-ttf";
       case ".woff":
         return "application/x-font-woff";
+      case ".ico":
+        return "image/x-icon";
       default:
         return "text/plain;charset=UTF-8";
     }

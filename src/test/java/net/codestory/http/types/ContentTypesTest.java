@@ -48,6 +48,7 @@ public class ContentTypesTest {
     assertThat(get(Paths.get("script.js"))).isEqualTo("application/javascript;charset=UTF-8");
     assertThat(get(Paths.get("script.coffee"))).isEqualTo("application/javascript;charset=UTF-8");
     assertThat(get(Paths.get("script.litcoffee"))).isEqualTo("application/javascript;charset=UTF-8");
+    assertThat(get(Paths.get("favicon.ico"))).isEqualTo("image/x-icon");
     assertThat(get(Paths.get("unknown"))).isEqualTo("text/plain;charset=UTF-8");
   }
 
@@ -76,6 +77,7 @@ public class ContentTypesTest {
     assertThat(support_templating(Paths.get("script.js"))).isFalse();
     assertThat(support_templating(Paths.get("script.coffee"))).isFalse();
     assertThat(support_templating(Paths.get("script.litcoffee"))).isFalse();
+    assertThat(support_templating(Paths.get("favicon.ico"))).isFalse();
     assertThat(support_templating(Paths.get("unknown"))).isFalse();
   }
 
@@ -104,6 +106,7 @@ public class ContentTypesTest {
     assertThat(is_binary(Paths.get("script.js"))).isFalse();
     assertThat(is_binary(Paths.get("script.coffee"))).isFalse();
     assertThat(is_binary(Paths.get("script.litcoffee"))).isFalse();
+    assertThat(is_binary(Paths.get("favicon.ico"))).isTrue();
     assertThat(is_binary(Paths.get("unknown"))).isTrue();
   }
 }
