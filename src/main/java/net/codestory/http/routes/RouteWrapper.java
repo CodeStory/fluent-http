@@ -34,8 +34,8 @@ class RouteWrapper implements Route {
   }
 
   @Override
-  public boolean matchMethod(Context context) {
-    return method.equalsIgnoreCase(context.method());
+  public boolean matchMethod(String method) {
+    return this.method.equalsIgnoreCase(method);
   }
 
   @Override

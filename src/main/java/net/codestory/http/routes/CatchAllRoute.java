@@ -30,7 +30,7 @@ class CatchAllRoute implements Route {
   }
 
   @Override
-  public boolean matchMethod(Context context) {
+  public boolean matchMethod(String method) {
     return true;
   }
 

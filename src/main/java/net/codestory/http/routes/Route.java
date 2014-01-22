@@ -29,7 +29,7 @@ public interface Route {
       return Payload.seeOther(uri + "/");
     }
 
-    if (!matchMethod(context)) {
+    if (!matchMethod(context.method())) {
       return Payload.methodNotAllowed();
     }
 
@@ -40,7 +40,7 @@ public interface Route {
 
   boolean matchUri(String uri);
 
-  boolean matchMethod(Context context);
+  boolean matchMethod(String method);
 
   Object body(Context context) throws IOException;
 }

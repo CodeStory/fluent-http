@@ -36,8 +36,8 @@ class WebJarsRoute implements Route {
   }
 
   @Override
-  public boolean matchMethod(Context context) {
-    return GET.equalsIgnoreCase(context.method()) || HEAD.equalsIgnoreCase(context.method());
+  public boolean matchMethod(String method) {
+    return GET.equalsIgnoreCase(method) || HEAD.equalsIgnoreCase(method);
   }
 
   @Override
