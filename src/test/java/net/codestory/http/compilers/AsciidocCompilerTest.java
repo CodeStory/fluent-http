@@ -23,7 +23,7 @@ import java.nio.file.*;
 import org.junit.*;
 
 public class AsciidocCompilerTest {
-  AsciidocCompiler compiler = new AsciidocCompiler();
+  private static AsciidocCompiler compiler = new AsciidocCompiler();
 
   @Test
   public void empty() throws IOException {
