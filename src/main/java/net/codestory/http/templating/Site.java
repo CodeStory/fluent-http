@@ -72,7 +72,7 @@ public class Site {
   }
 
   public static Site get() {
-    return Env.devMode() ? new Site() : INSTANCE;
+    return Env.INSTANCE.devMode() ? new Site() : INSTANCE;
   }
 
   private Map<String, Object> configYaml() {

@@ -15,30 +15,38 @@
  */
 package net.codestory.http.misc;
 
-public class Env {
+public enum Env {
+  INSTANCE;
+
   private static final String APP_PORT = "app.port";
   private static final String DISABLE_CLASSPATH = "http.disable.classpath";
   private static final String DISABLE_FILESYSTEM = "http.disable.filesystem";
   private static final String PROD_MODE = "PROD_MODE";
 
+  private final boolean devMode;
+  private final boolean disableClassPath;
+  private final boolean disableFilesystem;
+
   private Env() {
-    // Static class
+    devMode = getBoolean(PROD_MODE, false);
+    disableClassPath = getBoolean(DISABLE_CLASSPATH, false);
+    disableFilesystem = getBoolean(DISABLE_FILESYSTEM, false);
   }
 
-  public static boolean devMode() {
-    return getBoolean(PROD_MODE, false);
+  public boolean devMode() {
+    return devMode;
   }
 
-  public static int overriddenPort(int port) {
+  public int overriddenPort(int port) {
     return getInt(APP_PORT, port);
   }
 
-  public static boolean disableClassPath() {
-    return getBoolean(DISABLE_CLASSPATH, false);
+  public boolean disableClassPath() {
+    return disableClassPath;
   }
 
-  public static boolean disableFilesystem() {
-    return getBoolean(DISABLE_FILESYSTEM, false);
+  public boolean disableFilesystem() {
+    return disableFilesystem;
   }
 
   private static String get(String propertyName) {

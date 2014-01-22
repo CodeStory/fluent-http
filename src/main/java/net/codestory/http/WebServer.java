@@ -103,7 +103,7 @@ public class WebServer {
 
   private WebServer startWithContext(int port, SSLContext context) {
     try {
-      this.port = Env.overriddenPort(port);
+      this.port = Env.INSTANCE.overriddenPort(port);
 
       connection.connect(new InetSocketAddress(this.port), context);
 
@@ -184,6 +184,6 @@ public class WebServer {
   }
 
   protected boolean devMode() {
-    return Env.devMode();
+    return Env.INSTANCE.devMode();
   }
 }

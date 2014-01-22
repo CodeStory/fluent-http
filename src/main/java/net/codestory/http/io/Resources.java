@@ -41,11 +41,11 @@ public class Resources {
     Path parentPath = Paths.get(ROOT);
 
     try {
-      if (new File(CLASSES_OUTPUT_DIR).exists() && !Env.disableClassPath()) {
+      if (new File(CLASSES_OUTPUT_DIR).exists() && !Env.INSTANCE.disableClassPath()) {
         new ClasspathScanner().getResources(ROOT).forEach(resource -> paths.add(relativePath(parentPath, Paths.get(resource))));
       }
 
-      if (!Env.disableFilesystem()) {
+      if (!Env.INSTANCE.disableFilesystem()) {
         walkFileTree(Paths.get(ROOT), onFile(path -> paths.add(relativePath(parentPath, path))));
       }
     } catch (IOException e) {
