@@ -23,7 +23,7 @@ import java.nio.file.*;
 import org.junit.*;
 
 public class CoffeeCompilerTest {
-  CoffeeCompiler compiler = new CoffeeCompiler();
+  private static CoffeeCompiler compiler = new CoffeeCompiler();
 
   @Test
   public void empty() throws IOException {
