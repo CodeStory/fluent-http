@@ -108,6 +108,8 @@ public class WebServer {
       connection.connect(new InetSocketAddress(this.port), context);
 
       LOG.info("Server started on port {}", this.port);
+    } catch (BindException e) {
+      throw new IllegalStateException("Port already in use " + this.port);
     } catch (Exception e) {
       throw new IllegalStateException("Unable to bind the web server on port " + this.port, e);
     }
