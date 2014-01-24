@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http;
+package net.codestory.http.testhelpers;
 
 import static org.hamcrest.Matchers.*;
 
@@ -30,51 +30,51 @@ public abstract class AbstractWebServerTest {
   public static WebServerRule server = new WebServerRule();
 
   // GET
-  RestAssert get(String path) {
+  protected RestAssert get(String path) {
     return new RestAssert(request -> request.get(path));
   }
 
-  RestAssert getWithHeader(String path, String name, String value) {
+  protected RestAssert getWithHeader(String path, String name, String value) {
     return new RestAssert(given -> given.header(name, value), request -> request.get(path));
   }
 
-  RestAssert getWithAuth(String path, String login, String password) {
+  protected RestAssert getWithAuth(String path, String login, String password) {
     return new RestAssert(given -> given.auth().preemptive().basic(login, password), request -> request.get(path));
   }
 
   // PUT
-  RestAssert put(String path) {
+  protected RestAssert put(String path) {
     return new RestAssert(request -> request.put(path));
   }
 
-  RestAssert put(String path, String body) {
+  protected RestAssert put(String path, String body) {
     return new RestAssert(given -> given.body(body), request -> request.put(path));
   }
 
   // HEAD
-  RestAssert head(String path) {
+  protected RestAssert head(String path) {
     return new RestAssert(request -> request.head(path));
   }
 
   // POST
-  RestAssert post(String path) {
+  protected RestAssert post(String path) {
     return new RestAssert(request -> request.post(path));
   }
 
-  RestAssert post(String path, String firstParameterName, Object firstParameterValue, Object... parameterNameValuePairs) {
+  protected RestAssert post(String path, String firstParameterName, Object firstParameterValue, Object... parameterNameValuePairs) {
     return new RestAssert((given) -> given.parameters(firstParameterName, firstParameterValue, parameterNameValuePairs), request -> request.post(path));
   }
 
-  RestAssert post(String path, String body) {
+  protected RestAssert post(String path, String body) {
     return new RestAssert((given) -> given.body(body), request -> request.post(path));
   }
 
   // DELETE
-  RestAssert delete(String path) {
+  protected RestAssert delete(String path) {
     return new RestAssert((given) -> given, request -> request.delete(path));
   }
 
-  class RestAssert {
+  public class RestAssert {
     private final ValidatableResponse then;
 
     private RestAssert(Function<RequestSpecification, RequestSpecification> configuration, Function<RequestSender, Response> action) {
@@ -86,32 +86,32 @@ public abstract class AbstractWebServerTest {
     }
 
     // Assertions
-    RestAssert produces(String content) {
+    public RestAssert produces(String content) {
       then.content(containsString(content));
       return this;
     }
 
-    RestAssert produces(String contentType, String content) {
+    public RestAssert produces(String contentType, String content) {
       then.content(containsString(content)).contentType(contentType);
       return this;
     }
 
-    RestAssert produces(int code, String contentType, String content) {
+    public RestAssert produces(int code, String contentType, String content) {
       then.content(containsString(content)).contentType(contentType).statusCode(code);
       return this;
     }
 
-    RestAssert produces(int code) {
+    public RestAssert produces(int code) {
       then.statusCode(code);
       return this;
     }
 
-    RestAssert producesCookie(String name, String value) {
+    public RestAssert producesCookie(String name, String value) {
       then.cookie(name, value);
       return this;
     }
 
-    RestAssert producesHeader(String name, String value) {
+    public RestAssert producesHeader(String name, String value) {
       then.header(name, value);
       return this;
     }

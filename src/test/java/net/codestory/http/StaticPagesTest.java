@@ -15,6 +15,8 @@
  */
 package net.codestory.http;
 
+import net.codestory.http.testhelpers.*;
+
 import org.junit.*;
 
 public class StaticPagesTest extends AbstractWebServerTest {

@@ -30,6 +30,7 @@ import net.codestory.http.misc.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.routes.*;
 import net.codestory.http.templating.*;
+import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
 
