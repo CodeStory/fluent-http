@@ -94,30 +94,6 @@ public class WebServerTest extends AbstractWebServerTest {
   }
 
   @Test
-  public void static_content() {
-    get("/").produces("text/html", "Hello From a File");
-    get("/index.html").produces("text/html", "Hello From a File");
-    get("/test").produces("text/html", "TEST");
-    get("/test.html").produces("text/html", "TEST");
-    get("/js/script.js").produces("application/javascript", "console.log('Hello');");
-    get("/js/script.coffee").produces("application/javascript", "console.log('Hello');");
-    get("/assets/style.css").produces("text/css", "* {}");
-    get("/assets/style.less").produces("text/css", "body h1 {\n  color: red;\n}");
-    get("/assets/style.css.map").produces("text/plain", "\"file\":\"/assets/style.css.css\"");
-    get("/hello.md").produces("text/html", "<strong>Hello</strong>");
-    get("/goodbye.markdown").produces("text/html", "<strong>Good Bye</strong>");
-  }
-
-  @Test
-  public void private_files() {
-    get("/../private.txt").produces(404);
-    get("/_config.yaml").produces(404);
-    get("/_layouts/default.html").produces(404);
-    get("/unknown").produces(404);
-    get("/js").produces(404);
-  }
-
-  @Test
   public void annotated_resources() {
     server.configure(routes -> routes.add(new Object() {
       @Get("/hello")
@@ -425,12 +401,6 @@ public class WebServerTest extends AbstractWebServerTest {
 
     get("/").produces(200, "text/html", "Hello World");
     getWithHeader("/", "If-None-Match", Md5.of("Hello World".getBytes(UTF_8))).produces(304);
-  }
-
-  @Test
-  public void webJars() {
-    get("/webjars/bootstrap/3.0.3/css/bootstrap.min.css").produces(200, "text/css", "Bootstrap v3.0.3");
-    get("/webjars/bootstrap/3.0.3/js/bootstrap.min.js").produces(200, "application/javascript", "Bootstrap v3.0.3");
   }
 
   @Test
