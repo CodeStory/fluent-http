@@ -42,9 +42,8 @@ class AbstractReflectionRoute {
   }
 
   private static Object invoke(Method method, Object target, Object[] arguments) throws Throwable {
-    method.setAccessible(true);
-
     try {
+      method.setAccessible(true);
       return method.invoke(target, arguments);
     } catch (InvocationTargetException e) {
       throw e.getCause();
