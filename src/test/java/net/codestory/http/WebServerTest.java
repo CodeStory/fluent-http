@@ -17,7 +17,6 @@ package net.codestory.http;
 
 import static com.google.inject.internal.util.$ImmutableMap.*;
 import static java.nio.charset.StandardCharsets.*;
-import static net.codestory.http.RestAssert.*;
 import static org.mockito.Mockito.*;
 
 import java.io.*;
@@ -33,29 +32,8 @@ import net.codestory.http.routes.*;
 import net.codestory.http.templating.*;
 
 import org.junit.*;
-import org.junit.contrib.java.lang.system.*;
 
-public class WebServerTest {
-  @ClassRule
-  public static RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties("PROD_MODE");
-
-  static WebServer server = new WebServer();
-
-  @BeforeClass
-  public static void prodMode() {
-    System.setProperty("PROD_MODE", "true");
-  }
-
-  @BeforeClass
-  public static void startServer() {
-    server.startOnRandomPort();
-  }
-
-  @Before
-  public void resetWebServer() {
-    server.reset();
-  }
-
+public class WebServerTest extends AbstractWebServerTest {
   @Test
   public void not_found() {
     server.configure(routes -> routes.
