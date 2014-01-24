@@ -23,18 +23,18 @@ public enum Env {
   private static final String DISABLE_FILESYSTEM = "http.disable.filesystem";
   private static final String PROD_MODE = "PROD_MODE";
 
-  private final boolean devMode;
+  private final boolean prodMode;
   private final boolean disableClassPath;
   private final boolean disableFilesystem;
 
   private Env() {
-    devMode = getBoolean(PROD_MODE, false);
+    prodMode = getBoolean(PROD_MODE, false);
     disableClassPath = getBoolean(DISABLE_CLASSPATH, false);
     disableFilesystem = getBoolean(DISABLE_FILESYSTEM, false);
   }
 
   public boolean devMode() {
-    return devMode;
+    return !prodMode;
   }
 
   public int overriddenPort(int port) {
