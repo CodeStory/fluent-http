@@ -36,19 +36,6 @@ import org.junit.*;
 
 public class WebServerTest extends AbstractWebServerTest {
   @Test
-  public void not_found() {
-    server.configure(routes -> routes.
-        get("/error", () -> {
-          throw new NotFoundException();
-        }).
-        get("/notfound", Payload.notFound()));
-
-    get("/error").produces(404, "text/html", "Page not found");
-    get("/notfound").produces(404, "text/html", "Page not found");
-    get("/undefined").produces(404, "text/html", "Page not found");
-  }
-
-  @Test
   public void content_types() {
     server.configure(routes -> routes.
         get("/index", "Index").
@@ -220,15 +207,6 @@ public class WebServerTest extends AbstractWebServerTest {
 
     get("/").produces("FILTERED");
     get("/other").produces("OTHER");
-  }
-
-  @Test
-  public void error() {
-    server.configure(routes -> routes.get("/", () -> {
-      throw new RuntimeException("BUG");
-    }));
-
-    get("/").produces(500, "text/html", "An error occurred on the server");
   }
 
   @Test
