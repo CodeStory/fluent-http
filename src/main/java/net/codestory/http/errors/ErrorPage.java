@@ -15,6 +15,8 @@
  */
 package net.codestory.http.errors;
 
+import static net.codestory.http.constants.HttpStatus.*;
+
 import java.io.*;
 
 import net.codestory.http.payload.*;
@@ -39,7 +41,7 @@ public class ErrorPage {
   }
 
   private String filename() {
-    return payload.code() == 404 ? "404.html" : "500.html";
+    return (payload.code() == NOT_FOUND) ? "404.html" : "500.html";
   }
 
   private static String toString(Exception error) {

@@ -27,6 +27,7 @@ import java.time.*;
 import java.util.*;
 
 import net.codestory.http.compilers.*;
+import net.codestory.http.constants.*;
 import net.codestory.http.convert.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.io.*;
@@ -48,7 +49,7 @@ public class Payload {
   }
 
   public Payload(String contentType, Object content) {
-    this(contentType, content, 200);
+    this(contentType, content, HttpStatus.OK);
   }
 
   public Payload(int code) {
@@ -146,19 +147,19 @@ public class Payload {
   }
 
   public static Payload ok() {
-    return new Payload(200);
+    return new Payload(HttpStatus.OK);
   }
 
   public static Payload created() {
-    return new Payload(201);
+    return new Payload(HttpStatus.CREATED);
   }
 
   public static Payload movedPermanently(String url) {
-    return new Payload(301).withHeader(LOCATION, url);
+    return new Payload(HttpStatus.MOVED_PERMANENTLY).withHeader(LOCATION, url);
   }
 
   public static Payload seeOther(String uri) {
-    return new Payload(303).withHeader(LOCATION, uri);
+    return new Payload(HttpStatus.SEE_OTHER).withHeader(LOCATION, uri);
   }
 
   public static Payload seeOther(URI uri) {
@@ -166,7 +167,7 @@ public class Payload {
   }
 
   public static Payload temporaryRedirect(String uri) {
-    return new Payload(307).withHeader(LOCATION, uri);
+    return new Payload(HttpStatus.TEMPORARY_REDIRECT).withHeader(LOCATION, uri);
   }
 
   public static Payload temporaryRedirect(URI uri) {
@@ -174,35 +175,35 @@ public class Payload {
   }
 
   public static Payload notModified() {
-    return new Payload(304);
+    return new Payload(HttpStatus.NOT_MODIFIED);
   }
 
   public static Payload unauthorized(String realm) {
-    return new Payload(401).withHeader(WWW_AUTHENTICATE, "Basic realm=\"" + realm + "\"");
+    return new Payload(HttpStatus.UNAUTHORIZED).withHeader(WWW_AUTHENTICATE, "Basic realm=\"" + realm + "\"");
   }
 
   public static Payload forbidden() {
-    return new Payload(403);
+    return new Payload(HttpStatus.FORBIDDEN);
   }
 
   public static Payload notFound() {
-    return new Payload(404);
+    return new Payload(HttpStatus.NOT_FOUND);
   }
 
   public static Payload methodNotAllowed() {
-    return new Payload(405);
+    return new Payload(HttpStatus.METHOD_NOT_ALLOWED);
   }
 
+  // WTF?
   public boolean isBetter(Payload other) {
-    // WTF?
-    if (200 == code) {
-      return other.code() != 200;
+    if (HttpStatus.OK == code) {
+      return other.code() != HttpStatus.OK;
     }
-    if (405 == code) {
-      return (other.code() != 200) && (other.code() != 405);
+    if (HttpStatus.METHOD_NOT_ALLOWED == code) {
+      return (other.code() != HttpStatus.OK) && (other.code() != HttpStatus.METHOD_NOT_ALLOWED);
     }
-    if (303 == code) {
-      return (other.code() != 200) && (other.code() != 405) && (other.code() != 303);
+    if (HttpStatus.SEE_OTHER == code) {
+      return (other.code() != HttpStatus.OK) && (other.code() != HttpStatus.METHOD_NOT_ALLOWED) && (other.code() != HttpStatus.SEE_OTHER);
     }
     return false;
   }

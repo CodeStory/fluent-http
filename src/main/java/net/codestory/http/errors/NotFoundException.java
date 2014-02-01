@@ -15,9 +15,11 @@
  */
 package net.codestory.http.errors;
 
+import net.codestory.http.constants.*;
+
 public class NotFoundException extends HttpException {
   public NotFoundException() {
-    super(404);
+    super(HttpStatus.NOT_FOUND);
   }
 
   public static <T> T notFoundIfNull(T value) {

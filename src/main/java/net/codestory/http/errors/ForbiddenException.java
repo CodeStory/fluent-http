@@ -15,8 +15,10 @@
  */
 package net.codestory.http.errors;
 
+import net.codestory.http.constants.*;
+
 public class ForbiddenException extends HttpException {
   public ForbiddenException() {
-    super(403);
+    super(HttpStatus.FORBIDDEN);
   }
 }
