@@ -4,7 +4,7 @@
 
   <groupId>net.code-story</groupId>
   <artifactId>http</artifactId>
-  <version>1.28</version>
+  <version>1.29-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>CodeStory - Http Server</name>
