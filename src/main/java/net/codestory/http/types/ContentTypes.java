@@ -32,6 +32,7 @@ public class ContentTypes {
       case ".md":
       case ".markdown":
       case ".asciidoc":
+      case ".adoc":
         return "text/html;charset=UTF-8";
       case ".xml":
         return "application/xml;charset=UTF-8";
@@ -76,6 +77,7 @@ public class ContentTypes {
       case ".md":
       case ".markdown":
       case ".asciidoc":
+      case ".adoc":
       case ".html":
       case ".xml":
       case ".css":
@@ -93,6 +95,7 @@ public class ContentTypes {
       case ".md":
       case ".markdown":
       case ".asciidoc":
+      case ".adoc":
       case ".html":
       case ".xml":
       case ".css":
