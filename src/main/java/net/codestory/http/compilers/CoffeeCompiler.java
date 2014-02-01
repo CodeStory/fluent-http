@@ -22,7 +22,7 @@ import javax.script.*;
 
 class CoffeeCompiler extends AbstractNashornCompiler implements Compiler {
   public CoffeeCompiler() {
-    super("META-INF/resources/webjars/coffee-script/1.6.3/coffee-script.min.js");
+    super("META-INF/resources/webjars/coffee-script/1.7.0/coffee-script.min.js");
   }
 
   @Override
