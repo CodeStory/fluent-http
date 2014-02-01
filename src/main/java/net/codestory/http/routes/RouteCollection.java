@@ -29,6 +29,7 @@ import net.codestory.http.annotations.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.injection.*;
 import net.codestory.http.internal.*;
+import net.codestory.http.misc.*;
 import net.codestory.http.payload.*;
 
 public class RouteCollection implements Routes {
@@ -301,7 +302,7 @@ public class RouteCollection implements Routes {
 
   // TEMP
   public void addStaticRoutes() {
-    routes.add(new WebJarsRoute());
+    routes.add(new WebJarsRoute(!Env.INSTANCE.devMode()));
     routes.add(new StaticRoute());
     routes.add(new SourceMapRoute());
   }

@@ -30,6 +30,12 @@ import net.codestory.http.payload.*;
 import net.codestory.http.types.*;
 
 class WebJarsRoute implements Route {
+  private final boolean useMinifiedVersions;
+
+  public WebJarsRoute(boolean useMinifiedVersions) {
+    this.useMinifiedVersions = useMinifiedVersions;
+  }
+
   @Override
   public boolean matchUri(String uri) {
     return uri.startsWith("/webjars/") && (getResource(uri) != null);
@@ -61,5 +67,24 @@ class WebJarsRoute implements Route {
 
   private static URL getResource(String uri) {
     return ClassLoader.getSystemResource("META-INF/resources" + uri);
+  }
+
+  URL findUrl(String path) {
+    URL urlMinified = getResource(minified(path));
+    URL urlNonMinified = getResource(notMinified(path));
+
+    if (useMinifiedVersions) {
+      return (urlMinified != null) ? urlMinified : urlNonMinified;
+    } else {
+      return (urlNonMinified != null) ? urlNonMinified : urlMinified;
+    }
+  }
+
+  private static String minified(String path) {
+    return path.contains(".min.") ? path : path.replace(".js", ".min.js").replace(".css", ".min.css");
+  }
+
+  private static String notMinified(String path) {
+    return path.replace(".min.", ".");
   }
 }

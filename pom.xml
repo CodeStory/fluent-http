@@ -277,6 +277,12 @@
     </dependency>
     <dependency>
       <groupId>org.webjars</groupId>
+      <artifactId>restangular</artifactId>
+      <version>1.2.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.webjars</groupId>
       <artifactId>bootstrap</artifactId>
       <version>3.1.0</version>
       <scope>test</scope>
