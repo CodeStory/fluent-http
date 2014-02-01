@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+[[#if lang]]<html lang="[[lang]]">[[else]]<html lang="en">[[/each]]
 <head>
   <meta charset="UTF-8">
   <title>[[title]]</title>
-  [[#if viewport]]
-  <meta name="viewport" content="[[viewport]]">
-  [[/each]]
+  [[#if viewport]]<meta name="viewport" content="[[viewport]]">[[/each]]
+  [[#if keywords]]<meta name="keywords" content="[[keywords]]">[[/each]]
+  [[#if description]]<meta name="description" content="[[description]]">[[/each]]
+  [[#if author]]<meta name="description" content="[[author]]">[[/each]]
   [[#if style]]
   <link rel="stylesheet" href="[[style]]">
   [[/if]]
