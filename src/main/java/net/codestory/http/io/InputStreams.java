@@ -33,6 +33,15 @@ public class InputStreams {
     return read(from, bytes -> bytes.toString(charset.name()));
   }
 
+  public static void copy(InputStream from, OutputStream to) throws IOException {
+    byte[] buffer = new byte[BUF_SIZE];
+
+    int count;
+    while (-1 != (count = from.read(buffer))) {
+      to.write(buffer, 0, count);
+    }
+  }
+
   public static <T> T read(InputStream from, ForBytes<T> transform) throws IOException {
     byte[] buffer = new byte[BUF_SIZE];
 
