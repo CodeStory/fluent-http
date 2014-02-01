@@ -19,7 +19,12 @@ import java.io.*;
 import java.nio.charset.*;
 
 public class InputStreams {
-  private static final int BUF_SIZE = 4096;
+  private static final ThreadLocal<byte[]> BUFFER = new ThreadLocal<byte[]>() {
+    @Override
+    protected byte[] initialValue() {
+      return new byte[4096]; // Less GC
+    }
+  };
 
   private InputStreams() {
     // Static utility class
@@ -34,7 +39,7 @@ public class InputStreams {
   }
 
   public static void copy(InputStream from, OutputStream to) throws IOException {
-    byte[] buffer = new byte[BUF_SIZE]; // TODO: Thread local ?
+    byte[] buffer = BUFFER.get();
 
     int count;
     while (-1 != (count = from.read(buffer))) {
@@ -43,7 +48,7 @@ public class InputStreams {
   }
 
   public static <T> T read(InputStream from, ForBytes<T> transform) throws IOException {
-    byte[] buffer = new byte[BUF_SIZE]; // TODO: Thread local ?
+    byte[] buffer = BUFFER.get();
 
     try (ByteArrayOutputStream bytes = new ByteArrayOutputStream()) {
       int count;
