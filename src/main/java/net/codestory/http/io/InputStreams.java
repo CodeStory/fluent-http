@@ -34,7 +34,7 @@ public class InputStreams {
   }
 
   public static void copy(InputStream from, OutputStream to) throws IOException {
-    byte[] buffer = new byte[BUF_SIZE];
+    byte[] buffer = new byte[BUF_SIZE]; // TODO: Thread local ?
 
     int count;
     while (-1 != (count = from.read(buffer))) {
@@ -43,7 +43,7 @@ public class InputStreams {
   }
 
   public static <T> T read(InputStream from, ForBytes<T> transform) throws IOException {
-    byte[] buffer = new byte[BUF_SIZE];
+    byte[] buffer = new byte[BUF_SIZE]; // TODO: Thread local ?
 
     try (ByteArrayOutputStream bytes = new ByteArrayOutputStream()) {
       int count;
