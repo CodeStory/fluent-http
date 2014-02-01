@@ -34,7 +34,7 @@ public enum Compilers {
     register(MarkdownCompiler::new, ".md", ".markdown");
     register(LessCompiler::new, ".less");
     register(LessSourceMapCompiler::new, ".css.map");
-    register(AsciidocCompiler::new, ".asciidoc");
+    register(AsciidocCompiler::new, ".asciidoc", ".adoc");
   }
 
   public void register(Supplier<? extends Compiler> compilerFactory, String firstExtension, String... moreExtensions) {
