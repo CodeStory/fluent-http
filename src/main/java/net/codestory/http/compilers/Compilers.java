@@ -47,23 +47,21 @@ public enum Compilers {
   }
 
   public String compile(Path path, String content) {
-    return cache.computeIfAbsent(path.toString() + ";" + content, (ignore) -> {
-      try {
-        return doCompile(path, content);
-      } catch (IOException e) {
-        throw new IllegalStateException(e);
-      }
-    });
+    return cache.computeIfAbsent(path.toString() + ";" + content, (ignore) -> doCompile(path, content));
   }
 
-  private String doCompile(Path path, String content) throws IOException {
+  private String doCompile(Path path, String content) {
     String filename = path.toString();
 
     for (Map.Entry<String, Supplier<? extends Compiler>> entry : compilerByExtension.entrySet()) {
       String extension = entry.getKey();
       if (filename.endsWith(extension)) {
-        Compiler compiler = entry.getValue().get();
-        return compiler.compile(path, content);
+        try {
+          Compiler compiler = entry.getValue().get();
+          return compiler.compile(path, content);
+        } catch (IOException e) {
+          throw new IllegalStateException(e);
+        }
       }
     }
 
