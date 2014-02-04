@@ -65,7 +65,7 @@ public class StaticPagesTest extends AbstractWebServerTest {
   public void private_files() {
     get("/../private.txt").produces(404);
     get("/_config.yaml").produces(404);
-    get("/_layouts/default.html").produces(404);
+    get("/_layouts/layout.html").produces(404);
     get("/unknown").produces(404);
     get("/js").produces(404);
   }
