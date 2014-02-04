@@ -47,4 +47,47 @@ public class TemplateTest {
   public void markdown_list() {
     assertThat(new Template("list.md").render(Model.of())).contains("<ul>\n<li><p>Doc</p>\n</li>\n<li><p>Grumpy</p>\n</li>\n<li><p>Happy</p>\n</li>\n</ul>");
   }
+
+  @Test
+  public void default_layout() {
+    assertThat(new Template("minimal.html").render(Model.of())).isEqualTo("" +
+        "<!DOCTYPE html>\n" +
+        "<html lang=\"en\">\n" +
+        "<head>\n" +
+        "  <meta charset=\"UTF-8\">\n" +
+        "  <title></title>\n" +
+        "  \n" +
+        "  \n" +
+        "  \n" +
+        "  \n" +
+        "  \n" +
+        "  \n" +
+        "</head>\n" +
+        "<body>\n" +
+        "Hello World\n" +
+        "</body>\n" +
+        "</html>\n");
+  }
+
+  @Test
+  public void standard_head_fields() {
+    assertThat(new Template("full_header").render(Model.of())).isEqualTo("<!DOCTYPE html>\n" +
+        "<html lang=\"FR\" ng-app=\"app\">\n" +
+        "<head>\n" +
+        "  <meta charset=\"UTF-8\">\n" +
+        "  <title>TITLE</title>\n" +
+        "  <meta name=\"viewport\" content=\"viewport\">\n" +
+        "  <meta name=\"keywords\" content=\"keyword1, keyword2\">\n" +
+        "  <meta name=\"description\" content=\"description\">\n" +
+        "  <meta name=\"author\" content=\"author\">\n" +
+        "  <link rel=\"stylesheet\" href=\"style.less\">\n" +
+        "  \n" +
+        "  <link rel=\"stylesheet\" href=\"style1.css\">\n" +
+        "  <link rel=\"stylesheet\" href=\"style2.css\">\n" +
+        "</head>\n" +
+        "<body>\n" +
+        "Hello World\n" +
+        "</body>\n" +
+        "</html>\n");
+  }
 }
