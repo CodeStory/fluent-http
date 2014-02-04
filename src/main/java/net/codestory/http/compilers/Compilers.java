@@ -30,6 +30,7 @@ import net.codestory.http.misc.*;
 public enum Compilers {
   INSTANCE;
 
+  private final static String VERSION = "V1";
   private final Map<String, Supplier<? extends Compiler>> compilerByExtension = new HashMap<>();
   private final ConcurrentMap<String, String> cache = new ConcurrentHashMap<>();
 
@@ -66,7 +67,7 @@ public enum Compilers {
       try {
         String sha1 = Sha1.of(content);
 
-        File file = new File(System.getProperty("user.home"), ".code-story/cache/" + extension.substring(1) + "/" + sha1);
+        File file = Paths.get(System.getProperty("user.home"), ".code-story", "cache", VERSION, extension.substring(1), sha1).toFile();
         String fromCache = readFromCache(file);
         if (fromCache != null) {
           return fromCache;
@@ -101,7 +102,7 @@ public enum Compilers {
       throw new IllegalStateException("Unable to create cache folder: " + parentFile);
     }
 
-    File tmpFile = new File(file.getAbsolutePath()+ ".tmp");
+    File tmpFile = new File(file.getAbsolutePath() + ".tmp");
     try (Writer writer = new FileWriter(file)) {
       writer.write(data);
     }
