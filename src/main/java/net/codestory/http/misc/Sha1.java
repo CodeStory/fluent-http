@@ -15,6 +15,8 @@
  */
 package net.codestory.http.misc;
 
+import static java.nio.charset.StandardCharsets.*;
+
 import java.security.*;
 
 public class Sha1 {
@@ -28,5 +30,9 @@ public class Sha1 {
     } catch (NoSuchAlgorithmException e) {
       throw new IllegalStateException("Unable to compute sha1", e);
     }
+  }
+
+  public static String of(String data) {
+    return of(data.getBytes(UTF_8));
   }
 }

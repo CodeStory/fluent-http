@@ -15,6 +15,7 @@
  */
 package net.codestory.http.compilers;
 
+import static java.nio.charset.StandardCharsets.*;
 import static net.codestory.http.misc.MemoizingSupplier.*;
 
 import java.io.*;
@@ -22,6 +23,9 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
+
+import net.codestory.http.io.*;
+import net.codestory.http.misc.*;
 
 public enum Compilers {
   INSTANCE;
@@ -55,16 +59,52 @@ public enum Compilers {
 
     for (Map.Entry<String, Supplier<? extends Compiler>> entry : compilerByExtension.entrySet()) {
       String extension = entry.getKey();
-      if (filename.endsWith(extension)) {
-        try {
-          Compiler compiler = entry.getValue().get();
-          return compiler.compile(path, content);
-        } catch (IOException e) {
-          throw new IllegalStateException(e);
+      if (!filename.endsWith(extension)) {
+        continue;
+      }
+
+      try {
+        String sha1 = Sha1.of(content);
+
+        File file = new File(System.getProperty("user.home"), ".code-story/cache/" + extension.substring(1) + "/" + sha1);
+        String fromCache = readFromCache(file);
+        if (fromCache != null) {
+          return fromCache;
         }
+
+        Compiler compiler = entry.getValue().get();
+        String compiled = compiler.compile(path, content);
+        writeToCache(file, compiled);
+
+        return compiled;
+      } catch (IOException e) {
+        throw new IllegalStateException(e);
       }
     }
 
     return content;
+  }
+
+  private static String readFromCache(File file) throws IOException {
+    if (!file.exists()) {
+      return null;
+    }
+
+    try (InputStream input = new FileInputStream(file)) {
+      return InputStreams.readString(input, UTF_8);
+    }
+  }
+
+  private static void writeToCache(File file, String data) throws IOException {
+    File parentFile = file.getParentFile();
+    if (!parentFile.exists() && !parentFile.mkdirs()) {
+      throw new IllegalStateException("Unable to create cache folder: " + parentFile);
+    }
+
+    File tmpFile = new File(file.getAbsolutePath()+ ".tmp");
+    try (Writer writer = new FileWriter(file)) {
+      writer.write(data);
+    }
+    tmpFile.renameTo(file);
   }
 }
