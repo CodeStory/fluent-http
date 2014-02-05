@@ -82,8 +82,9 @@ public class TwitterAuthFilter implements Filter {
           .withCookie(new Cookie("userPhoto", "", "/", false));
     }
 
-    Cookie userId = context.cookie("userId");
-    if ((userId != null) && !userId.getValue().isEmpty()) {
+    String userId = context.cookieValue("userId");
+    if ((userId != null) && !userId.isEmpty()) {
+      context.setCurrentUser(userId);
       return nextFilter.get(); // Authenticated
     }
 

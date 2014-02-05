@@ -31,6 +31,7 @@ public class Context {
   private final Response response;
   private final IocAdapter iocAdapter;
   private final Query query;
+  private String currentUser;
 
   public Context(Request request, Response response, IocAdapter iocAdapter) {
     this.request = request;
@@ -151,5 +152,13 @@ public class Context {
 
   public <T> T getBean(Class<T> type) {
     return iocAdapter.get(type);
+  }
+
+  public void setCurrentUser(String user) {
+    this.currentUser = user;
+  }
+
+  public String currentUser() {
+    return currentUser;
   }
 }

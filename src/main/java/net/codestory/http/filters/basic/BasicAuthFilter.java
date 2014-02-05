@@ -27,19 +27,19 @@ import net.codestory.http.payload.*;
 public class BasicAuthFilter implements Filter {
   private final String uriPrefix;
   private final String realm;
-  private final List<String> hashes;
+  private final Map<String, String> usersPerHash;
 
   public BasicAuthFilter(String uriPrefix, String realm, Map<String, String> users) {
     this.uriPrefix = uriPrefix;
     this.realm = realm;
-    this.hashes = new ArrayList<>();
+    this.usersPerHash = new HashMap<>();
 
     users.entrySet().forEach((entry) -> {
       String user = entry.getKey();
       String password = entry.getValue();
       String hash = Base64.getEncoder().encodeToString((user + ":" + password).getBytes());
 
-      hashes.add("Basic " + hash);
+      usersPerHash.put("Basic " + hash, user);
     });
   }
 
@@ -50,9 +50,16 @@ public class BasicAuthFilter implements Filter {
     }
 
     String authorizationHeader = context.getHeader(AUTHORIZATION);
-    if ((authorizationHeader == null) || !hashes.contains(authorizationHeader.trim())) {
+    if (authorizationHeader == null) {
       return Payload.unauthorized(realm);
     }
+
+    String user = usersPerHash.get(authorizationHeader.trim());
+    if (user == null) {
+      return Payload.unauthorized(realm);
+    }
+
+    context.setCurrentUser(user);
 
     return nextFilter.get();
   }

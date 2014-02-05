@@ -58,4 +58,13 @@ public class AuthenticationTest extends AbstractWebServerTest {
 
     getWithAuth("/secure", "jl", "wrongpassword").produces(401);
   }
+
+  @Test
+  public void get_user_id() {
+    server.configure(routes -> routes.
+        filter(new BasicAuthFilter("/secure", "codestory", of("Dave", "pwd"))).
+        get("/secure", (context) -> "Hello " + context.currentUser()));
+
+    getWithAuth("/secure", "Dave", "pwd").produces(200, "text/html", "Hello Dave");
+  }
 }

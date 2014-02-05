@@ -63,6 +63,7 @@ public class BasicAuthFilterTest {
     Payload payload = filter.apply("/secure/foo", context, nextFilter);
 
     assertThat(payload).isSameAs(next);
+    verify(context).setCurrentUser("jl");
   }
 
   @Test
