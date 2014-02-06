@@ -26,7 +26,7 @@ class ClasspathScanner {
     for (URL url : urls(prefix)) {
       for (String path : ClassPaths.fromURL(url)) {
         if (path.startsWith(prefix) && !path.endsWith(".class")) {
-          resources.add(path);
+          resources.add(path.replace('\\', '/'));
         }
       }
     }
