@@ -164,14 +164,23 @@ public class Resources {
   }
 
   private static String readFile(String path, Charset charset) throws IOException {
-    return new String(readFileBytes(path), charset);
+    if (!new File(path).isFile()) {
+      throw new IllegalArgumentException("Invalid file path: " + path);
+    }
+
+    try (InputStream from = new FileInputStream(path)) {
+      return InputStreams.readString(from, charset);
+    }
   }
 
   private static byte[] readFileBytes(String path) throws IOException {
     if (!new File(path).isFile()) {
       throw new IllegalArgumentException("Invalid file path: " + path);
     }
-    return Files.readAllBytes(Paths.get(path));
+
+    try (InputStream from = new FileInputStream(path)) {
+      return InputStreams.readBytes(from);
+    }
   }
 
   private static File fileForClasspath(URL url) {
