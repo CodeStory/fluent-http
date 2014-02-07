@@ -58,7 +58,7 @@ public class Resources {
   }
 
   public static String relativePath(Path parent, Path path) {
-    return parent.relativize(path).toString();
+    return parent.relativize(path).toString().replace('\\', '/');
   }
 
   public static boolean isPublic(Path path) {
