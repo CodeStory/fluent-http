@@ -15,8 +15,10 @@
  */
 package net.codestory.http.io;
 
+import static java.nio.charset.StandardCharsets.*;
 import static org.assertj.core.api.Assertions.*;
 
+import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
@@ -53,5 +55,12 @@ public class ResourcesTest {
     assertThat(Resources.extension(Paths.get("file"))).isEmpty();
     assertThat(Resources.extension(Paths.get(".dotfile"))).isEmpty();
     assertThat(Resources.extension(Paths.get("."))).isEmpty();
+  }
+
+  @Test
+  public void read_file_in_unix_format() throws IOException {
+    String content = Resources.read(Paths.get("_layouts/layout.html"), UTF_8);
+
+    assertThat(content).doesNotContain("\r");
   }
 }
