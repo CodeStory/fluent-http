@@ -26,43 +26,43 @@ public class WebJarsRouteTest {
   public void dont_use_minified_asset_in_dev_mode() {
     WebJarsRoute route = new WebJarsRoute(false);
 
-    URL url = route.findUrl("/webjars/bootstrap/3.1.0/js/bootstrap.min.js");
-    assertThat(url.toString()).endsWith("/META-INF/resources/webjars/bootstrap/3.1.0/js/bootstrap.js");
+    URL url = route.findUrl("/webjars/fakewebjar/1.0/framework.min.js");
+    assertThat(url.toString()).endsWith("/META-INF/resources/webjars/fakewebjar/1.0/framework.js");
 
-    url = route.findUrl("/webjars/bootstrap/3.1.0/js/bootstrap.js");
-    assertThat(url.toString()).endsWith("/META-INF/resources/webjars/bootstrap/3.1.0/js/bootstrap.js");
+    url = route.findUrl("/webjars/fakewebjar/1.0/framework.js");
+    assertThat(url.toString()).endsWith("/META-INF/resources/webjars/fakewebjar/1.0/framework.js");
   }
 
   @Test
   public void non_minified_version_doesnt_exists() {
     WebJarsRoute route = new WebJarsRoute(false);
 
-    URL url = route.findUrl("/webjars/coffee-script/1.7.0/coffee-script.min.js");
-    assertThat(url.toString()).endsWith("/META-INF/resources/webjars/coffee-script/1.7.0/coffee-script.min.js");
+    URL url = route.findUrl("/webjars/fakewebjar/1.0/only-minified.min.js");
+    assertThat(url.toString()).endsWith("/META-INF/resources/webjars/fakewebjar/1.0/only-minified.min.js");
 
-    url = route.findUrl("/webjars/coffee-script/1.7.0/coffee-script.js");
-    assertThat(url.toString()).endsWith("/webjars/coffee-script/1.7.0/coffee-script.min.js");
+    url = route.findUrl("/webjars/fakewebjar/1.0/only-minified.js");
+    assertThat(url.toString()).endsWith("/META-INF/resources/webjars/fakewebjar/1.0/only-minified.min.js");
   }
 
   @Test
   public void use_minified_asset_in_production_mode() {
     WebJarsRoute route = new WebJarsRoute(true);
 
-    URL url = route.findUrl("/webjars/bootstrap/3.1.0/js/bootstrap.min.js");
-    assertThat(url.toString()).endsWith("/META-INF/resources/webjars/bootstrap/3.1.0/js/bootstrap.min.js");
+    URL url = route.findUrl("/webjars/fakewebjar/1.0/framework.min.js");
+    assertThat(url.toString()).endsWith("/META-INF/resources/webjars/fakewebjar/1.0/framework.min.js");
 
-    url = route.findUrl("/webjars/bootstrap/3.1.0/js/bootstrap.js");
-    assertThat(url.toString()).endsWith("/META-INF/resources/webjars/bootstrap/3.1.0/js/bootstrap.min.js");
+    url = route.findUrl("/webjars/fakewebjar/1.0/framework.js");
+    assertThat(url.toString()).endsWith("/META-INF/resources/webjars/fakewebjar/1.0/framework.min.js");
   }
 
   @Test
   public void minified_version_doesnt_exists() {
     WebJarsRoute route = new WebJarsRoute(true);
 
-    URL url = route.findUrl("/webjars/restangular/1.2.2/webjars-requirejs.min.js");
-    assertThat(url.toString()).endsWith("/META-INF/resources/webjars/restangular/1.2.2/webjars-requirejs.js");
+    URL url = route.findUrl("/webjars/fakewebjar/1.0/fake.min.js");
+    assertThat(url.toString()).endsWith("/META-INF/resources/webjars/fakewebjar/1.0/fake.js");
 
-    url = route.findUrl("/webjars/restangular/1.2.2/webjars-requirejs.js");
-    assertThat(url.toString()).endsWith("/META-INF/resources/webjars/restangular/1.2.2/webjars-requirejs.js");
+    url = route.findUrl("/webjars/fakewebjar/1.0/fake.js");
+    assertThat(url.toString()).endsWith("/META-INF/resources/webjars/fakewebjar/1.0/fake.js");
   }
 }

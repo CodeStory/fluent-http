@@ -15,29 +15,28 @@
  */
 package net.codestory.http.routes;
 
-import static com.googlecode.catchexception.CatchException.*;
-import static com.googlecode.catchexception.apis.CatchExceptionAssertJ.*;
-
 import org.junit.*;
+import org.junit.rules.*;
 
 public class RouteCollectionTest {
   RouteCollection routeCollection = new RouteCollection();
 
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
+
   @Test
   public void fail_with_too_many_params() {
-    when(routeCollection).get("/", (context, param) -> "");
+    thrown.expect(IllegalArgumentException.class);
+    thrown.expectMessage("Expected 1 parameter in /");
 
-    then(caughtException())
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Expected 1 parameter in /");
+    routeCollection.get("/", (context, param) -> "");
   }
 
   @Test
   public void fail_with_too_few_params() {
-    when(routeCollection).get("/:one/:two/:three", (context, one, two) -> "");
+    thrown.expect(IllegalArgumentException.class);
+    thrown.expectMessage("Expected 2 parameters in /:one/:two/:three");
 
-    then(caughtException())
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Expected 2 parameters in /:one/:two/:three");
+    routeCollection.get("/:one/:two/:three", (context, one, two) -> "");
   }
 }
