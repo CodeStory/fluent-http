@@ -45,49 +45,59 @@ public class TemplateTest {
 
   @Test
   public void markdown_list() {
-    assertThat(new Template("list.md").render(Model.of())).contains("<ul>\n<li><p>Doc</p>\n</li>\n<li><p>Grumpy</p>\n</li>\n<li><p>Happy</p>\n</li>\n</ul>");
+    String html = new Template("list.md").render(Model.of());
+
+    assertThat(ignoreLineEndings(html)).contains("<ul><li><p>Doc</p></li><li><p>Grumpy</p></li><li><p>Happy</p></li></ul>");
   }
 
   @Test
   public void default_layout() {
-    assertThat(new Template("minimal.html").render(Model.of())).isEqualTo("" +
-        "<!DOCTYPE html>\n" +
-        "<html lang=\"en\">\n" +
-        "<head>\n" +
-        "  <meta charset=\"UTF-8\">\n" +
-        "  <title></title>\n" +
-        "  \n" +
-        "  \n" +
-        "  \n" +
-        "  \n" +
-        "  \n" +
-        "  \n" +
-        "</head>\n" +
-        "<body>\n" +
-        "Hello World\n" +
-        "</body>\n" +
-        "</html>\n");
+    String html = new Template("minimal.html").render(Model.of());
+
+    assertThat(ignoreLineEndings(html)).isEqualTo("" +
+        "<!DOCTYPE html>" +
+        "<html lang=\"en\">" +
+        "<head>" +
+        "  <meta charset=\"UTF-8\">" +
+        "  <title></title>" +
+        "  " +
+        "  " +
+        "  " +
+        "  " +
+        "  " +
+        "  " +
+        "</head>" +
+        "<body>" +
+        "Hello World" +
+        "</body>" +
+        "</html>");
   }
 
   @Test
   public void standard_head_fields() {
-    assertThat(new Template("full_header").render(Model.of())).isEqualTo("<!DOCTYPE html>\n" +
-        "<html lang=\"FR\" ng-app=\"app\">\n" +
-        "<head>\n" +
-        "  <meta charset=\"UTF-8\">\n" +
-        "  <title>TITLE</title>\n" +
-        "  <meta name=\"viewport\" content=\"viewport\">\n" +
-        "  <meta name=\"keywords\" content=\"keyword1, keyword2\">\n" +
-        "  <meta name=\"description\" content=\"description\">\n" +
-        "  <meta name=\"author\" content=\"author\">\n" +
-        "  <link rel=\"stylesheet\" href=\"style.less\">\n" +
-        "  \n" +
-        "  <link rel=\"stylesheet\" href=\"style1.css\">\n" +
-        "  <link rel=\"stylesheet\" href=\"style2.css\">\n" +
-        "</head>\n" +
-        "<body>\n" +
-        "Hello World\n" +
-        "</body>\n" +
-        "</html>\n");
+    String html = new Template("full_header").render(Model.of());
+
+    assertThat(ignoreLineEndings(html)).isEqualTo("<!DOCTYPE html>" +
+        "<html lang=\"FR\" ng-app=\"app\">" +
+        "<head>" +
+        "  <meta charset=\"UTF-8\">" +
+        "  <title>TITLE</title>" +
+        "  <meta name=\"viewport\" content=\"viewport\">" +
+        "  <meta name=\"keywords\" content=\"keyword1, keyword2\">" +
+        "  <meta name=\"description\" content=\"description\">" +
+        "  <meta name=\"author\" content=\"author\">" +
+        "  <link rel=\"stylesheet\" href=\"style.less\">" +
+        "  " +
+        "  <link rel=\"stylesheet\" href=\"style1.css\">" +
+        "  <link rel=\"stylesheet\" href=\"style2.css\">" +
+        "</head>" +
+        "<body>" +
+        "Hello World" +
+        "</body>" +
+        "</html>");
+  }
+
+  private static String ignoreLineEndings(String text) {
+    return text.replaceAll("[\\n\\r]", "");
   }
 }
