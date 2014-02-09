@@ -21,9 +21,13 @@ import java.io.*;
 import java.nio.file.*;
 
 import org.junit.*;
+import org.junit.rules.*;
 
 public class LessCompilerTest {
-  LessCompiler lessCompiler = new LessCompiler();
+  private static LessCompiler lessCompiler = new LessCompiler();
+
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
 
   @Test
   public void empty() throws IOException {
@@ -37,5 +41,13 @@ public class LessCompilerTest {
     String css = lessCompiler.compile(Paths.get("file.less"), "body { h1 { color: red; } }");
 
     assertThat(css).isEqualTo("body h1 {\n  color: red;\n}\n/*# sourceMappingURL=file.css.map */\n");
+  }
+
+  @Test
+  public void invalid_file() throws IOException {
+    thrown.expect(IOException.class);
+    thrown.expectMessage("Unable to compile less");
+
+    lessCompiler.compile(Paths.get("invalid.less"), "body body");
   }
 }

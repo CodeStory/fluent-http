@@ -15,6 +15,8 @@
  */
 package net.codestory.http;
 
+import static net.codestory.http.errors.NotFoundException.*;
+
 import net.codestory.http.errors.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.testhelpers.*;
@@ -51,4 +53,16 @@ public class ErrorPageTest extends AbstractWebServerTest {
 
     get("/").produces(500, "text/html", "An error occurred on the server");
   }
+
+  @Test
+  public void not_found_if_null() {
+    server.configure(routes -> routes.get("/hello/:name", (context, name) -> {
+      String result = name.equals("Bob") ? "Hello Bob" : null;
+      return notFoundIfNull(result);
+    }));
+
+    get("/hello/Bob").produces("text/html", "Hello Bob");
+    get("/hello/Dave").produces(404, "text/html", "Page not found");
+  }
+
 }

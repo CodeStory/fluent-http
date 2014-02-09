@@ -23,7 +23,7 @@ import java.util.*;
 import org.junit.*;
 
 public class FormulaPluginTest {
-  FormulaPlugin plugin = new FormulaPlugin();
+  static FormulaPlugin plugin = new FormulaPlugin();
   StringBuilder output = new StringBuilder();
 
   @Test
@@ -54,5 +54,12 @@ public class FormulaPluginTest {
     plugin.emit(output, asList(" ", "a b", ""), new HashMap<>());
 
     assertThat(output.toString()).isEqualTo("<img src=\"http://latex.codecogs.com/png.download?a%20b\" />");
+  }
+
+  @Test
+  public void encode_url() {
+    String encoded = FormulaPlugin.encode("https://www.google.fr/1 2");
+
+    assertThat(encoded).isEqualTo("https%3A%2F%2Fwww.google.fr%2F1%202");
   }
 }
