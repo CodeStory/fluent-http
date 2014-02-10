@@ -24,6 +24,7 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import net.codestory.http.convert.*;
 import net.codestory.http.io.*;
 import net.codestory.http.misc.*;
 
@@ -81,6 +82,10 @@ public class Site {
 
   public Object get(String key) {
     return yaml.get().get(key);
+  }
+
+  public <T> T getAs(String key, Class<T> type) {
+    return TypeConvert.convertValue(get(key), type);
   }
 
   public Map<String, Object> getData() {

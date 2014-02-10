@@ -40,7 +40,7 @@ public class TypeConvert {
     Object[] converted = new Object[pathParameters.length + 1];
 
     for (int i = 0; i < pathParameters.length; i++) {
-      converted[i] = fromString(pathParameters[i], types[i]);
+      converted[i] = convertValue(pathParameters[i], types[i]);
     }
     converted[converted.length - 1] = convert(context, types[converted.length - 1]);
 
@@ -51,7 +51,7 @@ public class TypeConvert {
     Object[] converted = new Object[pathParameters.length];
 
     for (int i = 0; i < pathParameters.length; i++) {
-      converted[i] = fromString(pathParameters[i], types[i]);
+      converted[i] = convertValue(pathParameters[i], types[i]);
     }
 
     return converted;
@@ -66,7 +66,7 @@ public class TypeConvert {
       return (T) context.keyValues();
     }
     if (isUrlEncodedForm(context)) {
-      return fromKeyValues(context.keyValues(), type);
+      return convertValue(context.keyValues(), type);
     }
 
     String json;
@@ -87,12 +87,8 @@ public class TypeConvert {
     }
   }
 
-  public static <T> T fromString(String value, Class<T> type) {
+  public static <T> T convertValue(Object value, Class<T> type) {
     return OBJECT_MAPPER.convertValue(value, type);
-  }
-
-  public static <T> T fromKeyValues(Map<String, String> keyValues, Class<T> type) {
-    return OBJECT_MAPPER.convertValue(keyValues, type);
   }
 
   public static byte[] toByteArray(Object value) {

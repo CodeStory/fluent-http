@@ -24,22 +24,22 @@ import org.junit.*;
 public class TypeConvertTest {
   @Test
   public void dont_convert() {
-    assertThat(TypeConvert.fromString("TEXT", String.class)).isEqualTo("TEXT");
-    assertThat(TypeConvert.fromString("TEXT", Object.class)).isEqualTo("TEXT");
+    assertThat(TypeConvert.convertValue("TEXT", String.class)).isEqualTo("TEXT");
+    assertThat(TypeConvert.convertValue("TEXT", Object.class)).isEqualTo("TEXT");
   }
 
   @Test
   public void to_integer() {
-    assertThat(TypeConvert.fromString("42", Integer.class)).isEqualTo(42);
-    assertThat(TypeConvert.fromString("42", int.class)).isEqualTo(42);
+    assertThat(TypeConvert.convertValue("42", Integer.class)).isEqualTo(42);
+    assertThat(TypeConvert.convertValue("42", int.class)).isEqualTo(42);
   }
 
   @Test
   public void to_boolean() {
-    assertThat(TypeConvert.fromString("true", Boolean.class)).isTrue();
-    assertThat(TypeConvert.fromString("true", boolean.class)).isTrue();
-    assertThat(TypeConvert.fromString("false", Boolean.class)).isFalse();
-    assertThat(TypeConvert.fromString("false", boolean.class)).isFalse();
+    assertThat(TypeConvert.convertValue("true", Boolean.class)).isTrue();
+    assertThat(TypeConvert.convertValue("true", boolean.class)).isTrue();
+    assertThat(TypeConvert.convertValue("false", Boolean.class)).isFalse();
+    assertThat(TypeConvert.convertValue("false", boolean.class)).isFalse();
   }
 
   @Test
@@ -48,7 +48,7 @@ public class TypeConvertTest {
     keyValues.put("name", "joe");
     keyValues.put("age", "42");
 
-    Human human = TypeConvert.fromKeyValues(keyValues, Human.class);
+    Human human = TypeConvert.convertValue(keyValues, Human.class);
 
     assertThat(human.name).isEqualTo("joe");
     assertThat(human.age).isEqualTo(42);
