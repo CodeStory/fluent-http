@@ -28,7 +28,7 @@ public enum Compilers {
 
   private final Map<String, Supplier<Compiler>> compilerByExtension = new HashMap<>();
   private final ConcurrentMap<String, String> cache = new ConcurrentHashMap<>();
-  private final DiskCache diskCache = new DiskCache();
+  private final DiskCache diskCache = new DiskCache("V1");
 
   private Compilers() {
     register(CoffeeCompiler::new, ".coffee", ".litcoffee");
@@ -56,8 +56,7 @@ public enum Compilers {
       String extension = entry.getKey();
 
       if (path.toString().endsWith(extension)) {
-        Compiler compiler = entry.getValue().get();
-        return diskCache.computeIfAbsent(path, content, compiler, extension);
+        return diskCache.computeIfAbsent(path, content, entry.getValue(), extension);
       }
     }
 

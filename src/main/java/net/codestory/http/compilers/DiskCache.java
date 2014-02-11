@@ -19,24 +19,29 @@ import static java.nio.charset.StandardCharsets.*;
 
 import java.io.*;
 import java.nio.file.*;
+import java.util.function.*;
 
 import net.codestory.http.io.*;
 import net.codestory.http.misc.*;
 
 public class DiskCache {
-  private final static String VERSION = "V1";
+  private final File root;
 
-  String computeIfAbsent(Path path, String content, Compiler compiler, String extension) {
+  public DiskCache(String version) {
+    this.root = Paths.get(System.getProperty("user.home"), ".code-story", "cache", version).toFile();
+  }
+
+  String computeIfAbsent(Path path, String content, Supplier<Compiler> compilerSupplier, String extension) {
+    String sha1 = Sha1.of(content);
+
+    File file = new File(new File(root, extension.substring(1)), sha1);
     try {
-      String sha1 = Sha1.of(content);
-
-      File file = Paths.get(System.getProperty("user.home"), ".code-story", "cache", VERSION, extension.substring(1), sha1).toFile();
       String fromCache = readFromCache(file);
       if (fromCache != null) {
         return fromCache;
       }
 
-      String compiled = compiler.compile(path, content);
+      String compiled = compilerSupplier.get().compile(path, content);
       writeToCache(file, compiled);
 
       return compiled;
@@ -65,6 +70,8 @@ public class DiskCache {
     try (Writer writer = new FileWriter(file)) {
       writer.write(data);
     }
-    tmpFile.renameTo(file);
+    if (!tmpFile.renameTo(file)) {
+      throw new IllegalStateException("Unable to rename file: " + tmpFile + " to: " + file);
+    }
   }
 }
