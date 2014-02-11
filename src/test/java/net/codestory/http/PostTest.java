@@ -59,8 +59,8 @@ public class PostTest extends AbstractWebServerTest {
   @Test
   public void forms() {
     server.configure(routes -> routes.
-        post("/postForm", (context) -> "CREATED " + context.get("firstName") + " " + context.get("lastName")).
-        post("/postForm", (context) -> "CREATED " + context.get("firstName") + " " + context.get("lastName")).
+        post("/postForm", context -> "CREATED " + context.get("firstName") + " " + context.get("lastName")).
+        post("/postForm", context -> "CREATED " + context.get("firstName") + " " + context.get("lastName")).
         add(new Object() {
           @Post("/postFormResource")
           public String create(Map<String, String> keyValues) {

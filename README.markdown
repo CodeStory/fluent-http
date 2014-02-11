@@ -362,7 +362,7 @@ Now that the website is dynamic, we might also want to post data. We support `GE
 Here's how one would post data.
 
 ```java
-routes.post("/person", (context) -> {
+routes.post("/person", context -> {
   String name = context.get("name");
   int age = context.getInteger("age");
 
@@ -376,7 +376,7 @@ routes.post("/person", (context) -> {
 It's even easier to let [Jackson](http://jackson.codehaus.org/) do the mapping between form parameters and Java Beans.
 
 ```java
-routes.post("/person", (context) -> {
+routes.post("/person", context -> {
   Person person = context.payload(Person.class);
   // do something
 
