@@ -60,6 +60,6 @@ public enum Compilers {
       }
     }
 
-    return new CacheEntry(System.currentTimeMillis(), content); // TEMP
+    return CacheEntry.memory(content);
   }
 }

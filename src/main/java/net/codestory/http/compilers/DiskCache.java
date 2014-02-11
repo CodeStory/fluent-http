@@ -15,13 +15,10 @@
  */
 package net.codestory.http.compilers;
 
-import static java.nio.charset.StandardCharsets.*;
-
 import java.io.*;
 import java.nio.file.*;
 import java.util.function.*;
 
-import net.codestory.http.io.*;
 import net.codestory.http.misc.*;
 
 public class DiskCache {
@@ -35,27 +32,16 @@ public class DiskCache {
     String sha1 = Sha1.of(content);
 
     File file = new File(new File(root, extension.substring(1)), sha1);
+    if (file.exists()) {
+      return CacheEntry.disk(file);
+    }
+
     try {
-      String compiled = readFromCache(file);
-
-      if (compiled == null) {
-        compiled = compilerSupplier.get().compile(path, content);
-        writeToCache(file, compiled);
-      }
-
-      return new CacheEntry(file.lastModified(), compiled);
+      String compiled = compilerSupplier.get().compile(path, content);
+      writeToCache(file, compiled);
+      return CacheEntry.disk(file);
     } catch (IOException e) {
       throw new IllegalStateException(e);
-    }
-  }
-
-  private static String readFromCache(File file) throws IOException {
-    if (!file.exists()) {
-      return null;
-    }
-
-    try (InputStream input = new FileInputStream(file)) {
-      return InputStreams.readString(input, UTF_8);
     }
   }
 
@@ -69,6 +55,7 @@ public class DiskCache {
     try (Writer writer = new FileWriter(file)) {
       writer.write(data);
     }
+
     if (!tmpFile.renameTo(file)) {
       throw new IllegalStateException("Unable to rename file: " + tmpFile + " to: " + file);
     }

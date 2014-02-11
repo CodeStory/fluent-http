@@ -322,7 +322,7 @@ public class Payload {
       return forString((String) content);
     }
     if (content instanceof CacheEntry) {
-      return forString(((CacheEntry) content).content());
+      return ((CacheEntry) content).toBytes();
     }
     if (content instanceof InputStream) {
       return forInputStream((InputStream) content);
@@ -367,7 +367,7 @@ public class Payload {
 
     CacheEntry html = new Template(view).render(model);
 
-    return forString(html.content());
+    return html.toBytes();
   }
 
   private static Map<String, String> cookieValues(Context context) {
@@ -389,6 +389,6 @@ public class Payload {
 
     String content = Resources.read(path, UTF_8);
     CacheEntry compiled = Compilers.INSTANCE.compile(path, content);
-    return forString(compiled.content());
+    return compiled.toBytes();
   }
 }

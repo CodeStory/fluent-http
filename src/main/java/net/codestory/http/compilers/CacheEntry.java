@@ -15,20 +15,68 @@
  */
 package net.codestory.http.compilers;
 
-public class CacheEntry {
-  private final long lastModified;
-  private final String content;
+import static java.nio.charset.StandardCharsets.*;
 
-  public CacheEntry(long lastModified, String content) {
-    this.lastModified = lastModified;
-    this.content = content;
+import java.io.*;
+
+import net.codestory.http.io.*;
+
+public interface CacheEntry {
+  String content();
+
+  byte[] toBytes();
+
+  long lastModified();
+
+  public static CacheEntry disk(File file) {
+    return new CacheEntry() {
+      @Override
+      public String content() {
+        try {
+          try (InputStream input = new FileInputStream(file)) {
+            return InputStreams.readString(input, UTF_8);
+          }
+        } catch (IOException e) {
+          throw new IllegalStateException("Unable to read file", e);
+        }
+      }
+
+      @Override
+      public byte[] toBytes() {
+        try {
+          try (InputStream input = new FileInputStream(file)) {
+            return InputStreams.readBytes(input);
+          }
+        } catch (IOException e) {
+          throw new IllegalStateException("Unable to read file", e);
+        }
+      }
+
+      @Override
+      public long lastModified() {
+        return file.lastModified();
+      }
+    };
   }
 
-  public String content() {
-    return content;
-  }
+  public static CacheEntry memory(String content) {
+    return new CacheEntry() {
+      private final long lastModified = System.currentTimeMillis();
 
-  public long lastModified() {
-    return lastModified;
+      @Override
+      public String content() {
+        return content;
+      }
+
+      @Override
+      public byte[] toBytes() {
+        return content.getBytes(UTF_8);
+      }
+
+      @Override
+      public long lastModified() {
+        return lastModified;
+      }
+    };
   }
 }
