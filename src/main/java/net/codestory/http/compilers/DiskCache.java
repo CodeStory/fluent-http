@@ -31,20 +31,20 @@ public class DiskCache {
     this.root = Paths.get(System.getProperty("user.home"), ".code-story", "cache", version).toFile();
   }
 
-  String computeIfAbsent(Path path, String content, Supplier<Compiler> compilerSupplier, String extension) {
+  CacheEntry computeIfAbsent(Path path, String content, Supplier<Compiler> compilerSupplier, String extension) {
     String sha1 = Sha1.of(content);
 
     File file = new File(new File(root, extension.substring(1)), sha1);
     try {
       String fromCache = readFromCache(file);
       if (fromCache != null) {
-        return fromCache;
+        return new CacheEntry(file, fromCache);
       }
 
       String compiled = compilerSupplier.get().compile(path, content);
       writeToCache(file, compiled);
 
-      return compiled;
+      return new CacheEntry(file, compiled);
     } catch (IOException e) {
       throw new IllegalStateException(e);
     }

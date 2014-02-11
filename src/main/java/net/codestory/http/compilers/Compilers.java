@@ -56,7 +56,8 @@ public enum Compilers {
       String extension = entry.getKey();
 
       if (path.toString().endsWith(extension)) {
-        return diskCache.computeIfAbsent(path, content, entry.getValue(), extension);
+        CacheEntry cacheEntry = diskCache.computeIfAbsent(path, content, entry.getValue(), extension);
+        return cacheEntry.getContent();
       }
     }
 
