@@ -571,7 +571,6 @@ Synchro to Maven Central is done hourly.
  + PROD_MODE is not really convenient. It forces to have more complex prod script
  + Add some sort of http standard log
  + Cors support
- + If-Modified-since activé par défaut
  + Streaming
  + File upload
  + OPTIONS method

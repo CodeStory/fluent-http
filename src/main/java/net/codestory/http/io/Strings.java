@@ -39,4 +39,17 @@ public class Strings {
     }
     return in.substring(0, index);
   }
+
+  public static String stripQuotes(String text) {
+    if (text == null) {
+      return null;
+    }
+    if (text.length() < 2) {
+      return text;
+    }
+    if ((text.charAt(0) == '"') && (text.charAt(text.length() - 1) == '"')) {
+      return text.substring(1, text.length() - 1);
+    }
+    return text;
+  }
 }

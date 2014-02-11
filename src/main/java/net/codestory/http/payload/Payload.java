@@ -16,17 +16,16 @@
 package net.codestory.http.payload;
 
 import static java.nio.charset.StandardCharsets.*;
-import static java.time.format.DateTimeFormatter.*;
 import static net.codestory.http.constants.Encodings.*;
 import static net.codestory.http.constants.Headers.*;
 import static net.codestory.http.constants.HttpStatus.NOT_FOUND;
 import static net.codestory.http.constants.Methods.*;
+import static net.codestory.http.io.Strings.*;
 import static org.simpleframework.http.Status.NOT_MODIFIED;
 
 import java.io.*;
 import java.net.*;
 import java.nio.file.Path;
-import java.time.*;
 import java.util.*;
 import java.util.zip.*;
 
@@ -229,8 +228,17 @@ public class Payload {
     Response response = context.response();
 
     headers.entrySet().forEach(entry -> response.setValue(entry.getKey(), entry.getValue()));
-    addHeadersForContent(response);
     cookies.forEach(cookie -> response.setCookie(cookie));
+
+    long lastModified = getLastModified();
+    if (lastModified >= 0) {
+      String previousLastModified = stripQuotes(context.getHeader(IF_MODIFIED_SINCE));
+      if ((previousLastModified != null) && (lastModified <= Dates.parse_rfc_1123(previousLastModified))) {
+        response.setStatus(NOT_MODIFIED);
+        return;
+      }
+      response.setValue(LAST_MODIFIED, Dates.to_rfc_1123(lastModified));
+    }
 
     String uri = context.uri();
     byte[] data = getData(uri, context);
@@ -249,7 +257,7 @@ public class Payload {
     }
 
     String etag = etag(data);
-    String previousEtag = context.getHeader(IF_NONE_MATCH);
+    String previousEtag = stripQuotes(context.getHeader(IF_NONE_MATCH));
     if (etag.equals(previousEtag)) {
       response.setStatus(NOT_MODIFIED);
       return;
@@ -289,6 +297,9 @@ public class Payload {
       return "application/octet-stream";
     }
     if (content instanceof String) {
+      return "text/html;charset=UTF-8";
+    }
+    if (content instanceof CacheEntry) {
       return "text/html;charset=UTF-8";
     }
     if (content instanceof InputStream) {
@@ -337,18 +348,18 @@ public class Payload {
     return TypeConvert.toByteArray(content);
   }
 
-  private void addHeadersForContent(Response response) {
+  private long getLastModified() {
     if (content instanceof Path) {
-      addLastModifiedHeader(((Path) content).toFile().lastModified(), response);
-    } else if (content instanceof File) {
-      addLastModifiedHeader(((File) content).lastModified(), response);
-    } else if (content instanceof CacheEntry) {
-      addLastModifiedHeader(((CacheEntry) content).lastModified(), response);
+      return ((Path) content).toFile().lastModified();
     }
-  }
+    if (content instanceof File) {
+      return ((File) content).lastModified();
+    }
+    if (content instanceof CacheEntry) {
+      return ((CacheEntry) content).lastModified();
+    }
 
-  private void addLastModifiedHeader(long lastModified, Response response) {
-    response.setValue(LAST_MODIFIED, RFC_1123_DATE_TIME.format(ZonedDateTime.ofInstant(Instant.ofEpochMilli(lastModified), ZoneOffset.systemDefault())));
+    return -1;
   }
 
   private static byte[] forString(String value) {
