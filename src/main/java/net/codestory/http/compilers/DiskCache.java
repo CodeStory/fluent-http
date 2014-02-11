@@ -38,13 +38,13 @@ public class DiskCache {
     try {
       String fromCache = readFromCache(file);
       if (fromCache != null) {
-        return new CacheEntry(file, fromCache);
+        return new CacheEntry(file.lastModified(), fromCache);
       }
 
       String compiled = compilerSupplier.get().compile(path, content);
       writeToCache(file, compiled);
 
-      return new CacheEntry(file, compiled);
+      return new CacheEntry(file.lastModified(), compiled);
     } catch (IOException e) {
       throw new IllegalStateException(e);
     }

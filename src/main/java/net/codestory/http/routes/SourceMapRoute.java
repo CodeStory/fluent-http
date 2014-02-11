@@ -45,9 +45,9 @@ class SourceMapRoute implements Route {
     Path pathMap = Paths.get(uri);
     String contentType = ContentTypes.get(pathMap);
     String less = Resources.read(pathLess, UTF_8);
-    String map = Compilers.INSTANCE.compile(pathMap, less);
+    CacheEntry map = Compilers.INSTANCE.compile(pathMap, less);
 
-    return new Payload(contentType, map);
+    return new Payload(contentType, map.getContent());
   }
 
   private static Path pathLess(String uri) {

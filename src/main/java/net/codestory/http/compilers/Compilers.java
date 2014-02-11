@@ -27,7 +27,7 @@ public enum Compilers {
   INSTANCE;
 
   private final Map<String, Supplier<Compiler>> compilerByExtension = new HashMap<>();
-  private final ConcurrentMap<String, String> cache = new ConcurrentHashMap<>();
+  private final ConcurrentMap<String, CacheEntry> cache = new ConcurrentHashMap<>();
   private final DiskCache diskCache = new DiskCache("V1");
 
   private Compilers() {
@@ -47,20 +47,19 @@ public enum Compilers {
     }
   }
 
-  public String compile(Path path, String content) {
+  public CacheEntry compile(Path path, String content) {
     return cache.computeIfAbsent(path.toString() + ";" + content, ignore -> doCompile(path, content));
   }
 
-  private String doCompile(Path path, String content) {
+  private CacheEntry doCompile(Path path, String content) {
     for (Entry<String, Supplier<Compiler>> entry : compilerByExtension.entrySet()) {
       String extension = entry.getKey();
 
       if (path.toString().endsWith(extension)) {
-        CacheEntry cacheEntry = diskCache.computeIfAbsent(path, content, entry.getValue(), extension);
-        return cacheEntry.getContent();
+        return diskCache.computeIfAbsent(path, content, entry.getValue(), extension);
       }
     }
 
-    return content;
+    return new CacheEntry(System.currentTimeMillis(), content); // TEMP
   }
 }

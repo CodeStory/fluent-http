@@ -15,14 +15,12 @@
  */
 package net.codestory.http.compilers;
 
-import java.io.*;
-
 public class CacheEntry {
-  private final File file;
+  private final long lastModified;
   private final String content;
 
-  public CacheEntry(File file, String content) {
-    this.file = file;
+  public CacheEntry(long lastModified, String content) {
+    this.lastModified = lastModified;
     this.content = content;
   }
 
@@ -31,6 +29,6 @@ public class CacheEntry {
   }
 
   public long lastModified() {
-    return file.lastModified();
+    return lastModified;
   }
 }

@@ -37,11 +37,11 @@ public class Template {
     this.path = existing;
   }
 
-  public String render(Model model) {
+  public CacheEntry render(Model model) {
     return render(model.getKeyValues());
   }
 
-  String render(Map<String, Object> keyValues) {
+  CacheEntry render(Map<String, Object> keyValues) {
     try {
       YamlFrontMatter yamlFrontMatter = YamlFrontMatter.parse(path);
 
@@ -52,7 +52,7 @@ public class Template {
       String body = new HandlebarsCompiler().compile(content, allKeyValues);
       String layout = (String) variables.get("layout");
       if (layout != null) {
-        body = new Template("_layouts", layout).render(allKeyValues).replace("[[body]]", body);
+        body = new Template("_layouts", layout).render(allKeyValues).getContent().replace("[[body]]", body);
       }
 
       return Compilers.INSTANCE.compile(path, body);

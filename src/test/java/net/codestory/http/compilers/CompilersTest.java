@@ -25,14 +25,14 @@ import org.junit.*;
 public class CompilersTest {
   @Test
   public void compile_less_file() {
-    String css = Compilers.INSTANCE.compile(Paths.get("style.less"), "body { h1 { color: red; } }");
+    String css = Compilers.INSTANCE.compile(Paths.get("style.less"), "body { h1 { color: red; } }").getContent();
 
     assertThat(css).isEqualTo("body h1 {\n  color: red;\n}\n/*# sourceMappingURL=style.css.map */\n");
   }
 
   @Test
   public void do_not_compile_plain_file() {
-    String css = Compilers.INSTANCE.compile(Paths.get("plain.txt"), "Hello");
+    String css = Compilers.INSTANCE.compile(Paths.get("plain.txt"), "Hello").getContent();
 
     assertThat(css).isEqualTo("Hello");
   }
@@ -46,7 +46,7 @@ public class CompilersTest {
       }
     }, ".copycat");
 
-    String source = Compilers.INSTANCE.compile(Paths.get("file.copycat"), "Hello");
+    String source = Compilers.INSTANCE.compile(Paths.get("file.copycat"), "Hello").getContent();
 
     Assertions.assertThat(source).isEqualTo("HelloHello");
   }

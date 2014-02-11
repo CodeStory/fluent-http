@@ -360,9 +360,9 @@ public class Payload {
     Model model = modelAndView.model();
     model = model.merge(Model.of("cookies", cookieValues(context)));
 
-    String html = new Template(view).render(model);
+    CacheEntry html = new Template(view).render(model);
 
-    return forString(html);
+    return forString(html.getContent());
   }
 
   private static Map<String, String> cookieValues(Context context) {
@@ -383,7 +383,7 @@ public class Payload {
     }
 
     String content = Resources.read(path, UTF_8);
-    String compiled = Compilers.INSTANCE.compile(path, content);
-    return forString(compiled);
+    CacheEntry compiled = Compilers.INSTANCE.compile(path, content);
+    return forString(compiled.getContent());
   }
 }
