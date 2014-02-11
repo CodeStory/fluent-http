@@ -36,13 +36,12 @@ public class DiskCache {
 
     File file = new File(new File(root, extension.substring(1)), sha1);
     try {
-      String fromCache = readFromCache(file);
-      if (fromCache != null) {
-        return new CacheEntry(file.lastModified(), fromCache);
-      }
+      String compiled = readFromCache(file);
 
-      String compiled = compilerSupplier.get().compile(path, content);
-      writeToCache(file, compiled);
+      if (compiled == null) {
+        compiled = compilerSupplier.get().compile(path, content);
+        writeToCache(file, compiled);
+      }
 
       return new CacheEntry(file.lastModified(), compiled);
     } catch (IOException e) {

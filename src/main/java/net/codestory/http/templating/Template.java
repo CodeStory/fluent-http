@@ -56,7 +56,7 @@ public class Template {
       String body = new HandlebarsCompiler().compile(content, allKeyValues);
       String layout = (String) variables.get("layout");
       if (layout != null) {
-        body = new Template("_layouts", layout).render(allKeyValues).getContent().replace("[[body]]", body);
+        body = new Template("_layouts", layout).render(allKeyValues).content().replace("[[body]]", body);
       }
 
       return Compilers.INSTANCE.compile(path, body);

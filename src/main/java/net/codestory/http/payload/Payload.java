@@ -321,6 +321,9 @@ public class Payload {
     if (content instanceof String) {
       return forString((String) content);
     }
+    if (content instanceof CacheEntry) {
+      return forString(((CacheEntry) content).content());
+    }
     if (content instanceof InputStream) {
       return forInputStream((InputStream) content);
     }
@@ -336,14 +339,16 @@ public class Payload {
 
   private void addHeadersForContent(Response response) {
     if (content instanceof Path) {
-      addLastModifiedHeader(((Path) content).toFile(), response);
+      addLastModifiedHeader(((Path) content).toFile().lastModified(), response);
     } else if (content instanceof File) {
-      addLastModifiedHeader((File) content, response);
+      addLastModifiedHeader(((File) content).lastModified(), response);
+    } else if (content instanceof CacheEntry) {
+      addLastModifiedHeader(((CacheEntry) content).lastModified(), response);
     }
   }
 
-  private void addLastModifiedHeader(File file, Response response) {
-    response.setValue(LAST_MODIFIED, RFC_1123_DATE_TIME.format(ZonedDateTime.ofInstant(Instant.ofEpochMilli(file.lastModified()), ZoneOffset.systemDefault())));
+  private void addLastModifiedHeader(long lastModified, Response response) {
+    response.setValue(LAST_MODIFIED, RFC_1123_DATE_TIME.format(ZonedDateTime.ofInstant(Instant.ofEpochMilli(lastModified), ZoneOffset.systemDefault())));
   }
 
   private static byte[] forString(String value) {
@@ -362,7 +367,7 @@ public class Payload {
 
     CacheEntry html = new Template(view).render(model);
 
-    return forString(html.getContent());
+    return forString(html.content());
   }
 
   private static Map<String, String> cookieValues(Context context) {
@@ -384,6 +389,6 @@ public class Payload {
 
     String content = Resources.read(path, UTF_8);
     CacheEntry compiled = Compilers.INSTANCE.compile(path, content);
-    return forString(compiled.getContent());
+    return forString(compiled.content());
   }
 }

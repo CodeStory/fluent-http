@@ -45,7 +45,7 @@ public class HandlebarsCompiler {
     hb.with(new AbstractTemplateLoader() {
       @Override
       public TemplateSource sourceAt(String location) {
-        return new StringTemplateSource(location, new Template("_includes", location).render(variables).getContent());
+        return new StringTemplateSource(location, new Template("_includes", location).render(variables).content());
       }
     });
 
