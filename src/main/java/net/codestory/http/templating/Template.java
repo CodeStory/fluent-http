@@ -37,6 +37,10 @@ public class Template {
     this.path = existing;
   }
 
+  public CacheEntry render() {
+    return render(Collections.emptyMap());
+  }
+
   public CacheEntry render(Model model) {
     return render(model.getKeyValues());
   }

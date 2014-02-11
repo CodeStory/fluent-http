@@ -22,37 +22,37 @@ import org.junit.*;
 public class TemplateTest {
   @Test
   public void render() {
-    assertThat(new Template("0variable.txt").render(Model.of()).getContent()).isEqualTo("0 variables");
+    assertThat(new Template("0variable.txt").render().getContent()).isEqualTo("0 variables");
     assertThat(new Template("1variable.txt").render(Model.of("name", "Bob")).getContent()).isEqualTo("Hello Bob");
     assertThat(new Template("2variables.txt").render(Model.of("verb", "Hello", "name", "Bob")).getContent()).isEqualTo("Hello Bob");
   }
 
   @Test
   public void yaml_front_matter() {
-    assertThat(new Template("indexYaml.html").render(Model.of()).getContent()).contains("Hello Yaml");
+    assertThat(new Template("indexYaml.html").render().getContent()).contains("Hello Yaml");
   }
 
   @Test
   public void layout_decorator() {
-    assertThat(new Template("pageYaml.html").render(Model.of()).getContent()).contains("PREFIX_LAYOUT<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_LAYOUT");
-    assertThat(new Template("pageYamlWithMarkdownLayout.html").render(Model.of()).getContent()).contains("<em>TITLE</em>: PREFIX_MD<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_MD");
+    assertThat(new Template("pageYaml.html").render().getContent()).contains("PREFIX_LAYOUT<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_LAYOUT");
+    assertThat(new Template("pageYamlWithMarkdownLayout.html").render().getContent()).contains("<em>TITLE</em>: PREFIX_MD<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_MD");
   }
 
   @Test
   public void site_variables() {
-    assertThat(new Template("useSiteVariables.html").render(Model.of()).getContent()).contains("Hello, customer Bob wants to buy p1 for parkr");
+    assertThat(new Template("useSiteVariables.html").render().getContent()).contains("Hello, customer Bob wants to buy p1 for parkr");
   }
 
   @Test
   public void markdown_list() {
-    String html = new Template("list.md").render(Model.of()).getContent();
+    String html = new Template("list.md").render().getContent();
 
     assertThat(ignoreLineEndings(html)).contains("<ul><li><p>Doc</p></li><li><p>Grumpy</p></li><li><p>Happy</p></li></ul>");
   }
 
   @Test
   public void default_layout() {
-    String html = new Template("minimal.html").render(Model.of()).getContent();
+    String html = new Template("minimal.html").render().getContent();
 
     assertThat(ignoreLineEndings(html)).isEqualTo("" +
         "<!DOCTYPE html>" +
@@ -75,7 +75,7 @@ public class TemplateTest {
 
   @Test
   public void standard_head_fields() {
-    String html = new Template("full_header").render(Model.of()).getContent();
+    String html = new Template("full_header").render().getContent();
 
     assertThat(ignoreLineEndings(html)).isEqualTo("<!DOCTYPE html>" +
         "<html lang=\"FR\" ng-app=\"app\">" +
