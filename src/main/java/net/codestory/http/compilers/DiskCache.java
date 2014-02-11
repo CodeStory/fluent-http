@@ -56,8 +56,6 @@ public class DiskCache {
       writer.write(data);
     }
 
-    if (!tmpFile.renameTo(file)) {
-      throw new IllegalStateException("Unable to rename file: " + tmpFile + " to: " + file);
-    }
+    tmpFile.renameTo(file);
   }
 }
