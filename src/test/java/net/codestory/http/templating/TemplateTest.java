@@ -29,30 +29,30 @@ public class TemplateTest {
 
   @Test
   public void yaml_front_matter() {
-    assertThat(new Template("indexYaml.html").render().content()).contains("Hello Yaml");
+    assertThat(new Template("indexYaml.html").renderAsString()).contains("Hello Yaml");
   }
 
   @Test
   public void layout_decorator() {
-    assertThat(new Template("pageYaml.html").render().content()).contains("PREFIX_LAYOUT<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_LAYOUT");
-    assertThat(new Template("pageYamlWithMarkdownLayout.html").render().content()).contains("<em>TITLE</em>: PREFIX_MD<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_MD");
+    assertThat(new Template("pageYaml.html").renderAsString()).contains("PREFIX_LAYOUT<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_LAYOUT");
+    assertThat(new Template("pageYamlWithMarkdownLayout.html").renderAsString()).contains("<em>TITLE</em>: PREFIX_MD<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_MD");
   }
 
   @Test
   public void site_variables() {
-    assertThat(new Template("useSiteVariables.html").render().content()).contains("Hello, customer Bob wants to buy p1 for parkr");
+    assertThat(new Template("useSiteVariables.html").renderAsString()).contains("Hello, customer Bob wants to buy p1 for parkr");
   }
 
   @Test
   public void markdown_list() {
-    String html = new Template("list.md").render().content();
+    String html = new Template("list.md").renderAsString();
 
     assertThat(ignoreLineEndings(html)).contains("<ul><li><p>Doc</p></li><li><p>Grumpy</p></li><li><p>Happy</p></li></ul>");
   }
 
   @Test
   public void default_layout() {
-    String html = new Template("minimal.html").render().content();
+    String html = new Template("minimal.html").renderAsString();
 
     assertThat(ignoreLineEndings(html)).isEqualTo("" +
         "<!DOCTYPE html>" +
@@ -75,7 +75,7 @@ public class TemplateTest {
 
   @Test
   public void standard_head_fields() {
-    String html = new Template("full_header").render().content();
+    String html = new Template("full_header").renderAsString();
 
     assertThat(ignoreLineEndings(html)).isEqualTo("<!DOCTYPE html>" +
         "<html lang=\"FR\" ng-app=\"app\">" +

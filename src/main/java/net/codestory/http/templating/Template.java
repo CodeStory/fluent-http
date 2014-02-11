@@ -37,6 +37,14 @@ public class Template {
     this.path = existing;
   }
 
+  public String renderAsString() {
+    return render().content();
+  }
+
+  public String renderAsString(Model model) {
+    return render(model).content();
+  }
+
   public CacheEntry render() {
     return render(Collections.emptyMap());
   }
