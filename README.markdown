@@ -570,20 +570,19 @@ Synchro to Maven Central is done hourly.
  + Javadoc
  + PROD_MODE is not really convenient. It forces to have more complex prod script
  + Add some sort of http standard log
- + Cleanup Payload class. Make Payload immutable?
  + Cors support
  + monitoring
- + Optional Payload?
  + If-Modified-since activé par défaut
  + Laisser le Compiler Cache donner le last modified
  + Gere les last modified dans Payload
- + Auto reload meme sans les lambda avec capture de variables locales
  + Streaming
  + File upload
  + OPTIONS method
 
 # TODO Maybe
 
+ + Cleanup Payload class. Make Payload immutable?
+ + Auto reload meme sans les lambda avec capture de variables locales
  + Singletons qui utilise les annotations standards
  + Remplacer Simple par un Servlet Filter qui fonctionne par defaut sur un Jetty Http
  + Help use local storage

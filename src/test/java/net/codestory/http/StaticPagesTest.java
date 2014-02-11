@@ -15,6 +15,8 @@
  */
 package net.codestory.http;
 
+import java.util.*;
+
 import net.codestory.http.testhelpers.*;
 
 import org.junit.*;

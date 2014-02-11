@@ -21,6 +21,7 @@ import static org.mockito.Mockito.*;
 
 import java.io.*;
 import java.nio.file.*;
+import java.util.*;
 
 import net.codestory.http.internal.*;
 
@@ -78,6 +79,24 @@ public class PayloadTest {
 
     assertThat(payload.getData("/", context)).isEqualTo("Hello".getBytes(UTF_8));
     assertThat(payload.getContentType("/")).isEqualTo("text/plain");
+  }
+
+  @Test
+  public void support_present_optional() throws IOException {
+    Payload payload = new Payload("text/plain", Optional.of("TEXT"));
+
+    assertThat(payload.getData("/", context)).isEqualTo("TEXT".getBytes(UTF_8));
+    assertThat(payload.getContentType("/")).isEqualTo("text/plain");
+  }
+
+  @Test
+  public void support_absent_optional() throws IOException {
+    Payload payload = new Payload("text/plain", Optional.empty());
+    payload.writeTo(context);
+
+    verify(response).setStatus(Status.NOT_FOUND);
+    verify(response).setContentLength(0);
+    verifyNoMoreInteractions(response);
   }
 
   @Test

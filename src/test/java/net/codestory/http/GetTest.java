@@ -22,12 +22,11 @@ import java.util.*;
 
 import net.codestory.http.annotations.*;
 import net.codestory.http.payload.*;
-import net.codestory.http.routes.*;
 import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
 
-public class WebServerTest extends AbstractWebServerTest {
+public class GetTest extends AbstractWebServerTest {
   @Test
   public void content_types() {
     server.configure(routes -> routes.
@@ -35,13 +34,15 @@ public class WebServerTest extends AbstractWebServerTest {
         get("/text", new Payload("text/plain", "TEXT")).
         get("/html", new Payload("text/html", "<body>HTML</body>")).
         get("/raw", "RAW".getBytes(UTF_8)).
-        get("/json", new Person("NAME", 42)));
+        get("/json", new Person("NAME", 42)).
+        get("/optionalIndex", Optional.of("Index")));
 
     get("/index").produces("text/html", "Index");
     get("/text").produces("text/plain", "TEXT");
     get("/html").produces("text/html", "HTML");
     get("/raw").produces("application/octet-stream", "RAW");
     get("/json").produces("application/json", "{\"name\":\"NAME\",\"age\":42}");
+    get("/optionalIndex").produces("text/html", "Index");
   }
 
   @Test
@@ -79,89 +80,6 @@ public class WebServerTest extends AbstractWebServerTest {
     server.configure(routes -> routes.get("/", () -> new Payload("text/html", new ByteArrayInputStream("Hello".getBytes()))));
 
     get("/").produces("text/html", "Hello");
-  }
-
-  @Test
-  public void priority_to_route() {
-    server.configure(routes -> routes.get("/", "PRIORITY"));
-
-    get("/").produces("PRIORITY");
-  }
-
-  @Test
-  public void redirect() {
-    server.configure(routes -> routes.
-        get("/", Payload.seeOther("/login")).
-        get("/login", "LOGIN").
-        get("/dynamic/", "Dynamic"));
-
-    get("/").produces("LOGIN");
-    get("/section/").produces("text/plain", "Hello index");
-    get("/section").produces("text/plain", "Hello index");
-    get("/dynamic/").produces("text/html", "Dynamic");
-    get("/dynamic").produces("text/html", "Dynamic");
-  }
-
-  @Test
-  public void cookies() {
-    server.configure(routes -> routes.get("/set", () -> new Payload("").withCookie("id", "Bob")));
-
-    get("/set").producesCookie("id", "Bob");
-  }
-
-  @Test
-  public void first_route_serves_first() {
-    server.configure(routes -> routes.
-        get("/", "FIRST").
-        get("/", "SECOND"));
-
-    get("/").produces("FIRST");
-  }
-
-  @Test
-  public void catch_all() {
-    server.configure(routes -> routes.catchAll("HELLO"));
-
-    get("/any").produces("HELLO");
-    get("/random").produces("HELLO");
-  }
-
-  @Test
-  public void includes() {
-    server.configure(routes -> routes.
-        get("/", "MAIN").
-        include(moreRoutes -> moreRoutes.get("/more", "MORE")).
-        include(EvenMoreRoutes.class));
-
-    get("/").produces("MAIN");
-    get("/more").produces("MORE");
-    get("/evenMore").produces("EVEN_MORE");
-  }
-
-  @Test
-  public void multiple_routes_same_uri() {
-    server.configure(routes -> routes
-        .with("/").
-            get(() -> "Index GET").
-            post(() -> "Index POST")
-        .with("/action").
-            get(() -> "Action GET").
-            post(() -> "Action POST")
-    );
-
-    get("/").produces("Index GET");
-    post("/").produces("Index POST");
-    get("/action").produces("Action GET");
-    post("/action").produces("Action POST");
-  }
-
-  public static class EvenMoreRoutes implements Configuration {
-    private String response = "EVEN_MORE";
-
-    @Override
-    public void configure(Routes routes) {
-      routes.get("/evenMore", () -> response);
-    }
   }
 
   static class Person {

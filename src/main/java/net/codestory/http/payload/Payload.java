@@ -19,8 +19,9 @@ import static java.nio.charset.StandardCharsets.*;
 import static java.time.format.DateTimeFormatter.*;
 import static net.codestory.http.constants.Encodings.*;
 import static net.codestory.http.constants.Headers.*;
+import static net.codestory.http.constants.HttpStatus.NOT_FOUND;
 import static net.codestory.http.constants.Methods.*;
-import static org.simpleframework.http.Status.*;
+import static org.simpleframework.http.Status.NOT_MODIFIED;
 
 import java.io.*;
 import java.net.*;
@@ -64,16 +65,29 @@ public class Payload {
       Payload wrapped = (Payload) content;
       this.contentType = (null == contentType) ? wrapped.contentType : contentType;
       this.content = wrapped.content;
+      this.code = wrapped.code;
       this.headers = new LinkedHashMap<>(wrapped.headers);
       this.cookies = new ArrayList<>(wrapped.cookies);
-      this.code = wrapped.code;
+      return;
+    }
+
+    if (content instanceof Optional) {
+      Optional<?> optional = (Optional<?>) content;
+      if (optional.isPresent()) {
+        this.content = optional.get();
+        this.code = code;
+      } else {
+        this.content = null;
+        this.code = NOT_FOUND;
+      }
     } else {
-      this.contentType = contentType;
       this.content = content;
-      this.headers = new LinkedHashMap<>();
-      this.cookies = new ArrayList<>();
       this.code = code;
     }
+
+    this.contentType = contentType;
+    this.headers = new LinkedHashMap<>();
+    this.cookies = new ArrayList<>();
   }
 
   public Payload withHeader(String key, String value) {
@@ -190,7 +204,7 @@ public class Payload {
   }
 
   public static Payload notFound() {
-    return new Payload(HttpStatus.NOT_FOUND);
+    return new Payload(NOT_FOUND);
   }
 
   public static Payload methodNotAllowed() {
