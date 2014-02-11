@@ -69,7 +69,7 @@ new WebServer(routes -> routes.
 Routes can have path parameters:
 
 ```java
-routes.get("/hello/:who", (context, name) -> "Hello " + name);
+routes.get("/hello/:who", (context, name) -> "Hello " + name));
 routes.get("/add/:first/to/:second", (context, first, second) -> Integer.parseInt(first) + Integer.parseInt(second));
 ```
 
@@ -327,7 +327,7 @@ If we query `/hello`, the name will be replaced with an empty string since nowhe
 is to override the default route to `/hello` as is:
 
 ```java
-routes.get("/hello", Model.of("name", "Bob");
+routes.get("/hello", Model.of("name", "Bob"));
 ```
 
 Now, when the pages is rendered, `[[name]]` will be replaced server-side with `Bob`.
@@ -337,7 +337,7 @@ looked up in this order: `uri`, `uri.html`, `uri.md`, `uri.markdown`, `uri.txt` 
 it will *just work*, but the view can of course be overridden:
 
 ```java
-routes.get("/hello/:whom", (context, whom) -> ModelAndView.of("greeting", "name", whom);
+routes.get("/hello/:whom", (context, whom) -> ModelAndView.of("greeting", "name", whom));
 ```
 
 ## Return types
