@@ -34,7 +34,7 @@ public class BasicAuthFilter implements Filter {
     this.realm = realm;
     this.usersPerHash = new HashMap<>();
 
-    users.entrySet().forEach((entry) -> {
+    users.entrySet().forEach(entry -> {
       String user = entry.getKey();
       String password = entry.getValue();
       String hash = Base64.getEncoder().encodeToString((user + ":" + password).getBytes());

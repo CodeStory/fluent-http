@@ -48,7 +48,7 @@ public enum Compilers {
   }
 
   public String compile(Path path, String content) {
-    return cache.computeIfAbsent(path.toString() + ";" + content, (ignore) -> doCompile(path, content));
+    return cache.computeIfAbsent(path.toString() + ";" + content, ignore -> doCompile(path, content));
   }
 
   private String doCompile(Path path, String content) {
