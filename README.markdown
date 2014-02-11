@@ -571,7 +571,6 @@ Synchro to Maven Central is done hourly.
  + PROD_MODE is not really convenient. It forces to have more complex prod script
  + Add some sort of http standard log
  + Cors support
- + monitoring
  + If-Modified-since activé par défaut
  + Laisser le Compiler Cache donner le last modified
  + Gere les last modified dans Payload
@@ -581,6 +580,7 @@ Synchro to Maven Central is done hourly.
 
 # TODO Maybe
 
+ + monitoring
  + Cleanup Payload class. Make Payload immutable?
  + Auto reload meme sans les lambda avec capture de variables locales
  + Singletons qui utilise les annotations standards

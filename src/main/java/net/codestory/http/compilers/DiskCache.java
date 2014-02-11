@@ -1,0 +1,70 @@
+/**
+ * Copyright (C) 2013 all@code-story.net
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+package net.codestory.http.compilers;
+
+import static java.nio.charset.StandardCharsets.*;
+
+import java.io.*;
+import java.nio.file.*;
+
+import net.codestory.http.io.*;
+import net.codestory.http.misc.*;
+
+public class DiskCache {
+  private final static String VERSION = "V1";
+
+  String computeIfAbsent(Path path, String content, Compiler compiler, String extension) {
+    try {
+      String sha1 = Sha1.of(content);
+
+      File file = Paths.get(System.getProperty("user.home"), ".code-story", "cache", VERSION, extension.substring(1), sha1).toFile();
+      String fromCache = readFromCache(file);
+      if (fromCache != null) {
+        return fromCache;
+      }
+
+      String compiled = compiler.compile(path, content);
+      writeToCache(file, compiled);
+
+      return compiled;
+    } catch (IOException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
+  private static String readFromCache(File file) throws IOException {
+    if (!file.exists()) {
+      return null;
+    }
+
+    try (InputStream input = new FileInputStream(file)) {
+      return InputStreams.readString(input, UTF_8);
+    }
+  }
+
+  private static void writeToCache(File file, String data) throws IOException {
+    File parentFile = file.getParentFile();
+    if (!parentFile.exists() && !parentFile.mkdirs()) {
+      throw new IllegalStateException("Unable to create cache folder: " + parentFile);
+    }
+
+    File tmpFile = new File(file.getAbsolutePath() + ".tmp");
+    try (Writer writer = new FileWriter(file)) {
+      writer.write(data);
+    }
+    tmpFile.renameTo(file);
+  }
+}
