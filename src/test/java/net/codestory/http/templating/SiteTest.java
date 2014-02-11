@@ -22,7 +22,7 @@ import java.util.*;
 import org.junit.*;
 
 public class SiteTest {
-  Site site = Site.get();
+  private static Site site = Site.get();
 
   @Test
   public void pages() {
@@ -58,5 +58,18 @@ public class SiteTest {
     assertThat(data).hasSize(2);
     assertThat((List) data.get("members")).hasSize(3);
     assertThat((List) data.get("products")).hasSize(2);
+  }
+
+  @Test
+  public void get_as_bean() {
+    Config config = site.getAs("config", Config.class);
+
+    assertThat(config.greeting).isEqualTo("Hello");
+    assertThat(config.name).isEqualTo("Bob");
+  }
+
+  private static class Config {
+    public String greeting;
+    public String name;
   }
 }
