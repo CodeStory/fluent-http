@@ -455,7 +455,14 @@ TODO
 
 ## Json support
 
-TODO
+Json is supported as a first class citizen. Producing json is as easy as this:
+
+```java
+routes.get("/products", () -> Arrays.asList(new Product(...), new Product(...)));
+```
+
+This route serves the Products serialized as json using [Jackson](http://jackson.codehaus.org/).
+The content type will be `application/json;charset=UTF-8`.
 
 ## Cookies
 
