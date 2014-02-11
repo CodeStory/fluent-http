@@ -572,8 +572,6 @@ Synchro to Maven Central is done hourly.
  + Add some sort of http standard log
  + Cors support
  + If-Modified-since activé par défaut
- + Laisser le Compiler Cache donner le last modified
- + Gere les last modified dans Payload
  + Streaming
  + File upload
  + OPTIONS method
