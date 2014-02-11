@@ -486,4 +486,18 @@ public class FluentTest {
   public void get_only_element_of_empty_list() {
     Fluent.of().getOnlyElement();
   }
+
+  @Test
+  public void iterate_on_characters() {
+    Fluent<String> chars = Fluent.ofChars("ABCDE");
+
+    assertThat(chars.toList()).containsExactly("A", "B", "C", "D", "E");
+  }
+
+  @Test
+  public void iterate_on_zero_characters() {
+    Fluent<String> chars = Fluent.ofChars("");
+
+    assertThat(chars.toList()).isEmpty();
+  }
 }

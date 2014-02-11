@@ -65,6 +65,19 @@ public interface Fluent<T> extends Iterable<T> {
     return () -> stream;
   }
 
+  static Fluent<String> ofChars(String text) {
+    requireNonNull(text);
+
+    return of(Stream.generate(new Supplier<String>() {
+      int index = 0;
+
+      @Override
+      public String get() {
+        return text.substring(index, ++index);
+      }
+    })).limit(text.length());
+  }
+
   public default <R> Fluent<R> map(Function<? super T, ? extends R> transform) {
     requireNonNull(transform);
     return () -> stream().map(transform);
