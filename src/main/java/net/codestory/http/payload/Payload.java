@@ -233,7 +233,7 @@ public class Payload {
     long lastModified = getLastModified();
     if (lastModified >= 0) {
       String previousLastModified = stripQuotes(context.getHeader(IF_MODIFIED_SINCE));
-      if ((previousLastModified != null) && (lastModified <= Dates.parse_rfc_1123(previousLastModified))) {
+      if ((previousLastModified != null) && (lastModified < Dates.parse_rfc_1123(previousLastModified))) {
         response.setStatus(NOT_MODIFIED);
         return;
       }

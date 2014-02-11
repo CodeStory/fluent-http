@@ -46,9 +46,9 @@ public class CacheTest extends AbstractWebServerTest {
 
     get("/").produces(200, "text/html", "Hello").producesHeader("Last-Modified", to_rfc_1123(file.lastModified()));
     getWithHeader("/", "If-Modified-since", to_rfc_1123(file.lastModified() - 1000)).produces(200, "text/html", "Hello");
-    getWithHeader("/", "If-Modified-since", to_rfc_1123(file.lastModified())).produces(304);
-    getWithHeader("/", "If-Modified-since", "\"" + to_rfc_1123(file.lastModified()) + "\"").produces(304);
+    getWithHeader("/", "If-Modified-since", to_rfc_1123(file.lastModified())).produces(200); // Fast refresh
     getWithHeader("/", "If-Modified-since", to_rfc_1123(file.lastModified() + 1000)).produces(304);
+    getWithHeader("/", "If-Modified-since", "\"" + to_rfc_1123(file.lastModified() + 1000) + "\"").produces(304);
   }
 
   private File createFile(String hello) {
