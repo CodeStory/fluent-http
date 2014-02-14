@@ -87,6 +87,10 @@ public class WebServer {
     throw new IllegalStateException("Unable to start server");
   }
 
+  public WebServer start() {
+    return start(8080);
+  }
+
   public WebServer start(int port) {
     return startWithContext(port, null);
   }
