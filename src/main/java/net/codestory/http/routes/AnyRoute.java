@@ -15,9 +15,11 @@
  */
 package net.codestory.http.routes;
 
+import java.io.*;
+
 import net.codestory.http.internal.*;
 
 @FunctionalInterface
-interface AnyRoute {
+interface AnyRoute extends Serializable {
   Object body(Context context, String... pathParameters);
 }

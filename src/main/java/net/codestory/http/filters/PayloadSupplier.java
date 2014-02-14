@@ -20,7 +20,7 @@ import java.io.*;
 import net.codestory.http.payload.*;
 
 @FunctionalInterface
-public interface PayloadSupplier {
+public interface PayloadSupplier extends Serializable {
   Payload get() throws IOException;
 }
 

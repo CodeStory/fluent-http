@@ -15,9 +15,11 @@
  */
 package net.codestory.http;
 
+import java.io.*;
+
 import net.codestory.http.routes.*;
 
 @FunctionalInterface
-public interface Configuration {
+public interface Configuration extends Serializable {
   void configure(Routes routes);
 }

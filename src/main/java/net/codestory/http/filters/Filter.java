@@ -21,7 +21,7 @@ import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
 
 @FunctionalInterface
-public interface Filter {
+public interface Filter extends Serializable {
   Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws IOException;
 }
 
