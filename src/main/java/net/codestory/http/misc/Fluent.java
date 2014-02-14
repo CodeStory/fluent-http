@@ -287,7 +287,7 @@ public interface Fluent<T> extends Iterable<T> {
     for (T value : this) {
       K key = toKey.apply(value);
 
-      List<T> list = multiMap.computeIfAbsent(key, (k) -> new ArrayList<T>());
+      List<T> list = multiMap.computeIfAbsent(key, k -> new ArrayList<T>());
       list.add(value);
     }
 

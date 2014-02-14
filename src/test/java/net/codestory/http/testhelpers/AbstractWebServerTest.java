@@ -62,16 +62,16 @@ public abstract class AbstractWebServerTest {
   }
 
   protected RestAssert post(String path, String firstParameterName, Object firstParameterValue, Object... parameterNameValuePairs) {
-    return new RestAssert((given) -> given.parameters(firstParameterName, firstParameterValue, parameterNameValuePairs), request -> request.post(path));
+    return new RestAssert(given -> given.parameters(firstParameterName, firstParameterValue, parameterNameValuePairs), request -> request.post(path));
   }
 
   protected RestAssert post(String path, String body) {
-    return new RestAssert((given) -> given.body(body), request -> request.post(path));
+    return new RestAssert(given -> given.body(body), request -> request.post(path));
   }
 
   // DELETE
   protected RestAssert delete(String path) {
-    return new RestAssert((given) -> given, request -> request.delete(path));
+    return new RestAssert(given -> given, request -> request.delete(path));
   }
 
   public class RestAssert {

@@ -46,7 +46,7 @@ public class WebServer {
   private int port;
 
   public WebServer() {
-    this((routes) -> {
+    this(routes -> {
     });
   }
 
@@ -128,7 +128,7 @@ public class WebServer {
   }
 
   public void reset() {
-    configure((routes) -> {
+    configure(routes -> {
     });
   }
 
