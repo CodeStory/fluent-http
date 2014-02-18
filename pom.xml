@@ -112,6 +112,7 @@
         <version>2.4.2</version>
         <configuration>
           <releaseProfiles>release</releaseProfiles>
+          <pushChanges>false</pushChanges>
         </configuration>
       </plugin>
       <plugin>
