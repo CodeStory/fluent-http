@@ -36,7 +36,7 @@ Release versions are deployed on Maven Central:
 <dependency>
   <groupId>net.code-story</groupId>
   <artifactId>http</artifactId>
-  <version>1.30</version>
+  <version>1.31</version>
 </dependency>
 ```
 
