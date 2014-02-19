@@ -581,7 +581,8 @@ Synchro to Maven Central is done hourly.
  + Streaming
  + File upload
  + OPTIONS method
- + Support Etag set by user. Make it possible to not compute the data at all.
+ + Support Etag set by user. Make it possible to not compute the data at all
+ + Can we convert WebJarsRoute to a Filter?
 
 # TODO Maybe
 
