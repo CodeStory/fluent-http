@@ -19,7 +19,6 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.nio.file.*;
 
-import org.assertj.core.api.*;
 import org.junit.*;
 
 public class CompilersTest {
