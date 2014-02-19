@@ -67,9 +67,9 @@ public class WebServer {
   }
 
   public WebServer configure(Configuration configuration) {
-    routesProvider = devMode()
-        ? RoutesProvider.reloading(configuration)
-        : RoutesProvider.fixed(configuration);
+    routesProvider = Env.INSTANCE.prodMode()
+        ? RoutesProvider.fixed(configuration)
+        : RoutesProvider.reloading(configuration);
     return this;
   }
 
@@ -187,11 +187,7 @@ public class WebServer {
   }
 
   protected Payload errorPage(Payload payload, Exception e) {
-    Exception shownError = devMode() ? e : null;
+    Exception shownError = Env.INSTANCE.prodMode() ? null : e;
     return new ErrorPage(payload, shownError).payload();
-  }
-
-  protected boolean devMode() {
-    return Env.INSTANCE.devMode();
   }
 }

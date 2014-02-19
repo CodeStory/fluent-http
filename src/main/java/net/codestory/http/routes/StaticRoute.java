@@ -31,10 +31,10 @@ class StaticRoute implements Route {
   @Override
   public boolean matchUri(String uri) {
     Path result;
-    if (Env.INSTANCE.devMode()) {
-      result = findPath(uri);
-    } else {
+    if (Env.INSTANCE.prodMode()) {
       result = pathForUri.computeIfAbsent(uri, StaticRoute::findPath);
+    } else {
+      result = findPath(uri);
     }
     return result != NOT_FOUND;
   }
@@ -47,10 +47,10 @@ class StaticRoute implements Route {
   @Override
   public Object body(Context context) {
     String uri = context.uri();
-    if (Env.INSTANCE.devMode()) {
-      return findPath(uri);
+    if (Env.INSTANCE.prodMode()) {
+      return pathForUri.computeIfAbsent(uri, StaticRoute::findPath);
     }
-    return pathForUri.computeIfAbsent(uri, StaticRoute::findPath);
+    return findPath(uri);
   }
 
   private static Path findPath(String uri) {

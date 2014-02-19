@@ -302,7 +302,7 @@ public class RouteCollection implements Routes {
 
   // TEMP
   public void addStaticRoutes() {
-    routes.add(new WebJarsRoute(!Env.INSTANCE.devMode()));
+    routes.add(new WebJarsRoute(Env.INSTANCE.prodMode()));
     routes.add(new StaticRoute());
     routes.add(new SourceMapRoute());
   }

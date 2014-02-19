@@ -33,8 +33,8 @@ public enum Env {
     disableFilesystem = getBoolean(DISABLE_FILESYSTEM, false);
   }
 
-  public boolean devMode() {
-    return !prodMode;
+  public boolean prodMode() {
+    return prodMode;
   }
 
   public int overriddenPort(int port) {
