@@ -16,7 +16,7 @@
 package net.codestory.http.reload;
 
 import static java.nio.file.Files.*;
-import static net.codestory.http.io.FileVisitors.*;
+import static net.codestory.http.io.FileVisitor.*;
 
 import java.io.*;
 import java.nio.file.*;

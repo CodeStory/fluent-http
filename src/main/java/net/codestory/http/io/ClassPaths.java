@@ -17,7 +17,7 @@ package net.codestory.http.io;
 
 import static java.nio.charset.StandardCharsets.*;
 import static java.nio.file.Files.*;
-import static net.codestory.http.io.FileVisitors.*;
+import static net.codestory.http.io.FileVisitor.*;
 import static net.codestory.http.io.Resources.*;
 
 import java.io.*;

@@ -21,28 +21,26 @@ import java.io.*;
 import java.nio.file.*;
 import java.nio.file.attribute.*;
 
-public interface FileVisitors {
-  static SimpleFileVisitor<Path> onFile(FileAction action) {
+public interface FileVisitor {
+  void accept(Path path) throws IOException;
+
+  static SimpleFileVisitor<Path> onFile(FileVisitor visitor) {
     return new SimpleFileVisitor<Path>() {
       @Override
       public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-        action.accept(file);
+        visitor.accept(file);
         return CONTINUE;
       }
     };
   }
 
-  static SimpleFileVisitor<Path> onDirectory(FileAction action) {
+  static SimpleFileVisitor<Path> onDirectory(FileVisitor visitor) {
     return new SimpleFileVisitor<Path>() {
       @Override
       public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attr) throws IOException {
-        action.accept(dir);
+        visitor.accept(dir);
         return CONTINUE;
       }
     };
-  }
-
-  interface FileAction {
-    void accept(Path path) throws IOException;
   }
 }
