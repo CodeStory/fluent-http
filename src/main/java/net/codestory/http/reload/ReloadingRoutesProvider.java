@@ -35,18 +35,24 @@ class ReloadingRoutesProvider implements RoutesProvider {
 
   private final Configuration configuration;
   private final AtomicBoolean dirty;
+
+  private boolean watcherIsStarted;
   private RouteCollection routes;
 
   ReloadingRoutesProvider(Configuration configuration) {
     this.configuration = configuration;
     this.dirty = new AtomicBoolean(true);
-    startClassChangeWatcher(Paths.get(Resources.CLASSES_OUTPUT_DIR));
   }
 
   @Override
   public synchronized RouteCollection get() {
     if (dirty.get()) {
       LOG.info("Reloading configuration...");
+
+      if (!watcherIsStarted) {
+        startClassChangeWatcher(Paths.get(Resources.CLASSES_OUTPUT_DIR));
+        watcherIsStarted = true;
+      }
 
       routes = new RouteCollection();
       configuration.configure(routes);
