@@ -18,25 +18,28 @@ package net.codestory.http.routes;
 import static net.codestory.http.constants.Methods.*;
 
 import java.nio.file.*;
-import java.util.concurrent.*;
+import java.util.function.*;
 
 import net.codestory.http.internal.*;
 import net.codestory.http.io.*;
 import net.codestory.http.misc.*;
 
 class StaticRoute implements Route {
-  private final ConcurrentMap<String, Path> pathForUri = new ConcurrentHashMap<>(10);
   private static final Path NOT_FOUND = Paths.get("");
+
+  private final Function<String, Path> findPath;
+
+  StaticRoute(boolean cached) {
+    if (cached) {
+      this.findPath = new Cache<>(StaticRoute::findPath);
+    } else {
+      this.findPath = StaticRoute::findPath;
+    }
+  }
 
   @Override
   public boolean matchUri(String uri) {
-    Path result;
-    if (Env.INSTANCE.prodMode()) {
-      result = pathForUri.computeIfAbsent(uri, StaticRoute::findPath);
-    } else {
-      result = findPath(uri);
-    }
-    return result != NOT_FOUND;
+    return findPath.apply(uri) != NOT_FOUND;
   }
 
   @Override
@@ -46,11 +49,7 @@ class StaticRoute implements Route {
 
   @Override
   public Object body(Context context) {
-    String uri = context.uri();
-    if (Env.INSTANCE.prodMode()) {
-      return pathForUri.computeIfAbsent(uri, StaticRoute::findPath);
-    }
-    return findPath(uri);
+    return findPath.apply(context.uri());
   }
 
   private static Path findPath(String uri) {
