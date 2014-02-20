@@ -100,10 +100,26 @@ public class AnnotationsTest extends AbstractWebServerTest {
   }
 
   @Test
-  public void class_with_prefix() {
+  public void add_with_prefix() {
     server.configure(routes -> routes.add("/say", TestResource.class));
 
     get("/say/hello").produces("Hello");
+  }
+
+  @Test
+  public void resource_with_prefix() {
+    server.configure(routes -> routes.add(ResourceWithPrefix.class));
+
+    get("/prefix/route1").produces("Route 1");
+    get("/prefix/route2").produces("Route 2");
+  }
+
+  @Test
+  public void add_prefixed_resource_with_prefix() {
+    server.configure(routes -> routes.add("/test", ResourceWithPrefix.class));
+
+    get("/test/prefix/route1").produces("Route 1");
+    get("/test/prefix/route2").produces("Route 2");
   }
 
   @Test
@@ -129,6 +145,19 @@ public class AnnotationsTest extends AbstractWebServerTest {
     @Get("/hello")
     public String hello() {
       return "Hello";
+    }
+  }
+
+  @Prefix("/prefix")
+  public static class ResourceWithPrefix {
+    @Get("/route1")
+    public String route1() {
+      return "Route 1";
+    }
+
+    @Get("/route2")
+    public String route2() {
+      return "Route 2";
     }
   }
 }

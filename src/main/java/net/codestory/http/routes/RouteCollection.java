@@ -101,11 +101,16 @@ public class RouteCollection implements Routes {
       type = type.getSuperclass();
     }
 
+    Prefix prefixAnnotation = type.getAnnotation(Prefix.class);
+    String classPrefix = (prefixAnnotation != null) ? prefixAnnotation.value() : "";
+
+    String prefix = urlPrefix + classPrefix;
+
     for (Method method : type.getMethods()) {
-      stream(method.getAnnotationsByType(Get.class)).forEach(get -> addResource(GET, method, resource, urlPrefix + get.value()));
-      stream(method.getAnnotationsByType(Post.class)).forEach(post -> addResource(POST, method, resource, urlPrefix + post.value()));
-      stream(method.getAnnotationsByType(Put.class)).forEach(put -> addResource(PUT, method, resource, urlPrefix + put.value()));
-      stream(method.getAnnotationsByType(Delete.class)).forEach(delete -> addResource(DELETE, method, resource, urlPrefix + delete.value()));
+      stream(method.getAnnotationsByType(Get.class)).forEach(get -> addResource(GET, method, resource, prefix + get.value()));
+      stream(method.getAnnotationsByType(Post.class)).forEach(post -> addResource(POST, method, resource, prefix + post.value()));
+      stream(method.getAnnotationsByType(Put.class)).forEach(put -> addResource(PUT, method, resource, prefix + put.value()));
+      stream(method.getAnnotationsByType(Delete.class)).forEach(delete -> addResource(DELETE, method, resource, prefix + delete.value()));
     }
   }
 
