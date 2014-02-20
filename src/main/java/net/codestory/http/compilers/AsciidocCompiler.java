@@ -19,7 +19,10 @@ import java.io.*;
 import java.nio.file.*;
 
 class AsciidocCompiler implements Compiler {
-  private final NashornCompiler nashornCompiler = new NashornCompiler("asciidoc/opal.js", "asciidoc/asciidoctor.js", "asciidoc/render.js");
+  private final NashornCompiler nashornCompiler = new NashornCompiler(
+      "asciidoc/opal.js",
+      "asciidoc/asciidoctor.js",
+      "asciidoc/render.js");
 
   @Override
   public String compile(Path path, String source) throws IOException {
