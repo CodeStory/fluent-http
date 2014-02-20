@@ -1,1 +1,1 @@
-CoffeeScript.compile(coffeeScriptSource, {bare: true});
+CoffeeScript.compile(__source, {bare: true});

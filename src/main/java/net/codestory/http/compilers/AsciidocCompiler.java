@@ -15,28 +15,8 @@
  */
 package net.codestory.http.compilers;
 
-import java.io.*;
-import java.nio.file.*;
-
-import javax.script.*;
-
 class AsciidocCompiler extends AbstractNashornCompiler implements Compiler {
   public AsciidocCompiler() {
     super("asciidoc/opal.js", "asciidoc/asciidoctor.js", "asciidoc/render.js");
-  }
-
-  @Override
-  protected void setBindings(Bindings bindings, String source) {
-    bindings.put("asciidocSource", source);
-  }
-
-  @Override
-  protected String decorateScript(String source) {
-    return source;
-  }
-
-  @Override
-  public String compile(Path path, String source) throws IOException {
-    return compile(source);
   }
 }

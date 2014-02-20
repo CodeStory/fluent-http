@@ -19,6 +19,7 @@ import static java.nio.charset.StandardCharsets.*;
 import static javax.script.ScriptContext.*;
 
 import java.io.*;
+import java.nio.file.*;
 
 import net.codestory.http.io.*;
 
@@ -33,7 +34,7 @@ abstract class AbstractNashornCompiler {
 
     ScriptEngine nashorn = new ScriptEngineManager().getEngineByName("nashorn");
     try {
-      compiledScript = ((Compilable) nashorn).compile(decorateScript(script));
+      compiledScript = ((Compilable) nashorn).compile(script);
       bindings = nashorn.getBindings(ENGINE_SCOPE);
     } catch (ScriptException e) {
       throw new IllegalStateException("Unable to compile javascript", e);
@@ -56,12 +57,8 @@ abstract class AbstractNashornCompiler {
     return concatenatedScript.toString();
   }
 
-  protected abstract void setBindings(Bindings bindings, String source);
-
-  protected abstract String decorateScript(String source);
-
-  public synchronized String compile(String source) throws IOException {
-    setBindings(bindings, source);
+  public synchronized String compile(Path path, String source) throws IOException {
+    bindings.put("__source", source);
 
     try {
       return compiledScript.eval(bindings).toString();

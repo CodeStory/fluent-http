@@ -15,28 +15,8 @@
  */
 package net.codestory.http.compilers;
 
-import java.io.*;
-import java.nio.file.*;
-
-import javax.script.*;
-
 class CoffeeCompiler extends AbstractNashornCompiler implements Compiler {
   public CoffeeCompiler() {
     super("META-INF/resources/webjars/coffee-script/1.7.0/coffee-script.min.js", "coffee-script/compile.js");
-  }
-
-  @Override
-  protected void setBindings(Bindings bindings, String source) {
-    bindings.put("coffeeScriptSource", source);
-  }
-
-  @Override
-  protected String decorateScript(String source) {
-    return source;
-  }
-
-  @Override
-  public String compile(Path path, String source) throws IOException {
-    return compile(source);
   }
 }

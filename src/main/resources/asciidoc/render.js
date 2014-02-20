@@ -1,1 +1,1 @@
-Opal.Asciidoctor.$render(asciidocSource);
+Opal.Asciidoctor.$render(__source);
