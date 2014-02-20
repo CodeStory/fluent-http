@@ -10,8 +10,7 @@ This is the simplest fastest full fledged http server we could come up with.
 
 # Environment
 
-- `java-1.8`
-- `maven-3.1.1`
+- `java-1.8`, `maven-3.1.1`
 
 # Build
 
