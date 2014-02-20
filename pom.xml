@@ -71,7 +71,6 @@
   <build>
     <pluginManagement>
       <plugins>
-
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
           <version>2.5</version>
@@ -103,6 +102,32 @@
         <plugin>
           <artifactId>maven-source-plugin</artifactId>
           <version>2.2.1</version>
+        </plugin>
+        <plugin>
+          <!-- this plugin is used to list the licenses of all the dependencies :
+          mvn org.codehaus.mojo:license-maven-plugin:aggregate-add-third-party
+          -->
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>license-maven-plugin</artifactId>
+          <version>1.0-beta-3</version>
+          <configuration>
+            <groupByLicense>true</groupByLicense>
+            <excludedScopes>test</excludedScopes>
+            <excludedGroups>${project.groupId}</excludedGroups>
+            <licenseMerges>
+              <licenseMerge>The Apache Software License, Version 2.0|The Apache License, Version 2.0|Apache 2|Apache
+                2.0|Apache License 2.0|Apache
+                License|Apache License Version 2.0|Apache License, Version 2.0|ASF 2.0|Apache License|apache2|APLv2.0
+              </licenseMerge>
+              <licenseMerge>GNU Lesser General Public License, Version 2.1|GNU Lesser General Public License (LGPL),
+                Version 2.1|GNU Lesser General Public License, Version 2.1|Lesser Gnu Public License (LGPL), Version
+                2.1|LGPL, version 2.1|GNU Lesser General Public License (LGPL), Version 2.1
+              </licenseMerge>
+              <licenseMerge>The BSD License|BSD|BSD License</licenseMerge>
+              <licenseMerge>Eclipse Public License, Version 1.0|Eclipse Public License (EPL)</licenseMerge>
+              <licenseMerge>The MIT License|MIT License</licenseMerge>
+            </licenseMerges>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
