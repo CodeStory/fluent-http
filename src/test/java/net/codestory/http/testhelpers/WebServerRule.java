@@ -21,18 +21,17 @@ import org.junit.rules.*;
 
 public class WebServerRule extends ExternalResource {
   private final String previousProdMode = System.getProperty("PROD_MODE");
-  private final WebServer server = new WebServer();
+
+  private static WebServer server;
 
   @Override
   protected void before() {
     System.setProperty("PROD_MODE", "true");
-
-    server.startOnRandomPort();
   }
 
   @Override
   protected void after() {
-    server.reset();
+    server().reset();
 
     if (previousProdMode == null) {
       System.clearProperty("PROD_MODE");
@@ -42,10 +41,18 @@ public class WebServerRule extends ExternalResource {
   }
 
   public WebServer configure(Configuration configuration) {
-    return server.configure(configuration);
+    return server().configure(configuration);
   }
 
   public int port() {
-    return server.port();
+    return server().port();
+  }
+
+  private static WebServer server() {
+    if (server == null) {
+      server = new WebServer();
+      server.startOnRandomPort();
+    }
+    return server;
   }
 }
