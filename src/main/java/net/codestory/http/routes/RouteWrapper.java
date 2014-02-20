@@ -15,6 +15,8 @@
  */
 package net.codestory.http.routes;
 
+import static net.codestory.http.constants.Methods.*;
+
 import net.codestory.http.internal.*;
 
 class RouteWrapper implements Route {
@@ -35,7 +37,7 @@ class RouteWrapper implements Route {
 
   @Override
   public boolean matchMethod(String method) {
-    return this.method.equalsIgnoreCase(method);
+    return this.method.equalsIgnoreCase(method) || (HEAD.equalsIgnoreCase(method) && this.method.equalsIgnoreCase(GET));
   }
 
   @Override

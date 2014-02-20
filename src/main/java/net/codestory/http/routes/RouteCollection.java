@@ -111,6 +111,7 @@ public class RouteCollection implements Routes {
       stream(method.getAnnotationsByType(Post.class)).forEach(post -> addResource(POST, method, resource, prefix + post.value()));
       stream(method.getAnnotationsByType(Put.class)).forEach(put -> addResource(PUT, method, resource, prefix + put.value()));
       stream(method.getAnnotationsByType(Delete.class)).forEach(delete -> addResource(DELETE, method, resource, prefix + delete.value()));
+      stream(method.getAnnotationsByType(Head.class)).forEach(delete -> addResource(HEAD, method, resource, prefix + delete.value()));
     }
   }
 
@@ -166,6 +167,48 @@ public class RouteCollection implements Routes {
   @Override
   public RouteCollection get(String uriPattern, FourParamsRoute route) {
     add(GET, checkParametersCount(uriPattern, 4), route);
+    return this;
+  }
+
+  @Override
+  public RouteCollection head(String uriPattern, Object payload) {
+    head(uriPattern, () -> payload);
+    return this;
+  }
+
+  @Override
+  public RouteCollection head(String uriPattern, NoParamRoute route) {
+    add(HEAD, checkParametersCount(uriPattern, 0), route);
+    return this;
+  }
+
+  @Override
+  public RouteCollection head(String uriPattern, NoParamRouteWithContext route) {
+    add(HEAD, checkParametersCount(uriPattern, 0), route);
+    return this;
+  }
+
+  @Override
+  public RouteCollection head(String uriPattern, OneParamRoute route) {
+    add(HEAD, checkParametersCount(uriPattern, 1), route);
+    return this;
+  }
+
+  @Override
+  public RouteCollection head(String uriPattern, TwoParamsRoute route) {
+    add(HEAD, checkParametersCount(uriPattern, 2), route);
+    return this;
+  }
+
+  @Override
+  public RouteCollection head(String uriPattern, ThreeParamsRoute route) {
+    add(HEAD, checkParametersCount(uriPattern, 3), route);
+    return this;
+  }
+
+  @Override
+  public RouteCollection head(String uriPattern, FourParamsRoute route) {
+    add(HEAD, checkParametersCount(uriPattern, 4), route);
     return this;
   }
 

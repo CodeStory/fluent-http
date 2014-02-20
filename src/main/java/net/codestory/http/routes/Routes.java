@@ -52,6 +52,20 @@ public interface Routes {
 
   Routes get(String uriPattern, FourParamsRoute route);
 
+  Routes head(String uriPattern, Object payload);
+
+  Routes head(String uriPattern, NoParamRoute route);
+
+  Routes head(String uriPattern, NoParamRouteWithContext route);
+
+  Routes head(String uriPattern, OneParamRoute route);
+
+  Routes head(String uriPattern, TwoParamsRoute route);
+
+  Routes head(String uriPattern, ThreeParamsRoute route);
+
+  Routes head(String uriPattern, FourParamsRoute route);
+
   Routes post(String uriPattern, NoParamRoute route);
 
   Routes post(String uriPattern, NoParamRouteWithContext route);

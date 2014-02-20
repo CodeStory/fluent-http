@@ -15,15 +15,43 @@
  */
 package net.codestory.http;
 
+import net.codestory.http.annotations.*;
 import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
 
 public class HeadTest extends AbstractWebServerTest {
   @Test
-  public void head() {
+  public void implicit_head() {
     server.configure(routes -> routes.get("/", "Hello"));
 
-    head("/").produces(200);
+    head("/").produces(200, "", "");
+  }
+
+  @Test
+  public void explicit_head() {
+    server.configure(routes -> routes.head("/", "Hello"));
+
+    head("/").produces(200, "", "");
+  }
+
+  @Test
+  public void implicit_head_resource() {
+    server.configure(routes -> routes.add(Resource.class));
+
+    head("/implicit").produces(200, "", "");
+    head("/explicit").produces(200, "", "");
+  }
+
+  public static class Resource {
+    @Get("/implicit")
+    public String implicit() {
+      return "Hello";
+    }
+
+    @Head("/explicit")
+    public String explicit() {
+      return "Hello";
+    }
   }
 }

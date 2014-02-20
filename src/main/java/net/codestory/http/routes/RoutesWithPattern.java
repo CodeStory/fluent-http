@@ -59,6 +59,41 @@ public class RoutesWithPattern {
     return this;
   }
 
+  public RoutesWithPattern head(Object payload) {
+    routes.head(currentUriPattern, payload);
+    return this;
+  }
+
+  public RoutesWithPattern head(NoParamRoute route) {
+    routes.head(currentUriPattern, route);
+    return this;
+  }
+
+  public RoutesWithPattern head(NoParamRouteWithContext route) {
+    routes.head(currentUriPattern, route);
+    return this;
+  }
+
+  public RoutesWithPattern head(OneParamRoute route) {
+    routes.head(currentUriPattern, route);
+    return this;
+  }
+
+  public RoutesWithPattern head(TwoParamsRoute route) {
+    routes.head(currentUriPattern, route);
+    return this;
+  }
+
+  public RoutesWithPattern head(ThreeParamsRoute route) {
+    routes.head(currentUriPattern, route);
+    return this;
+  }
+
+  public RoutesWithPattern head(FourParamsRoute route) {
+    routes.head(currentUriPattern, route);
+    return this;
+  }
+
   public RoutesWithPattern post(NoParamRoute route) {
     routes.post(currentUriPattern, route);
     return this;
