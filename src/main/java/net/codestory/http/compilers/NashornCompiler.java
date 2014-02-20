@@ -19,17 +19,16 @@ import static java.nio.charset.StandardCharsets.*;
 import static javax.script.ScriptContext.*;
 
 import java.io.*;
-import java.nio.file.*;
 
 import net.codestory.http.io.*;
 
 import javax.script.*;
 
-abstract class AbstractNashornCompiler {
+final class NashornCompiler {
   private final CompiledScript compiledScript;
   private final Bindings bindings;
 
-  protected AbstractNashornCompiler(String... scriptPaths) {
+  NashornCompiler(String... scriptPaths) {
     String script = readScripts(scriptPaths);
 
     ScriptEngine nashorn = new ScriptEngineManager().getEngineByName("nashorn");
@@ -57,7 +56,7 @@ abstract class AbstractNashornCompiler {
     return concatenatedScript.toString();
   }
 
-  public synchronized String compile(Path path, String source) throws IOException {
+  public synchronized String compile(String source) throws IOException {
     bindings.put("__source", source);
 
     try {

@@ -15,8 +15,14 @@
  */
 package net.codestory.http.compilers;
 
-class AsciidocCompiler extends AbstractNashornCompiler implements Compiler {
-  public AsciidocCompiler() {
-    super("asciidoc/opal.js", "asciidoc/asciidoctor.js", "asciidoc/render.js");
+import java.io.*;
+import java.nio.file.*;
+
+class AsciidocCompiler implements Compiler {
+  private final NashornCompiler nashornCompiler = new NashornCompiler("asciidoc/opal.js", "asciidoc/asciidoctor.js", "asciidoc/render.js");
+
+  @Override
+  public String compile(Path path, String source) throws IOException {
+    return nashornCompiler.compile(source);
   }
 }
