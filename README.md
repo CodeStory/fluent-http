@@ -6,16 +6,15 @@ This is the simplest fastest full fledged http server we could come up with.
 
 [![Build Status](https://api.travis-ci.org/CodeStory/code-story-http.png)](https://api.travis-ci.org/CodeStory/code-story-http.png)
 
-# Build instructions
+# Environment
 
-Prerequisites
-- Java 1.8
-- Apache Maven 3
+- `java-1.8`
+- `maven-3.1.1`
 
-Build the project
+# Build
 
 ```bash
-mvn verify
+mvn clean verify
 ```
 
 ## Generate missing licenses
