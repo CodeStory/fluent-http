@@ -581,6 +581,7 @@ Synchro to Maven Central is done hourly.
  + OPTIONS method
  + Support Etag set by user. Make it possible to not compute the data at all
  + Can we convert WebJarsRoute to a Filter?
+ + Support @MatrixParam, @QueryParam, @CookieParam ?
 
 # TODO Maybe
 
