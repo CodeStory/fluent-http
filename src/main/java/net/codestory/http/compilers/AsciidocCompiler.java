@@ -22,7 +22,7 @@ import javax.script.*;
 
 class AsciidocCompiler extends AbstractNashornCompiler implements Compiler {
   public AsciidocCompiler() {
-    super("asciidoc/opal_asciidoctor.js");
+    super("asciidoc/opal.js", "asciidoc/asciidoctor.js", "asciidoc/render.js");
   }
 
   @Override

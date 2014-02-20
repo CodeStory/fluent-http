@@ -28,16 +28,32 @@ abstract class AbstractNashornCompiler {
   private final CompiledScript compiledScript;
   private final Bindings bindings;
 
-  protected AbstractNashornCompiler(String scriptPath) {
-    ScriptEngine nashorn = new ScriptEngineManager().getEngineByName("nashorn");
+  protected AbstractNashornCompiler(String... scriptPaths) {
+    String script = readScripts(scriptPaths);
 
-    try (InputStream input = ClassLoader.getSystemResourceAsStream(scriptPath)) {
-      String script = InputStreams.readString(input, UTF_8);
+    ScriptEngine nashorn = new ScriptEngineManager().getEngineByName("nashorn");
+    try {
       compiledScript = ((Compilable) nashorn).compile(decorateScript(script));
       bindings = nashorn.getBindings(ENGINE_SCOPE);
-    } catch (IOException | ScriptException e) {
-      throw new IllegalStateException(e);
+    } catch (ScriptException e) {
+      throw new IllegalStateException("Unable to compile javascript", e);
     }
+  }
+
+  private String readScripts(String... scriptPaths) {
+    StringBuilder concatenatedScript = new StringBuilder();
+
+    for (String scriptPath : scriptPaths) {
+      try (InputStream input = ClassLoader.getSystemResourceAsStream(scriptPath)) {
+        String content = InputStreams.readString(input, UTF_8);
+
+        concatenatedScript.append(content).append("\n");
+      } catch (IOException e) {
+        throw new IllegalStateException("Unable to read script " + scriptPath, e);
+      }
+    }
+
+    return concatenatedScript.toString();
   }
 
   protected abstract void setBindings(Bindings bindings, String source);
