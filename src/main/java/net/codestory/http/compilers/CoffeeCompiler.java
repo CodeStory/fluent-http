@@ -22,7 +22,7 @@ import javax.script.*;
 
 class CoffeeCompiler extends AbstractNashornCompiler implements Compiler {
   public CoffeeCompiler() {
-    super("META-INF/resources/webjars/coffee-script/1.7.0/coffee-script.min.js");
+    super("META-INF/resources/webjars/coffee-script/1.7.0/coffee-script.min.js", "coffee-script/compile.js");
   }
 
   @Override
@@ -32,7 +32,7 @@ class CoffeeCompiler extends AbstractNashornCompiler implements Compiler {
 
   @Override
   protected String decorateScript(String source) {
-    return source + "\nCoffeeScript.compile(coffeeScriptSource, {bare: true});\n";
+    return source;
   }
 
   @Override
