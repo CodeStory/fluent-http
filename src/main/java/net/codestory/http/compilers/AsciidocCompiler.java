@@ -32,7 +32,7 @@ class AsciidocCompiler extends AbstractNashornCompiler implements Compiler {
 
   @Override
   protected String decorateScript(String source) {
-    return source + source;
+    return source;
   }
 
   @Override
