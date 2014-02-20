@@ -6,8 +6,6 @@ This is the simplest fastest full fledged http server we could come up with.
 
 [![Build Status](https://api.travis-ci.org/CodeStory/code-story-http.png)](https://api.travis-ci.org/CodeStory/code-story-http.png)
 
-[![Build Status](https://buildhive.cloudbees.com/job/CodeStory/job/code-story-http/badge/icon)](https://buildhive.cloudbees.com/job/CodeStory/job/code-story-http/)
-
 # Environment
 
 - `java-1.8`, `maven-3.1.1`
