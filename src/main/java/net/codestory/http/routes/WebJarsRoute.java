@@ -49,11 +49,9 @@ class WebJarsRoute implements Route {
   @Override
   public Object body(Context context) throws IOException {
     String uri = context.uri();
-    if (context.getHeader(IF_MODIFIED_SINCE) != null) {
-      return Payload.notModified();
-    }
 
-    URL classpathUrl = getResource(uri);
+    URL classpathUrl = findUrl(uri);
+
     try (InputStream stream = classpathUrl.openStream()) {
       String contentType = ContentTypes.get(Paths.get(uri));
       byte[] data = InputStreams.readBytes(stream);
