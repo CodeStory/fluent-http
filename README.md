@@ -34,7 +34,7 @@ Release versions are deployed on Maven Central:
 <dependency>
   <groupId>net.code-story</groupId>
   <artifactId>http</artifactId>
-  <version>1.31</version>
+  <version>1.33</version>
 </dependency>
 ```
 
@@ -47,7 +47,7 @@ import net.codestory.http.*;
 
 public class HelloWorld {
   public static void main(String[] args) {
-    new WebServer(routes -> routes.get("/", "Hello World")).start(8080);
+    new WebServer(routes -> routes.get("/", "Hello World")).start();
   }
 }
 ```
@@ -59,7 +59,7 @@ new WebServer(routes -> routes.
     get("/", "Hello World").
     get("/Test", "Test").
     get("/OtherTest", "Other Test")
-).start(8080);
+).start();
 ```
 
 ## Path parameters
@@ -111,14 +111,21 @@ import net.codestory.http.*;
 
 public class HelloWorld {
   public static void main(String[] args) {
-    new WebServer().start(8080);
+    new WebServer().start();
   }
 }
 ```
 
 ## Random port
 
-Instead of providing a fixed port, you can also let the web server find a tcp port available.
+Instead of relying on the default port, you can specify the port yourself...
+
+
+```java
+int port = new WebServer().port(4242);
+```
+
+... or you can also let the web server find a tcp port available.
 
 ```java
 int port = new WebServer().startOnRandomPort().port();
