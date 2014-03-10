@@ -158,6 +158,11 @@ public class Site {
     }
 
     @Override
+    public Object resolve(Object context) {
+      return UNRESOLVED;
+    }
+
+    @Override
     public Set<Map.Entry<String, Object>> propertySet(Object context) {
       if (context instanceof Site) {
         return ((Site) context).configYaml().entrySet();
