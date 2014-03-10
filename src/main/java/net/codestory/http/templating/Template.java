@@ -53,7 +53,7 @@ public class Template {
     return render(model.getKeyValues());
   }
 
-  CacheEntry render(Map<String, Object> keyValues) {
+  CacheEntry render(Map<String, ?> keyValues) {
     try {
       YamlFrontMatter yamlFrontMatter = YamlFrontMatter.parse(path);
 
@@ -73,7 +73,7 @@ public class Template {
     }
   }
 
-  private static Map<String, Object> merge(Map<String, Object> first, Map<String, Object> second) {
+  private static Map<String, Object> merge(Map<String, ?> first, Map<String, ?> second) {
     Map<String, Object> merged = new HashMap<>();
     merged.putAll(first);
     merged.putAll(second);

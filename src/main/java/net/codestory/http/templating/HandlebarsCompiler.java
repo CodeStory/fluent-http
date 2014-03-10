@@ -33,7 +33,7 @@ public class HandlebarsCompiler {
         .apply(context(variables));
   }
 
-  private static Handlebars handlebars(Map<String, Object> variables) {
+  private static Handlebars handlebars(Map<String, ?> variables) {
     Handlebars hb = new Handlebars();
 
     hb.startDelimiter("[[");
