@@ -170,8 +170,12 @@ public class Payload {
     return new Payload(HttpStatus.CREATED);
   }
 
-  public static Payload movedPermanently(String url) {
-    return new Payload(HttpStatus.MOVED_PERMANENTLY).withHeader(LOCATION, url);
+  public static Payload created(String uri) {
+    return new Payload(HttpStatus.CREATED).withHeader(LOCATION, uri);
+  }
+
+  public static Payload movedPermanently(String uri) {
+    return new Payload(HttpStatus.MOVED_PERMANENTLY).withHeader(LOCATION, uri);
   }
 
   public static Payload seeOther(String uri) {
