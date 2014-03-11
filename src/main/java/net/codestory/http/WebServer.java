@@ -141,12 +141,20 @@ public class WebServer {
   }
 
   void handle(Request request, Response response) {
-    RouteCollection routes = routesProvider.get();
-    Context context = new Context(request, response, routes.getIocAdapter());
+    Context context = null;
 
     try {
+      RouteCollection routes = routesProvider.get();
+      context = new Context(request, response, routes.getIocAdapter());
+
       applyRoutes(routes, context);
     } catch (Exception e) {
+      if (context == null) {
+        // Didn't manage to initialize a full context
+        // because the routes failed to load
+        //
+        context = new Context(request, response, null);
+      }
       handleServerError(context, e);
     } finally {
       try {
