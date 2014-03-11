@@ -29,10 +29,17 @@ public class PutTest extends AbstractWebServerTest {
   }
 
   @Test
-  public void payload() {
-    server.configure(routes -> routes.put("/put", context -> context.payload()));
+  public void content() {
+    server.configure(routes -> routes.put("/put", context -> context.content()));
 
     put("/put", "Bob").produces("Bob");
+  }
+
+  @Test
+  public void content_as_string() {
+    server.configure(routes -> routes.put("/put", context -> context.contentAsString()));
+
+    put("/put", "Joe").produces("Joe");
   }
 
   @Test

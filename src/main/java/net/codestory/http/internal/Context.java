@@ -138,15 +138,23 @@ public class Context {
     return response;
   }
 
-  public byte[] payload() {
+  public byte[] content() {
     try {
       return InputStreams.readBytes(request.getInputStream());
     } catch (IOException e) {
-      throw new IllegalStateException("Unable to read payload", e);
+      throw new IllegalStateException("Unable to read content", e);
     }
   }
 
-  public <T> T payload(Class<T> type) {
+  public String contentAsString() {
+    try {
+      return request.getContent();
+    } catch (IOException e) {
+      throw new IllegalStateException("Unable to read content", e);
+    }
+  }
+
+  public <T> T contentAs(Class<T> type) {
     return TypeConvert.convert(this, type);
   }
 
