@@ -15,6 +15,9 @@
  */
 package net.codestory.http.compilers;
 
+import static java.lang.ClassLoader.*;
+import static java.nio.charset.StandardCharsets.*;
+import static net.codestory.http.io.InputStreams.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.io.*;
@@ -41,6 +44,13 @@ public class LessCompilerTest {
     String css = lessCompiler.compile(Paths.get("file.less"), "body { h1 { color: red; } }");
 
     assertThat(css).isEqualTo("body h1 {\n  color: red;\n}\n/*# sourceMappingURL=file.css.map */\n");
+  }
+
+  @Test
+  public void large_css() throws IOException {
+    String css = lessCompiler.compile(Paths.get("file.less"), readString(getSystemResourceAsStream("less/style.less"), UTF_8));
+
+    assertThat(css).isNotEmpty();
   }
 
   @Test
