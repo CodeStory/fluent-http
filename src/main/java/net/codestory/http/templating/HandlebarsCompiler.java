@@ -27,7 +27,7 @@ import com.github.jknack.handlebars.helper.*;
 import com.github.jknack.handlebars.io.*;
 
 public class HandlebarsCompiler {
-  public String compile(String template, Map<String, Object> variables) throws IOException {
+  public String compile(String template, Map<String, ?> variables) throws IOException {
     return handlebars(variables)
         .compileInline(template)
         .apply(context(variables));
@@ -70,7 +70,7 @@ public class HandlebarsCompiler {
     }
   }
 
-  private static Context context(Map<String, Object> variables) {
+  private static Context context(Map<String, ?> variables) {
     return Context.newBuilder(null)
         .resolver(
             MapValueResolver.INSTANCE,
