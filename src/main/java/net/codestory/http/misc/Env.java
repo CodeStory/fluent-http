@@ -38,7 +38,7 @@ public enum Env {
   }
 
   public int overriddenPort(int port) {
-    return getInt(APP_PORT, port);
+    return getInt("PORT", getInt(APP_PORT, port));
   }
 
   public boolean disableClassPath() {
