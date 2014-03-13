@@ -18,19 +18,16 @@ package net.codestory.http.misc;
 public enum Env {
   INSTANCE;
 
-  private static final String APP_PORT = "app.port";
-  private static final String DISABLE_CLASSPATH = "http.disable.classpath";
-  private static final String DISABLE_FILESYSTEM = "http.disable.filesystem";
-  private static final String PROD_MODE = "PROD_MODE";
-
   private final boolean prodMode;
   private final boolean disableClassPath;
   private final boolean disableFilesystem;
+  private final boolean disableGzip;
 
   private Env() {
-    prodMode = getBoolean(PROD_MODE, false);
-    disableClassPath = getBoolean(DISABLE_CLASSPATH, false);
-    disableFilesystem = getBoolean(DISABLE_FILESYSTEM, false);
+    prodMode = getBoolean("PROD_MODE", false);
+    disableClassPath = getBoolean("http.disable.classpath", false);
+    disableFilesystem = getBoolean("http.disable.filesystem", false);
+    disableGzip = getBoolean("http.disable.gzipm", false);
   }
 
   public boolean prodMode() {
@@ -38,7 +35,7 @@ public enum Env {
   }
 
   public int overriddenPort(int port) {
-    return getInt("PORT", getInt(APP_PORT, port));
+    return getInt("PORT", getInt("app.port", port));
   }
 
   public boolean disableClassPath() {
@@ -47,6 +44,10 @@ public enum Env {
 
   public boolean disableFilesystem() {
     return disableFilesystem;
+  }
+
+  public boolean disableGzip() {
+    return disableGzip;
   }
 
   private static String get(String propertyName) {

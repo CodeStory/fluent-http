@@ -269,7 +269,7 @@ public class Payload {
     response.setValue(ETAG, etag);
 
     String acceptEncoding = context.getHeader(ACCEPT_ENCODING);
-    if ((acceptEncoding != null) && acceptEncoding.contains(GZIP)) {
+    if ((acceptEncoding != null) && acceptEncoding.contains(GZIP) && !Env.INSTANCE.disableGzip()) {
       response.setValue(CONTENT_ENCODING, GZIP);
 
       GZIPOutputStream gzip = new GZIPOutputStream(response.getOutputStream());
