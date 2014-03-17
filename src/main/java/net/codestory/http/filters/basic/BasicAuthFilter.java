@@ -24,23 +24,21 @@ import net.codestory.http.filters.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
 
+import org.simpleframework.http.parse.*;
+
 public class BasicAuthFilter implements Filter {
   private final String uriPrefix;
   private final String realm;
-  private final Map<String, String> usersPerHash;
+  private final Users users;
 
-  public BasicAuthFilter(String uriPrefix, String realm, Map<String, String> users) {
+  public BasicAuthFilter(String uriPrefix, String realm, Users users) {
     this.uriPrefix = uriPrefix;
     this.realm = realm;
-    this.usersPerHash = new HashMap<>();
+    this.users = users;
+  }
 
-    users.entrySet().forEach(entry -> {
-      String user = entry.getKey();
-      String password = entry.getValue();
-      String hash = Base64.getEncoder().encodeToString((user + ":" + password).getBytes());
-
-      usersPerHash.put("Basic " + hash, user);
-    });
+  public BasicAuthFilter(String uriPrefix, String realm, Map<String, String> users) {
+    this(uriPrefix, realm, (login, password) -> Objects.equals(users.get(login), password));
   }
 
   @Override
@@ -54,12 +52,14 @@ public class BasicAuthFilter implements Filter {
       return Payload.unauthorized(realm);
     }
 
-    String user = usersPerHash.get(authorizationHeader.trim());
-    if (user == null) {
+    PrincipalParser parser = new PrincipalParser(authorizationHeader);
+    String login = parser.getName();
+    String password = parser.getPassword();
+    if (!users.isValid(login, password)) {
       return Payload.unauthorized(realm);
     }
 
-    context.setCurrentUser(user);
+    context.setCurrentUser(login);
 
     return nextFilter.get();
   }
