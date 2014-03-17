@@ -517,9 +517,7 @@ public class BasicAuthFilter implements Filter {
     this.realm = realm;
     this.hashes = new ArrayList<>();
 
-    users.entrySet().forEach((entry) -> {
-      String user = entry.getKey();
-      String password = entry.getValue();
+    users.forEach((String user, String password) -> {
       String hash = Base64.getEncoder().encodeToString((user + ":" + password).getBytes());
 
       hashes.add("Basic " + hash);
