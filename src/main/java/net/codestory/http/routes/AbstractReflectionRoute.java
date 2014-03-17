@@ -38,7 +38,11 @@ abstract class AbstractReflectionRoute implements AnyRoute {
     try {
       Object[] arguments = findArguments(context, pathParameters, method.getParameterTypes());
 
-      return payload(arguments);
+      Object target = resource.get();
+      Object response = invoke(method, target, arguments);
+      Object payload = emptyIfNull(response);
+
+      return new Payload(contentType, payload);
     } catch (RuntimeException e) {
       throw e;
     } catch (Throwable e) {
@@ -47,15 +51,6 @@ abstract class AbstractReflectionRoute implements AnyRoute {
   }
 
   protected abstract Object[] findArguments(Context context, String[] parameters, Class<?>[] parameterTypes);
-
-  private Object payload(Object[] arguments) throws Throwable {
-    Object target = resource.get();
-
-    Object response = invoke(method, target, arguments);
-    Object payload = emptyIfNull(response);
-
-    return new Payload(contentType, payload);
-  }
 
   private static Object invoke(Method method, Object target, Object[] arguments) throws Throwable {
     try {
