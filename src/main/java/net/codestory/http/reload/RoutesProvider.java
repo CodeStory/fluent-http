@@ -15,11 +15,13 @@
  */
 package net.codestory.http.reload;
 
+import java.io.*;
+
 import net.codestory.http.*;
 import net.codestory.http.routes.*;
 
 @FunctionalInterface
-public interface RoutesProvider {
+public interface RoutesProvider extends Serializable {
   RouteCollection get();
 
   static RoutesProvider fixed(Configuration configuration) {

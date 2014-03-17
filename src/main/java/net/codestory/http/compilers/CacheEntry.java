@@ -21,7 +21,7 @@ import java.io.*;
 
 import net.codestory.http.io.*;
 
-public interface CacheEntry {
+public interface CacheEntry extends Serializable {
   String content();
 
   byte[] toBytes();

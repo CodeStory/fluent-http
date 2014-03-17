@@ -15,11 +15,13 @@
  */
 package net.codestory.http.routes;
 
+import java.io.*;
+
 import net.codestory.http.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.injection.*;
 
-public interface Routes {
+public interface Routes extends Serializable {
   Routes setIocAdapter(IocAdapter iocAdapter);
 
   Routes include(Class<? extends Configuration> configurationClass);

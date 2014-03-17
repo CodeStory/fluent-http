@@ -20,7 +20,7 @@ import java.io.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
 
-public interface Route {
+public interface Route extends Serializable {
   public default Payload apply(String uri, Context context) throws IOException {
     if (!matchUri(uri)) {
       if (uri.endsWith("/") || !matchUri(uri + "/")) {

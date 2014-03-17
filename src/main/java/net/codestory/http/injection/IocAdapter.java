@@ -15,6 +15,8 @@
  */
 package net.codestory.http.injection;
 
-public interface IocAdapter {
+import java.io.*;
+
+public interface IocAdapter extends Serializable {
   <T> T get(Class<T> type);
 }

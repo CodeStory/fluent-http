@@ -21,7 +21,8 @@ import java.io.*;
 import java.nio.file.*;
 import java.nio.file.attribute.*;
 
-public interface FileVisitor {
+@FunctionalInterface
+public interface FileVisitor extends Serializable {
   void accept(Path path) throws IOException;
 
   static SimpleFileVisitor<Path> onFile(FileVisitor visitor) {
