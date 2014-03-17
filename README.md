@@ -586,7 +586,6 @@ Synchro to Maven Central is done hourly.
  + Streaming
  + File upload
  + OPTIONS method
- + Can we convert WebJarsRoute to a Filter?
  + Support @MatrixParam, @QueryParam, @CookieParam ?
 
 # TODO Maybe
