@@ -250,7 +250,7 @@ public class Payload {
       return;
     }
 
-    String uri = context.uri();
+    final String uri = context.uri();
     String type = getContentType(uri);
     response.setValue(CONTENT_TYPE, type);
     response.setStatus(Status.getStatus(code));
@@ -259,14 +259,20 @@ public class Payload {
       return;
     }
 
-    byte[] data = getData(uri, context);
-    String etag = etag(data);
+    DataSupplier lazyData = DataSupplier.cache(() -> getData(uri, context));
+    String etag = headers.get(ETAG);
+    if (etag == null) {
+      etag = etag(lazyData.get());
+    }
+
     String previousEtag = stripQuotes(context.getHeader(IF_NONE_MATCH));
     if (etag.equals(previousEtag)) {
       response.setStatus(NOT_MODIFIED);
       return;
     }
     response.setValue(ETAG, etag);
+
+    byte[] data = lazyData.get();
 
     String acceptEncoding = context.getHeader(ACCEPT_ENCODING);
     if ((acceptEncoding != null) && acceptEncoding.contains(GZIP) && !Env.INSTANCE.disableGzip()) {
