@@ -231,8 +231,8 @@ public class Payload {
   public void writeTo(Context context) throws IOException {
     Response response = context.response();
 
-    headers.entrySet().forEach(entry -> response.setValue(entry.getKey(), entry.getValue()));
-    cookies.forEach(cookie -> response.setCookie(cookie));
+    headers.forEach(response::setValue);
+    cookies.forEach(response::setCookie);
 
     long lastModified = getLastModified();
     if (lastModified >= 0) {
