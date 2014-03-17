@@ -577,11 +577,13 @@ Synchro to Maven Central is done hourly.
 
 # TODO
 
- + Support hot reload 'a la' JRebel
+ + Better documentation
+ + Easy Push to deploy on [GCE](https://cloud.google.com/products/compute-engine/)
+ + Support hot reload 'à la' JRebel
  + Support access control on annotated resources
- + Write the Javadoc
- + Setting system property `PROD_MODE` is not really convenient. It forces to have more complex prod script
+ + Javadoc
  + Automatically switch on production mode if we detect we run on [GCE](https://cloud.google.com/products/compute-engine/), Cloudbees or Heroku
+ + Setting system property `PROD_MODE` is not really convenient. It forces to have more complex prod script
  + Support pre-generated Coffee/Less/Markdown/...
  + Suport Cors
  + Support Streaming
