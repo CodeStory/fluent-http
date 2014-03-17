@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.filters.basic;
+package net.codestory.http.security;
 
 import java.io.*;
-import java.util.*;
 
 @FunctionalInterface
-public interface Users extends Serializable {
-  boolean isValid(String login, String password);
-
-  static Users forMap(Map<String, String> users) {
-    return (login, password) -> Objects.equals(users.get(login), password);
-  }
+public interface CheckRoles extends Serializable {
+  boolean check(String login, String[] roles);
 }
