@@ -18,6 +18,7 @@ package net.codestory.http.routes;
 import static java.util.Arrays.*;
 import static net.codestory.http.constants.Methods.*;
 import static net.codestory.http.internal.UriParser.*;
+import static net.codestory.http.misc.ForEach.forEach;
 
 import java.io.*;
 import java.lang.reflect.*;
@@ -107,11 +108,11 @@ public class RouteCollection implements Routes {
     String prefix = urlPrefix + classPrefix;
 
     for (Method method : type.getMethods()) {
-      stream(method.getAnnotationsByType(Get.class)).forEach(get -> addResource(GET, method, resource, prefix + get.value()));
-      stream(method.getAnnotationsByType(Post.class)).forEach(post -> addResource(POST, method, resource, prefix + post.value()));
-      stream(method.getAnnotationsByType(Put.class)).forEach(put -> addResource(PUT, method, resource, prefix + put.value()));
-      stream(method.getAnnotationsByType(Delete.class)).forEach(delete -> addResource(DELETE, method, resource, prefix + delete.value()));
-      stream(method.getAnnotationsByType(Head.class)).forEach(delete -> addResource(HEAD, method, resource, prefix + delete.value()));
+      forEach(method.getAnnotationsByType(Get.class)).then(get -> addResource(GET, method, resource, prefix + get.value()));
+      forEach(method.getAnnotationsByType(Post.class)).then(post -> addResource(POST, method, resource, prefix + post.value()));
+      forEach(method.getAnnotationsByType(Put.class)).then(put -> addResource(PUT, method, resource, prefix + put.value()));
+      forEach(method.getAnnotationsByType(Delete.class)).then(delete -> addResource(DELETE, method, resource, prefix + delete.value()));
+      forEach(method.getAnnotationsByType(Head.class)).then(delete -> addResource(HEAD, method, resource, prefix + delete.value()));
     }
   }
 
