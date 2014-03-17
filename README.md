@@ -577,15 +577,16 @@ Synchro to Maven Central is done hourly.
 
 # TODO
 
- + Javadoc
- + PROD_MODE is not really convenient. It forces to have more complex prod script
- + Detect prod mode on GCE
- + Add some sort of http standard log
- + Cors support
- + Streaming
- + File upload
+ + Support hot reload 'a la' JRebel
+ + Write the Javadoc
+ + Setting system property `PROD_MODE` is not really convenient. It forces to have more complex prod script
+ + Automatically switch on production mode if we detect we run on [GCE](https://cloud.google.com/products/compute-engine/), Cloudbees or Heroku
+ + Suport Cors
+ + Support Streaming
+ + Support File upload
  + OPTIONS method
  + Support @MatrixParam, @QueryParam, @CookieParam ?
+ + Add some sort of http standard log
 
 # TODO Maybe
 
