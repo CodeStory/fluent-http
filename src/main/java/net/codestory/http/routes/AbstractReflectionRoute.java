@@ -25,12 +25,10 @@ import net.codestory.http.payload.*;
 abstract class AbstractReflectionRoute implements AnyRoute {
   private final Supplier<Object> resource;
   private final Method method;
-  private final String contentType;
 
   protected AbstractReflectionRoute(Supplier<Object> resource, Method method) {
     this.resource = resource;
     this.method = method;
-    this.contentType = findContentType(method);
   }
 
   @Override
@@ -41,6 +39,7 @@ abstract class AbstractReflectionRoute implements AnyRoute {
       Object target = resource.get();
       Object response = invoke(method, target, arguments);
       Object payload = emptyIfNull(response);
+      String contentType = findContentType(method);
 
       return new Payload(contentType, payload);
     } catch (RuntimeException e) {
