@@ -19,12 +19,13 @@ import java.lang.reflect.*;
 import java.util.function.*;
 
 import net.codestory.http.annotations.*;
+import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
 
-class AbstractReflectionRoute {
-  protected final Supplier<Object> resource;
-  protected final Method method;
-  protected final String contentType;
+abstract class AbstractReflectionRoute implements AnyRoute {
+  private final Supplier<Object> resource;
+  private final Method method;
+  private final String contentType;
 
   protected AbstractReflectionRoute(Supplier<Object> resource, Method method) {
     this.resource = resource;
@@ -32,7 +33,22 @@ class AbstractReflectionRoute {
     this.contentType = findContentType(method);
   }
 
-  protected Object payload(Object[] arguments) throws Throwable {
+  @Override
+  public Object body(Context context, String[] pathParameters) {
+    try {
+      Object[] arguments = findArguments(context, pathParameters, method.getParameterTypes());
+
+      return payload(arguments);
+    } catch (RuntimeException e) {
+      throw e;
+    } catch (Throwable e) {
+      throw new IllegalStateException("Unable to apply route", e);
+    }
+  }
+
+  protected abstract Object[] findArguments(Context context, String[] parameters, Class<?>[] parameterTypes);
+
+  private Object payload(Object[] arguments) throws Throwable {
     Object target = resource.get();
 
     Object response = invoke(method, target, arguments);

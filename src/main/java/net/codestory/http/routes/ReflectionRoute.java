@@ -21,22 +21,14 @@ import java.util.function.*;
 import net.codestory.http.convert.*;
 import net.codestory.http.internal.*;
 
-class ReflectionRoute extends AbstractReflectionRoute implements AnyRoute {
+class ReflectionRoute extends AbstractReflectionRoute {
   ReflectionRoute(Supplier<Object> resource, Method method) {
     super(resource, method);
   }
 
   @Override
-  public Object body(Context context, String[] pathParameters) {
-    try {
-      Object[] arguments = TypeConvert.convert(pathParameters, method.getParameterTypes());
-
-      return payload(arguments);
-    } catch (RuntimeException e) {
-      throw e;
-    } catch (Throwable e) {
-      throw new IllegalStateException("Unable to apply route", e);
-    }
+  protected Object[] findArguments(Context context, String[] parameters, Class<?>[] parameterTypes) {
+    return TypeConvert.convert(parameters, parameterTypes);
   }
 }
 
