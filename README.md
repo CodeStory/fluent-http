@@ -578,28 +578,21 @@ Synchro to Maven Central is done hourly.
 # TODO
 
  + Support hot reload 'a la' JRebel
+ + Support access control on annotated resources
  + Write the Javadoc
  + Setting system property `PROD_MODE` is not really convenient. It forces to have more complex prod script
  + Automatically switch on production mode if we detect we run on [GCE](https://cloud.google.com/products/compute-engine/), Cloudbees or Heroku
+ + Support pre-generated Coffee/Less/Markdown/...
  + Suport Cors
  + Support Streaming
  + Support File upload
  + OPTIONS method
- + Support @MatrixParam, @QueryParam, @CookieParam ?
+ + Support @MatrixParam, @QueryParam, @CookieParam?
  + Add some sort of http standard log
-
-# TODO Maybe
-
- + monitoring
- + Cleanup Payload class. Make Payload immutable?
- + Auto reload meme sans les lambda avec capture de variables locales
- + Singletons qui utilise les annotations standards
- + Remplacer Simple par un Servlet Filter qui fonctionne par defaut sur un Jetty Http
+ + Backport to java7?
+ + Monitoring
+ + Cleanup Payload class. Should we make Payload immutable?
  + Help use local storage
- + Add your own/reuse Servlet filters
- + Supporter les coffee et less pré-générés
- + Supporter les templates pré-générés
- + Fonctionnement en mode war
  + TRACE method
  + CONNECT method
  + nio
