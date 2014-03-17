@@ -581,6 +581,7 @@ Synchro to Maven Central is done hourly.
 
  + Javadoc
  + PROD_MODE is not really convenient. It forces to have more complex prod script
+ + Detect prod mode on GCE
  + Add some sort of http standard log
  + Cors support
  + Streaming
