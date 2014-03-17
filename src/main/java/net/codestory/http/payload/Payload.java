@@ -244,14 +244,13 @@ public class Payload {
       response.setValue(LAST_MODIFIED, Dates.to_rfc_1123(lastModified));
     }
 
-    String uri = context.uri();
-    byte[] data = getData(uri, context);
-    if (data == null) {
+    if (content == null) {
       response.setStatus(Status.getStatus(code));
       response.setContentLength(0);
       return;
     }
 
+    String uri = context.uri();
     String type = getContentType(uri);
     response.setValue(CONTENT_TYPE, type);
     response.setStatus(Status.getStatus(code));
@@ -260,6 +259,7 @@ public class Payload {
       return;
     }
 
+    byte[] data = getData(uri, context);
     String etag = etag(data);
     String previousEtag = stripQuotes(context.getHeader(IF_NONE_MATCH));
     if (etag.equals(previousEtag)) {
