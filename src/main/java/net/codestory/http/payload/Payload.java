@@ -287,7 +287,7 @@ public class Payload {
     }
   }
 
-  private static String etag(byte[] data) {
+  protected String etag(byte[] data) {
     return Md5.of(data);
   }
 
