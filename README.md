@@ -469,6 +469,39 @@ routes.get("/products", () -> Arrays.asList(new Product(...), new Product(...)))
 This route serves the Products serialized as json using [Jackson](http://jackson.codehaus.org/).
 The content type will be `application/json;charset=UTF-8`.
 
+You can also use a more programmatic approach to render or consume json:
+
+```java
+ import org.reactivecouchbase.json.*;
+ import static org.reactivecouchbase.json.Syntax.*;
+
+ routes.get("/products", () -> {
+   return Json.arr(
+     Json.obj(
+       $("id", 1),
+       $("name", "product1"),
+       $("vendor", Json.obj( ... ))
+     ),
+     Json.obj(
+       $("id", 2),
+       $("name", "product2"),
+       $("vendor", Json.obj( ... ))
+     )
+   )
+ ).
+ post("/products", context -> {
+    JsObject productJson = context.contentAsJson().as(JsObject.class);
+    Product product = new Product(
+      productJson.field("id").as(Long.class),
+      productJson.field("name").as(String.class)
+    );
+    product.save();
+    return Payload.created();
+ });
+```
+
+The [ReactiveCouchbase API](https://github.com/ReactiveCouchbase/json-lib) provide APIs to easily manipulate Json AST, validate it, transform it, etc ...
+
 ## Cookies
 
 TODO
