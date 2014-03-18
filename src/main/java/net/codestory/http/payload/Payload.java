@@ -89,6 +89,21 @@ public class Payload {
     this.cookies = new ArrayList<>();
   }
 
+  public Payload withAllowedOrigin(String allowedOrigin) {
+    if (allowedOrigin != null) headers.put("Access-Control-Allow-Origin", allowedOrigin);
+    return this;
+  }
+
+  public Payload withAllowedMethods(String allowedMethods) {
+    if (allowedMethods != null) headers.put("Access-Control-Allow-Methods", allowedMethods);
+    return this;
+  }
+
+  public Payload withAllowedCredentials(Boolean allowedCredentials) {
+    if (allowedCredentials != null) headers.put("Access-Control-Allow-Credentials", allowedCredentials.toString());
+    return this;
+  }
+
   public Payload withHeader(String key, String value) {
     headers.put(key, value);
     return this;
