@@ -20,6 +20,7 @@ import net.codestory.http.annotations.AllowedHeaders;
 import net.codestory.http.annotations.AllowedMethods;
 import net.codestory.http.annotations.AllowedOrigin;
 import net.codestory.http.annotations.Get;
+import net.codestory.http.errors.HttpException;
 import net.codestory.http.payload.Payload;
 import net.codestory.http.testhelpers.AbstractWebServerTest;
 import org.junit.Test;
@@ -31,6 +32,38 @@ import java.util.Optional;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class CORSTest extends AbstractWebServerTest {
+
+
+    @Test
+    public void cors_preflight() {
+      server.configure(routes -> routes.
+        options("/cors", context -> {
+          if (!context.isCORS()) throw new HttpException(401);
+          if (context.isPreflight()) throw new HttpException(402);
+          return new Payload("")
+            .withCode(200)
+            .withAllowedOrigin("*")
+            .withAllowedCredentials(true)
+            .withExposeHeaders("X-TOTO")
+            .withMaxAge(3600);
+        }).
+        options("/corspf", context -> {
+          if (!context.isCORS()) throw new HttpException(401);
+          if (!context.isPreflight()) throw new HttpException(402);
+          return new Payload("")
+            .withCode(200)
+            .withAllowedOrigin("*")
+            .withAllowedMethods("PUT")
+            .withAllowedHeaders("X-TOTO")
+            .withExposeHeaders("X-TOTO")
+            .withMaxAge(3600);
+        })
+      );
+
+      options("/cors").produces(200);
+      optionsWithHeader("/corspf", "Access-Control-Allow-Method", "PUT").produces(200);
+      optionsWithHeader("/corspf", "Access-Control-Allow-Method", "PUT").producesHeader("Access-Control-Allow-Methods", "PUT");
+    }
 
   @Test
   public void cors_programmatic() {
