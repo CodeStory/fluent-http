@@ -30,16 +30,18 @@ import org.simpleframework.http.parse.*;
 public class BasicAuthFilter implements Filter {
   private final String uriPrefix;
   private final String realm;
-  private final CheckPassword checkPassword;
+  private final Users users;
 
-  public BasicAuthFilter(String uriPrefix, String realm, CheckPassword checkPassword) {
+  public BasicAuthFilter(String uriPrefix, String realm, Users users) {
     this.uriPrefix = uriPrefix;
     this.realm = realm;
-    this.checkPassword = checkPassword;
+    this.users = users;
   }
 
   public BasicAuthFilter(String uriPrefix, String realm, Map<String, String> users) {
-    this(uriPrefix, realm, CheckPassword.forMap(users));
+    this.uriPrefix = uriPrefix;
+    this.realm = realm;
+    this.users = Users.forMap(users);
   }
 
   @Override
@@ -54,13 +56,12 @@ public class BasicAuthFilter implements Filter {
     }
 
     PrincipalParser parser = new PrincipalParser(authorizationHeader);
-    String login = parser.getName();
-    String password = parser.getPassword();
-    if (!checkPassword.check(login, password)) {
+    User user = users.find(parser.getName(), parser.getPassword());
+    if (user == null) {
       return Payload.unauthorized(realm);
     }
 
-    context.setCurrentUser(login);
+    context.setCurrentUser(user);
 
     return nextFilter.get();
   }

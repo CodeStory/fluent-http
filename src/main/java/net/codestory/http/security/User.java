@@ -17,7 +17,22 @@ package net.codestory.http.security;
 
 import java.io.*;
 
-@FunctionalInterface
-public interface CheckRoles extends Serializable {
-  boolean check(String login, String[] roles);
+public interface User extends Serializable {
+  String login();
+
+  String[] roles();
+
+  static User forLogin(String login) {
+    return new User() {
+      @Override
+      public String login() {
+        return login;
+      }
+
+      @Override
+      public String[] roles() {
+        return new String[0];
+      }
+    };
+  }
 }

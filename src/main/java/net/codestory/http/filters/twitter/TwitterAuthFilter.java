@@ -84,7 +84,7 @@ public class TwitterAuthFilter implements Filter {
 
     String userId = context.cookieValue("userId");
     if ((userId != null) && !userId.isEmpty()) {
-      context.setCurrentUser(userId);
+      context.setCurrentUser(net.codestory.http.security.User.forLogin(userId));
       return nextFilter.get(); // Authenticated
     }
 

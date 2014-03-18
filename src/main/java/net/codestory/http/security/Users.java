@@ -19,10 +19,10 @@ import java.io.*;
 import java.util.*;
 
 @FunctionalInterface
-public interface CheckPassword extends Serializable {
-  boolean check(String login, String password);
+public interface Users extends Serializable {
+  User find(String login, String password);
 
-  static CheckPassword forMap(Map<String, String> users) {
-    return (login, password) -> Objects.equals(users.get(login), password);
+  static Users forMap(Map<String, String> users) {
+    return (login, password) -> Objects.equals(users.get(login), password) ? User.forLogin(login) : null;
   }
 }

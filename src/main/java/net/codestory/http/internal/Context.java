@@ -23,6 +23,7 @@ import java.util.*;
 import net.codestory.http.convert.*;
 import net.codestory.http.injection.*;
 import net.codestory.http.io.*;
+import net.codestory.http.security.*;
 
 import org.simpleframework.http.*;
 
@@ -31,7 +32,7 @@ public class Context {
   private final Response response;
   private final IocAdapter iocAdapter;
   private final Query query;
-  private String currentUser;
+  private User currentUser;
 
   public Context(Request request, Response response, IocAdapter iocAdapter) {
     this.request = request;
@@ -162,11 +163,11 @@ public class Context {
     return iocAdapter.get(type);
   }
 
-  public void setCurrentUser(String user) {
+  public void setCurrentUser(User user) {
     this.currentUser = user;
   }
 
-  public String currentUser() {
+  public User currentUser() {
     return currentUser;
   }
 }

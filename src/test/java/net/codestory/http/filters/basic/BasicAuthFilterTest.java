@@ -16,6 +16,7 @@
 package net.codestory.http.filters.basic;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentCaptor.*;
 import static org.mockito.Mockito.*;
 
 import java.io.*;
@@ -24,8 +25,10 @@ import java.util.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
+import net.codestory.http.security.*;
 
 import org.junit.*;
+import org.mockito.*;
 
 public class BasicAuthFilterTest {
   private BasicAuthFilter filter;
@@ -33,6 +36,7 @@ public class BasicAuthFilterTest {
   private Payload next = Payload.ok();
   private PayloadSupplier nextFilter = () -> next;
   private Context context = mock(Context.class);
+  private ArgumentCaptor<User> user = forClass(User.class);
 
   @Before
   public void create_filter() {
@@ -63,7 +67,8 @@ public class BasicAuthFilterTest {
     Payload payload = filter.apply("/secure/foo", context, nextFilter);
 
     assertThat(payload).isSameAs(next);
-    verify(context).setCurrentUser("jl");
+    verify(context).setCurrentUser(user.capture());
+    assertThat(user.getValue().login()).isEqualTo("jl");
   }
 
   @Test
