@@ -15,9 +15,11 @@
  */
 package net.codestory.http;
 
+import net.codestory.http.errors.HttpException;
 import net.codestory.http.payload.Payload;
 import net.codestory.http.testhelpers.AbstractWebServerTest;
 import org.junit.Test;
+import org.reactivecouchbase.common.Functionnal;
 import org.reactivecouchbase.json.Format;
 import org.reactivecouchbase.json.JsResult;
 import org.reactivecouchbase.json.JsValue;
@@ -93,14 +95,38 @@ public class JsonTest extends AbstractWebServerTest {
         ));
 
         server.configure(routes -> routes.
-                post("/persons/format/surname", context -> context.contentFrom(Person.FORMAT)
-                        .getOpt().map(p -> new Payload(p.surname).withCode(200)).getOrElse(new Payload("Body is malformed").withCode(400))).
-                post("/persons/format/name", context -> context.contentFrom(Person.FORMAT)
-                        .getOpt().map(p -> new Payload(p.name).withCode(200)).getOrElse(new Payload("Body is malformed").withCode(400))).
-                post("/persons/format/city", context -> context.contentFrom(Person.FORMAT)
-                        .getOpt().map(p -> new Payload(p.address.city).withCode(200)).getOrElse(new Payload("Body is malformed").withCode(400))).
-                post("/persons/format/age", context -> context.contentFrom(Person.FORMAT)
-                        .getOpt().map(p -> new Payload(p.age).withCode(200)).getOrElse(new Payload("Body is malformed").withCode(400))).
+                post("/persons/format/surname", context -> {
+                    Functionnal.Option<Payload> payload = context.contentFrom(Person.FORMAT)
+                        .getOpt().map(p -> new Payload(p.surname).withCode(200)); //.getOrElse(new Payload("Body is malformed").withCode(400))
+                    if (payload.isEmpty()) {
+                        throw new HttpException(400);
+                    }
+                    return payload.get();
+                }).
+                post("/persons/format/name", context -> {
+                    Functionnal.Option<Payload> payload = context.contentFrom(Person.FORMAT)
+                            .getOpt().map(p -> new Payload(p.name).withCode(200)); //.getOrElse(new Payload("Body is malformed").withCode(400))
+                    if (payload.isEmpty()) {
+                        throw new HttpException(400);
+                    }
+                    return payload.get();
+                }).
+                post("/persons/format/city", context -> {
+                    Functionnal.Option<Payload> payload = context.contentFrom(Person.FORMAT)
+                            .getOpt().map(p -> new Payload(p.address.city).withCode(200)); //.getOrElse(new Payload("Body is malformed").withCode(400))
+                    if (payload.isEmpty()) {
+                        throw new HttpException(400);
+                    }
+                    return payload.get();
+                }).
+                post("/persons/format/age", context -> {
+                    Functionnal.Option<Payload> payload = context.contentFrom(Person.FORMAT)
+                            .getOpt().map(p -> new Payload(p.age).withCode(200)); //.getOrElse(new Payload("Body is malformed").withCode(400))
+                    if (payload.isEmpty()) {
+                        throw new HttpException(400);
+                    }
+                    return payload.get();
+                }).
 
                 post("/persons/surname", context -> context.contentAsJson().field("surname").as(String.class)).
                 post("/persons/name", context -> context.contentAsJson().field("name").as(String.class)).
