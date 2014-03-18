@@ -26,6 +26,7 @@ abstract class AbstractReflectionRoute implements AnyRoute {
   private final Supplier<Object> resource;
   private final Method method;
 
+
   protected AbstractReflectionRoute(Supplier<Object> resource, Method method) {
     this.resource = resource;
     this.method = method;
@@ -41,7 +42,20 @@ abstract class AbstractReflectionRoute implements AnyRoute {
       Object payload = emptyIfNull(response);
       String contentType = findContentType(method);
 
-      return new Payload(contentType, payload);
+      Payload finalPayload = new Payload(contentType, payload);
+
+      AllowedOrigin origin = method.getDeclaredAnnotation(AllowedOrigin.class);
+      AllowedMethods methods = method.getDeclaredAnnotation(AllowedMethods.class);
+      AllowedCredentials credentials = method.getDeclaredAnnotation(AllowedCredentials.class);
+      AllowedHeaders allowedHeaders = method.getDeclaredAnnotation(AllowedHeaders.class);
+      ExposedHeaders exposedHeaders = method.getDeclaredAnnotation(ExposedHeaders.class);
+      if (origin != null) finalPayload.withAllowedOrigin(origin.value());
+      if (methods != null) finalPayload.withAllowedMethods(methods.value());
+      if (credentials != null) finalPayload.withAllowedCredentials(credentials.value());
+      if (allowedHeaders != null) finalPayload.withAllowedHeaders(allowedHeaders.value());
+      if (exposedHeaders != null) finalPayload.withExposeHeaders(exposedHeaders.value());
+
+      return finalPayload;
     } catch (RuntimeException e) {
       throw e;
     } catch (Throwable e) {
