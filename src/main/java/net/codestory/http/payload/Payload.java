@@ -40,6 +40,8 @@ import net.codestory.http.types.*;
 
 import org.simpleframework.http.*;
 
+import org.reactivecouchbase.json.*;
+
 public class Payload {
   private final String contentType;
   private final Object content;
@@ -353,6 +355,9 @@ public class Payload {
     }
     if (content instanceof Model) {
       return forModelAndView(ModelAndView.of(uri, (Model) content), context);
+    }
+    if (JsValue.class.isAssignableFrom(content.getClass())) {
+      return Json.stringify((JsValue) content).getBytes(UTF_8);
     }
 
     return TypeConvert.toByteArray(content);

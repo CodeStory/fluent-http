@@ -27,6 +27,8 @@ import net.codestory.http.security.*;
 
 import org.simpleframework.http.*;
 
+import org.reactivecouchbase.json.*;
+
 public class Context {
   private final Request request;
   private final Response response;
@@ -153,6 +155,14 @@ public class Context {
     } catch (IOException e) {
       throw new IllegalStateException("Unable to read content", e);
     }
+  }
+
+  public <T> JsResult<T> contentFrom(org.reactivecouchbase.json.Reader<T> reader) {
+    return reader.read(contentAs(JsValue.class));
+  }
+
+  public JsValue contentAsJson() {
+      return contentAs(JsValue.class);
   }
 
   public <T> T contentAs(Class<T> type) {

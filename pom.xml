@@ -195,6 +195,14 @@
     </plugins>
   </build>
 
+  <repositories>
+    <repository>
+      <!-- Will be available in maven central soon -->
+      <id>ReactiveCouchbase</id>
+      <url>https://raw.github.com/ReactiveCouchbase/repository/master/snapshots</url>
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>org.simpleframework</groupId>
@@ -246,6 +254,11 @@
       <groupId>org.webjars</groupId>
       <artifactId>coffee-script</artifactId>
       <version>1.7.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.reactivecouchbase</groupId>
+      <artifactId>json-lib</artifactId>
+      <version>0.2-SNAPSHOT</version>
     </dependency>
 
     <!-- Optional dependencies -->
