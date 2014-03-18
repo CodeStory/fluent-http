@@ -73,6 +73,11 @@ public class Payload {
     this.cookies = new ArrayList<>();
   }
 
+  public Payload withMaxAge(int maxAge) {
+    headers.put("Access-Control-Max-Age", maxAge + "");
+    return this;
+  }
+
   public Payload withAllowedOrigin(String allowedOrigin) {
     if (allowedOrigin != null) headers.put("Access-Control-Allow-Origin", allowedOrigin);
     return this;
