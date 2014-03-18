@@ -275,7 +275,7 @@ public class Payload {
     byte[] data = lazyData.get();
 
     String acceptEncoding = context.getHeader(ACCEPT_ENCODING);
-    if ((acceptEncoding != null) && acceptEncoding.contains(GZIP) && !Env.INSTANCE.disableGzip()) {
+    if ((acceptEncoding != null) && acceptEncoding.contains(GZIP) && Env.INSTANCE.prodMode() && !Env.INSTANCE.disableGzip()) {
       response.setValue(CONTENT_ENCODING, GZIP);
 
       GZIPOutputStream gzip = new GZIPOutputStream(response.getOutputStream());
