@@ -15,25 +15,32 @@
  */
 package net.codestory.http.security;
 
-import java.io.*;
 import java.util.*;
 
-public interface Users extends Serializable {
-  User find(String login, String password);
+public interface SessionIdStore {
+  void put(String sessionId, String login);
 
-  User find(String login);
+  void remove(String sessionId);
 
-  static Users forMap(Map<String, String> users) {
-    return new Users() {
+  String getLogin(String sessionId);
+
+  static SessionIdStore inMemory() {
+    return new SessionIdStore() {
+      private final Map<String, String> sessionIds = new HashMap<>();
+
       @Override
-      public User find(String login, String password) {
-        String userPassword = users.get(login);
-        return Objects.equals(userPassword, password) ? User.forLogin(login) : null;
+      public void put(String sessionId, String login) {
+        sessionIds.put(sessionId, login);
       }
 
       @Override
-      public User find(String login) {
-        return users.containsKey(login) ? User.forLogin(login) : null;
+      public void remove(String sessionId) {
+        sessionIds.remove(sessionId);
+      }
+
+      @Override
+      public String getLogin(String sessionId) {
+        return sessionIds.get(sessionId);
       }
     };
   }
