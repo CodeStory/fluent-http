@@ -39,9 +39,7 @@ public class BasicAuthFilter implements Filter {
   }
 
   public BasicAuthFilter(String uriPrefix, String realm, Map<String, String> users) {
-    this.uriPrefix = uriPrefix;
-    this.realm = realm;
-    this.users = Users.forMap(users);
+    this(uriPrefix, realm, Users.forMap(users));
   }
 
   @Override
