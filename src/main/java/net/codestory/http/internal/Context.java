@@ -41,6 +41,14 @@ public class Context {
     this.query = request.getQuery();
   }
 
+  public boolean isCORS() {
+      return getHeader("Origin") != null;
+  }
+
+  public boolean isPreflight() {
+    return isCORS() && method().toLowerCase().equals("options") && (getHeader("Access-Control-Allow-Method") != null);
+  }
+
   public String uri() {
     return request.getPath().getPath();
   }
