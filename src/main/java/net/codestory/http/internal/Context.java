@@ -18,13 +18,18 @@ package net.codestory.http.internal;
 import static net.codestory.http.constants.Headers.*;
 
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 
+import net.codestory.http.constants.Headers;
+import net.codestory.http.constants.Methods;
 import net.codestory.http.convert.*;
 import net.codestory.http.injection.*;
 import net.codestory.http.io.*;
 import net.codestory.http.security.*;
 
+import net.codestory.http.types.ContentTypes;
 import org.simpleframework.http.*;
 
 public class Context {
@@ -41,12 +46,81 @@ public class Context {
     this.query = request.getQuery();
   }
 
+  public static enum CORSRequestType {
+    SIMPLE,
+    ACTUAL,
+    PRE_FLIGHT,
+    NOT_CORS,
+    INVALID_CORS
+  }
+
+  public CORSRequestType corsRequestType() {
+    CORSRequestType requestType = CORSRequestType.INVALID_CORS;
+    String originHeader = getHeader(Headers.ORIGIN);
+    if (originHeader != null) {
+      if (originHeader.isEmpty()) {
+        requestType = CORSRequestType.INVALID_CORS;
+      } else if (!isValidOrigin(originHeader)) {
+        requestType = CORSRequestType.INVALID_CORS;
+      } else {
+        String method = method();
+        if (method != null && Methods.HTTP_METHODS.contains(method)) {
+          if (Method.OPTIONS.equals(method)) {
+            String accessControlRequestMethodHeader =
+                    getHeader(Headers.ACCESS_CONTROL_REQUEST_METHOD);
+            if (accessControlRequestMethodHeader != null
+                    && !accessControlRequestMethodHeader.isEmpty()) {
+              requestType = CORSRequestType.PRE_FLIGHT;
+            } else if (accessControlRequestMethodHeader != null
+                    && accessControlRequestMethodHeader.isEmpty()) {
+              requestType = CORSRequestType.INVALID_CORS;
+            } else {
+              requestType = CORSRequestType.ACTUAL;
+            }
+          } else if (Method.GET.equals(method) || Method.HEAD.equals(method)) {
+            requestType = CORSRequestType.SIMPLE;
+          } else if (Method.POST.equals(method)) {
+            String contentType = request.getContentType().getType();
+            if (contentType != null) {
+              contentType = contentType.toLowerCase().trim();
+              if (ContentTypes.SIMPLE_HTTP_REQUEST_CONTENT_TYPE_VALUES
+                      .contains(contentType)) {
+                requestType = CORSRequestType.SIMPLE;
+              } else {
+                requestType = CORSRequestType.ACTUAL;
+              }
+            }
+          } else if (Methods.COMPLEX_HTTP_METHODS.contains(method)) {
+            requestType = CORSRequestType.ACTUAL;
+          }
+        }
+      }
+    } else {
+      requestType = CORSRequestType.NOT_CORS;
+    }
+    return requestType;
+  }
+
+
   public boolean isCORS() {
-      return getHeader("Origin") != null;
+    return !corsRequestType().equals(CORSRequestType.NOT_CORS);
   }
 
   public boolean isPreflight() {
-    return isCORS() && method().toLowerCase().equals("options") && (getHeader("Access-Control-Allow-Method") != null);
+    return corsRequestType().equals(CORSRequestType.PRE_FLIGHT);
+  }
+
+  private boolean isValidOrigin(String origin) {
+    if (origin.contains("%")) {
+      return false;
+    }
+    URI originURI;
+    try {
+      originURI = new URI(origin);
+    } catch (URISyntaxException e) {
+      return false;
+    }
+    return originURI.getScheme() != null;
   }
 
   public String uri() {

@@ -90,47 +90,47 @@ public class Payload {
   }
 
   public Payload withMaxAge(int maxAge) {
-    headers.put("Access-Control-Max-Age", maxAge + "");
+    headers.put(Headers.ACCESS_CONTROL_MAX_AGE, maxAge + "");
     return this;
   }
 
-  public Payload withAllowedOrigin(String allowedOrigin) {
-    if (allowedOrigin != null) headers.put("Access-Control-Allow-Origin", allowedOrigin);
+  public Payload withAllowOrigin(String allowedOrigin) {
+    if (allowedOrigin != null) headers.put(Headers.ACCESS_CONTROL_ALLOW_ORIGIN, allowedOrigin);
     return this;
   }
 
-  public Payload withAllowedMethods(String... allowedMethods) {
-    if (allowedMethods != null) headers.put("Access-Control-Allow-Methods", Fluent.of(allowedMethods).join(", "));
+  public Payload withAllowMethods(String... allowedMethods) {
+    if (allowedMethods != null) headers.put(ACCESS_CONTROL_ALLOW_METHODS, Fluent.of(allowedMethods).join(", "));
     return this;
   }
 
-  public Payload withAllowedMethods(List<String> allowedMethods) {
-    if (allowedMethods != null) headers.put("Access-Control-Allow-Methods", Fluent.of(allowedMethods).join(", "));
+  public Payload withAllowMethods(List<String> allowedMethods) {
+    if (allowedMethods != null) headers.put(Headers.ACCESS_CONTROL_ALLOW_METHODS, Fluent.of(allowedMethods).join(", "));
     return this;
   }
 
-  public Payload withAllowedCredentials(Boolean allowedCredentials) {
-    if (allowedCredentials != null) headers.put("Access-Control-Allow-Credentials", allowedCredentials.toString());
+  public Payload withAllowCredentials(Boolean allowedCredentials) {
+    if (allowedCredentials != null) headers.put(Headers.ACCESS_CONTROL_ALLOW_CREDENTIALS, allowedCredentials.toString());
     return this;
   }
 
-  public Payload withAllowedHeaders(String... allowedHeaders) {
-    if (allowedHeaders != null) headers.put("Access-Control-Allow-Headers", Fluent.of(Arrays.asList(allowedHeaders)).join(", "));
+  public Payload withAllowHeaders(String... allowedHeaders) {
+    if (allowedHeaders != null) headers.put(Headers.ACCESS_CONTROL_ALLOW_HEADERS, Fluent.of(Arrays.asList(allowedHeaders)).join(", "));
     return this;
   }
 
   public Payload withExposeHeaders(String... allowedHeaders) {
-    if (allowedHeaders != null) headers.put("Access-Control-Expose-Credentials", Fluent.of(Arrays.asList(allowedHeaders)).join(", "));
+    if (allowedHeaders != null) headers.put(Headers.ACCESS_CONTROL_EXPOSE_HEADERS, Fluent.of(Arrays.asList(allowedHeaders)).join(", "));
     return this;
   }
 
-  public Payload withAllowedHeaders(List<String> allowedHeaders) {
-    if (allowedHeaders != null) headers.put("Access-Control-Allow-Headers", Fluent.of(allowedHeaders).join(", "));
+  public Payload withAllowHeaders(List<String> allowedHeaders) {
+    if (allowedHeaders != null) headers.put(Headers.ACCESS_CONTROL_ALLOW_HEADERS, Fluent.of(allowedHeaders).join(", "));
     return this;
   }
 
   public Payload withExposeHeaders(List<String> allowedHeaders) {
-    if (allowedHeaders != null) headers.put("Access-Control-Expose-Headers", Fluent.of(allowedHeaders).join(", "));
+    if (allowedHeaders != null) headers.put(Headers.ACCESS_CONTROL_EXPOSE_HEADERS, Fluent.of(allowedHeaders).join(", "));
     return this;
   }
 

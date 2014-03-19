@@ -44,16 +44,16 @@ abstract class AbstractReflectionRoute implements AnyRoute {
 
       Payload finalPayload = new Payload(contentType, payload);
 
-      AllowedOrigin origin = method.getDeclaredAnnotation(AllowedOrigin.class);
-      AllowedMethods methods = method.getDeclaredAnnotation(AllowedMethods.class);
-      AllowedCredentials credentials = method.getDeclaredAnnotation(AllowedCredentials.class);
-      AllowedHeaders allowedHeaders = method.getDeclaredAnnotation(AllowedHeaders.class);
-      ExposedHeaders exposedHeaders = method.getDeclaredAnnotation(ExposedHeaders.class);
+      AllowOrigin origin = method.getDeclaredAnnotation(AllowOrigin.class);
+      AllowMethods methods = method.getDeclaredAnnotation(AllowMethods.class);
+      AllowCredentials credentials = method.getDeclaredAnnotation(AllowCredentials.class);
+      AllowHeaders allowedHeaders = method.getDeclaredAnnotation(AllowHeaders.class);
+      ExposeHeaders exposedHeaders = method.getDeclaredAnnotation(ExposeHeaders.class);
       MaxAge maxAge = method.getDeclaredAnnotation(MaxAge.class);
-      if (origin != null) finalPayload.withAllowedOrigin(origin.value());
-      if (methods != null) finalPayload.withAllowedMethods(methods.value());
-      if (credentials != null) finalPayload.withAllowedCredentials(credentials.value());
-      if (allowedHeaders != null) finalPayload.withAllowedHeaders(allowedHeaders.value());
+      if (origin != null) finalPayload.withAllowOrigin(origin.value());
+      if (methods != null) finalPayload.withAllowMethods(methods.value());
+      if (credentials != null) finalPayload.withAllowCredentials(credentials.value());
+      if (allowedHeaders != null) finalPayload.withAllowHeaders(allowedHeaders.value());
       if (exposedHeaders != null) finalPayload.withExposeHeaders(exposedHeaders.value());
       if (maxAge != null) finalPayload.withMaxAge(maxAge.value());
 
