@@ -25,6 +25,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Target(METHOD)
 @Retention(RUNTIME)
-public @interface AllowedOrigin {
-  String value();
+public @interface AllowCredentials {
+  boolean value();
 }

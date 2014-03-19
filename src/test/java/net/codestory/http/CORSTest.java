@@ -15,120 +15,126 @@
  */
 package net.codestory.http;
 
-import net.codestory.http.annotations.AllowedCredentials;
-import net.codestory.http.annotations.AllowedHeaders;
-import net.codestory.http.annotations.AllowedMethods;
-import net.codestory.http.annotations.AllowedOrigin;
-import net.codestory.http.annotations.Get;
+import net.codestory.http.annotations.AllowCredentials;
+import net.codestory.http.annotations.AllowHeaders;
+import net.codestory.http.annotations.AllowMethods;
+import net.codestory.http.annotations.AllowOrigin;
 import net.codestory.http.annotations.Options;
+import net.codestory.http.constants.Headers;
 import net.codestory.http.errors.HttpException;
 import net.codestory.http.payload.Payload;
 import net.codestory.http.testhelpers.AbstractWebServerTest;
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
-import java.util.Map;
-import java.util.Optional;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 public class CORSTest extends AbstractWebServerTest {
 
+  @Test
+  public void cors_preflight() {
+    server.configure(routes -> routes.
+      options("/cors", context -> {
+        if (!context.isCORS()) throw new HttpException(401);
+        if (context.isPreflight()) throw new HttpException(402);
+        return new Payload("")
+          .withCode(200)
+          .withAllowOrigin("*")
+          .withAllowCredentials(true)
+          .withExposeHeaders("X-TOTO")
+          .withMaxAge(3600);
+      }).
+      options("/corspf", context -> {
+        if (!context.isCORS()) throw new HttpException(403);
+        if (!context.isPreflight()) throw new HttpException(404);
+        if (!"PUT".equals(context.getHeader(Headers.ACCESS_CONTROL_REQUEST_METHOD))) throw new HttpException(405);
+        return new Payload("")
+           .withCode(200)
+           .withAllowOrigin("*")
+           .withAllowMethods("PUT")
+           .withAllowHeaders("X-TOTO")
+           .withExposeHeaders("X-TOTO")
+           .withMaxAge(3600);
+      })
+    );
 
-    @Test
-    public void cors_preflight() {
-      server.configure(routes -> routes.
-        options("/cors", context -> {
-          if (!context.isCORS()) throw new HttpException(400);
-          if (context.isPreflight()) throw new HttpException(400);
-          return new Payload("")
-            .withCode(200)
-            .withAllowedOrigin("*")
-            .withAllowedCredentials(true)
-            .withExposeHeaders("X-TOTO")
-            .withMaxAge(3600);
-        }).
-        options("/corspf", context -> {
-          if (!context.isCORS()) throw new HttpException(400);
-          if (!context.isPreflight()) throw new HttpException(400);
-          if (!"PUT".equals(context.getHeader("Access-Control-Allow-Method"))) throw new HttpException(400);
-          return new Payload("")
-            .withCode(200)
-            .withAllowedOrigin("*")
-            .withAllowedMethods("PUT")
-            .withAllowedHeaders("X-TOTO")
-            .withExposeHeaders("X-TOTO")
-            .withMaxAge(3600);
-        })
-      );
-
-      options("/cors").produces(200);
-      optionsWithHeader("/corspf", "Access-Control-Allow-Method", "PUT").produces(200);
-      optionsWithHeader("/corspf", "Access-Control-Allow-Method", "PUT").producesHeader("Access-Control-Allow-Methods", "PUT");
-    }
+    options("/cors").produces(200);
+    optionsWithHeader("/corspf", Headers.ACCESS_CONTROL_REQUEST_METHOD, "PUT").produces(200);
+    optionsWithHeader("/corspf", Headers.ACCESS_CONTROL_REQUEST_METHOD, "PUT").producesHeader(Headers.ACCESS_CONTROL_ALLOW_METHODS, "PUT");
+  }
 
   @Test
   public void cors_programmatic() {
     server.configure(routes -> routes.
-            options("/origin", new Payload("").withCode(200).withAllowedOrigin("http://www.code-story.net")).
-            options("/originall", new Payload("").withCode(200).withAllowedOrigin("*")).
-            options("/methods", new Payload("").withCode(200).withAllowedMethods("GET")).
-            options("/methodsmore", new Payload("").withCode(200).withAllowedMethods("GET", "POST")).
-            options("/credentials", new Payload("").withCode(200).withAllowedCredentials(true)).
-            options("/headers", new Payload("").withCode(200).withAllowedHeaders("X-TOTO")).
-            options("/headersmore", new Payload("").withCode(200).withAllowedHeaders("X-TOTO", "X-BIDULE"))
+      options("/origin", new Payload("").withCode(200).withAllowOrigin("http://www.code-story.net")).
+      options("/originall", new Payload("").withCode(200).withAllowOrigin("*")).
+      options("/methods", new Payload("").withCode(200).withAllowMethods("GET")).
+      options("/methodsmore", new Payload("").withCode(200).withAllowMethods("GET", "POST")).
+      options("/credentials", new Payload("").withCode(200).withAllowCredentials(true)).
+      options("/headers", new Payload("").withCode(200).withAllowHeaders("X-TOTO")).
+      options("/headersmore", new Payload("").withCode(200).withAllowHeaders("X-TOTO", "X-BIDULE"))
     );
 
-    options("/origin").producesHeader("Access-Control-Allow-Origin", "http://www.code-story.net");
-    options("/originall").producesHeader("Access-Control-Allow-Origin", "*");
-    options("/methods").producesHeader("Access-Control-Allow-Methods", "GET");
-    options("/methodsmore").producesHeader("Access-Control-Allow-Methods", "GET, POST");
-    options("/credentials").producesHeader("Access-Control-Allow-Credentials", "true");
-    options("/headers").producesHeader("Access-Control-Allow-Headers", "X-TOTO");
-    options("/headersmore").producesHeader("Access-Control-Allow-Headers", "X-TOTO, X-BIDULE");
+    options("/origin").producesHeader(Headers.ACCESS_CONTROL_ALLOW_ORIGIN, "http://www.code-story.net");
+    options("/originall").producesHeader(Headers.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+    options("/methods").producesHeader(Headers.ACCESS_CONTROL_ALLOW_METHODS, "GET");
+    options("/methodsmore").producesHeader(Headers.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST");
+    options("/credentials").producesHeader(Headers.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
+    options("/headers").producesHeader(Headers.ACCESS_CONTROL_ALLOW_HEADERS, "X-TOTO");
+    options("/headersmore").producesHeader(Headers.ACCESS_CONTROL_ALLOW_HEADERS, "X-TOTO, X-BIDULE");
   }
 
   @Test
   public void cors_annotations() {
-      server.configure(routes -> routes.add(CorsResource.class));
+    server.configure(routes -> routes.add(CorsResource.class));
 
-      options("/origin").producesHeader("Access-Control-Allow-Origin", "http://www.code-story.net");
-      options("/originall").producesHeader("Access-Control-Allow-Origin", "*");
-      options("/methods").producesHeader("Access-Control-Allow-Methods", "GET");
-      options("/methodsmore").producesHeader("Access-Control-Allow-Methods", "GET, POST");
-      options("/credentials").producesHeader("Access-Control-Allow-Credentials", "true");
-      options("/headers").producesHeader("Access-Control-Allow-Headers", "X-TOTO");
-      options("/headersmore").producesHeader("Access-Control-Allow-Headers", "X-TOTO, X-BIDULE");
+    options("/origin").producesHeader(Headers.ACCESS_CONTROL_ALLOW_ORIGIN, "http://www.code-story.net");
+    options("/originall").producesHeader(Headers.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+    options("/methods").producesHeader(Headers.ACCESS_CONTROL_ALLOW_METHODS, "GET");
+    options("/methodsmore").producesHeader(Headers.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST");
+    options("/credentials").producesHeader(Headers.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
+    options("/headers").producesHeader(Headers.ACCESS_CONTROL_ALLOW_HEADERS, "X-TOTO");
+    options("/headersmore").producesHeader(Headers.ACCESS_CONTROL_ALLOW_HEADERS, "X-TOTO, X-BIDULE");
   }
 
-    public static class CorsResource {
-        @Options("/origin") @AllowedOrigin("http://www.code-story.net")
-        public String route1() {
-            return "";
-        }
-        @Options("/originall") @AllowedOrigin("*")
-        public String route2() {
-            return "";
-        }
-        @Options("/methods") @AllowedMethods("GET")
-        public String route3() {
-            return "";
-        }
-        @Options("/methodsmore") @AllowedMethods({"GET", "POST"})
-        public String route4() {
-            return "";
-        }
-        @Options("/credentials") @AllowedCredentials(true)
-        public String route5() {
-            return "";
-        }
-        @Options("/headers") @AllowedHeaders("X-TOTO")
-        public String route6() {
-            return "";
-        }
-        @Options("/headersmore") @AllowedHeaders({"X-TOTO", "X-BIDULE"})
-        public String route7() {
-            return "";
-        }
+  public static class CorsResource {
+    @Options("/origin")
+    @AllowOrigin("http://www.code-story.net")
+    public String route1() {
+      return "";
     }
+
+    @Options("/originall")
+    @AllowOrigin("*")
+    public String route2() {
+      return "";
+    }
+
+    @Options("/methods")
+    @AllowMethods("GET")
+    public String route3() {
+      return "";
+    }
+
+    @Options("/methodsmore")
+    @AllowMethods({"GET", "POST"})
+    public String route4() {
+      return "";
+    }
+
+    @Options("/credentials")
+    @AllowCredentials(true)
+    public String route5() {
+      return "";
+    }
+
+    @Options("/headers")
+    @AllowHeaders("X-TOTO")
+    public String route6() {
+      return "";
+    }
+
+    @Options("/headersmore")
+    @AllowHeaders({"X-TOTO", "X-BIDULE"})
+    public String route7() {
+      return "";
+    }
+  }
 }
