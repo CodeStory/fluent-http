@@ -53,4 +53,12 @@ public abstract class Headers {
   public static final String COOKIE = "Cookie";
   public static final String SET_COOKIE = "Set-Cookie";
   public static final String X_FORWARDED_FOR = "X-Forwarded-For";
+  public static final String ACCESS_CONTROL_REQUEST_METHOD = "Access-Control-Request-Method";
+  public static final String ACCESS_CONTROL_MAX_AGE = "Access-Control-Max-Age";
+  public static final String ACCESS_CONTROL_ALLOW_HEADERS = "Access-Control-Allow-Headers";
+  public static final String ACCESS_CONTROL_EXPOSE_HEADERS = "Access-Control-Expose-Headers";
+  public static final String ACCESS_CONTROL_ALLOW_METHODS = "Access-Control-Allow-Methods";
+  public static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
+  public static final String ACCESS_CONTROL_ALLOW_CREDENTIALS = "Access-Control-Allow-Credentials";
+  public static final String ORIGIN = "Origin";
 }
