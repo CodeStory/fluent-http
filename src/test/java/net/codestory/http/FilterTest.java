@@ -57,6 +57,39 @@ public class FilterTest extends AbstractWebServerTest {
     getWithHeader("/", "If-None-Match", Md5.of("Hello World".getBytes(UTF_8))).produces(304);
   }
 
+    private int control = 0;
+
+    /**
+     * This method checks that filters are executed in the same order they have been declared
+     */
+    @Test
+    public void multi_filter() {
+        control = 0;
+
+        server.configure(routes -> routes.
+                get("/", "NOT FILTERED").
+                get("/other", "OTHER").
+                filter((uri, context, nextFilter) -> {
+                    control += 5;
+                    System.out.println("I'm a basic LOGGING filter");
+                    return nextFilter.get();
+                })
+                .filter((uri, context, nextFilter) -> {
+                    control *= 3;
+                    if ("/".equals(uri)) {
+                        return new Payload("text/html", "FILTERED");
+                    }
+                    return nextFilter.get();
+                }));
+
+        control = 0;
+        get("/other").produces("OTHER");
+        Assert.assertEquals(15, control);
+        control = 0;
+        get("/").produces("FILTERED");
+        Assert.assertEquals(15, control);
+    }
+
   public static class CatchAll implements Filter {
     @Override
     public Payload apply(String uri, Context context, PayloadSupplier nextFilter) {
