@@ -19,9 +19,9 @@
   </parent>
 
   <scm>
-    <connection>scm:git:git@github.com:CodeStory/code-story-http.git</connection>
-    <url>scm:git:git@github.com:CodeStory/code-story-http.git</url>
-    <developerConnection>scm:git:git@github.com:CodeStory/code-story-http.git</developerConnection>
+    <connection>scm:git:git@github.com:CodeStory/fluent-http.git</connection>
+    <url>scm:git:git@github.com:CodeStory/fluent-http.git</url>
+    <developerConnection>scm:git:git@github.com:CodeStory/fluent-http.git</developerConnection>
   </scm>
 
   <licenses>
