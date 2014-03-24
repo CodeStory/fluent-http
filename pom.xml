@@ -22,7 +22,6 @@
     <connection>scm:git:git@github.com:CodeStory/code-story-http.git</connection>
     <url>scm:git:git@github.com:CodeStory/code-story-http.git</url>
     <developerConnection>scm:git:git@github.com:CodeStory/code-story-http.git</developerConnection>
-    <tag>HEAD</tag>
   </scm>
 
   <licenses>
