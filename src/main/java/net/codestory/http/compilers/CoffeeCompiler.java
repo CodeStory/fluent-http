@@ -20,7 +20,7 @@ import java.nio.file.*;
 
 class CoffeeCompiler implements Compiler {
   private final NashornCompiler nashornCompiler = new NashornCompiler(
-      "META-INF/resources/webjars/coffee-script/1.7.0/coffee-script.min.js",
+      "META-INF/resources/webjars/coffee-script/1.7.1/coffee-script.min.js",
       "coffee-script/compile.js");
 
   @Override
