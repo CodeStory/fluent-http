@@ -29,7 +29,7 @@ import net.codestory.http.types.*;
 
 public class Resources {
   public static final String CLASSES_OUTPUT_DIR = "target/classes/";
-  private static final String ROOT = "app";
+  public static final String ROOT = "app";
 
   private Resources() {
     // Static utility class

@@ -21,6 +21,7 @@ import static net.codestory.http.io.FileVisitor.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.concurrent.atomic.*;
+import java.util.function.*;
 
 import net.codestory.http.*;
 import net.codestory.http.io.*;
@@ -36,7 +37,8 @@ class ReloadingRoutesProvider implements RoutesProvider {
   private final Configuration configuration;
   private final AtomicBoolean dirty;
 
-  private boolean watcherIsStarted;
+  private boolean targetWatcherIsStarted;
+  private boolean appWatcherIsStarted;
   private RouteCollection routes;
 
   ReloadingRoutesProvider(Configuration configuration) {
@@ -49,9 +51,13 @@ class ReloadingRoutesProvider implements RoutesProvider {
     if (dirty.get()) {
       LOG.info("Reloading configuration...");
 
-      if (!watcherIsStarted) {
-        startClassChangeWatcher(Paths.get(Resources.CLASSES_OUTPUT_DIR));
-        watcherIsStarted = true;
+      if (!targetWatcherIsStarted) {
+        targetWatcherIsStarted = startClassChangeWatcher(Paths.get(Resources.CLASSES_OUTPUT_DIR));
+      }
+      if (false) {
+        if (!appWatcherIsStarted) {
+          appWatcherIsStarted = triggerLiveReadOnChange(Paths.get(Resources.ROOT));
+        }
       }
 
       routes = new RouteCollection();
@@ -64,13 +70,23 @@ class ReloadingRoutesProvider implements RoutesProvider {
     return routes;
   }
 
-  private void startClassChangeWatcher(Path path) {
-    new Thread(() -> watchChanges(path)).start();
+  private boolean startClassChangeWatcher(Path path) {
+    return startWatcherThread(path, ev -> dirty.set(true));
   }
 
-  private void watchChanges(Path path) {
-    WatchService watcher = createWatcher(path);
-    reloadOnChange(watcher);
+  private boolean triggerLiveReadOnChange(Path path) {
+    return startWatcherThread(path, ev -> System.out.println("Change detected in app folder"));
+  }
+
+  private boolean startWatcherThread(Path path, Consumer<WatchEvent<?>> action) {
+    if (!path.toFile().exists()) {
+      return false;
+    }
+    new Thread(() -> {
+      WatchService watcher = createWatcher(path);
+      reloadOnChange(watcher, action);
+    }).start();
+    return true;
   }
 
   private WatchService createWatcher(Path path) {
@@ -91,11 +107,11 @@ class ReloadingRoutesProvider implements RoutesProvider {
     }
   }
 
-  private void reloadOnChange(WatchService watcher) {
+  private void reloadOnChange(WatchService watcher, Consumer<WatchEvent<?>> action) {
     while (true) {
       try {
         WatchKey take = watcher.take();
-        take.pollEvents().forEach(ev -> dirty.set(true)); // consume all events of this shitty API;
+        take.pollEvents().forEach(action); // consume all events of this shitty API;
         take.reset();
       } catch (InterruptedException e) {
       }
