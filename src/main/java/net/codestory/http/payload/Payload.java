@@ -16,6 +16,7 @@
 package net.codestory.http.payload;
 
 import static java.nio.charset.StandardCharsets.*;
+import static java.util.Objects.requireNonNull;
 import static net.codestory.http.constants.Encodings.*;
 import static net.codestory.http.constants.Headers.*;
 import static net.codestory.http.constants.HttpStatus.NOT_FOUND;
@@ -317,10 +318,12 @@ public class Payload {
     }
     if (content instanceof ModelAndView) {
       Path path = Resources.findExistingPath(((ModelAndView) content).view());
+      requireNonNull(path, "View not found for " + uri);
       return ContentTypes.get(path);
     }
     if (content instanceof Model) {
       Path path = Resources.findExistingPath(uri);
+      requireNonNull(path, "View not found for " + uri);
       return ContentTypes.get(path);
     }
     return "application/json;charset=UTF-8";
