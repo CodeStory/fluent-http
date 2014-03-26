@@ -18,6 +18,7 @@ package net.codestory.http.compilers;
 import static java.nio.charset.StandardCharsets.*;
 
 import java.io.*;
+import java.net.*;
 import java.nio.file.*;
 
 import net.codestory.http.io.*;
@@ -35,6 +36,15 @@ class PathSource extends LessSource {
 
   @Override
   public LessSource relativeSource(String filename) throws CannotReadFile, FileNotFound {
+    if (filename.startsWith("/webjars/")) {
+      URL webjarResource = ClassLoader.getSystemResource("META-INF/resources" + filename);
+      if (webjarResource == null) {
+        throw new FileNotFound();
+      }
+
+      return new LessSource.URLSource(webjarResource);
+    }
+
     Path relativePath = Paths.get(filename);
     if (!Resources.exists(relativePath)) {
       throw new FileNotFound();
