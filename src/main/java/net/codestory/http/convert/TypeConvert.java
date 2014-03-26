@@ -26,7 +26,8 @@ import com.fasterxml.jackson.databind.*;
 
 public class TypeConvert {
   private static ObjectMapper OBJECT_MAPPER = new ObjectMapper()
-      .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+      .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
+      .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
   private TypeConvert() {
     // static class

@@ -55,6 +55,18 @@ public class TypeConvertTest {
   }
 
   @Test
+  public void ignore_missing_fields() {
+    Map<String, String> keyValues = new HashMap<>();
+    keyValues.put("name", "joe");
+    keyValues.put("city", "Paris");
+
+    Human human = TypeConvert.convertValue(keyValues, Human.class);
+
+    assertThat(human.name).isEqualTo("joe");
+    assertThat(human.age).isZero();
+  }
+
+  @Test
   public void json_to_bean() {
     Human human = TypeConvert.fromJson("{\"name\":\"jack\",\"age\":31}", Human.class);
 
