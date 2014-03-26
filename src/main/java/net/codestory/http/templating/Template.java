@@ -26,15 +26,18 @@ public class Template {
   private final Path path;
 
   public Template(String folder, String name) {
-    this(folder + (name.startsWith("/") ? name : "/" + name));
+    this(folder + "/" + name, Resources.findExistingPath(folder, name));
   }
 
   public Template(String uri) {
-    Path existing = Resources.findExistingPath(uri);
-    if (existing == null) {
+    this(uri, Resources.findExistingPath(uri));
+  }
+
+  private Template(String uri, Path path) {
+    if (path == null) {
       throw new IllegalArgumentException("Template not found " + uri);
     }
-    this.path = existing;
+    this.path = path;
   }
 
   public String renderAsString() {
@@ -61,7 +64,7 @@ public class Template {
       Map<String, Object> variables = yamlFrontMatter.getVariables();
       Map<String, Object> allKeyValues = merge(variables, keyValues);
 
-      String body = new HandlebarsCompiler().compile(content, allKeyValues);
+      String body = HandlebarsCompiler.INSTANCE.compile(content, allKeyValues);
       String layout = (String) variables.get("layout");
       if (layout != null) {
         body = new Template("_layouts", layout).render(allKeyValues).content().replace("[[body]]", body);

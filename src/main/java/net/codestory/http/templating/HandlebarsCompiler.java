@@ -15,9 +15,12 @@
  */
 package net.codestory.http.templating;
 
+import static java.nio.charset.StandardCharsets.*;
+
 import java.io.*;
 import java.util.*;
 
+import net.codestory.http.io.*;
 import net.codestory.http.templating.helpers.*;
 
 import com.github.jknack.handlebars.*;
@@ -26,14 +29,20 @@ import com.github.jknack.handlebars.context.*;
 import com.github.jknack.handlebars.helper.*;
 import com.github.jknack.handlebars.io.*;
 
-public class HandlebarsCompiler {
-  public String compile(String template, Map<String, ?> variables) throws IOException {
-    return handlebars(variables)
-        .compileInline(template)
-        .apply(context(variables));
+public enum HandlebarsCompiler {
+  INSTANCE;
+
+  private final Handlebars handlebars;
+
+  HandlebarsCompiler() {
+    this.handlebars = handlebars();
   }
 
-  private static Handlebars handlebars(Map<String, ?> variables) {
+  public String compile(String template, Map<String, ?> variables) throws IOException {
+    return handlebars.compileInline(template).apply(context(variables));
+  }
+
+  private static Handlebars handlebars() {
     Handlebars hb = new Handlebars();
 
     hb.startDelimiter("[[");
@@ -44,8 +53,8 @@ public class HandlebarsCompiler {
     hb.with(new ConcurrentMapTemplateCache());
     hb.with(new AbstractTemplateLoader() {
       @Override
-      public TemplateSource sourceAt(String location) {
-        return new StringTemplateSource(location, new Template("_includes", location).render(variables).content());
+      public TemplateSource sourceAt(String location) throws IOException {
+        return new StringTemplateSource(location, Resources.read(Resources.findExistingPath("_includes", location), UTF_8));
       }
     });
 

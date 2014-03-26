@@ -24,7 +24,7 @@ import java.util.*;
 import org.junit.*;
 
 public class HandlebarsCompilerTest {
-  HandlebarsCompiler compiler = new HandlebarsCompiler();
+  HandlebarsCompiler compiler = HandlebarsCompiler.INSTANCE;
 
   @Test
   public void compile() throws IOException {
@@ -41,10 +41,10 @@ public class HandlebarsCompilerTest {
   }
 
   @Test
-  public void yaml_front_matter_markdown_partial() throws IOException {
-    String result = compiler.compile("-[[>header.md]]-", map("name", "Bob"));
+  public void partial_with_context() throws IOException {
+    String result = compiler.compile("[[>partialWithContext ctx]]", map("ctx", map("firstName", "Bob", "age", "42")));
 
-    assertThat(result).isEqualTo("-<p><em>Hello Bob</em></p>\n-");
+    assertThat(result).isEqualTo("Hello Bob/42");
   }
 
   @Test
@@ -139,6 +139,13 @@ public class HandlebarsCompilerTest {
   private static Map<String, Object> map(String key, Object value) {
     return new TreeMap<String, Object>() {{
       put(key, value);
+    }};
+  }
+
+  private static Map<String, Object> map(String key1, Object value1, String key2, Object value2) {
+    return new TreeMap<String, Object>() {{
+      put(key1, value1);
+      put(key2, value2);
     }};
   }
 

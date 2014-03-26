@@ -70,6 +70,10 @@ public class Resources {
     return Resources.exists(path);
   }
 
+  public static Path findExistingPath(String folder, String name) {
+    return findExistingPath(folder + (name.startsWith("/") ? name : "/" + name));
+  }
+
   public static Path findExistingPath(String uri) {
     if (uri.endsWith("/")) {
       return findExistingPath(uri + "index");
