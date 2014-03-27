@@ -16,6 +16,7 @@
 package net.codestory.http;
 
 import static java.nio.charset.StandardCharsets.*;
+import static org.assertj.core.api.Assertions.*;
 
 import net.codestory.http.filters.*;
 import net.codestory.http.internal.*;
@@ -24,6 +25,9 @@ import net.codestory.http.payload.*;
 import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FilterTest extends AbstractWebServerTest {
   @Test
@@ -57,37 +61,33 @@ public class FilterTest extends AbstractWebServerTest {
     getWithHeader("/", "If-None-Match", Md5.of("Hello World".getBytes(UTF_8))).produces(304);
   }
 
-    private int control = 0;
-
     /**
      * This method checks that filters are executed in the same order they have been declared
      */
     @Test
     public void multi_filter() {
-        control = 0;
+        List<String> filters = new ArrayList<>();
 
         server.configure(routes -> routes.
                 get("/", "NOT FILTERED").
                 get("/other", "OTHER").
                 filter((uri, context, nextFilter) -> {
-                    control += 5;
-                    System.out.println("I'm a basic LOGGING filter");
+                    filters.add("filter 1");
                     return nextFilter.get();
                 })
                 .filter((uri, context, nextFilter) -> {
-                    control *= 3;
-                    if ("/".equals(uri)) {
+		    filters.add("filter 2");
+		    if ("/".equals(uri)) {
                         return new Payload("text/html", "FILTERED");
                     }
                     return nextFilter.get();
                 }));
 
-        control = 0;
         get("/other").produces("OTHER");
-        Assert.assertEquals(15, control);
-        control = 0;
+        assertThat(filters).containsExactly("filter 1", "filter 2");
+	filters.clear();
         get("/").produces("FILTERED");
-        Assert.assertEquals(15, control);
+	assertThat(filters).containsExactly("filter 1", "filter 2");
     }
 
   public static class CatchAll implements Filter {
