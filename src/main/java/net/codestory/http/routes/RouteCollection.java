@@ -35,7 +35,7 @@ import net.codestory.http.payload.*;
 
 public class RouteCollection implements Routes {
   private final List<Route> routes;
-  private final List<Supplier<Filter>> filters;
+  private final LinkedList<Supplier<Filter>> filters;
   private IocAdapter iocAdapter = new Singletons();
 
   public RouteCollection() {
@@ -381,7 +381,8 @@ public class RouteCollection implements Routes {
       return bestMatch;
     };
 
-    for (Supplier<Filter> filter : filters) {
+    for (Iterator<Supplier<Filter>> ite = filters.descendingIterator();ite.hasNext();) {
+      Supplier<Filter>  filter = ite.next();
       PayloadSupplier nextFilter = payloadSupplier;
       payloadSupplier = () -> filter.get().apply(uri, context, nextFilter);
     }
