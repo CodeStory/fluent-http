@@ -24,6 +24,8 @@ import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
 
+import org.reactivecouchbase.json.*;
+
 public class TypeConvert {
   private static ObjectMapper OBJECT_MAPPER = new ObjectMapper()
       .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
@@ -76,7 +78,9 @@ public class TypeConvert {
     } catch (IOException e) {
       throw new IllegalArgumentException("Unable read request content", e);
     }
-
+    if (type.isAssignableFrom(JsValue.class)) {
+      return Json.parse(json).as(type);
+    }
     return fromJson(json, type);
   }
 
