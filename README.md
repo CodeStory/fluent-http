@@ -542,6 +542,23 @@ public class BasicAuthFilter implements Filter {
 
 Both `BasicAuthFilter` and `LogRequestFilter` are pre-packaged filters that you can use in your applications.
 
+## ObjectMapper override
+
+When fluent-http talks json, the [jackson json processor](http://jackson.codehaus.org/) is not far.
+Sometimes (meaning: Always in any decent sized project), you want to  provide your own home-cooked `ObjectMapper`. You can do this by using `TypeConvert.overrideMapper(ObjectMapper objectMapper)`.
+
+
+Like the example below, for instance let's say someone, let's name it Cedric, wants to map objects using the "new" jdk8 date api. He can do so by using :
+```java
+ObjectMapper objectMapper = new ObjectMapper()
+.registerModule(new JSR310Module())
+.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+//Do you own cooking with your objectMapper then...
+TypeConvert.overrideMapper(objectMapper);
+```
+
+Take care of doing this early in your app start.
+
 ## Twitter Auth
 
 TODO
