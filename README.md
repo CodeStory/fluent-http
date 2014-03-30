@@ -565,7 +565,46 @@ TODO
 
 ## Dependency Injection
 
-TODO
+### With Guice
+
+Out of the box support for Guice: just throw in your Guice dependency in your pom, and you're ready to roll.
+
+Let's say you got some Guice Module like this.
+
+```Java
+public class ServiceModule extends AbstractModule {
+
+    @Override
+    protected void configure() {
+        bind(MongoDB.class);
+
+        bind(AllProducts.class);
+        bind(AllOrders.class);
+        bind(AllEmails.class);
+  }
+}
+```
+
+Wiring them in can be done in your WebConfiguration like this
+
+```Java
+public void configure(Routes routes) {
+        routes.setIocAdapter(new GuiceAdapter(new ServiceModule()));
+        routes.get("/foobar", "<h1>FOO BAR FTW</h1>");
+}
+```
+
+Now you can inject your bean like you would expect
+
+```Java
+public class AllProducts {
+    private final MongoCollection products;
+
+    @Inject
+    public AllProducts(MongoDB mongodb) {
+        products = mongodb.getJongo().getCollection("product");
+    }
+```
 
 ## Markdown extensions
 
