@@ -20,8 +20,12 @@ import com.google.inject.*;
 public class GuiceAdapter implements IocAdapter {
   private final Injector injector;
 
+  public GuiceAdapter(Injector injector) {
+    this.injector = injector;
+  }
+
   public GuiceAdapter(Module... modules) {
-    injector = Guice.createInjector(modules);
+    this(Guice.createInjector(modules));
   }
 
   public <T> T get(Class<T> type) {
