@@ -33,8 +33,8 @@ import net.codestory.http.misc.*;
 import net.codestory.http.payload.*;
 
 public class RouteCollection implements Routes {
-  private final List<Route> routes;
-  private final LinkedList<Supplier<Filter>> filters;
+  private final Deque<Route> routes;
+  private final Deque<Supplier<Filter>> filters;
   private IocAdapter iocAdapter = new Singletons();
 
   public RouteCollection() {
@@ -61,13 +61,13 @@ public class RouteCollection implements Routes {
 
   @Override
   public RouteCollection filter(Class<? extends Filter> filterClass) {
-    filters.add(() -> iocAdapter.get(filterClass));
+    filters.addFirst(() -> iocAdapter.get(filterClass));
     return this;
   }
 
   @Override
   public RouteCollection filter(Filter filter) {
-    filters.add(() -> filter);
+    filters.addFirst(() -> filter);
     return this;
   }
 
@@ -380,8 +380,7 @@ public class RouteCollection implements Routes {
       return bestMatch;
     };
 
-    for (Iterator<Supplier<Filter>> ite = filters.descendingIterator(); ite.hasNext(); ) {
-      Supplier<Filter> filter = ite.next();
+    for (Supplier<Filter> filter : filters) {
       PayloadSupplier nextFilter = payloadSupplier;
       payloadSupplier = () -> filter.get().apply(uri, context, nextFilter);
     }

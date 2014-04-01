@@ -16,9 +16,6 @@
 package net.codestory.http;
 
 import static java.nio.charset.StandardCharsets.*;
-import static org.assertj.core.api.Assertions.*;
-
-import java.util.*;
 
 import net.codestory.http.filters.*;
 import net.codestory.http.internal.*;
@@ -60,33 +57,14 @@ public class FilterTest extends AbstractWebServerTest {
     getWithHeader("/", "If-None-Match", Md5.of("Hello World".getBytes(UTF_8))).produces(304);
   }
 
-  /**
-   * This method checks that filters are executed in the same order they have been declared
-   */
   @Test
-  public void multi_filter() {
-    List<String> filters = new ArrayList<>();
+  public void filter_are_executed_in_order_of_definition() {
+    server.configure(routes -> routes
+        .get("/", "NOT FILTERED")
+        .filter((uri, context, next) -> new Payload("FILTER1>" + next.get().rawContent()))
+        .filter((uri, context, next) -> new Payload("FILTER2>" + next.get().rawContent())));
 
-    server.configure(routes -> routes.
-        get("/", "NOT FILTERED").
-        get("/other", "OTHER").
-        filter((uri, context, nextFilter) -> {
-          filters.add("filter 1");
-          return nextFilter.get();
-        })
-        .filter((uri, context, nextFilter) -> {
-          filters.add("filter 2");
-          if ("/".equals(uri)) {
-            return new Payload("text/html", "FILTERED");
-          }
-          return nextFilter.get();
-        }));
-
-    get("/other").produces("OTHER");
-    assertThat(filters).containsExactly("filter 1", "filter 2");
-    filters.clear();
-    get("/").produces("FILTERED");
-    assertThat(filters).containsExactly("filter 1", "filter 2");
+    get("/").produces("FILTER1>FILTER2>NOT FILTERED");
   }
 
   public static class CatchAll implements Filter {
