@@ -26,6 +26,7 @@ abstract class AbstractReflectionRoute implements AnyRoute {
   private final Supplier<Object> resource;
   private final Method method;
 
+
   protected AbstractReflectionRoute(Supplier<Object> resource, Method method) {
     this.resource = resource;
     this.method = method;
@@ -41,7 +42,22 @@ abstract class AbstractReflectionRoute implements AnyRoute {
       Object payload = emptyIfNull(response);
       String contentType = findContentType(method);
 
-      return new Payload(contentType, payload);
+      Payload finalPayload = new Payload(contentType, payload);
+
+      AllowOrigin origin = method.getDeclaredAnnotation(AllowOrigin.class);
+      AllowMethods methods = method.getDeclaredAnnotation(AllowMethods.class);
+      AllowCredentials credentials = method.getDeclaredAnnotation(AllowCredentials.class);
+      AllowHeaders allowedHeaders = method.getDeclaredAnnotation(AllowHeaders.class);
+      ExposeHeaders exposedHeaders = method.getDeclaredAnnotation(ExposeHeaders.class);
+      MaxAge maxAge = method.getDeclaredAnnotation(MaxAge.class);
+      if (origin != null) finalPayload.withAllowOrigin(origin.value());
+      if (methods != null) finalPayload.withAllowMethods(methods.value());
+      if (credentials != null) finalPayload.withAllowCredentials(credentials.value());
+      if (allowedHeaders != null) finalPayload.withAllowHeaders(allowedHeaders.value());
+      if (exposedHeaders != null) finalPayload.withExposeHeaders(exposedHeaders.value());
+      if (maxAge != null) finalPayload.withMaxAge(maxAge.value());
+
+      return finalPayload;
     } catch (RuntimeException e) {
       throw e;
     } catch (Throwable e) {

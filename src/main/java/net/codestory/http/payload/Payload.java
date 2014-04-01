@@ -90,6 +90,51 @@ public class Payload {
     this.cookies = new ArrayList<>();
   }
 
+  public Payload withMaxAge(int maxAge) {
+    headers.put(Headers.ACCESS_CONTROL_MAX_AGE, maxAge + "");
+    return this;
+  }
+
+  public Payload withAllowOrigin(String allowedOrigin) {
+    if (allowedOrigin != null) headers.put(Headers.ACCESS_CONTROL_ALLOW_ORIGIN, allowedOrigin);
+    return this;
+  }
+
+  public Payload withAllowMethods(String... allowedMethods) {
+    if (allowedMethods != null) headers.put(ACCESS_CONTROL_ALLOW_METHODS, Fluent.of(allowedMethods).join(", "));
+    return this;
+  }
+
+  public Payload withAllowMethods(List<String> allowedMethods) {
+    if (allowedMethods != null) headers.put(Headers.ACCESS_CONTROL_ALLOW_METHODS, Fluent.of(allowedMethods).join(", "));
+    return this;
+  }
+
+  public Payload withAllowCredentials(Boolean allowedCredentials) {
+    if (allowedCredentials != null) headers.put(Headers.ACCESS_CONTROL_ALLOW_CREDENTIALS, allowedCredentials.toString());
+    return this;
+  }
+
+  public Payload withAllowHeaders(String... allowedHeaders) {
+    if (allowedHeaders != null) headers.put(Headers.ACCESS_CONTROL_ALLOW_HEADERS, Fluent.of(Arrays.asList(allowedHeaders)).join(", "));
+    return this;
+  }
+
+  public Payload withExposeHeaders(String... allowedHeaders) {
+    if (allowedHeaders != null) headers.put(Headers.ACCESS_CONTROL_EXPOSE_HEADERS, Fluent.of(Arrays.asList(allowedHeaders)).join(", "));
+    return this;
+  }
+
+  public Payload withAllowHeaders(List<String> allowedHeaders) {
+    if (allowedHeaders != null) headers.put(Headers.ACCESS_CONTROL_ALLOW_HEADERS, Fluent.of(allowedHeaders).join(", "));
+    return this;
+  }
+
+  public Payload withExposeHeaders(List<String> allowedHeaders) {
+    if (allowedHeaders != null) headers.put(Headers.ACCESS_CONTROL_EXPOSE_HEADERS, Fluent.of(allowedHeaders).join(", "));
+    return this;
+  }
+
   public Payload withHeader(String key, String value) {
     headers.put(key, value);
     return this;

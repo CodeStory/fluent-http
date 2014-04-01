@@ -112,6 +112,7 @@ public class RouteCollection implements Routes {
       forEach(method.getAnnotationsByType(Put.class)).then(put -> addResource(PUT, method, resource, prefix + put.value()));
       forEach(method.getAnnotationsByType(Delete.class)).then(delete -> addResource(DELETE, method, resource, prefix + delete.value()));
       forEach(method.getAnnotationsByType(Head.class)).then(delete -> addResource(HEAD, method, resource, prefix + delete.value()));
+      forEach(method.getAnnotationsByType(Options.class)).then(opts -> addResource(OPTIONS, method, resource, prefix + opts.value()));
     }
   }
 
@@ -171,6 +172,49 @@ public class RouteCollection implements Routes {
   }
 
   @Override
+  public RouteCollection options(String uriPattern, Object payload) {
+      options(uriPattern, () -> payload);
+      return this;
+  }
+
+  @Override
+  public RouteCollection options(String uriPattern, NoParamRoute route) {
+      add(OPTIONS, checkParametersCount(uriPattern, 0), route);
+      return this;
+  }
+
+  @Override
+  public RouteCollection options(String uriPattern, NoParamRouteWithContext route) {
+      add(OPTIONS, checkParametersCount(uriPattern, 0), route);
+      return this;
+  }
+
+  @Override
+  public RouteCollection options(String uriPattern, OneParamRoute route) {
+      add(OPTIONS, checkParametersCount(uriPattern, 1), route);
+      return this;
+  }
+
+  @Override
+  public RouteCollection options(String uriPattern, TwoParamsRoute route) {
+      add(OPTIONS, checkParametersCount(uriPattern, 2), route);
+      return this;
+  }
+
+  @Override
+  public RouteCollection options(String uriPattern, ThreeParamsRoute route) {
+      add(OPTIONS, checkParametersCount(uriPattern, 3), route);
+      return this;
+  }
+
+  @Override
+  public RouteCollection options(String uriPattern, FourParamsRoute route) {
+      add(OPTIONS, checkParametersCount(uriPattern, 4), route);
+      return this;
+  }
+
+
+    @Override
   public RouteCollection head(String uriPattern, Object payload) {
     head(uriPattern, () -> payload);
     return this;
