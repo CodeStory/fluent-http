@@ -15,6 +15,8 @@
  */
 package net.codestory.http.compilers;
 
+import static com.github.sommeri.less4j.LessCompiler.*;
+
 import java.io.*;
 import java.nio.file.*;
 
@@ -22,10 +24,15 @@ import com.github.sommeri.less4j.*;
 import com.github.sommeri.less4j.core.*;
 
 class LessCompiler implements Compiler {
+  public static boolean linkSourceMap = true;
+
   @Override
   public String compile(Path path, String source) throws IOException {
     try {
-      return new ThreadUnsafeLessCompiler().compile(new PathSource(path, source)).getCss();
+      Configuration configuration = new Configuration();
+      configuration.setLinkSourceMap(linkSourceMap);
+
+      return new ThreadUnsafeLessCompiler().compile(new PathSource(path, source), configuration).getCss();
     } catch (Less4jException e) {
       throw new IOException("Unable to compile less", e);
     }
