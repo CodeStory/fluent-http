@@ -22,7 +22,7 @@ import org.markdown4j.*;
 
 import com.github.rjeschke.txtmark.*;
 
-class MarkdownCompiler implements Compiler {
+public class MarkdownCompiler implements Compiler {
   private final Configuration configuration;
 
   public MarkdownCompiler() {

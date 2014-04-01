@@ -18,7 +18,7 @@ package net.codestory.http.compilers;
 import java.io.*;
 import java.nio.file.*;
 
-class CoffeeCompiler implements Compiler {
+public class CoffeeCompiler implements Compiler {
   private final NashornCompiler nashornCompiler = new NashornCompiler(
       "META-INF/resources/webjars/coffee-script/1.7.1/coffee-script.min.js",
       "coffee-script/compile.js");

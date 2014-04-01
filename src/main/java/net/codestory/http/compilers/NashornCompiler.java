@@ -24,7 +24,7 @@ import net.codestory.http.io.*;
 
 import javax.script.*;
 
-final class NashornCompiler {
+public final class NashornCompiler {
   private final CompiledScript compiledScript;
   private final Bindings bindings;
 

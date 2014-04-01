@@ -18,7 +18,7 @@ package net.codestory.http.compilers;
 import java.io.*;
 import java.nio.file.*;
 
-class AsciidocCompiler implements Compiler {
+public class AsciidocCompiler implements Compiler {
   private final NashornCompiler nashornCompiler = new NashornCompiler(
       "asciidoc/opal.js",
       "asciidoc/asciidoctor.js",

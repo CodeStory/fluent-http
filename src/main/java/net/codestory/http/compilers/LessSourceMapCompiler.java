@@ -21,7 +21,7 @@ import java.nio.file.*;
 import com.github.sommeri.less4j.*;
 import com.github.sommeri.less4j.core.*;
 
-class LessSourceMapCompiler implements Compiler {
+public class LessSourceMapCompiler implements Compiler {
   @Override
   public String compile(Path path, String source) throws IOException {
     try {

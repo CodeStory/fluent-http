@@ -23,7 +23,7 @@ import java.nio.file.*;
 import com.github.sommeri.less4j.*;
 import com.github.sommeri.less4j.core.*;
 
-class LessCompiler implements Compiler {
+public class LessCompiler implements Compiler {
   public static boolean linkSourceMap = true;
 
   @Override
