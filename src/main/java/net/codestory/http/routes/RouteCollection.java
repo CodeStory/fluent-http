@@ -15,10 +15,9 @@
  */
 package net.codestory.http.routes;
 
-import static java.util.Arrays.*;
 import static net.codestory.http.constants.Methods.*;
 import static net.codestory.http.internal.UriParser.*;
-import static net.codestory.http.misc.ForEach.forEach;
+import static net.codestory.http.misc.ForEach.*;
 
 import java.io.*;
 import java.lang.reflect.*;
@@ -381,8 +380,8 @@ public class RouteCollection implements Routes {
       return bestMatch;
     };
 
-    for (Iterator<Supplier<Filter>> ite = filters.descendingIterator();ite.hasNext();) {
-      Supplier<Filter>  filter = ite.next();
+    for (Iterator<Supplier<Filter>> ite = filters.descendingIterator(); ite.hasNext(); ) {
+      Supplier<Filter> filter = ite.next();
       PayloadSupplier nextFilter = payloadSupplier;
       payloadSupplier = () -> filter.get().apply(uri, context, nextFilter);
     }
