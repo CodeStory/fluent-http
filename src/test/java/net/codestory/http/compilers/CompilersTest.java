@@ -38,12 +38,7 @@ public class CompilersTest {
 
   @Test
   public void register_custom_compiler() {
-    Compilers.INSTANCE.register(() -> new Compiler() {
-      @Override
-      public String compile(Path path, String source) {
-        return source + source;
-      }
-    }, ".copycat");
+    Compilers.INSTANCE.register(() -> (path, source) -> source + source, ".copycat");
 
     String source = Compilers.INSTANCE.compile(Paths.get("file.copycat"), "Hello").content();
 
