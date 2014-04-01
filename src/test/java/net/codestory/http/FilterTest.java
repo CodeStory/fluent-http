@@ -33,7 +33,7 @@ public class FilterTest extends AbstractWebServerTest {
         get("/other", "OTHER").
         filter((uri, context, nextFilter) -> {
           if ("/".equals(uri)) {
-            return new Payload("text/html", "FILTERED");
+            return new Payload("FILTERED");
           }
           return nextFilter.get();
         }));
@@ -70,7 +70,7 @@ public class FilterTest extends AbstractWebServerTest {
   public static class CatchAll implements Filter {
     @Override
     public Payload apply(String uri, Context context, PayloadSupplier nextFilter) {
-      return new Payload("text/html", "FILTERED");
+      return new Payload("FILTERED");
     }
   }
 }
