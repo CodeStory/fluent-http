@@ -16,6 +16,7 @@
 package net.codestory.http;
 
 import static java.nio.charset.StandardCharsets.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import net.codestory.http.filters.*;
 import net.codestory.http.internal.*;
@@ -23,6 +24,7 @@ import net.codestory.http.misc.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.testhelpers.*;
 
+import org.assertj.core.api.Assertions;
 import org.junit.*;
 
 public class FilterTest extends AbstractWebServerTest {
@@ -55,6 +57,33 @@ public class FilterTest extends AbstractWebServerTest {
 
     get("/").produces(200, "text/html", "Hello World");
     getWithHeader("/", "If-None-Match", Md5.of("Hello World".getBytes(UTF_8))).produces(304);
+  }
+
+  @Test
+  public void filter_are_executed_in_the_order_of_definition() {
+    final StringBuilder orderControl = new StringBuilder();
+    server.configure(routes -> routes.
+        get("/", "NOT FILTERED").
+        get("/other", "OTHER").
+        filter((uri, context, nextFilter) -> {
+          orderControl.append("[1]");
+          return nextFilter.get();
+        }).
+        filter((uri, context, nextFilter) -> {
+          orderControl.append("[2]");
+          if ("/".equals(uri)) {
+            return new Payload("text/html", "FILTERED");
+          }
+          return nextFilter.get();
+        }));
+
+    orderControl.setLength(0);
+    get("/other").produces("OTHER");
+    assertThat(orderControl.toString()).isEqualTo("[1][2]");
+
+    orderControl.setLength(0);
+    get("/").produces("FILTERED");
+    assertThat(orderControl.toString()).isEqualTo("[1][2]");
   }
 
   public static class CatchAll implements Filter {
