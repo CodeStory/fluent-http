@@ -48,6 +48,10 @@ public class Template {
     return render(model).content();
   }
 
+  public String renderAsString(Map<String, ?> keyValues) {
+    return render(keyValues).content();
+  }
+
   public CacheEntry render() {
     return render(Collections.emptyMap());
   }
