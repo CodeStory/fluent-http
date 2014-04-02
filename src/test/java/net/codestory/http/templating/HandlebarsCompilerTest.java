@@ -23,6 +23,8 @@ import java.util.*;
 
 import org.junit.*;
 
+import com.github.jknack.handlebars.*;
+
 public class HandlebarsCompilerTest {
   HandlebarsCompiler compiler = HandlebarsCompiler.INSTANCE;
 
@@ -134,6 +136,25 @@ public class HandlebarsCompilerTest {
     String result = compiler.compile("[[&html]]", map("html", "<div>Hello</div>"));
 
     assertThat(result).isEqualTo("<div>Hello</div>");
+  }
+
+  @Test
+  public void custom_resolver() throws IOException {
+    compiler.addResolver(new ValueResolver() {
+      @Override
+      public Object resolve(Object context, String name) {
+        return name.equals("additional") ? "SUCCESS" : UNRESOLVED;
+      }
+
+      @Override
+      public Set<Map.Entry<String, Object>> propertySet(Object context) {
+        return Collections.emptySet();
+      }
+    });
+
+    String result = compiler.compile("[[additional]]", new TreeMap<>());
+
+    assertThat(result).isEqualTo("SUCCESS");
   }
 
   private static Map<String, Object> map(String key, Object value) {

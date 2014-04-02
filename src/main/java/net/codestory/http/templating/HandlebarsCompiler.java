@@ -16,8 +16,10 @@
 package net.codestory.http.templating;
 
 import static java.nio.charset.StandardCharsets.*;
+import static java.util.Arrays.*;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.*;
 
 import net.codestory.http.io.*;
@@ -33,9 +35,17 @@ public enum HandlebarsCompiler {
   INSTANCE;
 
   private final Handlebars handlebars;
+  private final List<ValueResolver> resolvers;
 
   HandlebarsCompiler() {
     this.handlebars = handlebars();
+    this.resolvers = new ArrayList<>(asList(
+        MapValueResolver.INSTANCE,
+        JavaBeanValueResolver.INSTANCE,
+        FieldValueResolver.INSTANCE,
+        MethodValueResolver.INSTANCE,
+        Site.SiteValueResolver.INSTANCE
+    ));
   }
 
   public String compile(String template, Map<String, ?> variables) throws IOException {
@@ -69,7 +79,6 @@ public enum HandlebarsCompiler {
     return null != Site.get().get("handleBarHelper");
   }
 
-
   private static Class<?> findHandleBarHelpers() {
     String helperClassName = (String) Site.get().get("handleBarHelper");
     try {
@@ -79,17 +88,16 @@ public enum HandlebarsCompiler {
     }
   }
 
-  private static Context context(Map<String, ?> variables) {
+  private Context context(Map<String, ?> variables) {
     return Context.newBuilder(null)
-        .resolver(
-            MapValueResolver.INSTANCE,
-            JavaBeanValueResolver.INSTANCE,
-            FieldValueResolver.INSTANCE,
-            MethodValueResolver.INSTANCE,
-            Site.SiteValueResolver.INSTANCE)
+        .resolver(resolvers.toArray(new ValueResolver[resolvers.size()]))
         .combine("site", Site.get())
         .combine(variables)
         .build();
+  }
+
+  public void addResolver(ValueResolver resolver) {
+    resolvers.add(resolver);
   }
 
   private static class NopRegister {
