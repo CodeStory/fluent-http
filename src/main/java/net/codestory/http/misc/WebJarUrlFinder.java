@@ -15,35 +15,35 @@
  */
 package net.codestory.http.misc;
 
-import java.net.URL;
+import java.net.*;
 
 public class WebJarUrlFinder {
-    private final boolean useMinifiedVersions;
+  private final boolean useMinifiedVersions;
 
-    public WebJarUrlFinder(boolean useMinifiedVersions) {
-        this.useMinifiedVersions = useMinifiedVersions;
+  public WebJarUrlFinder(boolean useMinifiedVersions) {
+    this.useMinifiedVersions = useMinifiedVersions;
+  }
+
+  public URL url(String path) {
+    URL urlMinified = getResource(minified(path));
+    URL urlNonMinified = getResource(notMinified(path));
+
+    if (useMinifiedVersions) {
+      return (urlMinified != null) ? urlMinified : urlNonMinified;
+    } else {
+      return (urlNonMinified != null) ? urlNonMinified : urlMinified;
     }
+  }
 
-    public URL url(String path) {
-        URL urlMinified = getResource(minified(path));
-        URL urlNonMinified = getResource(notMinified(path));
+  private static URL getResource(String uri) {
+    return ClassLoader.getSystemResource("META-INF/resources" + uri);
+  }
 
-        if (useMinifiedVersions) {
-            return (urlMinified != null) ? urlMinified : urlNonMinified;
-        } else {
-            return (urlNonMinified != null) ? urlNonMinified : urlMinified;
-        }
-    }
+  private static String minified(String path) {
+    return path.contains(".min.") ? path : path.replace(".js", ".min.js").replace(".css", ".min.css");
+  }
 
-    private static URL getResource(String uri) {
-        return ClassLoader.getSystemResource("META-INF/resources" + uri);
-    }
-
-    private static String minified(String path) {
-        return path.contains(".min.") ? path : path.replace(".js", ".min.js").replace(".css", ".min.css");
-    }
-
-    private static String notMinified(String path) {
-        return path.replace(".min.", ".");
-    }
+  private static String notMinified(String path) {
+    return path.replace(".min.", ".");
+  }
 }

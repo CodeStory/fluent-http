@@ -16,7 +16,7 @@
 package net.codestory.http.payload;
 
 import static java.nio.charset.StandardCharsets.*;
-import static java.util.Objects.requireNonNull;
+import static java.util.Objects.*;
 import static net.codestory.http.constants.Encodings.*;
 import static net.codestory.http.constants.Headers.*;
 import static net.codestory.http.constants.HttpStatus.NOT_FOUND;
