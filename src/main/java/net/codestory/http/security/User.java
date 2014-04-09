@@ -16,11 +16,16 @@
 package net.codestory.http.security;
 
 import java.io.*;
+import java.util.stream.*;
 
 public interface User extends Serializable {
   String login();
 
   String[] roles();
+
+  default boolean isInRole(String expectedRole) {
+    return Stream.of(roles()).anyMatch(role -> role.equals(expectedRole));
+  }
 
   static User forLogin(String login) {
     return new User() {
