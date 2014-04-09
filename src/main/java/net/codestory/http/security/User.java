@@ -19,6 +19,8 @@ import java.io.*;
 import java.util.stream.*;
 
 public interface User extends Serializable {
+  String name();
+
   String login();
 
   String[] roles();
@@ -29,6 +31,11 @@ public interface User extends Serializable {
 
   static User forLogin(String login) {
     return new User() {
+      @Override
+      public String name() {
+        return login;
+      }
+
       @Override
       public String login() {
         return login;
