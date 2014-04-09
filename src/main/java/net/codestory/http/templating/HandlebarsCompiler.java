@@ -19,9 +19,11 @@ import static java.nio.charset.StandardCharsets.*;
 import static java.util.Arrays.*;
 
 import java.io.*;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.*;
 
+import net.codestory.http.compilers.*;
 import net.codestory.http.io.*;
 import net.codestory.http.templating.helpers.*;
 
@@ -64,7 +66,14 @@ public enum HandlebarsCompiler {
     hb.with(new AbstractTemplateLoader() {
       @Override
       public TemplateSource sourceAt(String location) throws IOException {
-        return new StringTemplateSource(location, Resources.read(Resources.findExistingPath("_includes", location), UTF_8));
+        Path include = Resources.findExistingPath("_includes", location);
+        if (include == null) {
+          throw new IOException("Template not found " + location);
+        }
+
+        String template = Resources.read(include, UTF_8);
+        CacheEntry compiled = Compilers.INSTANCE.compile(include, template);
+        return new StringTemplateSource(location, compiled.content());
       }
     });
 

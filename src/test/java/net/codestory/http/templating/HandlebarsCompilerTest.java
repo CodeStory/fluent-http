@@ -57,6 +57,18 @@ public class HandlebarsCompilerTest {
   }
 
   @Test
+  public void markdown_partial() throws IOException {
+    String result = compiler.compile("[[>map city]]", map("city", "Paris"));
+
+    assertThat(result).isEqualTo("<p><a href=\"https://maps.google.com/maps?q=+Paris\"> Paris</a></p>\n");
+  }
+
+  @Test(expected = HandlebarsException.class)
+  public void unknown_partial() throws IOException {
+    compiler.compile("[[>unknown]]", map("", ""));
+  }
+
+  @Test
   public void string_helpers() throws IOException {
     String result = compiler.compile("Hello [[capitalizeFirst name]]", map("name", "joe"));
 
