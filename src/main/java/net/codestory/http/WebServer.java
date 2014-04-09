@@ -75,9 +75,9 @@ public class WebServer {
 
   public WebServer startOnRandomPort() {
     Random random = new Random();
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 30; i++) {
       try {
-        int port = 8183 + random.nextInt(1000);
+        int port = 8183 + random.nextInt(10000);
         start(port);
         return this;
       } catch (Exception e) {
