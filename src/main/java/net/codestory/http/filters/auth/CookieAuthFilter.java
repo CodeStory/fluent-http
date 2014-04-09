@@ -90,6 +90,10 @@ public class CookieAuthFilter implements Filter {
           .withCookie(sessionCookie(null));
     }
 
+    if (uri.startsWith("/auth/")) {
+      return nextFilter.get(); // Don't protect other /auth/ pages
+    }
+
     String sessionId = context.cookieValue("sessionId");
     if (sessionId != null) {
       String login = sessionIdStore.getLogin(sessionId);
