@@ -174,7 +174,7 @@ public class WebServer {
   }
 
   protected void handleServerError(Context context, Exception e) {
-    if (!(e instanceof HttpException)) {
+    if (!(e instanceof HttpException) && !(e instanceof NoSuchElementException)) {
       e.printStackTrace();
     }
 
@@ -190,7 +190,13 @@ public class WebServer {
   }
 
   protected Payload errorPage(Exception e) {
-    int code = (e instanceof HttpException) ? ((HttpException) e).code() : 500;
+    int code = 500;
+    if (e instanceof HttpException) {
+      code = ((HttpException) e).code();
+    } else if (e instanceof NoSuchElementException) {
+      code = 404;
+    }
+
     return errorPage(new Payload(code), e);
   }
 
