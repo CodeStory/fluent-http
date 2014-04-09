@@ -30,6 +30,7 @@ import org.simpleframework.http.*;
 
 public class CookieAuthFilter implements Filter {
   private static final int ONE_DAY = (int) TimeUnit.DAYS.toSeconds(1L);
+  private static final String[] DEFAULT_EXCLUDE = {".less", ".css", ".map", ".ico", ".jpeg", ".jpg", ".gif", ".png", ".svg", ".eot", ".ttf", ".woff"};
 
   private final String uriPrefix;
   private final Users users;
@@ -37,7 +38,7 @@ public class CookieAuthFilter implements Filter {
   private final String[] ignoreExtensions;
 
   public CookieAuthFilter(String uriPrefix, Users users) {
-    this(uriPrefix, users, SessionIdStore.inMemory(), ".ico", ".jpeg", ".jpg", ".gif", ".png", ".svg", ".eot", ".ttf", ".woff");
+    this(uriPrefix, users, SessionIdStore.inMemory(), DEFAULT_EXCLUDE);
   }
 
   public CookieAuthFilter(String uriPrefix, Users users, SessionIdStore sessionIdStore, String... ignoreExtensions) {
