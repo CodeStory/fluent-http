@@ -500,4 +500,11 @@ public class FluentTest {
 
     assertThat(chars.toList()).isEmpty();
   }
+
+  @Test
+  public void split_string() {
+    Fluent<String> letters = Fluent.split("A,B,C,D", ",");
+
+    assertThat(letters.toList()).containsExactly("A", "B", "C", "D");
+  }
 }

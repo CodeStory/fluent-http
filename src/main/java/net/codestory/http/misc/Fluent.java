@@ -78,6 +78,12 @@ public interface Fluent<T> extends Iterable<T> {
     })).limit(text.length());
   }
 
+  static Fluent<String> split(String text, String regex) {
+    requireNonNull(text);
+    requireNonNull(regex);
+    return of(text.split(regex));
+  }
+
   public default <R> Fluent<R> map(Function<? super T, ? extends R> transform) {
     requireNonNull(transform);
     return () -> stream().map(transform);
