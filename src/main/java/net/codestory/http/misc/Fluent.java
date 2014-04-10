@@ -89,6 +89,36 @@ public interface Fluent<T> extends Iterable<T> {
     return () -> stream().map(transform);
   }
 
+  public default IntStream mapToInt(ToIntFunction<? super T> transform) {
+    requireNonNull(transform);
+    return stream().mapToInt(transform);
+  }
+
+  public default LongStream mapToLong(ToLongFunction<? super T> transform) {
+    requireNonNull(transform);
+    return stream().mapToLong(transform);
+  }
+
+  public default DoubleStream mapToDouble(ToDoubleFunction<? super T> transform) {
+    requireNonNull(transform);
+    return stream().mapToDouble(transform);
+  }
+
+  public default IntStream flatMapToInt(Function<? super T, ? extends IntStream> transform) {
+    requireNonNull(transform);
+    return stream().flatMapToInt(transform);
+  }
+
+  public default LongStream flatMapToLong(Function<? super T, ? extends LongStream> transform) {
+    requireNonNull(transform);
+    return stream().flatMapToLong(transform);
+  }
+
+  public default DoubleStream flatMapToDouble(Function<? super T, ? extends DoubleStream> transform) {
+    requireNonNull(transform);
+    return stream().flatMapToDouble(transform);
+  }
+
   public default Fluent<T> filter(Predicate<? super T> predicate) {
     requireNonNull(predicate);
     return () -> stream().filter(predicate);
@@ -116,6 +146,14 @@ public interface Fluent<T> extends Iterable<T> {
 
   public default Optional<T> first() {
     return stream().findFirst();
+  }
+
+  public default Optional<T> any() {
+    return stream().findAny();
+  }
+
+  public default Fluent<T> skip(long n) {
+    return () -> stream().skip(n);
   }
 
   public default Optional<T> firstMatch(Predicate<? super T> predicate) {
@@ -223,6 +261,11 @@ public interface Fluent<T> extends Iterable<T> {
     }
   }
 
+  public default Fluent<T> peek(Consumer<? super T> action) {
+    requireNonNull(action);
+    return () -> stream().peek(action);
+  }
+
   public default void forEachOrdered(Consumer<? super T> action) {
     requireNonNull(action);
     stream().forEachOrdered(action);
@@ -230,6 +273,22 @@ public interface Fluent<T> extends Iterable<T> {
 
   public default Iterator<T> iterator() {
     return stream().iterator();
+  }
+
+  public default Spliterator<T> spliterator() {
+    return stream().spliterator();
+  }
+
+  public default boolean isParallel() {
+    return stream().isParallel();
+  }
+
+  public default Fluent<T> sequential() {
+    return () -> stream().sequential();
+  }
+
+  public default Fluent<T> unordered() {
+    return () -> stream().unordered();
   }
 
   public default IntStream intStream(ToIntFunction<? super T> mapper) {
