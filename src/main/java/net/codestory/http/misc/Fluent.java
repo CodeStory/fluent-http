@@ -338,6 +338,10 @@ public interface Fluent<T> extends Iterable<T> {
     };
   }
 
+  public default Fluent<T> parallel() {
+    return () -> stream().parallel();
+  }
+
   public default Fluent<T> sorted() {
     return () -> stream().sorted();
   }
