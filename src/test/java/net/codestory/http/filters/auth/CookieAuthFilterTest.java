@@ -31,28 +31,28 @@ public class CookieAuthFilterTest {
 
   @Test
   public void ignore_public_pages() {
-    assertThat(filter.matches("/")).isFalse();
-    assertThat(filter.matches("/public")).isFalse();
-    assertThat(filter.matches("/public/foo")).isFalse();
-    assertThat(filter.matches("/public/secure/bar")).isFalse();
+    assertThat(filter.matches("/", null)).isFalse();
+    assertThat(filter.matches("/public", null)).isFalse();
+    assertThat(filter.matches("/public/foo", null)).isFalse();
+    assertThat(filter.matches("/public/secure/bar", null)).isFalse();
   }
 
   @Test
   public void ignore_public_extensions() {
-    assertThat(filter.matches("/secure/style.less")).isFalse();
-    assertThat(filter.matches("/secure/style.css")).isFalse();
+    assertThat(filter.matches("/secure/style.less", null)).isFalse();
+    assertThat(filter.matches("/secure/style.css", null)).isFalse();
   }
 
   @Test
   public void filter_secure_pages() {
-    assertThat(filter.matches("/secure/")).isTrue();
-    assertThat(filter.matches("/secure/foo")).isTrue();
-    assertThat(filter.matches("/secure/foo/")).isTrue();
+    assertThat(filter.matches("/secure/", null)).isTrue();
+    assertThat(filter.matches("/secure/foo", null)).isTrue();
+    assertThat(filter.matches("/secure/foo/", null)).isTrue();
   }
 
   @Test
   public void filter_pivate_extensions() {
-    assertThat(filter.matches("/secure/index.html")).isTrue();
-    assertThat(filter.matches("/secure/app.js")).isTrue();
+    assertThat(filter.matches("/secure/index.html", null)).isTrue();
+    assertThat(filter.matches("/secure/app.js", null)).isTrue();
   }
 }

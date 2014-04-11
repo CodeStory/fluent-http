@@ -24,7 +24,7 @@ import net.codestory.http.payload.*;
 public interface Filter extends Serializable {
   Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws IOException;
 
-  default boolean matches(String uri) {
+  default boolean matches(String uri, Context context) {
     return true;
   }
 }

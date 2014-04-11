@@ -20,6 +20,7 @@ import static net.codestory.http.constants.Methods.*;
 import java.io.*;
 import java.util.concurrent.*;
 
+import net.codestory.http.constants.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.misc.*;
@@ -58,7 +59,7 @@ public class CookieAuthFilter implements Filter {
   }
 
   @Override
-  public boolean matches(String uri) {
+  public boolean matches(String uri, Context context) {
     if (!uri.startsWith(uriPrefix)) {
       return false;
     }
@@ -116,7 +117,7 @@ public class CookieAuthFilter implements Filter {
       if (login != null) {
         User user = users.find(login);
         context.setCurrentUser(user);
-        return nextFilter.get();
+        return nextFilter.get().withHeader(Headers.CACHE_CONTROL, "must-revalidate");
       }
     }
 

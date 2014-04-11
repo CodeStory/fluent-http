@@ -20,6 +20,7 @@ import static net.codestory.http.constants.Headers.*;
 import java.io.*;
 import java.util.*;
 
+import net.codestory.http.constants.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
@@ -43,7 +44,7 @@ public class BasicAuthFilter implements Filter {
   }
 
   @Override
-  public boolean matches(String uri) {
+  public boolean matches(String uri, Context context) {
     return uri.startsWith(uriPrefix);
   }
 
@@ -62,6 +63,6 @@ public class BasicAuthFilter implements Filter {
 
     context.setCurrentUser(user);
 
-    return nextFilter.get();
+    return nextFilter.get().withHeader(Headers.CACHE_CONTROL, "must-revalidate");
   }
 }

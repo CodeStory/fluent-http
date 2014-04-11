@@ -76,14 +76,14 @@ public class BasicAuthFilterTest {
 
   @Test
   public void block_all_subsequent_paths() {
-    assertThat(filter.matches("/")).isFalse();
-    assertThat(filter.matches("/foo")).isFalse();
-    assertThat(filter.matches("/foo/")).isFalse();
-    assertThat(filter.matches("/foo/secure")).isFalse();
+    assertThat(filter.matches("/", null)).isFalse();
+    assertThat(filter.matches("/foo", null)).isFalse();
+    assertThat(filter.matches("/foo/", null)).isFalse();
+    assertThat(filter.matches("/foo/secure", null)).isFalse();
 
-    assertThat(filter.matches("/secure")).isTrue();
-    assertThat(filter.matches("/secure/")).isTrue();
-    assertThat(filter.matches("/secure/foo")).isTrue();
-    assertThat(filter.matches("/secure/foo/")).isTrue();
+    assertThat(filter.matches("/secure", null)).isTrue();
+    assertThat(filter.matches("/secure/", null)).isTrue();
+    assertThat(filter.matches("/secure/foo", null)).isTrue();
+    assertThat(filter.matches("/secure/foo/", null)).isTrue();
   }
 }

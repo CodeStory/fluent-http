@@ -39,7 +39,7 @@ public class TwitterAuthFilter implements Filter {
   }
 
   @Override
-  public boolean matches(String uri) {
+  public boolean matches(String uri, Context context) {
     return uri.startsWith(uriPrefix);
   }
 
