@@ -46,13 +46,6 @@ public class BasicAuthFilterTest {
   }
 
   @Test
-  public void skip_non_secured_path() throws IOException {
-    Payload payload = filter.apply("/foo", context, nextFilter);
-
-    assertThat(payload).isSameAs(next);
-  }
-
-  @Test
   public void answer_401_on_non_authenticated_query() throws IOException {
     Payload payload = filter.apply("/secure/foo", context, nextFilter);
 
@@ -82,14 +75,15 @@ public class BasicAuthFilterTest {
   }
 
   @Test
-  public void block_all_subsequent_paths() throws IOException {
-    assertThat(filter.apply("/", context, nextFilter).code()).isEqualTo(200);
-    assertThat(filter.apply("/foo", context, nextFilter).code()).isEqualTo(200);
-    assertThat(filter.apply("/foo/", context, nextFilter).code()).isEqualTo(200);
-    assertThat(filter.apply("/foo/secure", context, nextFilter).code()).isEqualTo(200);
-    assertThat(filter.apply("/secure", context, nextFilter).code()).isEqualTo(401);
-    assertThat(filter.apply("/secure/", context, nextFilter).code()).isEqualTo(401);
-    assertThat(filter.apply("/secure/foo", context, nextFilter).code()).isEqualTo(401);
-    assertThat(filter.apply("/secure/foo/", context, nextFilter).code()).isEqualTo(401);
+  public void block_all_subsequent_paths() {
+    assertThat(filter.matches("/")).isFalse();
+    assertThat(filter.matches("/foo")).isFalse();
+    assertThat(filter.matches("/foo/")).isFalse();
+    assertThat(filter.matches("/foo/secure")).isFalse();
+
+    assertThat(filter.matches("/secure")).isTrue();
+    assertThat(filter.matches("/secure")).isTrue();
+    assertThat(filter.matches("/secure/foo")).isTrue();
+    assertThat(filter.matches("/secure/foo/")).isTrue();
   }
 }

@@ -43,11 +43,12 @@ public class BasicAuthFilter implements Filter {
   }
 
   @Override
-  public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
-    if (!uri.startsWith(uriPrefix)) {
-      return nextFilter.get(); // Ignore
-    }
+  public boolean matches(String uri) {
+    return uri.startsWith(uriPrefix);
+  }
 
+  @Override
+  public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
     String authorizationHeader = context.getHeader(AUTHORIZATION);
     if (authorizationHeader == null) {
       return Payload.unauthorized(realm);

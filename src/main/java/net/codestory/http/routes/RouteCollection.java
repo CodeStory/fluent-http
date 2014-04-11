@@ -383,8 +383,10 @@ public class RouteCollection implements Routes {
     };
 
     for (Supplier<Filter> filter : filters) {
-      PayloadSupplier nextFilter = payloadSupplier;
-      payloadSupplier = () -> filter.get().apply(uri, context, nextFilter);
+      if (filter.get().matches(uri)) {
+        PayloadSupplier nextFilter = payloadSupplier;
+        payloadSupplier = () -> filter.get().apply(uri, context, nextFilter);
+      }
     }
 
     return payloadSupplier.get();

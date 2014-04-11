@@ -38,6 +38,11 @@ public class TwitterAuthFilter implements Filter {
     this.twitterAuthenticator = createAuthenticator(oAuthKey, oAuthSecret);
   }
 
+  @Override
+  public boolean matches(String uri) {
+    return uri.startsWith(uriPrefix);
+  }
+
   private static String validPrefix(String prefix) {
     return prefix.endsWith("/") ? prefix : prefix + "/";
   }
@@ -54,10 +59,6 @@ public class TwitterAuthFilter implements Filter {
   }
 
   public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
-    if (!uri.startsWith(uriPrefix)) {
-      return nextFilter.get(); // Ignore
-    }
-
     if (uri.equals(uriPrefix + "authenticate")) {
       User user;
       try {
