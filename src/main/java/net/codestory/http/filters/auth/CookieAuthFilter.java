@@ -77,22 +77,22 @@ public class CookieAuthFilter implements Filter {
     String method = context.method();
 
     if (uri.equals("/auth/login") && method.equals(GET)) {
-      return nextFilter.get(); // Login page
+      return nextFilter.get(); // Server login page
     }
 
     if (uri.equals("/auth/signin") && method.equals(POST)) {
       String login = context.get("login");
       String password = context.get("password");
-
       if (users.find(login, password) == null) {
-        return Payload.seeOther("/auth/login.html");
+        return Payload.seeOther("/auth/login"); // Unknown user. Go back to login
       }
 
       String sessionId = create(login);
 
-      return Payload.seeOther("/") // Should be the url asked by the user
+      return Payload.seeOther(notFavIcon(context.cookieValue("redirectAfterLogin", "/")))
           .withCookie(loginCookie(login))
-          .withCookie(sessionCookie(sessionId));
+          .withCookie(sessionCookie(sessionId))
+          .withCookie(redirectUrlCookie("/"));
     }
 
     if (uri.equals("/auth/signout") && method.equals(GET)) {
@@ -102,11 +102,12 @@ public class CookieAuthFilter implements Filter {
 
       return Payload.seeOther("/?signout")
           .withCookie(loginCookie(null))
-          .withCookie(sessionCookie(null));
+          .withCookie(sessionCookie(null))
+          .withCookie(redirectUrlCookie(null));
     }
 
     if (uri.startsWith("/auth/")) {
-      return nextFilter.get(); // Don't protect other /auth/ pages
+      return nextFilter.get(); // Don't protect other /auth/ pages. Lost password page for eg.
     }
 
     String sessionId = context.cookieValue("sessionId");
@@ -121,7 +122,8 @@ public class CookieAuthFilter implements Filter {
 
     return Payload.seeOther("/auth/login")
         .withCookie(loginCookie(null))
-        .withCookie(sessionCookie(null));
+        .withCookie(sessionCookie(null))
+        .withCookie(redirectUrlCookie(uri));
   }
 
   private String create(String login) {
@@ -138,10 +140,18 @@ public class CookieAuthFilter implements Filter {
     return expire(new Cookie("sessionId", sessionId, "/", true));
   }
 
+  private static Cookie redirectUrlCookie(String uri) {
+    return expire(new Cookie("redirectAfterLogin", uri, "/", true));
+  }
+
   private static Cookie expire(Cookie cookie) {
     cookie.setExpiry(ONE_DAY);
     cookie.setDomain(null);
     cookie.setSecure(false);
     return cookie;
+  }
+
+  private static String notFavIcon(String redirectUrl) {
+    return redirectUrl.contains("favicon.ico") ? "/" : redirectUrl;
   }
 }
