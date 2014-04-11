@@ -15,12 +15,12 @@
  */
 package net.codestory.http.filters.auth;
 
+import static net.codestory.http.constants.Headers.*;
 import static net.codestory.http.constants.Methods.*;
 
 import java.io.*;
 import java.util.concurrent.*;
 
-import net.codestory.http.constants.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.misc.*;
@@ -117,7 +117,7 @@ public class CookieAuthFilter implements Filter {
       if (login != null) {
         User user = users.find(login);
         context.setCurrentUser(user);
-        return nextFilter.get().withHeader(Headers.CACHE_CONTROL, "must-revalidate");
+        return nextFilter.get().withHeader(CACHE_CONTROL, "must-revalidate");
       }
     }
 
