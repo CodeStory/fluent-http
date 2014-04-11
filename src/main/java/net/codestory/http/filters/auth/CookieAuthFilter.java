@@ -59,17 +59,21 @@ public class CookieAuthFilter implements Filter {
 
   @Override
   public boolean matches(String uri) {
-    return uri.startsWith(uriPrefix);
+    if (!uri.startsWith(uriPrefix)) {
+      return false;
+    }
+
+    for (String ignoreExtension : ignoreExtensions) {
+      if (uri.endsWith(ignoreExtension)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   @Override
   public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
-    for (String ignoreExtension : ignoreExtensions) {
-      if (uri.endsWith(ignoreExtension)) {
-        return nextFilter.get(); // Ignore
-      }
-    }
-
     String method = context.method();
 
     if (uri.equals("/auth/login") && method.equals(GET)) {

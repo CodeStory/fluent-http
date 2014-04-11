@@ -82,7 +82,7 @@ public class BasicAuthFilterTest {
     assertThat(filter.matches("/foo/secure")).isFalse();
 
     assertThat(filter.matches("/secure")).isTrue();
-    assertThat(filter.matches("/secure")).isTrue();
+    assertThat(filter.matches("/secure/")).isTrue();
     assertThat(filter.matches("/secure/foo")).isTrue();
     assertThat(filter.matches("/secure/foo/")).isTrue();
   }

@@ -37,4 +37,10 @@ public interface Users extends Serializable {
       }
     };
   }
+
+  static Users singleUser(String login, String password) {
+    Map<String, String> users = new HashMap<>();
+    users.put(login, password);
+    return forMap(users);
+  }
 }
