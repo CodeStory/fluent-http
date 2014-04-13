@@ -16,6 +16,7 @@
 package net.codestory.http.security;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 public interface SessionIdStore {
   void put(String sessionId, String login);
@@ -26,7 +27,7 @@ public interface SessionIdStore {
 
   static SessionIdStore inMemory() {
     return new SessionIdStore() {
-      private final Map<String, String> sessionIds = new HashMap<>();
+      private final Map<String, String> sessionIds = new ConcurrentHashMap<>();
 
       @Override
       public void put(String sessionId, String login) {
