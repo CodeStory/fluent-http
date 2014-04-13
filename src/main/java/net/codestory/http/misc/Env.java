@@ -27,7 +27,7 @@ public enum Env {
     prodMode = getBoolean("PROD_MODE", false);
     disableClassPath = getBoolean("http.disable.classpath", false);
     disableFilesystem = getBoolean("http.disable.filesystem", false);
-    disableGzip = getBoolean("http.disable.gzipm", false);
+    disableGzip = getBoolean("http.disable.gzip", false);
   }
 
   public boolean prodMode() {
