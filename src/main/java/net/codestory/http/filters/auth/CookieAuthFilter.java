@@ -69,7 +69,7 @@ public class CookieAuthFilter implements Filter {
     String method = context.method();
 
     if (uri.equals("/auth/login") && method.equals(GET)) {
-      return nextFilter.get(); // Server login page
+      return nextFilter.get(); // Serve login page
     }
 
     if (uri.equals("/auth/signin") && method.equals(POST)) {
