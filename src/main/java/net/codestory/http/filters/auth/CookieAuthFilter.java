@@ -18,6 +18,7 @@ package net.codestory.http.filters.auth;
 import static java.util.stream.Stream.*;
 import static net.codestory.http.constants.Headers.*;
 import static net.codestory.http.constants.Methods.*;
+import static net.codestory.http.payload.Payload.*;
 
 import java.io.*;
 import java.util.concurrent.*;
@@ -66,42 +67,50 @@ public class CookieAuthFilter implements Filter {
 
   @Override
   public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
+    return uri.startsWith("/auth/") ? authenticationUri(uri, context, nextFilter) : otherUri(uri, context, nextFilter);
+  }
+
+  private Payload authenticationUri(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
     String method = context.method();
 
-    if (uri.equals("/auth/login") && method.equals(GET)) {
-      return nextFilter.get(); // Serve login page
-    }
-
     if (uri.equals("/auth/signin") && method.equals(POST)) {
-      String login = context.get("login");
-      String password = context.get("password");
-      if (users.find(login, password) == null) {
-        return Payload.seeOther("/auth/login"); // Unknown user. Go back to login
-      }
-
-      String sessionId = create(login);
-
-      return Payload.seeOther(notFavIcon(context.cookieValue("redirectAfterLogin", "/")))
-          .withCookie(loginCookie(login))
-          .withCookie(sessionCookie(sessionId))
-          .withCookie(redirectUrlCookie("/"));
+      return signin(context);
     }
 
     if (uri.equals("/auth/signout") && method.equals(GET)) {
-      String sessionId = context.cookieValue("sessionId", "");
+      return signout(context);
+    }
 
+    return nextFilter.get(); // Don't protect other /auth/ pages. Login and lost password pages for eg.
+  }
+
+  private Payload signin(Context context) {
+    String login = context.get("login");
+    String password = context.get("password");
+
+    if (users.find(login, password) == null) {
+      return seeOther("/auth/login"); // Unknown user. Go back to login
+    }
+
+    return seeOther(notFavIcon(context.cookieValue("redirectAfterLogin", "/")))
+        .withCookie(loginCookie(login))
+        .withCookie(sessionCookie(newSessionId(login)))
+        .withCookie(redirectUrlCookie("/"));
+  }
+
+  private Payload signout(Context context) {
+    String sessionId = context.cookieValue("sessionId");
+    if (sessionId != null) {
       sessionIdStore.remove(sessionId);
-
-      return Payload.seeOther("/?signout")
-          .withCookie(loginCookie(null))
-          .withCookie(sessionCookie(null))
-          .withCookie(redirectUrlCookie(null));
     }
 
-    if (uri.startsWith("/auth/")) {
-      return nextFilter.get(); // Don't protect other /auth/ pages. Lost password page for eg.
-    }
+    return seeOther("/?signout")
+        .withCookie(loginCookie(null))
+        .withCookie(sessionCookie(null))
+        .withCookie(redirectUrlCookie(null));
+  }
 
+  private Payload otherUri(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
     String sessionId = context.cookieValue("sessionId");
     if (sessionId != null) {
       String login = sessionIdStore.getLogin(sessionId);
@@ -112,28 +121,32 @@ public class CookieAuthFilter implements Filter {
       }
     }
 
-    return Payload.seeOther("/auth/login")
+    return seeOther("/auth/login")
         .withCookie(loginCookie(null))
         .withCookie(sessionCookie(null))
         .withCookie(redirectUrlCookie(uri));
   }
 
-  private String create(String login) {
+  private String newSessionId(String login) {
     String sessionId = RandomStringUtils.random(32, true, true);
     sessionIdStore.put(sessionId, login);
     return sessionId;
   }
 
   private static Cookie loginCookie(String login) {
-    return expire(new Cookie("login", login, "/", true));
+    return cookie("login", login);
   }
 
   private static Cookie sessionCookie(String sessionId) {
-    return expire(new Cookie("sessionId", sessionId, "/", true));
+    return cookie("sessionId", sessionId);
   }
 
   private static Cookie redirectUrlCookie(String uri) {
-    return expire(new Cookie("redirectAfterLogin", uri, "/", true));
+    return cookie("redirectAfterLogin", uri);
+  }
+
+  private static Cookie cookie(String name, String value) {
+    return expire(new Cookie(name, value, "/", true));
   }
 
   private static Cookie expire(Cookie cookie) {
