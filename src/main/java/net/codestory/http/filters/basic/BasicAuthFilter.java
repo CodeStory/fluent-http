@@ -16,11 +16,11 @@
 package net.codestory.http.filters.basic;
 
 import static net.codestory.http.constants.Headers.*;
+import static net.codestory.http.payload.Payload.*;
 
 import java.io.*;
 import java.util.*;
 
-import net.codestory.http.constants.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
@@ -50,19 +50,19 @@ public class BasicAuthFilter implements Filter {
 
   @Override
   public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
-    String authorizationHeader = context.getHeader(AUTHORIZATION);
-    if (authorizationHeader == null) {
-      return Payload.unauthorized(realm);
+    String authorization = context.getHeader(AUTHORIZATION);
+    if (authorization == null) {
+      return unauthorized(realm);
     }
 
-    PrincipalParser parser = new PrincipalParser(authorizationHeader);
+    PrincipalParser parser = new PrincipalParser(authorization);
     User user = users.find(parser.getName(), parser.getPassword());
     if (user == null) {
-      return Payload.unauthorized(realm);
+      return unauthorized(realm);
     }
 
     context.setCurrentUser(user);
 
-    return nextFilter.get().withHeader(Headers.CACHE_CONTROL, "must-revalidate");
+    return nextFilter.get().withHeader(CACHE_CONTROL, "must-revalidate");
   }
 }
