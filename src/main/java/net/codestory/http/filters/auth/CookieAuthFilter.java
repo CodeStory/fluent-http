@@ -15,6 +15,7 @@
  */
 package net.codestory.http.filters.auth;
 
+import static java.util.stream.Stream.*;
 import static net.codestory.http.constants.Headers.*;
 import static net.codestory.http.constants.Methods.*;
 
@@ -60,17 +61,7 @@ public class CookieAuthFilter implements Filter {
 
   @Override
   public boolean matches(String uri, Context context) {
-    if (!uri.startsWith(uriPrefix)) {
-      return false;
-    }
-
-    for (String ignoreExtension : ignoreExtensions) {
-      if (uri.endsWith(ignoreExtension)) {
-        return false;
-      }
-    }
-
-    return true;
+    return uri.startsWith(uriPrefix) && of(ignoreExtensions).noneMatch(uri::endsWith);
   }
 
   @Override
