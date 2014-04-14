@@ -408,7 +408,7 @@ public class Payload {
     }
 
     if (ContentTypes.support_templating(path)) {
-      return forModelAndView(ModelAndView.of(path.toString()), context);
+      return forModelAndView(ModelAndView.of(path.toString().replace('\\', '/')), context);
     }
 
     String content = Resources.read(path, UTF_8);
