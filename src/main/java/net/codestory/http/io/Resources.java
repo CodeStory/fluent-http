@@ -58,7 +58,7 @@ public class Resources {
   }
 
   public static String relativePath(Path parent, Path path) {
-    return parent.relativize(path).toString().replace('\\', '/');
+    return toUnixString(parent.relativize(path));
   }
 
   public static boolean isPublic(Path path) {
@@ -103,11 +103,15 @@ public class Resources {
   }
 
   private static String withPrefix(Path path) {
-    return ROOT + (path.toString().startsWith("/") ? "" : "/") + path;
+    return ROOT + (toUnixString(path).startsWith("/") ? "" : "/") + toUnixString(path);
+  }
+
+  public static String toUnixString(Path path) {
+    return path.toString().replace('\\', '/');
   }
 
   public static String extension(Path path) {
-    String filename = path.toString();
+    String filename = toUnixString(path);
     int dotIndex = filename.lastIndexOf('.');
     if (dotIndex <= 0) {
       return "";

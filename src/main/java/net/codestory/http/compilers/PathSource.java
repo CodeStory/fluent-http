@@ -61,7 +61,7 @@ class PathSource extends LessSource {
 
   @Override
   public String getName() {
-    return path.toString().replace('\\', '/');
+    return Resources.toUnixString(path);
   }
 
   @Override
