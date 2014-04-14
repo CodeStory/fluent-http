@@ -65,6 +65,6 @@ class WebJarsRoute implements Route {
   }
 
   private static URL getResource(String uri) {
-    return ClassLoader.getSystemResource("META-INF/resources" + uri);
+    return Resources.getResource("META-INF/resources" + uri);
   }
 }

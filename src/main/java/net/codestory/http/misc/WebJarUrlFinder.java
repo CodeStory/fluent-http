@@ -17,6 +17,8 @@ package net.codestory.http.misc;
 
 import java.net.*;
 
+import net.codestory.http.io.*;
+
 public class WebJarUrlFinder {
   private final boolean useMinifiedVersions;
 
@@ -36,7 +38,7 @@ public class WebJarUrlFinder {
   }
 
   private static URL getResource(String uri) {
-    return ClassLoader.getSystemResource("META-INF/resources" + uri);
+    return Resources.getResource("META-INF/resources" + uri);
   }
 
   private static String minified(String path) {

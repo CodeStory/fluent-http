@@ -120,7 +120,7 @@ public class Resources {
   }
 
   private static boolean existsInClassPath(String path) {
-    URL url = ClassLoader.getSystemResource(path);
+    URL url = getResource(path);
     if (url == null) {
       return false;
     }
@@ -134,7 +134,7 @@ public class Resources {
   }
 
   private static String readClasspath(String path, Charset charset) throws IOException {
-    URL url = ClassLoader.getSystemResource(path);
+    URL url = getResource(path);
     if (url == null) {
       throw new IllegalArgumentException("Classpath resource not found classpath:" + path);
     }
@@ -153,7 +153,7 @@ public class Resources {
   }
 
   private static byte[] readClasspathBytes(String path) throws IOException {
-    URL url = ClassLoader.getSystemResource(path);
+    URL url = getResource(path);
     if (url == null) {
       throw new IllegalArgumentException("Invalid file classpath: " + path);
     }
@@ -202,5 +202,13 @@ public class Resources {
     } catch (UnsupportedEncodingException e) {
       throw new IllegalArgumentException("Invalid filename classpath: " + url, e);
     }
+  }
+
+  public static URL getResource(String path) {
+    return Thread.currentThread().getContextClassLoader().getResource(path);
+  }
+
+  public static InputStream getResourceAsStream(String path) {
+    return Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
   }
 }

@@ -20,6 +20,7 @@ import java.nio.file.*;
 import java.util.*;
 
 import net.codestory.http.*;
+import net.codestory.http.io.*;
 
 import org.junit.*;
 
@@ -34,6 +35,6 @@ public class SSLTest {
   }
 
   private static Path resource(String name) throws URISyntaxException {
-    return Paths.get(ClassLoader.getSystemResource(name).toURI());
+    return Paths.get(Resources.getResource(name).toURI());
   }
 }
