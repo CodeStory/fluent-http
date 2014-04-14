@@ -19,7 +19,15 @@ import static java.nio.charset.StandardCharsets.*;
 import static java.util.Objects.*;
 import static net.codestory.http.constants.Encodings.*;
 import static net.codestory.http.constants.Headers.*;
+import static net.codestory.http.constants.HttpStatus.CREATED;
+import static net.codestory.http.constants.HttpStatus.FORBIDDEN;
+import static net.codestory.http.constants.HttpStatus.METHOD_NOT_ALLOWED;
+import static net.codestory.http.constants.HttpStatus.MOVED_PERMANENTLY;
 import static net.codestory.http.constants.HttpStatus.NOT_FOUND;
+import static net.codestory.http.constants.HttpStatus.OK;
+import static net.codestory.http.constants.HttpStatus.SEE_OTHER;
+import static net.codestory.http.constants.HttpStatus.TEMPORARY_REDIRECT;
+import static net.codestory.http.constants.HttpStatus.UNAUTHORIZED;
 import static net.codestory.http.constants.Methods.*;
 import static net.codestory.http.io.Strings.*;
 import static org.simpleframework.http.Status.NOT_MODIFIED;
@@ -31,7 +39,6 @@ import java.util.*;
 import java.util.zip.*;
 
 import net.codestory.http.compilers.*;
-import net.codestory.http.constants.*;
 import net.codestory.http.convert.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.io.*;
@@ -53,7 +60,7 @@ public class Payload {
   }
 
   public Payload(String contentType, Object content) {
-    this(contentType, content, HttpStatus.OK);
+    this(contentType, content, OK);
   }
 
   public Payload(int code) {
@@ -164,23 +171,23 @@ public class Payload {
   }
 
   public static Payload ok() {
-    return new Payload(HttpStatus.OK);
+    return new Payload(OK);
   }
 
   public static Payload created() {
-    return new Payload(HttpStatus.CREATED);
+    return new Payload(CREATED);
   }
 
   public static Payload created(String uri) {
-    return new Payload(HttpStatus.CREATED).withHeader(LOCATION, uri);
+    return new Payload(CREATED).withHeader(LOCATION, uri);
   }
 
   public static Payload movedPermanently(String uri) {
-    return new Payload(HttpStatus.MOVED_PERMANENTLY).withHeader(LOCATION, uri);
+    return new Payload(MOVED_PERMANENTLY).withHeader(LOCATION, uri);
   }
 
   public static Payload seeOther(String uri) {
-    return new Payload(HttpStatus.SEE_OTHER).withHeader(LOCATION, uri);
+    return new Payload(SEE_OTHER).withHeader(LOCATION, uri);
   }
 
   public static Payload seeOther(URI uri) {
@@ -188,7 +195,7 @@ public class Payload {
   }
 
   public static Payload temporaryRedirect(String uri) {
-    return new Payload(HttpStatus.TEMPORARY_REDIRECT).withHeader(LOCATION, uri);
+    return new Payload(TEMPORARY_REDIRECT).withHeader(LOCATION, uri);
   }
 
   public static Payload temporaryRedirect(URI uri) {
@@ -196,15 +203,15 @@ public class Payload {
   }
 
   public static Payload notModified() {
-    return new Payload(HttpStatus.NOT_MODIFIED);
+    return new Payload(NOT_MODIFIED);
   }
 
   public static Payload unauthorized(String realm) {
-    return new Payload(HttpStatus.UNAUTHORIZED).withHeader(WWW_AUTHENTICATE, "Basic realm=\"" + realm + "\"");
+    return new Payload(UNAUTHORIZED).withHeader(WWW_AUTHENTICATE, "Basic realm=\"" + realm + "\"");
   }
 
   public static Payload forbidden() {
-    return new Payload(HttpStatus.FORBIDDEN);
+    return new Payload(FORBIDDEN);
   }
 
   public static Payload notFound() {
@@ -212,19 +219,19 @@ public class Payload {
   }
 
   public static Payload methodNotAllowed() {
-    return new Payload(HttpStatus.METHOD_NOT_ALLOWED);
+    return new Payload(METHOD_NOT_ALLOWED);
   }
 
   // WTF?
   public boolean isBetter(Payload other) {
-    if (HttpStatus.OK == code) {
-      return other.code() != HttpStatus.OK;
+    if (OK == code) {
+      return other.code() != OK;
     }
-    if (HttpStatus.METHOD_NOT_ALLOWED == code) {
-      return (other.code() != HttpStatus.OK) && (other.code() != HttpStatus.METHOD_NOT_ALLOWED);
+    if (METHOD_NOT_ALLOWED == code) {
+      return (other.code() != OK) && (other.code() != METHOD_NOT_ALLOWED);
     }
-    if (HttpStatus.SEE_OTHER == code) {
-      return (other.code() != HttpStatus.OK) && (other.code() != HttpStatus.METHOD_NOT_ALLOWED) && (other.code() != HttpStatus.SEE_OTHER);
+    if (SEE_OTHER == code) {
+      return (other.code() != OK) && (other.code() != METHOD_NOT_ALLOWED) && (other.code() != SEE_OTHER);
     }
     return false;
   }
