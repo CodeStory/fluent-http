@@ -39,7 +39,7 @@ class WebJarsRoute implements Route {
 
   @Override
   public boolean matchUri(String uri) {
-    return uri.startsWith("/webjars/") && (getResource(uri) != null);
+    return uri.startsWith("/webjars/") && !uri.endsWith("/") && (getResource(uri) != null);
   }
 
   @Override

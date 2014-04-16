@@ -24,6 +24,7 @@ public class StaticPagesTest extends AbstractWebServerTest {
   public void webJars() {
     get("/webjars/bootstrap/3.1.1/css/bootstrap.min.css").produces(200, "text/css", "Bootstrap v3.1.1");
     get("/webjars/bootstrap/3.1.1/js/bootstrap.min.js").produces(200, "application/javascript", "Bootstrap v3.1.1");
+    get("/webjars/").produces(404);
   }
 
   @Test
