@@ -36,6 +36,7 @@ public class TemplateTest {
   public void layout_decorator() {
     assertThat(new Template("pageYaml.html").renderAsString()).contains("PREFIX_LAYOUT<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_LAYOUT");
     assertThat(new Template("pageYamlWithMarkdownLayout.html").renderAsString()).contains("<em>TITLE</em>: PREFIX_MD<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_MD");
+    assertThat(new Template("markdownWithLayout.md").renderAsString()).startsWith("<!DOCTYPE html>").contains("<p>Hello World</p>").endsWith("</html>\n");
   }
 
   @Test

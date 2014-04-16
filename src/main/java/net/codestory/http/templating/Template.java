@@ -69,12 +69,17 @@ public class Template {
       Map<String, Object> allKeyValues = merge(variables, keyValues);
 
       String body = HandlebarsCompiler.INSTANCE.compile(content, allKeyValues);
+      CacheEntry entry = Compilers.INSTANCE.compile(path, body);
+
       String layout = (String) variables.get("layout");
-      if (layout != null) {
-        body = new Template("_layouts", layout).render(allKeyValues).content().replace("[[body]]", body);
+      if (layout == null) {
+        return entry;
       }
 
-      return Compilers.INSTANCE.compile(path, body);
+      String layoutContent = new Template("_layouts", layout).render(allKeyValues).content();
+      String bodyWithLayout = layoutContent.replace("[[body]]", entry.content());
+
+      return CacheEntry.memory(bodyWithLayout); // Could have a more aggressive lastModified()
     } catch (IOException e) {
       throw new IllegalStateException("Unable to render template", e);
     }
