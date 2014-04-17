@@ -51,13 +51,17 @@ class WebJarsRoute implements Route {
     }
 
     if ((!prodMode) && uri.contains("webjar") && uri.endsWith("/")) {
-      LOG.info("Found these webjars files:");
-      for (String s : new ClasspathScanner().getResources("META-INF/resources/webjars/")) {
-        LOG.info(" + " + substringAfter(s, "META-INF/resources"));
-      }
+      printKnownWebjars();
     }
 
     return false;
+  }
+
+  private void printKnownWebjars() {
+    LOG.info("Found these webjars files:");
+    for (String s : new ClasspathScanner().getResources("META-INF/resources/webjars/")) {
+      LOG.info(" + " + substringAfter(s, "META-INF/resources"));
+    }
   }
 
   @Override
