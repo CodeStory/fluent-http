@@ -19,6 +19,7 @@ import static java.time.ZonedDateTime.*;
 import static java.time.format.DateTimeFormatter.*;
 import static net.codestory.http.constants.Headers.*;
 import static net.codestory.http.constants.Methods.*;
+import static net.codestory.http.io.Strings.*;
 
 import java.io.*;
 import java.net.*;
@@ -31,15 +32,28 @@ import net.codestory.http.payload.*;
 import net.codestory.http.types.*;
 
 class WebJarsRoute implements Route {
+  private final boolean prodMode;
   private final WebJarUrlFinder webJarUrlFinder;
 
-  public WebJarsRoute(boolean useMinifiedVersions) {
-    this.webJarUrlFinder = new WebJarUrlFinder(useMinifiedVersions);
+  public WebJarsRoute(boolean prodMode) {
+    this.prodMode = prodMode;
+    this.webJarUrlFinder = new WebJarUrlFinder(prodMode);
   }
 
   @Override
   public boolean matchUri(String uri) {
-    return uri.startsWith("/webjars/") && !uri.endsWith("/") && (getResource(uri) != null);
+    if (uri.startsWith("/webjars/") && !uri.endsWith("/") && (getResource(uri) != null)) {
+      return true;
+    }
+
+    if ((!prodMode) && uri.contains("webjar") && uri.endsWith("/")) {
+      System.out.println("Found these webjars files:");
+      for (String s : new ClasspathScanner().getResources("META-INF/resources/webjars/")) {
+        System.out.println(" + " + substringAfter(s, "META-INF/resources"));
+      }
+    }
+
+    return false;
   }
 
   @Override

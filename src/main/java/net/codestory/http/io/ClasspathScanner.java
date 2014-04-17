@@ -19,7 +19,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-class ClasspathScanner {
+public class ClasspathScanner {
   public Set<String> getResources(String prefix) {
     Set<String> resources = new LinkedHashSet<>();
 
