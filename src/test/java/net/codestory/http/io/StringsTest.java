@@ -35,4 +35,22 @@ public class StringsTest {
     assertThat(Strings.stripQuotes("\"\"")).isEmpty();
     assertThat(Strings.stripQuotes("\"TEXT\"")).isEqualTo("TEXT");
   }
+
+  @Test
+  public void substring_before_last() {
+    assertThat(Strings.substringBeforeLast("", "")).isEmpty();
+    assertThat(Strings.substringBeforeLast("name.jar", ".")).isEqualTo("name");
+    assertThat(Strings.substringBeforeLast("name.jar", ".jar")).isEqualTo("name");
+    assertThat(Strings.substringBeforeLast("name.jar", "name.jar")).isEmpty();
+    assertThat(Strings.substringBeforeLast("name.jar", "unknown")).isEqualTo("name.jar");
+  }
+
+  @Test
+  public void substring_after() {
+    assertThat(Strings.substringAfter("", "")).isEmpty();
+    assertThat(Strings.substringAfter("name.jar", ".")).isEqualTo("jar");
+    assertThat(Strings.substringAfter("name.jar", ".jar")).isEmpty();
+    assertThat(Strings.substringAfter("name.jar", "name.jar")).isEmpty();
+    assertThat(Strings.substringAfter("name.jar", "unknown")).isEmpty();
+  }
 }

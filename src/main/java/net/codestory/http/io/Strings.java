@@ -40,6 +40,14 @@ public class Strings {
     return in.substring(0, index);
   }
 
+  public static String substringAfter(String in, String what) {
+    int index = in.lastIndexOf(what);
+    if (index == -1) {
+      return "";
+    }
+    return in.substring(index + what.length());
+  }
+
   public static String stripQuotes(String text) {
     if (text == null) {
       return null;
