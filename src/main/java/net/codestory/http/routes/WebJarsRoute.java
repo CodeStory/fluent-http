@@ -31,7 +31,11 @@ import net.codestory.http.misc.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.types.*;
 
+import org.slf4j.*;
+
 class WebJarsRoute implements Route {
+  private final static Logger LOG = LoggerFactory.getLogger(WebJarsRoute.class);
+
   private final boolean prodMode;
   private final WebJarUrlFinder webJarUrlFinder;
 
@@ -47,9 +51,9 @@ class WebJarsRoute implements Route {
     }
 
     if ((!prodMode) && uri.contains("webjar") && uri.endsWith("/")) {
-      System.out.println("Found these webjars files:");
+      LOG.info("Found these webjars files:");
       for (String s : new ClasspathScanner().getResources("META-INF/resources/webjars/")) {
-        System.out.println(" + " + substringAfter(s, "META-INF/resources"));
+        LOG.info(" + " + substringAfter(s, "META-INF/resources"));
       }
     }
 
