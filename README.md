@@ -382,7 +382,7 @@ It's even easier to let [Jackson](http://jackson.codehaus.org/) do the mapping b
 
 ```java
 routes.post("/person", context -> {
-  Person person = context.payload(Person.class);
+  Person person = context.contentAs(Person.class);
   // do something
 
   return Payload.created();
@@ -422,7 +422,7 @@ Same goes for the lambda syntax:
 routes.
   get("/person/:id", (context, id) -> Model.of("person", repository.find(id))).
   put("/person/:id", (context, id) -> {
-    Person person = context.payload(Person.class);
+    Person person = context.contentAs(Person.class);
     repository.update(person);
 
     return Payload.created();
@@ -437,7 +437,7 @@ routes
   .with("/person/:id").
     get((context, id) -> Model.of("person", repository.find(id))).
     put((context, id) -> {
-      Person person = context.payload(Person.class);
+      Person person = context.contentAs(Person.class);
       repository.update(person);
 
       return Payload.created();
