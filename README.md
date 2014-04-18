@@ -1,6 +1,6 @@
 # Fluent-Http
 
-This is the simplest fastest full fledged http server we could come up with.
+This is the simplest fastest full fledged HTTP server we could come up with.
 
 # Build status
 
@@ -40,7 +40,7 @@ Release versions are deployed on Maven Central:
 
 ## Hello World
 
-Starting a web server that responds `Hello World` on `/` uri is as simple as that:
+Starting a web server that responds `Hello World` on `/` URI is as simple as that:
 
 ```java
 import net.codestory.http.*;
@@ -76,7 +76,7 @@ Notice that path parameters have to be of type `String`.
 ## Resources
 
 The notation with lambdas is very compact but cannot support path parameters of type other than `String`. So we've added
-the notion of resource, in a way similar to jaxb.
+the notion of resource, in a way similar to JAXB.
 
 ```java
 routes.add(new CalculationResource());
@@ -89,8 +89,8 @@ public class CalculationResource {
 }
 ```
 
-Each method annotated with `@Get` is a route. The method can have any name. The number of parameters must match the uri
-pattern. Parameters names are not important but it's a good practice to match the uri placeholders. The conversion between
+Each method annotated with `@Get` is a route. The method can have any name. The number of parameters must match the URI
+pattern. Parameters names are not important but it's a good practice to match the URI placeholders. The conversion between
 path parameters and method parameters is done with [Jackson](http://jackson.codehaus.org/).
 
 We can also let the web server take care of the resource instantiation. It will create a singleton for each resource,
@@ -143,7 +143,7 @@ serverSocket.close();
 
 ## NOHTML (Not Only HTML)
 
-The web server recognizes html files but not only. It is also able to transform more user-friendly file formats on the fly:
+The web server recognizes HTML files but not only. It is also able to transform more user-friendly file formats on the fly:
 
  + Html (`.html`)
  + Markdown (`.md` or `.markdown`) -> Html
@@ -243,7 +243,7 @@ A layout file can be a `.html`, `.md`, `.markdown`, `.txt` or `.asciidoc` file. 
 The layout name used in the Yaml Front Matter section can omit the layout file extension.
 Layouts are recursive, ie a layout file can have a layout.
 
-A layout can use variables defined in the rendered file. Here's an example with an html title:
+A layout can use variables defined in the rendered file. Here's an example with an HTML title:
 
 ```html
 <!DOCTYPE html>
@@ -337,7 +337,7 @@ routes.get("/hello", Model.of("name", "Bob"));
 
 Now, when the pages is rendered, `[[name]]` will be replaced server-side with `Bob`.
 
-If not specified, the name of the page (ie. the view) to render for a given uri is guessed after the uri. Files are
+If not specified, the name of the page (ie. the view) to render for a given URI is guessed after the URI. Files are
 looked up in this order: `uri`, `uri.html`, `uri.md`, `uri.markdown`, `uri.txt` then `uri.asciidoc`. Most of the time
 it will *just work*, but the view can of course be overridden:
 
@@ -349,7 +349,7 @@ routes.get("/hello/:whom", (context, whom) -> ModelAndView.of("greeting", "name"
 
 A route can return any Object, the server will try to guess what to do with it:
 
- - `java.lang.String` is interpreted as inline html with content type `text/html;charset=UTF-8`.
+ - `java.lang.String` is interpreted as inline HTML with content type `text/html;charset=UTF-8`.
  - `byte[]` is interpreted as `application/octet-stream`.
  - `java.io.InputStream` is interpreted as `application/octet-stream`.
  - `java.io.File` is interpreted as a static file. The content type is guessed from file's extension.
@@ -359,7 +359,7 @@ A route can return any Object, the server will try to guess what to do with it:
  - `ModelAndView` is interpreted as a template with given name, rendered with given variables. The content type is
  guessed from file's extension.
  - `void` is empty content.
- - any other type is serialized to json with content type `application/json;charset=UTF-8`.
+ - any other type is serialized to JSON with content type `application/json;charset=UTF-8`.
 
 ## POST
 
@@ -400,7 +400,7 @@ public class PersonResource {
 }
 ```
 
-Multiple methods can be used for the same uri:
+Multiple methods can be used for the same URI:
 
 ```java
 public class PersonResource {
@@ -460,18 +460,18 @@ TODO
 
 ## Json support
 
-Json is supported as a first class citizen. Producing json is as easy as this:
+Json is supported as a first class citizen. Producing JSON is as easy as this:
 
 ```java
 routes.get("/products", () -> Arrays.asList(new Product(...), new Product(...)));
 ```
 
-This route serves the Products serialized as json using [Jackson](http://jackson.codehaus.org/).
+This route serves the Products serialized as JSON using [Jackson](http://jackson.codehaus.org/).
 The content type will be `application/json;charset=UTF-8`.
 
 ## ObjectMapper override
 
-When fluent-http talks json, the [jackson json processor](http://jackson.codehaus.org/) is not far.
+When fluent-http talks JSON, the [jackson JSON processor](http://jackson.codehaus.org/) is not far.
 Sometimes (meaning: Always in any decent sized project), you want to  provide your own home-cooked `ObjectMapper`. You can do this by using `TypeConvert.overrideMapper(ObjectMapper objectMapper)`.
 
 
@@ -646,7 +646,7 @@ Synchro to Maven Central is done hourly.
  + Support File upload
  + OPTIONS method
  + Support @MatrixParam, @QueryParam, @CookieParam?
- + Add some sort of http standard log
+ + Add some sort of HTTP standard log
  + Backport to java7?
  + Monitoring
  + Cleanup Payload class. Should we make Payload immutable?
