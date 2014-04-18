@@ -102,7 +102,7 @@ routes.add(CalculationResource.class);
 
 ## Static pages
 
-When a web server is started. It automatically treats files found in `app` folder as static pages. The `app` folder
+When a web server is started, it automatically treats files found in `app` folder as static pages. The `app` folder
 is searched first on the classpath and then in the working directory.
 So the simplest way to start a web server is in fact:
 
@@ -293,7 +293,7 @@ In addition to the variables defined in the Yaml Front Matter section, some site
 ## Webjars
 
 We also support [WebJars](http://www.webjars.org/) to server static assets.
-Just add a maven dependency to a WebJar and reference the static resource in your pages with the `/webjars/` suffix.
+Just add a maven dependency to a WebJar and reference the static resource in your pages with the `/webjars/` prefix.
 
 Here's an example with Bootstrap:
 
@@ -319,8 +319,8 @@ Here's an example with Bootstrap:
 
 ## Dynamic pages
 
-Ok, so its easy to mimic the behavior of a static website generated with Jekyll. But what about dynamic pages. Turns
-out it's heady too.
+Ok, so its easy to mimic the behavior of a static website generated with Jekyll. But what about dynamic pages? Turns
+out it's heasy too.
 
 Let's create a `hello.md` page with an unbound variable.
 
