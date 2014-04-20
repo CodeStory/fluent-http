@@ -225,6 +225,9 @@ For example, given this `app/_layouts/default.html` file:
 and this `app/index.md` file:
 
 ```markdown
+---
+layout: default
+---
 Hello World
 ```
 
