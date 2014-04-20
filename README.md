@@ -265,6 +265,8 @@ and this `app/index.md` file:
 ```markdown
 ---
 title: Greeting
+layout: default
+---
 ---
 Hello World
 ```
