@@ -612,7 +612,16 @@ TODO (Formulas, Tables, ...)
 
 ## HandleBars extensions
 
-TODO
+You may want to pass some HandlBars helper for your server side templating.
+
+You first write a HandleBars Helper like this one :
+
+```java
+````
+
+You can then wire it by adding to `_config.yml` the following line :
+
+/!\ This works as of now, but we're not *that* proud of the way it works so this will likely change in the future
 
 ## Etag
 
