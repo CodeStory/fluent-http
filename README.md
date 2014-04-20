@@ -612,16 +612,46 @@ TODO (Formulas, Tables, ...)
 
 ## HandleBars extensions
 
-You may want to pass some HandlBars helper for your server side templating.
+## HandleBars extensions
 
-You first write a HandleBars Helper like this one :
+You'll be probably sooner than later wanting to have access to some custom HandleBars [helpers](http://handlebarsjs.com/block_helpers.html) for your Server Side templates.
 
-```java
-````
+You first start to write you own helper in Java.
+```Java
+import com.github.jknack.handlebars.Helper;
+import com.github.jknack.handlebars.Options;
+.../...
 
-You can then wire it by adding to `_config.yml` the following line :
+public enum HandleBarHelper implements Helper<Object> {
 
-/!\ This works as of now, but we're not *that* proud of the way it works so this will likely change in the future
+    appStoreClassSuffix {
+
+        @Override
+        public CharSequence apply(Object context, Options options) throws IOException {
+            if (((String) context).contains("google"))
+                return "_play";
+            else
+                return "_ios";
+        }
+
+    },
+    .../...
+
+}
+```
+
+You wire it in, by declaring your class in the `handleBarHelper` property inside your `app/_config.yml` file.
+As of now, you can only have one class declared here, but as shown above this can be an `enum` so you can declare as many as you want inside one.
+```yaml
+handleBarHelper: com.foobar.HandleBarHelper
+```
+
+You are able to use your own helper in any of your template like this example for the code above.
+```html
+<a href="[[appStoreUrl]]" class="btn_appstore[[appStoreClassSuffix appStoreUrl]]"></a>
+```
+
+Note that we provide quite a few helper by default like the [StringHelper](https://github.com/jknack/handlebars.java/blob/master/handlebars/src/main/java/com/github/jknack/handlebars/helper/StringHelpers.java) which provides quite a few things already
 
 ## Etag
 
