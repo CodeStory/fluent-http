@@ -267,7 +267,6 @@ and this `app/index.md` file:
 title: Greeting
 layout: default
 ---
----
 Hello World
 ```
 
