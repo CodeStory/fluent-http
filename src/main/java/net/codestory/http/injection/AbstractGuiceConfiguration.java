@@ -32,6 +32,7 @@ public abstract class AbstractGuiceConfiguration implements Configuration {
     Injector injector = Guice.createInjector(modules);
 
     routes.setIocAdapter(new GuiceAdapter(injector));
+    configure(routes, injector);
   }
 
   protected abstract void configure(Routes routes, Injector injector);
