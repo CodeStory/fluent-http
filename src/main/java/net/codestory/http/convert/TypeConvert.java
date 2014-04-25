@@ -15,18 +15,23 @@
  */
 package net.codestory.http.convert;
 
-import java.io.*;
-import java.util.*;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
+import net.codestory.http.internal.Context;
 
-import net.codestory.http.internal.*;
-
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.core.*;
-import com.fasterxml.jackson.databind.*;
+import java.io.IOException;
+import java.util.Map;
 
 public class TypeConvert {
   private static ObjectMapper OBJECT_MAPPER = new ObjectMapper()
       .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
+      .registerModule(new JSR310Module())
+      .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
       .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
   private TypeConvert() {
