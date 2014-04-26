@@ -140,34 +140,6 @@ public class PayloadTest {
   }
 
   @Test
-  public void better() {
-    Payload ok = Payload.ok();
-    Payload wrongMethod = Payload.methodNotAllowed();
-    Payload redirect = Payload.seeOther("/");
-    Payload notFound = Payload.notFound();
-
-    assertThat(ok.isBetter(ok)).isFalse();
-    assertThat(ok.isBetter(wrongMethod)).isTrue();
-    assertThat(ok.isBetter(redirect)).isTrue();
-    assertThat(ok.isBetter(notFound)).isTrue();
-
-    assertThat(wrongMethod.isBetter(ok)).isFalse();
-    assertThat(wrongMethod.isBetter(wrongMethod)).isFalse();
-    assertThat(wrongMethod.isBetter(redirect)).isTrue();
-    assertThat(wrongMethod.isBetter(notFound)).isTrue();
-
-    assertThat(redirect.isBetter(ok)).isFalse();
-    assertThat(redirect.isBetter(wrongMethod)).isFalse();
-    assertThat(redirect.isBetter(redirect)).isFalse();
-    assertThat(redirect.isBetter(notFound)).isTrue();
-
-    assertThat(notFound.isBetter(ok)).isFalse();
-    assertThat(notFound.isBetter(wrongMethod)).isFalse();
-    assertThat(notFound.isBetter(redirect)).isFalse();
-    assertThat(notFound.isBetter(notFound)).isFalse();
-  }
-
-  @Test
   public void json_cookie() {
     Payload payload = Payload.ok();
 

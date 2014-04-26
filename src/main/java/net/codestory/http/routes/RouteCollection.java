@@ -23,6 +23,7 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.Collectors;
 
 import net.codestory.http.*;
 import net.codestory.http.annotations.*;
@@ -366,20 +367,25 @@ public class RouteCollection implements Routes {
     }
 
     PayloadSupplier payloadSupplier = () -> {
-      Payload bestMatch = Payload.notFound();
 
-      for (Route route : routes) {
-        Payload match = route.apply(uri, context);
-        if (!match.isError()) {
-          return match;
-        }
+      List<Route> matchingRoutes = routes.stream().filter((Route route) -> {
+          return route.matchUri(uri) || route.matchUri(uri + '/');
+      }).collect(Collectors.toList());
 
-        if (match.isBetter(bestMatch)) {
-          bestMatch = match;
-        }
+      if (matchingRoutes.isEmpty()) {
+          return Payload.notFound();
       }
 
-      return bestMatch;
+      for (Route route : matchingRoutes) {
+          if (route.matchMethod(context.method())) {
+              if (!uri.endsWith("/") && route.matchUri(uri + '/')) {
+                  return Payload.seeOther(uri + '/');
+              }
+              return route.apply(uri, context);
+          }
+      }
+
+      return Payload.methodNotAllowed();
     };
 
     for (Supplier<Filter> filter : filters) {
