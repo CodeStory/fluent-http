@@ -610,11 +610,13 @@ public class AllProducts {
     }
 ```
 
+### With Spring
+
+Nothing here for now, it will in the future, if you're on a hurry we gladly accept pull requests ;)
+
 ## Markdown extensions
 
 TODO (Formulas, Tables, ...)
-
-## HandleBars extensions
 
 ## HandleBars extensions
 
