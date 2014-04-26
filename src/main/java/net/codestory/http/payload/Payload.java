@@ -222,20 +222,6 @@ public class Payload {
     return new Payload(METHOD_NOT_ALLOWED);
   }
 
-  // WTF?
-  public boolean isBetter(Payload other) {
-    if (OK == code) {
-      return other.code() != OK;
-    }
-    if (METHOD_NOT_ALLOWED == code) {
-      return (other.code() != OK) && (other.code() != METHOD_NOT_ALLOWED);
-    }
-    if (SEE_OTHER == code) {
-      return (other.code() != OK) && (other.code() != METHOD_NOT_ALLOWED) && (other.code() != SEE_OTHER);
-    }
-    return false;
-  }
-
   public void writeTo(Context context) throws IOException {
     Response response = context.response();
 
