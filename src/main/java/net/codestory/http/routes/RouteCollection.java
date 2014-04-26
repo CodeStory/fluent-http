@@ -18,12 +18,12 @@ package net.codestory.http.routes;
 import static net.codestory.http.constants.Methods.*;
 import static net.codestory.http.internal.UriParser.*;
 import static net.codestory.http.misc.ForEach.*;
+import static net.codestory.http.payload.Payload.*;
 
 import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.Collectors;
 
 import net.codestory.http.*;
 import net.codestory.http.annotations.*;
@@ -363,29 +363,27 @@ public class RouteCollection implements Routes {
   public Payload apply(Context context) throws IOException {
     String uri = context.uri();
     if (uri == null) {
-      return Payload.notFound();
+      return notFound();
     }
 
     PayloadSupplier payloadSupplier = () -> {
+      Payload response = notFound();
 
-      List<Route> matchingRoutes = routes.stream().filter((Route route) -> {
-          return route.matchUri(uri) || route.matchUri(uri + '/');
-      }).collect(Collectors.toList());
-
-      if (matchingRoutes.isEmpty()) {
-          return Payload.notFound();
-      }
-
-      for (Route route : matchingRoutes) {
+      for (Route route : routes) {
+        if (route.matchUri(uri)) {
           if (route.matchMethod(context.method())) {
-              if (!uri.endsWith("/") && route.matchUri(uri + '/')) {
-                  return Payload.seeOther(uri + '/');
-              }
-              return route.apply(uri, context);
+            return route.apply(uri, context);
           }
+          response = methodNotAllowed();
+        } else if (!uri.endsWith("/") && route.matchUri(uri + '/')) {
+          if (route.matchMethod(context.method())) {
+            return seeOther(uri + '/');
+          }
+          response = methodNotAllowed();
+        }
       }
 
-      return Payload.methodNotAllowed();
+      return response;
     };
 
     for (Supplier<Filter> filter : filters) {
