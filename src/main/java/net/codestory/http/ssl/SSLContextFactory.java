@@ -21,18 +21,25 @@ import java.security.*;
 import java.security.cert.*;
 import java.security.interfaces.*;
 import java.security.spec.*;
+import java.util.List;
 
 import javax.net.ssl.*;
 
 public class SSLContextFactory {
-  public SSLContext create(Path pathCertificate, Path pathPrivateKey) throws Exception {
-    X509Certificate cert = generateCertificateFromDER(Files.readAllBytes(pathCertificate));
+  public SSLContext create(List<Path> pathCertificate, Path pathPrivateKey) throws Exception {
+    X509Certificate[] chain = pathCertificate.stream().map((path) -> {
+      try {
+        return generateCertificateFromDER(Files.readAllBytes(path));
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
+    }).toArray(X509Certificate[]::new);
     RSAPrivateKey key = generatePrivateKeyFromDER(Files.readAllBytes(pathPrivateKey));
 
     KeyStore keystore = KeyStore.getInstance("JKS");
     keystore.load(null);
-    keystore.setCertificateEntry("cert-alias", cert);
-    keystore.setKeyEntry("key-alias", key, new char[0], new X509Certificate[]{cert});
+    keystore.setCertificateEntry("cert-alias", chain[0]);
+    keystore.setKeyEntry("key-alias", key, new char[0], chain);
 
     SSLContext context = SSLContext.getInstance("TLS");
     context.init(getKeyManagers(keystore), null, null);
