@@ -32,7 +32,6 @@ import net.codestory.http.injection.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.misc.*;
 import net.codestory.http.payload.*;
-import org.apache.commons.lang3.StringUtils;
 
 public class RouteCollection implements Routes {
   private final Deque<Route> routes;
@@ -124,7 +123,7 @@ public class RouteCollection implements Routes {
   }
 
   private static void appendUrl(StringBuilder urlBuilder, String path) {
-    if (StringUtils.isNotBlank(path)) {
+    if (!path.isEmpty()) {
       if (!path.startsWith("/") && !urlBuilder.toString().endsWith("/")) {
         urlBuilder.append("/");
       }
