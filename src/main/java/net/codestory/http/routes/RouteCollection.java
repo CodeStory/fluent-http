@@ -32,6 +32,7 @@ import net.codestory.http.injection.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.misc.*;
 import net.codestory.http.payload.*;
+import org.apache.commons.lang3.StringUtils;
 
 public class RouteCollection implements Routes {
   private final Deque<Route> routes;
@@ -115,7 +116,20 @@ public class RouteCollection implements Routes {
   }
 
   static String url(String resourcePrefix, String classPrefix, String uri) {
-    return ("/" + resourcePrefix + "/" + classPrefix + "/" + uri).replaceAll("/+", "/");
+    StringBuilder urlBuilder = new StringBuilder();
+    appendUrl(urlBuilder, resourcePrefix);
+    appendUrl(urlBuilder, classPrefix);
+    appendUrl(urlBuilder, uri);
+    return urlBuilder.toString().replaceAll("/+", "/");
+  }
+
+  private static void appendUrl(StringBuilder urlBuilder, String path) {
+    if (StringUtils.isNotBlank(path)) {
+      if (!path.startsWith("/") && !urlBuilder.toString().endsWith("/")) {
+        urlBuilder.append("/");
+      }
+      urlBuilder.append(path);
+    }
   }
 
   private void addResource(String httpMethod, Method method, Supplier<Object> resource, String uriPattern) {

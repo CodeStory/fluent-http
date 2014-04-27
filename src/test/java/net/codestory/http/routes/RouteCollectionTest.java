@@ -44,11 +44,15 @@ public class RouteCollectionTest {
 
   @Test
   public void url() {
+    assertThat(RouteCollection.url("", "", "")).isEqualTo("");
     assertThat(RouteCollection.url("", "", "url")).isEqualTo("/url");
     assertThat(RouteCollection.url("", "", "/url")).isEqualTo("/url");
+    assertThat(RouteCollection.url("", "prefix", "")).isEqualTo("/prefix");
     assertThat(RouteCollection.url("", "prefix", "/url")).isEqualTo("/prefix/url");
+    assertThat(RouteCollection.url("", "prefix/", "")).isEqualTo("/prefix/");
     assertThat(RouteCollection.url("", "prefix/", "/url")).isEqualTo("/prefix/url");
     assertThat(RouteCollection.url("", "/prefix/", "/url")).isEqualTo("/prefix/url");
+    assertThat(RouteCollection.url("/top", "/prefix/", "")).isEqualTo("/top/prefix/");
     assertThat(RouteCollection.url("/top", "/prefix/", "url")).isEqualTo("/top/prefix/url");
     assertThat(RouteCollection.url("/top/", "/prefix/", "url")).isEqualTo("/top/prefix/url");
     assertThat(RouteCollection.url("top/", "/prefix/", "url")).isEqualTo("/top/prefix/url");
