@@ -15,8 +15,6 @@
  */
 package net.codestory.http.routes;
 
-import static org.assertj.core.api.Assertions.*;
-
 import org.junit.*;
 import org.junit.rules.*;
 
@@ -40,23 +38,5 @@ public class RouteCollectionTest {
     thrown.expectMessage("Expected 2 parameters in /:one/:two/:three");
 
     routeCollection.get("/:one/:two/:three", (context, one, two) -> "");
-  }
-
-  @Test
-  public void url() {
-    assertThat(RouteCollection.url("", "", "")).isEqualTo("");
-    assertThat(RouteCollection.url("", "", "url")).isEqualTo("/url");
-    assertThat(RouteCollection.url("", "", "/url")).isEqualTo("/url");
-    assertThat(RouteCollection.url("", "prefix", "")).isEqualTo("/prefix");
-    assertThat(RouteCollection.url("", "prefix", "/url")).isEqualTo("/prefix/url");
-    assertThat(RouteCollection.url("", "prefix/", "")).isEqualTo("/prefix/");
-    assertThat(RouteCollection.url("", "prefix/", "/url")).isEqualTo("/prefix/url");
-    assertThat(RouteCollection.url("", "/prefix/", "/url")).isEqualTo("/prefix/url");
-    assertThat(RouteCollection.url("/top", "/prefix/", "")).isEqualTo("/top/prefix/");
-    assertThat(RouteCollection.url("/top", "/prefix/", "url")).isEqualTo("/top/prefix/url");
-    assertThat(RouteCollection.url("/top/", "/prefix/", "url")).isEqualTo("/top/prefix/url");
-    assertThat(RouteCollection.url("top/", "/prefix/", "url")).isEqualTo("/top/prefix/url");
-    assertThat(RouteCollection.url("top/", "prefix/", "url")).isEqualTo("/top/prefix/url");
-    assertThat(RouteCollection.url("top", "prefix/", "url")).isEqualTo("/top/prefix/url");
   }
 }
