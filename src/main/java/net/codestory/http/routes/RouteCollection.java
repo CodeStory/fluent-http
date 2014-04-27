@@ -115,7 +115,20 @@ public class RouteCollection implements Routes {
   }
 
   static String url(String resourcePrefix, String classPrefix, String uri) {
-    return ("/" + resourcePrefix + "/" + classPrefix + "/" + uri).replaceAll("/+", "/");
+    StringBuilder urlBuilder = new StringBuilder();
+    appendUrl(urlBuilder, resourcePrefix);
+    appendUrl(urlBuilder, classPrefix);
+    appendUrl(urlBuilder, uri);
+    return urlBuilder.toString().replaceAll("/+", "/");
+  }
+
+  private static void appendUrl(StringBuilder urlBuilder, String path) {
+    if (!path.isEmpty()) {
+      if (!path.startsWith("/") && !urlBuilder.toString().endsWith("/")) {
+        urlBuilder.append("/");
+      }
+      urlBuilder.append(path);
+    }
   }
 
   private void addResource(String httpMethod, Method method, Supplier<Object> resource, String uriPattern) {
