@@ -96,13 +96,7 @@ public class WebServer {
   }
 
   public WebServer startSSL(int port, Path pathCertificate, Path pathPrivateKey) {
-    SSLContext context;
-    try {
-      context = new SSLContextFactory().create(Arrays.asList(pathCertificate), pathPrivateKey);
-    } catch (Exception e) {
-      throw new IllegalStateException("Unable to read certificate or key", e);
-    }
-    return startWithContext(port, context);
+    return startSSL(port, Arrays.asList(pathCertificate), pathPrivateKey);
   }
 
   public WebServer startSSL(int port, List<Path> pathChain, Path pathPrivateKey) {
