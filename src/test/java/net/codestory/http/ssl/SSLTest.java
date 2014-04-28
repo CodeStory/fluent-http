@@ -15,14 +15,24 @@
  */
 package net.codestory.http.ssl;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.*;
 import java.nio.file.*;
+import java.security.*;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.util.*;
 
 import net.codestory.http.*;
 import net.codestory.http.io.*;
 
 import org.junit.*;
+
+import javax.net.ssl.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class SSLTest {
   @Test
@@ -34,7 +44,48 @@ public class SSLTest {
     webServer.startSSL(8183 + new Random().nextInt(1000), pathCertificate, pathPrivateKey);
   }
 
+  @Test
+  public void start_server_with_chain()
+          throws URISyntaxException, NoSuchAlgorithmException, KeyStoreException, IOException,
+          CertificateException, KeyManagementException {
+    Path pathEECertificate = resource("certificates/ee.crt");
+    Path pathSubCACertificate = resource("certificates/sub.crt");
+    Path pathRootCACertificate = resource("certificates/root.crt");
+    Path pathPrivateKey = resource("certificates/ee.der");
+
+    WebServer webServer = new WebServer();
+    int port = 8183 + new Random().nextInt(1000);
+    webServer.startSSL(port, Arrays.asList(pathEECertificate, pathSubCACertificate), pathPrivateKey);
+
+    URL url = new URL("https://localhost:" + port);
+    HttpsURLConnection conn = (HttpsURLConnection)url.openConnection();
+    conn.setSSLSocketFactory(getSocketFactory(pathRootCACertificate));
+    conn.setRequestMethod("GET");
+    conn.getResponseCode();
+    assertThat(conn.getServerCertificates()).hasSize(2);
+    assertThat(conn.getServerCertificates()[0].getEncoded()).isEqualTo(getCertificateFromPath(pathEECertificate).getEncoded());
+    assertThat(conn.getServerCertificates()[1].getEncoded()).isEqualTo(getCertificateFromPath(pathSubCACertificate).getEncoded());
+  }
+
   private static Path resource(String name) throws URISyntaxException {
     return Paths.get(Resources.getResource(name).toURI());
   }
+
+  private static SSLSocketFactory getSocketFactory(Path caCertificate) throws NoSuchAlgorithmException, KeyStoreException, IOException, CertificateException, KeyManagementException {
+    SSLContext ctx = SSLContext.getInstance("TLS");
+    KeyStore ks = KeyStore.getInstance("JKS");
+    ks.load(null);
+    ks.setCertificateEntry("rootca", getCertificateFromPath(caCertificate));
+    TrustManagerFactory tmf = TrustManagerFactory.getInstance("PKIX");
+    tmf.init(ks);
+    ctx.init(null, tmf.getTrustManagers(), null);
+    return ctx.getSocketFactory();
+  }
+
+  private static Certificate getCertificateFromPath(Path certPath) throws CertificateException, IOException {
+    return CertificateFactory.getInstance("X.509").generateCertificate(
+                new ByteArrayInputStream(Files.readAllBytes(certPath)));
+  }
+
+
 }

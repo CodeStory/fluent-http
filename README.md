@@ -458,6 +458,13 @@ That's it. No need to import anything in a stupid keystore. It cannot be easier!
 new Webserver().startSSL(9443, Paths.get("server.crt"), Paths.get("server.der"));
 ```
 
+It is also possible to use a TLS certificate chain with intermediate CA certificates
+
+```java
+new Webserver().startSSL(9443, Arrays.asList(Paths.get("server.crt"), Paths.get("subCA.crt")), Paths.get("server.der"));
+```
+
+
 ## Errors
 
 TODO
