@@ -18,18 +18,30 @@ package net.codestory.http.misc;
 public class UrlConcat {
   public String url(String resourcePrefix, String classPrefix, String uri) {
     StringBuilder urlBuilder = new StringBuilder();
+
     appendUrl(urlBuilder, resourcePrefix);
     appendUrl(urlBuilder, classPrefix);
     appendUrl(urlBuilder, uri);
-    return urlBuilder.toString().replaceAll("/+", "/");
+
+    return urlBuilder.toString();
   }
 
-  private static void appendUrl(StringBuilder urlBuilder, String path) {
-    if (!path.isEmpty()) {
-      if (!path.startsWith("/") && !urlBuilder.toString().endsWith("/")) {
-        urlBuilder.append("/");
-      }
-      urlBuilder.append(path);
+  private static void appendUrl(StringBuilder appendTo, String path) {
+    if (path.isEmpty()) {
+      return;
     }
+
+    if ((path.charAt(0) == '/') && endWith(appendTo, '/')) {
+      appendTo.append(path, 1, path.length());
+    } else if ((path.charAt(0) != '/') && !endWith(appendTo, '/')) {
+      appendTo.append('/').append(path);
+    } else {
+      appendTo.append(path);
+    }
+  }
+
+  private static boolean endWith(StringBuilder appendTo, char character) {
+    int length = appendTo.length();
+    return (length > 0) && (appendTo.charAt(length - 1) == character);
   }
 }
