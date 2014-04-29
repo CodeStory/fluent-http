@@ -38,7 +38,7 @@ class ReflectionRoute implements AnyRoute {
       Object target = resource.get();
 
       Object[] arguments = TypeConvert.convert(context, pathParameters, method.getParameterTypes());
-      Object response = invoke(method, target, arguments);
+      Object response = invoke(target, method, arguments);
       Object payload = emptyIfNull(response);
       String contentType = findContentType(method);
 
@@ -50,7 +50,7 @@ class ReflectionRoute implements AnyRoute {
     }
   }
 
-  private static Object invoke(Method method, Object target, Object[] arguments) throws Throwable {
+  private static Object invoke(Object target, Method method, Object[] arguments) throws Throwable {
     try {
       method.setAccessible(true);
       return method.invoke(target, arguments);
