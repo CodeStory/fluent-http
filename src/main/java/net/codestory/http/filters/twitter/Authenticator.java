@@ -20,5 +20,5 @@ import java.net.*;
 public interface Authenticator {
   URI getAuthenticateURI(String callbackUri) throws AuthenticationException;
 
-  User authenticate(String aouthToken, String oauthVerifier) throws AuthenticationException;
+  User authenticate(String oauthToken, String oauthVerifier) throws AuthenticationException;
 }
