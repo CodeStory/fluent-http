@@ -21,14 +21,10 @@ import static org.mockito.Mockito.*;
 import java.util.*;
 
 import net.codestory.http.internal.*;
-import net.codestory.http.security.*;
 
 import org.junit.*;
-import org.simpleframework.http.*;
 
 public class TypeConvertTest {
-  Context context = mock(Context.class);
-
   @Test
   public void dont_convert() {
     assertThat(TypeConvert.convertValue("TEXT", String.class)).isEqualTo("TEXT");
@@ -83,6 +79,7 @@ public class TypeConvertTest {
 
   @Test
   public void inject_context() {
+    Context context = mock(Context.class);
     when(context.extract(Context.class)).thenReturn(context);
 
     Object[] parameters = TypeConvert.convert(context, new String[]{"param1", "param2"}, String.class, String.class, Context.class);
@@ -91,47 +88,14 @@ public class TypeConvertTest {
   }
 
   @Test
-  public void inject_context_content() {
+  public void inject_context_content_as_bean() {
+    Context context = mock(Context.class);
     Human human = mock(Human.class);
     when(context.extract(Human.class)).thenReturn(human);
 
     Object[] parameters = TypeConvert.convert(context, new String[]{"param"}, String.class, Human.class);
 
     assertThat(parameters).containsExactly("param", human);
-  }
-
-  @Test
-  public void inject_request_and_response() {
-    Request request = mock(Request.class);
-    Response response = mock(Response.class);
-    when(context.extract(Request.class)).thenReturn(request);
-    when(context.extract(Response.class)).thenReturn(response);
-
-    Object[] parameters = TypeConvert.convert(context, new String[]{"param"}, String.class, Request.class, Response.class);
-
-    assertThat(parameters).containsExactly("param", request, response);
-  }
-
-  @Test
-  public void inject_user() {
-    User user = mock(User.class);
-    when(context.extract(User.class)).thenReturn(user);
-
-    Object[] parameters = TypeConvert.convert(context, new String[]{"param"}, String.class, User.class);
-
-    assertThat(parameters).containsExactly("param", user);
-  }
-
-  @Test
-  public void inject_raw_content() {
-    byte[] byteContent = new byte[0];
-    String stringContent = "content";
-    when(context.extract(byte[].class)).thenReturn(byteContent);
-    when(context.extract(String.class)).thenReturn(stringContent);
-
-    Object[] parameters = TypeConvert.convert(context, new String[]{"param"}, String.class, byte[].class, String.class);
-
-    assertThat(parameters).containsExactly("param", byteContent, stringContent);
   }
 
   static class Human {

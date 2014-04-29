@@ -18,7 +18,10 @@ package net.codestory.http.internal;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.io.*;
+
 import net.codestory.http.injection.*;
+import net.codestory.http.security.*;
 
 import org.junit.*;
 import org.simpleframework.http.*;
@@ -89,6 +92,22 @@ public class ContextTest {
     Service actualService = context.getBean(Service.class);
 
     assertThat(actualService).isSameAs(expectedService);
+  }
+
+  @Test
+  public void extract() throws IOException {
+    byte[] rawContent = "Content".getBytes();
+    User user = mock(User.class);
+    context.setCurrentUser(user);
+    when(request.getInputStream()).thenReturn(new ByteArrayInputStream(rawContent));
+    when(request.getContent()).thenReturn("Content");
+
+    assertThat(context.extract(Context.class)).isSameAs(context);
+    assertThat(context.extract(Request.class)).isSameAs(request);
+    assertThat(context.extract(Response.class)).isSameAs(response);
+    assertThat(context.extract(User.class)).isSameAs(user);
+    assertThat(context.extract(byte[].class)).isEqualTo(rawContent);
+    assertThat(context.extract(String.class)).isSameAs("Content");
   }
 
   static class Order {
