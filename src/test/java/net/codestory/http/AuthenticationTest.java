@@ -15,7 +15,7 @@
  */
 package net.codestory.http;
 
-import static com.google.inject.internal.util.$ImmutableMap.*;
+import java.util.*;
 
 import net.codestory.http.filters.basic.*;
 import net.codestory.http.testhelpers.*;
@@ -66,5 +66,11 @@ public class AuthenticationTest extends AbstractWebServerTest {
         get("/secure", context -> "Hello " + context.currentUser().login()));
 
     getWithAuth("/secure", "Dave", "pwd").produces(200, "text/html", "Hello Dave");
+  }
+
+  private static Map<String, String> of(String user, String pwd) {
+    Map<String, String> users = new HashMap<>();
+    users.put(user, pwd);
+    return users;
   }
 }
