@@ -16,12 +16,8 @@
 package net.codestory.http.convert;
 
 import java.io.*;
-import java.util.*;
 
 import net.codestory.http.internal.*;
-import net.codestory.http.security.*;
-
-import org.simpleframework.http.*;
 
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.*;
@@ -50,51 +46,10 @@ public class TypeConvert {
 
     // Other parameters
     for (int i = pathParameters.length; i < converted.length; i++) {
-      converted[i] = convert(context, types[i]);
+      converted[i] = context.extract(types[i]);
     }
 
     return converted;
-  }
-
-  public static Object[] convert(String[] pathParameters, Class<?>... types) {
-    Object[] converted = new Object[pathParameters.length];
-
-    for (int i = 0; i < pathParameters.length; i++) {
-      converted[i] = convertValue(pathParameters[i], types[i]);
-    }
-
-    return converted;
-  }
-
-  // TODO: move in context
-  @SuppressWarnings("unchecked")
-  public static <T> T convert(Context context, Class<T> type) {
-    if (type.isAssignableFrom(Context.class)) {
-      return (T) context;
-    }
-    if (type.isAssignableFrom(Map.class)) {
-      return (T) context.keyValues();
-    }
-    if (type.isAssignableFrom(Request.class)) {
-      return (T) context.request();
-    }
-    if (type.isAssignableFrom(Response.class)) {
-      return (T) context.response();
-    }
-    if (type.isAssignableFrom(User.class)) {
-      return (T) context.currentUser();
-    }
-    if (type.isAssignableFrom(byte[].class)) {
-      return (T) context.content();
-    }
-    if (type.isAssignableFrom(String.class)) {
-      return (T) context.contentAsString();
-    }
-    if (isUrlEncodedForm(context)) {
-      return convertValue(context.keyValues(), type);
-    }
-
-    return context.contentAs(type);
   }
 
   public static <T> T fromJson(String json, Class<T> type) {
@@ -123,10 +78,5 @@ public class TypeConvert {
     } catch (JsonProcessingException e) {
       throw new IllegalArgumentException("Unable to serialize to json", e);
     }
-  }
-
-  private static boolean isUrlEncodedForm(Context context) {
-    String contentType = context.getHeader("Content-Type");
-    return (contentType != null) && (contentType.contains("application/x-www-form-urlencoded"));
   }
 }

@@ -83,6 +83,8 @@ public class TypeConvertTest {
 
   @Test
   public void inject_context() {
+    when(context.extract(Context.class)).thenReturn(context);
+
     Object[] parameters = TypeConvert.convert(context, new String[]{"param1", "param2"}, String.class, String.class, Context.class);
 
     assertThat(parameters).containsExactly("param1", "param2", context);
@@ -91,7 +93,7 @@ public class TypeConvertTest {
   @Test
   public void inject_context_content() {
     Human human = mock(Human.class);
-    when(context.contentAs(Human.class)).thenReturn(human);
+    when(context.extract(Human.class)).thenReturn(human);
 
     Object[] parameters = TypeConvert.convert(context, new String[]{"param"}, String.class, Human.class);
 
@@ -99,21 +101,11 @@ public class TypeConvertTest {
   }
 
   @Test
-  public void inject_context_and_context_content() {
-    Human human = mock(Human.class);
-    when(context.contentAs(Human.class)).thenReturn(human);
-
-    Object[] parameters = TypeConvert.convert(context, new String[]{"param"}, String.class, Human.class, Context.class);
-
-    assertThat(parameters).containsExactly("param", human, context);
-  }
-
-  @Test
   public void inject_request_and_response() {
     Request request = mock(Request.class);
     Response response = mock(Response.class);
-    when(context.request()).thenReturn(request);
-    when(context.response()).thenReturn(response);
+    when(context.extract(Request.class)).thenReturn(request);
+    when(context.extract(Response.class)).thenReturn(response);
 
     Object[] parameters = TypeConvert.convert(context, new String[]{"param"}, String.class, Request.class, Response.class);
 
@@ -123,7 +115,7 @@ public class TypeConvertTest {
   @Test
   public void inject_user() {
     User user = mock(User.class);
-    when(context.currentUser()).thenReturn(user);
+    when(context.extract(User.class)).thenReturn(user);
 
     Object[] parameters = TypeConvert.convert(context, new String[]{"param"}, String.class, User.class);
 
@@ -134,8 +126,8 @@ public class TypeConvertTest {
   public void inject_raw_content() {
     byte[] byteContent = new byte[0];
     String stringContent = "content";
-    when(context.content()).thenReturn(byteContent);
-    when(context.contentAsString()).thenReturn(stringContent);
+    when(context.extract(byte[].class)).thenReturn(byteContent);
+    when(context.extract(String.class)).thenReturn(stringContent);
 
     Object[] parameters = TypeConvert.convert(context, new String[]{"param"}, String.class, byte[].class, String.class);
 

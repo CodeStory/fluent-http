@@ -176,4 +176,39 @@ public class Context {
   public User currentUser() {
     return currentUser;
   }
+
+  public boolean isUrlEncodedForm() {
+    String contentType = getHeader("Content-Type");
+    return (contentType != null) && (contentType.contains("application/x-www-form-urlencoded"));
+  }
+
+  @SuppressWarnings("unchecked")
+  public <T> T extract(Class<T> type) {
+    if (type.isAssignableFrom(Context.class)) {
+      return (T) this;
+    }
+    if (type.isAssignableFrom(Map.class)) {
+      return (T) keyValues();
+    }
+    if (type.isAssignableFrom(Request.class)) {
+      return (T) request();
+    }
+    if (type.isAssignableFrom(Response.class)) {
+      return (T) response();
+    }
+    if (type.isAssignableFrom(User.class)) {
+      return (T) currentUser();
+    }
+    if (type.isAssignableFrom(byte[].class)) {
+      return (T) content();
+    }
+    if (type.isAssignableFrom(String.class)) {
+      return (T) contentAsString();
+    }
+    if (isUrlEncodedForm()) {
+      return TypeConvert.convertValue(keyValues(), type);
+    }
+
+    return contentAs(type);
+  }
 }
