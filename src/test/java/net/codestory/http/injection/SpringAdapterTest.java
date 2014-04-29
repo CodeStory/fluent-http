@@ -22,7 +22,6 @@ import org.springframework.context.*;
 import org.springframework.context.annotation.*;
 import org.springframework.stereotype.*;
 
-
 public class SpringAdapterTest {
   @Test
   public void inject_bean_with_configuration_classes() {
