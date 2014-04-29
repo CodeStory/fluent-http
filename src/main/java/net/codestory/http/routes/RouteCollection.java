@@ -121,14 +121,11 @@ public class RouteCollection implements Routes {
   private void addResource(String httpMethod, Method method, Supplier<Object> resource, String uriPattern) {
     int methodParamsCount = method.getParameterCount();
     int uriParamsCount = paramsCount(uriPattern);
-
-    if (methodParamsCount == uriParamsCount) {
-      add(httpMethod, checkParametersCount(uriPattern, methodParamsCount), new ReflectionRoute(resource, method));
-    } else if (methodParamsCount == (uriParamsCount + 1)) {
-      add(httpMethod, checkParametersCount(uriPattern, methodParamsCount - 1), new ReflectionRouteWithContext(resource, method));
-    } else {
-      throw new IllegalArgumentException("Expected " + uriParamsCount + " or " + (uriParamsCount + 1) + " parameters in " + uriPattern);
+    if (methodParamsCount < uriParamsCount) {
+      throw new IllegalArgumentException("Expected at least" + uriParamsCount + " parameters in " + uriPattern);
     }
+
+    add(httpMethod, uriPattern, new ReflectionRoute(resource, method));
   }
 
   @Override

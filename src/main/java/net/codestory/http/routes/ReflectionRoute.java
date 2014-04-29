@@ -18,17 +18,53 @@ package net.codestory.http.routes;
 import java.lang.reflect.*;
 import java.util.function.*;
 
+import net.codestory.http.annotations.*;
 import net.codestory.http.convert.*;
 import net.codestory.http.internal.*;
+import net.codestory.http.payload.*;
 
-class ReflectionRoute extends AbstractReflectionRoute {
+class ReflectionRoute implements AnyRoute {
+  private final Supplier<Object> resource;
+  private final Method method;
+
   ReflectionRoute(Supplier<Object> resource, Method method) {
-    super(resource, method);
+    this.resource = resource;
+    this.method = method;
   }
 
   @Override
-  protected Object[] findArguments(Context context, String[] parameters, Class<?>[] parameterTypes) {
-    return TypeConvert.convert(parameters, parameterTypes);
+  public Object body(Context context, String[] pathParameters) {
+    try {
+      Object[] arguments = TypeConvert.convert(context, pathParameters, method.getParameterTypes());
+
+      Object target = resource.get();
+      Object response = invoke(method, target, arguments);
+      Object payload = emptyIfNull(response);
+      String contentType = findContentType(method);
+
+      return new Payload(contentType, payload);
+    } catch (RuntimeException e) {
+      throw e;
+    } catch (Throwable e) {
+      throw new IllegalStateException("Unable to apply route", e);
+    }
+  }
+
+  private static Object invoke(Method method, Object target, Object[] arguments) throws Throwable {
+    try {
+      method.setAccessible(true);
+      return method.invoke(target, arguments);
+    } catch (InvocationTargetException e) {
+      throw e.getCause();
+    }
+  }
+
+  private static Object emptyIfNull(Object payload) {
+    return (payload == null) ? "" : payload;
+  }
+
+  private static String findContentType(Method method) {
+    Produces annotation = method.getAnnotation(Produces.class);
+    return (annotation == null) ? null : annotation.value();
   }
 }
-
