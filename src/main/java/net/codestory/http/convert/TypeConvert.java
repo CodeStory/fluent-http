@@ -19,6 +19,9 @@ import java.io.*;
 import java.util.*;
 
 import net.codestory.http.internal.*;
+import net.codestory.http.security.*;
+
+import org.simpleframework.http.*;
 
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.*;
@@ -37,18 +40,23 @@ public class TypeConvert {
     OBJECT_MAPPER = mapper;
   }
 
-  public static Object[] convert(Context context, String[] pathParameters, Class<?>[] types) {
-    Object[] converted = new Object[pathParameters.length + 1];
+  public static Object[] convert(Context context, String[] pathParameters, Class<?>... types) {
+    Object[] converted = new Object[types.length];
 
+    // String parameters
     for (int i = 0; i < pathParameters.length; i++) {
       converted[i] = convertValue(pathParameters[i], types[i]);
     }
-    converted[converted.length - 1] = convert(context, types[converted.length - 1]);
+
+    // Other parameters
+    for (int i = pathParameters.length; i < converted.length; i++) {
+      converted[i] = convert(context, types[i]);
+    }
 
     return converted;
   }
 
-  public static Object[] convert(String[] pathParameters, Class<?>[] types) {
+  public static Object[] convert(String[] pathParameters, Class<?>... types) {
     Object[] converted = new Object[pathParameters.length];
 
     for (int i = 0; i < pathParameters.length; i++) {
@@ -58,6 +66,7 @@ public class TypeConvert {
     return converted;
   }
 
+  // TODO: move in context
   @SuppressWarnings("unchecked")
   public static <T> T convert(Context context, Class<T> type) {
     if (type.isAssignableFrom(Context.class)) {
@@ -66,18 +75,26 @@ public class TypeConvert {
     if (type.isAssignableFrom(Map.class)) {
       return (T) context.keyValues();
     }
+    if (type.isAssignableFrom(Request.class)) {
+      return (T) context.request();
+    }
+    if (type.isAssignableFrom(Response.class)) {
+      return (T) context.response();
+    }
+    if (type.isAssignableFrom(User.class)) {
+      return (T) context.currentUser();
+    }
+    if (type.isAssignableFrom(byte[].class)) {
+      return (T) context.content();
+    }
+    if (type.isAssignableFrom(String.class)) {
+      return (T) context.contentAsString();
+    }
     if (isUrlEncodedForm(context)) {
       return convertValue(context.keyValues(), type);
     }
 
-    String json;
-    try {
-      json = context.request().getContent();
-    } catch (IOException e) {
-      throw new IllegalArgumentException("Unable read request content", e);
-    }
-
-    return fromJson(json, type);
+    return context.contentAs(type);
   }
 
   public static <T> T fromJson(String json, Class<T> type) {

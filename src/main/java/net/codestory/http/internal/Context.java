@@ -156,7 +156,13 @@ public class Context {
   }
 
   public <T> T contentAs(Class<T> type) {
-    return TypeConvert.convert(this, type);
+    try {
+      String json = request.getContent();
+
+      return TypeConvert.fromJson(json, type);
+    } catch (IOException e) {
+      throw new IllegalArgumentException("Unable read request content", e);
+    }
   }
 
   public <T> T getBean(Class<T> type) {
