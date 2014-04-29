@@ -21,20 +21,21 @@ import java.security.*;
 import java.security.cert.*;
 import java.security.interfaces.*;
 import java.security.spec.*;
-import java.util.List;
+import java.util.*;
 
 import javax.net.ssl.*;
 
 public class SSLContextFactory {
-  public SSLContext create(List<Path> pathCertificate, Path pathPrivateKey) throws Exception {
-    X509Certificate[] chain = pathCertificate.stream().map((path) -> {
+  public SSLContext create(List<Path> pathCertificates, Path pathPrivateKey) throws Exception {
+    X509Certificate[] chain = pathCertificates.stream().map(path -> {
       try {
-        return generateCertificateFromDER(Files.readAllBytes(path));
+        return generateCertificateFromDER(path);
       } catch (Exception e) {
         throw new RuntimeException(e);
       }
     }).toArray(X509Certificate[]::new);
-    RSAPrivateKey key = generatePrivateKeyFromDER(Files.readAllBytes(pathPrivateKey));
+
+    RSAPrivateKey key = generatePrivateKeyFromDER(pathPrivateKey);
 
     KeyStore keystore = KeyStore.getInstance("JKS");
     keystore.load(null);
@@ -53,8 +54,16 @@ public class SSLContextFactory {
     return kmf.getKeyManagers();
   }
 
+  private static X509Certificate generateCertificateFromDER(Path path) throws CertificateException, IOException {
+    return generateCertificateFromDER(Files.readAllBytes(path));
+  }
+
   private static X509Certificate generateCertificateFromDER(byte[] data) throws CertificateException {
     return (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate(new ByteArrayInputStream(data));
+  }
+
+  private static RSAPrivateKey generatePrivateKeyFromDER(Path path) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+    return generatePrivateKeyFromDER(Files.readAllBytes(path));
   }
 
   private static RSAPrivateKey generatePrivateKeyFromDER(byte[] data) throws NoSuchAlgorithmException, InvalidKeySpecException {
