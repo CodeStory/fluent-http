@@ -161,7 +161,7 @@ public class Context {
 
       return TypeConvert.fromJson(json, type);
     } catch (IOException e) {
-      throw new IllegalArgumentException("Unable read request content", e);
+      throw new IllegalArgumentException("Unable read content", e);
     }
   }
 
