@@ -15,7 +15,6 @@
  */
 package net.codestory.http.compilers;
 
-import java.io.*;
 import java.nio.file.*;
 
 import org.markdown4j.*;
@@ -34,7 +33,7 @@ public class MarkdownCompiler implements Compiler {
   }
 
   @Override
-  public String compile(Path path, String source) throws IOException {
+  public String compile(Path path, String source) {
     return Processor.process(source, configuration);
   }
 }
