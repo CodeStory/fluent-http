@@ -56,13 +56,16 @@ public final class NashornCompiler {
     return concatenatedScript.toString();
   }
 
-  public synchronized String compile(String source) throws IOException {
+  public synchronized String compile(String source) {
     bindings.put("__source", source);
 
     try {
       return compiledScript.eval(bindings).toString();
     } catch (ScriptException e) {
-      throw new IOException("Unable to compile", e);
+      if (e.getCause() instanceof RuntimeException) {
+        throw (RuntimeException) e.getCause();
+      }
+      throw new IllegalArgumentException("Unable to compile", e.getCause());
     }
   }
 }

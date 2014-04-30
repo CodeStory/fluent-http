@@ -15,7 +15,6 @@
  */
 package net.codestory.http.compilers;
 
-import java.io.*;
 import java.nio.file.*;
 
 public class CoffeeCompiler implements Compiler {
@@ -24,7 +23,7 @@ public class CoffeeCompiler implements Compiler {
       "coffee-script/toJs.js");
 
   @Override
-  public String compile(Path path, String source) throws IOException {
+  public String compile(Path path, String source) {
     return nashornCompiler.compile(source);
   }
 }
