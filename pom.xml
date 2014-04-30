@@ -285,6 +285,7 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
       <version>4.0.3.RELEASE</version>
+      <optional>true</optional>
     </dependency>
 
     <!-- Test dependencies -->
