@@ -17,48 +17,47 @@ package net.codestory.http.compilers;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.io.*;
 import java.nio.file.*;
 
 import org.junit.*;
 import org.junit.rules.*;
 
 public class LessCompilerTest {
-  private static LessCompiler lessCompiler = new LessCompiler();
+  private static LessCompiler compiler = new LessCompiler();
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();
 
   @Test
-  public void empty() throws IOException {
-    String css = lessCompiler.compile(Paths.get("empty.less"), "");
+  public void empty() {
+    String css = compiler.compile(Paths.get("empty.less"), "");
 
     assertThat(css).isEqualTo("/*# sourceMappingURL=empty.css.map */\n");
   }
 
   @Test
-  public void to_css() throws IOException {
-    String css = lessCompiler.compile(Paths.get("file.less"), "body { h1 { color: red; } }");
+  public void to_css() {
+    String css = compiler.compile(Paths.get("file.less"), "body { h1 { color: red; } }");
 
     assertThat(css).isEqualTo("body h1 {\n  color: red;\n}\n/*# sourceMappingURL=file.css.map */\n");
   }
 
   @Test
-  public void import_less() throws IOException {
-    String css = lessCompiler.compile(Paths.get("style.less"), "@import 'assets/style.less';");
+  public void import_less() {
+    String css = compiler.compile(Paths.get("style.less"), "@import 'assets/style.less';");
 
     assertThat(css).isEqualTo("body h1 {\n  color: red;\n}\n/*# sourceMappingURL=style.css.map */\n");
   }
 
   @Test
-  public void import_less_from_webjar() throws IOException {
-    String css = lessCompiler.compile(Paths.get("style.less"), "@import '/webjars/bootstrap/3.1.1/less/bootstrap.less';");
+  public void import_less_from_webjar() {
+    String css = compiler.compile(Paths.get("style.less"), "@import '/webjars/bootstrap/3.1.1/less/bootstrap.less';");
 
     assertThat(css).isNotEmpty().doesNotContain("@import");
   }
 
   @Test
-  public void invalid_file() throws IOException {
+  public void invalid_file() {
     thrown.expect(CompilerException.class);
     thrown.expectMessage(
         "Unable to compile less invalid.less: 3 error(s) occurred:\n" +
@@ -66,6 +65,6 @@ public class LessCompilerTest {
             "ERROR 1:6 required (...)+ loop did not match anything at input 'body' in selectors (which started at 1:6)\n" +
             "...");
 
-    lessCompiler.compile(Paths.get("invalid.less"), "body body");
+    compiler.compile(Paths.get("invalid.less"), "body body");
   }
 }

@@ -17,7 +17,6 @@ package net.codestory.http.compilers;
 
 import static com.github.sommeri.less4j.LessCompiler.*;
 
-import java.io.*;
 import java.nio.file.*;
 
 import com.github.sommeri.less4j.*;
@@ -27,7 +26,7 @@ public class LessCompiler implements Compiler {
   public static boolean linkSourceMap = true;
 
   @Override
-  public String compile(Path path, String source) throws IOException {
+  public String compile(Path path, String source) {
     try {
       Configuration configuration = new Configuration();
       configuration.setLinkSourceMap(linkSourceMap);

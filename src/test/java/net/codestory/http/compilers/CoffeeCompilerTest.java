@@ -17,7 +17,6 @@ package net.codestory.http.compilers;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.io.*;
 import java.nio.file.*;
 
 import org.junit.*;
@@ -30,14 +29,14 @@ public class CoffeeCompilerTest {
   public ExpectedException thrown = ExpectedException.none();
 
   @Test
-  public void empty() throws IOException {
+  public void empty() {
     String js = compiler.compile(Paths.get("empty.coffee"), "");
 
     assertThat(js).isEqualTo("\n");
   }
 
   @Test
-  public void to_javascript() throws IOException {
+  public void to_javascript() {
     String js = compiler.compile(Paths.get("file.coffee"), "life=42");
 
     assertThat(js).isEqualTo("var life;\n\nlife = 42;\n");

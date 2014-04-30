@@ -15,7 +15,6 @@
  */
 package net.codestory.http.compilers;
 
-import java.io.*;
 import java.nio.file.*;
 
 import com.github.sommeri.less4j.*;
@@ -23,11 +22,16 @@ import com.github.sommeri.less4j.core.*;
 
 public class LessSourceMapCompiler implements Compiler {
   @Override
-  public String compile(Path path, String source) throws IOException {
+  public String compile(Path path, String source) {
     try {
       return new ThreadUnsafeLessCompiler().compile(new PathSource(path, source)).getSourceMap();
     } catch (Less4jException e) {
-      throw new IOException("Unable to compile less", e);
+      String message = cleanMessage(path, e.getMessage());
+      throw new CompilerException(message);
     }
+  }
+
+  private static String cleanMessage(Path path, String message) {
+    return "Unable to compile less " + path + ": " + message.replace("Could not compile less. ", "");
   }
 }
