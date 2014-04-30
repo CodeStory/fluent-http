@@ -1,22 +1,21 @@
 package net.codestory.http.injection;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.beans.factory.*;
+import org.springframework.context.annotation.*;
 
 public class SpringAdapter implements IocAdapter {
-  private final ApplicationContext context;
+  private final BeanFactory beanFactory;
 
-  public SpringAdapter(ApplicationContext context) {
-    this.context = context;
+  public SpringAdapter(BeanFactory beanFactory) {
+    this.beanFactory = beanFactory;
   }
 
-  public SpringAdapter(Class<?> annotatedClass) {
-    this.context = new AnnotationConfigApplicationContext(annotatedClass);
+  public SpringAdapter(Class<?>... annotatedClasses) {
+    this(new AnnotationConfigApplicationContext(annotatedClasses));
   }
 
   @Override
   public <T> T get(Class<T> type) {
-    return context.getBean(type);
+    return beanFactory.getBean(type);
   }
-
 }
