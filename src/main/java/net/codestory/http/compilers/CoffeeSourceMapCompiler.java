@@ -18,10 +18,10 @@ package net.codestory.http.compilers;
 import java.io.*;
 import java.nio.file.*;
 
-public class CoffeeCompiler implements Compiler {
+public class CoffeeSourceMapCompiler implements Compiler {
   private final NashornCompiler nashornCompiler = new NashornCompiler(
       "META-INF/resources/webjars/coffee-script/1.7.1/coffee-script.min.js",
-      "coffee-script/toJs.js");
+      "coffee-script/toSourceMap.js");
 
   @Override
   public String compile(Path path, String source) throws IOException {

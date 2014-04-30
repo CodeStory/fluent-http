@@ -32,6 +32,7 @@ public enum Compilers {
 
   private Compilers() {
     register(CoffeeCompiler::new, ".coffee", ".litcoffee");
+    register(CoffeeSourceMapCompiler::new, ".coffee.map", ".litcoffee.map");
     register(MarkdownCompiler::new, ".md", ".markdown");
     register(LessCompiler::new, ".less");
     register(LessSourceMapCompiler::new, ".css.map");

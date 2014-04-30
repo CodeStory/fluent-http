@@ -30,7 +30,7 @@ import net.codestory.http.types.*;
 class SourceMapRoute implements Route {
   @Override
   public boolean matchUri(String uri) {
-    return uri.endsWith(".css.map") && Resources.isPublic(pathLess(uri));
+    return uri.endsWith(".map") && Resources.isPublic(pathSource(uri));
   }
 
   @Override
@@ -41,7 +41,7 @@ class SourceMapRoute implements Route {
   @Override
   public Object body(Context context) throws IOException {
     String uri = context.uri();
-    Path pathLess = pathLess(uri);
+    Path pathLess = pathSource(uri);
     Path pathMap = Paths.get(uri);
     String contentType = ContentTypes.get(pathMap);
     String less = Resources.read(pathLess, UTF_8);
@@ -50,7 +50,12 @@ class SourceMapRoute implements Route {
     return new Payload(contentType, map);
   }
 
-  private static Path pathLess(String uri) {
-    return Paths.get(Strings.substringBeforeLast(uri, ".css.map") + ".less");
+  private static Path pathSource(String uri) {
+    if (uri.endsWith(".css.map")) { // special case for css/less map
+      return Paths.get(Strings.substringBeforeLast(uri, ".css.map") + ".less");
+    }
+    return Paths.get(Strings.substringBeforeLast(uri, ".map"));
   }
 }
+
+

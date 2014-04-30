@@ -1,0 +1,1 @@
+CoffeeScript.compile(__source, {bare: true, sourceMap: true}).v3SourceMap;
