@@ -15,7 +15,6 @@
  */
 package net.codestory.http.compilers;
 
-import java.io.*;
 import java.nio.file.*;
 
 public class AsciidocCompiler implements Compiler {
@@ -25,7 +24,7 @@ public class AsciidocCompiler implements Compiler {
       "asciidoc/render.js");
 
   @Override
-  public String compile(Path path, String source) throws IOException {
+  public String compile(Path path, String source) {
     return nashornCompiler.compile(path, source);
   }
 }
