@@ -20,6 +20,7 @@ import java.net.*;
 import java.nio.file.Path;
 import java.util.*;
 
+import net.codestory.http.compilers.*;
 import net.codestory.http.errors.*;
 import net.codestory.http.filters.log.*;
 import net.codestory.http.internal.*;
@@ -178,7 +179,9 @@ public class WebServer {
   }
 
   protected void handleServerError(Context context, Exception e) {
-    if (!(e instanceof HttpException) && !(e instanceof NoSuchElementException)) {
+    if (e instanceof CompilerException) {
+      LOG.error(e.getMessage());
+    } else if (!(e instanceof HttpException) && !(e instanceof NoSuchElementException)) {
       e.printStackTrace();
     }
 

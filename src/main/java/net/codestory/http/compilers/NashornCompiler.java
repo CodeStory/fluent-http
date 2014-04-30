@@ -19,6 +19,7 @@ import static java.nio.charset.StandardCharsets.*;
 import static javax.script.ScriptContext.*;
 
 import java.io.*;
+import java.nio.file.*;
 
 import net.codestory.http.io.*;
 
@@ -56,16 +57,21 @@ public final class NashornCompiler {
     return concatenatedScript.toString();
   }
 
-  public synchronized String compile(String source) {
+  public synchronized String compile(Path path, String source) {
     bindings.put("__source", source);
 
     try {
       return compiledScript.eval(bindings).toString();
     } catch (ScriptException e) {
-      if (e.getCause() instanceof RuntimeException) {
-        throw (RuntimeException) e.getCause();
-      }
-      throw new IllegalArgumentException("Unable to compile", e.getCause());
+      String message = cleanMessage(path, e.getCause().getMessage());
+      throw new CompilerException(message);
     }
+  }
+
+  private static String cleanMessage(Path path, String message) {
+    return message.replace(
+        "Unable to compile CoffeeScript [stdin]:",
+        "Unable to compile " + path + ":"
+    );
   }
 }

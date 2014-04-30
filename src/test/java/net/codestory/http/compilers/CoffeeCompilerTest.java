@@ -23,8 +23,6 @@ import java.nio.file.*;
 import org.junit.*;
 import org.junit.rules.*;
 
-import jdk.nashorn.internal.runtime.*;
-
 public class CoffeeCompilerTest {
   private static CoffeeCompiler compiler = new CoffeeCompiler();
 
@@ -47,9 +45,16 @@ public class CoffeeCompilerTest {
 
   @Test
   public void invalid_script() {
-    thrown.expect(ECMAException.class);
-    thrown.expectMessage("SyntaxError: unexpected ==");
+    thrown.expect(CompilerException.class);
+    thrown.expectMessage("Unable to compile invalid.coffee:1:1: error: unexpected ==");
 
     compiler.compile(Paths.get("invalid.coffee"), "===");
+  }
+
+  @Test
+  public void report_line_number() {
+    thrown.expectMessage("Unable to compile invalid.coffee:3:1: error: unexpected ==");
+
+    compiler.compile(Paths.get("invalid.coffee"), "\n\n===");
   }
 }

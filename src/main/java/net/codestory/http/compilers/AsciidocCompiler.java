@@ -26,6 +26,6 @@ public class AsciidocCompiler implements Compiler {
 
   @Override
   public String compile(Path path, String source) throws IOException {
-    return nashornCompiler.compile(source);
+    return nashornCompiler.compile(path, source);
   }
 }

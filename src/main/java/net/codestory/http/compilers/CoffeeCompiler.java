@@ -24,6 +24,6 @@ public class CoffeeCompiler implements Compiler {
 
   @Override
   public String compile(Path path, String source) {
-    return nashornCompiler.compile(source);
+    return nashornCompiler.compile(path, source);
   }
 }
