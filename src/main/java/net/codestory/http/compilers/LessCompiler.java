@@ -34,7 +34,12 @@ public class LessCompiler implements Compiler {
 
       return new ThreadUnsafeLessCompiler().compile(new PathSource(path, source), configuration).getCss();
     } catch (Less4jException e) {
-      throw new IOException("Unable to compile less", e);
+      String message = cleanMessage(path, e.getMessage());
+      throw new CompilerException(message);
     }
+  }
+
+  private static String cleanMessage(Path path, String message) {
+    return "Unable to compile less " + path + ": " + message.replace("Could not compile less. ", "");
   }
 }

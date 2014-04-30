@@ -59,8 +59,12 @@ public class LessCompilerTest {
 
   @Test
   public void invalid_file() throws IOException {
-    thrown.expect(IOException.class);
-    thrown.expectMessage("Unable to compile less");
+    thrown.expect(CompilerException.class);
+    thrown.expectMessage(
+        "Unable to compile less invalid.less: 3 error(s) occurred:\n" +
+            "ERROR 1:6 no viable alternative at input 'body' in ruleset (which started at 1:1)\n" +
+            "ERROR 1:6 required (...)+ loop did not match anything at input 'body' in selectors (which started at 1:6)\n" +
+            "...");
 
     lessCompiler.compile(Paths.get("invalid.less"), "body body");
   }
