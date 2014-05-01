@@ -49,14 +49,9 @@ public class SSLTest {
     Path pathRootCACertificate = resource("certificates/root.crt");
     Path pathPrivateKey = resource("certificates/ee.der");
 
-    int port = randomPort();
-    new WebServer().startSSL(port, asList(pathEECertificate, pathSubCACertificate), pathPrivateKey);
+    WebServer webServer = new WebServer().startSSL(randomPort(), asList(pathEECertificate, pathSubCACertificate), pathPrivateKey);
 
-    URL url = new URL("https://localhost:" + port);
-    HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-    conn.setSSLSocketFactory(getSocketFactory(pathRootCACertificate));
-    conn.setRequestMethod("GET");
-    conn.getResponseCode();
+    HttpsURLConnection conn = httpGet(webServer, getSocketFactory(pathRootCACertificate));
 
     assertThat(conn.getServerCertificates()).hasSize(2);
     assertThat(conn.getServerCertificates()[0].getEncoded()).isEqualTo(getCertificateFromPath(pathEECertificate).getEncoded());
@@ -71,14 +66,9 @@ public class SSLTest {
     Path pathTrustAnchors = resource("certificates/root.crt");
     Path pathClientCertificate = resource("certificates/client.pfx");
 
-    int port = randomPort();
-    new WebServer().startSSL(port, asList(pathEECertificate, pathSubCACertificate), pathPrivateKey, asList(pathTrustAnchors));
+    WebServer webServer = new WebServer().startSSL(randomPort(), asList(pathEECertificate, pathSubCACertificate), pathPrivateKey, asList(pathTrustAnchors));
 
-    URL url = new URL("https://localhost:" + port);
-    HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-    conn.setSSLSocketFactory(getSocketFactory(pathTrustAnchors, pathClientCertificate));
-    conn.setRequestMethod("GET");
-    conn.getResponseCode();
+    httpGet(webServer, getSocketFactory(pathTrustAnchors, pathClientCertificate));
   }
 
   @Test(expected = Exception.class)
@@ -88,14 +78,18 @@ public class SSLTest {
     Path pathPrivateKey = resource("certificates/ee.der");
     Path pathTrustAnchors = resource("certificates/root.crt");
 
-    int port = randomPort();
-    new WebServer().startSSL(port, asList(pathEECertificate, pathSubCACertificate), pathPrivateKey, asList(pathTrustAnchors));
+    WebServer webServer = new WebServer().startSSL(randomPort(), asList(pathEECertificate, pathSubCACertificate), pathPrivateKey, asList(pathTrustAnchors));
 
-    URL url = new URL("https://localhost:" + port);
+    httpGet(webServer, getSocketFactory(pathTrustAnchors));
+  }
+
+  private HttpsURLConnection httpGet(WebServer webServer, SSLSocketFactory socketFactory) throws IOException {
+    URL url = new URL("https://localhost:" + webServer.port());
     HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-    conn.setSSLSocketFactory(getSocketFactory(pathTrustAnchors));
+    conn.setSSLSocketFactory(socketFactory);
     conn.setRequestMethod("GET");
     conn.getResponseCode();
+    return conn;
   }
 
   private static int randomPort() {
