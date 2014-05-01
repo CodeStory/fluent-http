@@ -15,24 +15,15 @@
  */
 package net.codestory.http.convert;
 
-<<<<<<< HEAD
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
-=======
-import org.junit.Test;
->>>>>>> 28f1c8f130d0810d14c6967774a013ebaa716893
 
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
+import java.time.*;
+import java.util.*;
 
-<<<<<<< HEAD
 import net.codestory.http.internal.*;
 
 import org.junit.*;
-=======
-import static org.assertj.core.api.Assertions.assertThat;
->>>>>>> 28f1c8f130d0810d14c6967774a013ebaa716893
 
 public class TypeConvertTest {
   @Test
