@@ -1,6 +1,6 @@
 # Fluent-Http
 
-This is the simplest fastest full fledged http server we could come up with.
+This is the simplest fastest full fledged web server we could come up with.
 
 # Build status
 
