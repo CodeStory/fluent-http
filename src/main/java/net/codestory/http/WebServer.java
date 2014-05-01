@@ -15,6 +15,8 @@
  */
 package net.codestory.http;
 
+import static java.util.Arrays.asList;
+
 import java.io.*;
 import java.net.*;
 import java.nio.file.Path;
@@ -33,6 +35,7 @@ import net.codestory.http.ssl.*;
 import org.simpleframework.http.*;
 import org.simpleframework.http.core.*;
 import org.simpleframework.transport.*;
+import org.simpleframework.transport.Socket;
 import org.simpleframework.transport.connect.*;
 import org.slf4j.*;
 
@@ -41,7 +44,7 @@ import javax.net.ssl.*;
 public class WebServer {
   private final static Logger LOG = LoggerFactory.getLogger(WebServer.class);
 
-  private final Server server;
+  private final ProxyServer server;
   private final SocketConnection connection;
   private RoutesProvider routesProvider;
   private int port;
@@ -53,7 +56,7 @@ public class WebServer {
 
   public WebServer(Configuration configuration) {
     try {
-      server = new ContainerServer(this::handle);
+      server = new ProxyServer(new ContainerServer(this::handle));
       connection = new SocketConnection(server);
     } catch (IOException e) {
       throw new IllegalStateException("Unable to create http server", e);
@@ -97,15 +100,22 @@ public class WebServer {
   }
 
   public WebServer startSSL(int port, Path pathCertificate, Path pathPrivateKey) {
-    return startSSL(port, Arrays.asList(pathCertificate), pathPrivateKey);
+    return startSSL(port, asList(pathCertificate), pathPrivateKey, null);
   }
 
   public WebServer startSSL(int port, List<Path> pathChain, Path pathPrivateKey) {
+    return startSSL(port, pathChain, pathPrivateKey, null);
+  }
+
+  public WebServer startSSL(int port, List<Path> pathChain, Path pathPrivateKey, List<Path> pathTrustAnchors) {
     SSLContext context;
     try {
-      context = new SSLContextFactory().create(pathChain, pathPrivateKey);
+      context = new SSLContextFactory().create(pathChain, pathPrivateKey, pathTrustAnchors);
     } catch (Exception e) {
       throw new IllegalStateException("Unable to read certificate or key", e);
+    }
+    if (pathTrustAnchors != null) {
+      server.setClientAuthRequired(true);
     }
     return startWithContext(port, context);
   }
@@ -210,5 +220,31 @@ public class WebServer {
   protected Payload errorPage(Payload payload, Exception e) {
     Exception shownError = Env.INSTANCE.prodMode() ? null : e;
     return new ErrorPage(payload, shownError).payload();
+  }
+
+  private static class ProxyServer implements Server {
+    private final Server delegate;
+    private volatile boolean authReq;
+
+    ProxyServer(Server delegate) {
+      this.delegate = delegate;
+    }
+
+    void setClientAuthRequired(boolean authReq) {
+      this.authReq = authReq;
+    }
+
+    @Override
+    public void process(Socket socket) throws IOException {
+      if (authReq) {
+        socket.getEngine().setNeedClientAuth(authReq);
+      }
+      delegate.process(socket);
+    }
+
+    @Override
+    public void stop() throws IOException {
+      delegate.stop();
+    }
   }
 }

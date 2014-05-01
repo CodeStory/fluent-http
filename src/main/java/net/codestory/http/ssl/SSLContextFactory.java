@@ -23,11 +23,13 @@ import java.security.interfaces.*;
 import java.security.spec.*;
 import java.util.*;
 
+import net.codestory.http.misc.*;
+
 import javax.net.ssl.*;
 
 public class SSLContextFactory {
-  public SSLContext create(List<Path> pathCertificates, Path pathPrivateKey) throws Exception {
-    X509Certificate[] chain = pathCertificates.stream().map(path -> {
+  public SSLContext create(List<Path> pathCertificates, Path pathPrivateKey, List<Path> pathTrustAnchors) throws Exception {
+    X509Certificate[] chain = pathCertificates.stream().map((path) -> {
       try {
         return generateCertificateFromDER(path);
       } catch (Exception e) {
@@ -42,8 +44,25 @@ public class SSLContextFactory {
     keystore.setCertificateEntry("cert-alias", chain[0]);
     keystore.setKeyEntry("key-alias", key, new char[0], chain);
 
+    KeyStore truststore = null;
+    if (pathTrustAnchors != null && !pathTrustAnchors.isEmpty()) {
+      X509Certificate[] trustAnchors = pathTrustAnchors.stream().map((path) -> {
+        try {
+          return generateCertificateFromDER(Files.readAllBytes(path));
+        } catch (Exception e) {
+          throw new RuntimeException(e);
+        }
+      }).toArray(X509Certificate[]::new);
+
+      truststore = KeyStore.getInstance("JKS");
+      truststore.load(null);
+      for (X509Certificate certificate : trustAnchors) {
+        truststore.setCertificateEntry(Md5.of(certificate.getEncoded()), certificate);
+      }
+    }
+
     SSLContext context = SSLContext.getInstance("TLS");
-    context.init(getKeyManagers(keystore), null, null);
+    context.init(getKeyManagers(keystore), getTrustManagers(truststore), null);
 
     return context;
   }
@@ -56,6 +75,15 @@ public class SSLContextFactory {
 
   private static X509Certificate generateCertificateFromDER(Path path) throws CertificateException, IOException {
     return generateCertificateFromDER(Files.readAllBytes(path));
+  }
+
+  private static TrustManager[] getTrustManagers(KeyStore trustStore) throws NoSuchAlgorithmException, KeyStoreException {
+    if (trustStore == null) {
+      return null;
+    }
+    TrustManagerFactory tmf = TrustManagerFactory.getInstance("PKIX");
+    tmf.init(trustStore);
+    return tmf.getTrustManagers();
   }
 
   private static X509Certificate generateCertificateFromDER(byte[] data) throws CertificateException {
