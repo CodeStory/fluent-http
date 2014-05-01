@@ -32,14 +32,14 @@ public class CoffeeCompilerTest {
   public void empty() {
     String js = compiler.compile(Paths.get("empty.coffee"), "");
 
-    assertThat(js).isEqualTo("\n");
+    assertThat(js).isEqualTo("\n\n//# sourceMappingURL=empty.coffee.map");
   }
 
   @Test
   public void to_javascript() {
     String js = compiler.compile(Paths.get("file.coffee"), "life=42");
 
-    assertThat(js).isEqualTo("var life;\n\nlife = 42;\n");
+    assertThat(js).isEqualTo("var life;\n\nlife = 42;\n\n//# sourceMappingURL=file.coffee.map");
   }
 
   @Test

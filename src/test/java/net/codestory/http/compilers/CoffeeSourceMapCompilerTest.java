@@ -15,15 +15,22 @@
  */
 package net.codestory.http.compilers;
 
-import java.nio.file.*;
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
+import org.junit.Test;
 
-public class CoffeeCompiler implements Compiler {
-  private final NashornCompiler nashornCompiler = new NashornCompiler(
-      "META-INF/resources/webjars/coffee-script/1.7.1/coffee-script.min.js",
-      "coffee-script/toJs.js");
+import java.io.IOException;
+import java.nio.file.Paths;
 
-  @Override
-  public String compile(Path path, String source) {
-    return nashornCompiler.compile(path, source) + "\n//# sourceMappingURL=" + path.getFileName() + ".map";
+import static org.assertj.core.api.Assertions.assertThat;
+
+
+public class CoffeeSourceMapCompilerTest {
+
+  @Test
+  public void generate_sourcemapfile_with_filename_and_sources() throws IOException {
+    String result = new CoffeeSourceMapCompiler().compile(Paths.get("polka.coffee"), "a=b=3\nc=4\nd=(a+b)*c");
+    assertThat(result).isEqualTo(Resources.toString(Resources.getResource("polka.coffee.map"), Charsets.UTF_8));
   }
+
 }

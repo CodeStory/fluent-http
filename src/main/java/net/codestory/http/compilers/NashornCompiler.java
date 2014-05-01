@@ -58,6 +58,7 @@ public final class NashornCompiler {
   }
 
   public synchronized String compile(Path path, String source) {
+    bindings.put("__filename", path.getFileName());
     bindings.put("__source", source);
 
     try {
