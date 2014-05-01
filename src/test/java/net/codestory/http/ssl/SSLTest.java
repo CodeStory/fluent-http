@@ -15,6 +15,7 @@
  */
 package net.codestory.http.ssl;
 
+import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.io.*;
@@ -38,20 +39,18 @@ public class SSLTest {
     Path pathCertificate = resource("certificates/server.crt");
     Path pathPrivateKey = resource("certificates/server.der");
 
-    WebServer webServer = new WebServer();
-    webServer.startSSL(randomPort(), pathCertificate, pathPrivateKey);
+    new WebServer().startSSL(randomPort(), pathCertificate, pathPrivateKey);
   }
 
   @Test
-  public void start_server_with_chain() throws Exception {
+  public void certificate_chain() throws Exception {
     Path pathEECertificate = resource("certificates/ee.crt");
     Path pathSubCACertificate = resource("certificates/sub.crt");
     Path pathRootCACertificate = resource("certificates/root.crt");
     Path pathPrivateKey = resource("certificates/ee.der");
 
-    WebServer webServer = new WebServer();
     int port = randomPort();
-    webServer.startSSL(port, Arrays.asList(pathEECertificate, pathSubCACertificate), pathPrivateKey);
+    new WebServer().startSSL(port, asList(pathEECertificate, pathSubCACertificate), pathPrivateKey);
 
     URL url = new URL("https://localhost:" + port);
     HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
@@ -64,39 +63,37 @@ public class SSLTest {
     assertThat(conn.getServerCertificates()[1].getEncoded()).isEqualTo(getCertificateFromPath(pathSubCACertificate).getEncoded());
   }
 
-  @Test(expected = Exception.class)
-  public void start_server_with_client_auth_failure() throws Exception {
-    Path pathEECertificate = resource("certificates/ee.crt");
-    Path pathSubCACertificate = resource("certificates/sub.crt");
-    Path pathPrivateKey = resource("certificates/ee.der");
-    Path pathTrustAnchors = resource("certificates/root.crt");
-
-    WebServer webServer = new WebServer();
-    int port = randomPort();
-    webServer.startSSL(port, Arrays.asList(pathEECertificate, pathSubCACertificate), pathPrivateKey, Arrays.asList(pathTrustAnchors));
-
-    URL url = new URL("https://localhost:" + port);
-    HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-    conn.setSSLSocketFactory(getSocketFactory(pathTrustAnchors));
-    conn.setRequestMethod("GET");
-    conn.getResponseCode();
-  }
-
   @Test
-  public void start_server_with_client_auth() throws Exception {
+  public void client_auth() throws Exception {
     Path pathEECertificate = resource("certificates/ee.crt");
     Path pathSubCACertificate = resource("certificates/sub.crt");
     Path pathPrivateKey = resource("certificates/ee.der");
     Path pathTrustAnchors = resource("certificates/root.crt");
     Path pathClientCertificate = resource("certificates/client.pfx");
 
-    WebServer webServer = new WebServer();
     int port = randomPort();
-    webServer.startSSL(port, Arrays.asList(pathEECertificate, pathSubCACertificate), pathPrivateKey, Arrays.asList(pathTrustAnchors));
+    new WebServer().startSSL(port, asList(pathEECertificate, pathSubCACertificate), pathPrivateKey, asList(pathTrustAnchors));
 
     URL url = new URL("https://localhost:" + port);
     HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
     conn.setSSLSocketFactory(getSocketFactory(pathTrustAnchors, pathClientCertificate));
+    conn.setRequestMethod("GET");
+    conn.getResponseCode();
+  }
+
+  @Test(expected = Exception.class)
+  public void client_auth_failure() throws Exception {
+    Path pathEECertificate = resource("certificates/ee.crt");
+    Path pathSubCACertificate = resource("certificates/sub.crt");
+    Path pathPrivateKey = resource("certificates/ee.der");
+    Path pathTrustAnchors = resource("certificates/root.crt");
+
+    int port = randomPort();
+    new WebServer().startSSL(port, asList(pathEECertificate, pathSubCACertificate), pathPrivateKey, asList(pathTrustAnchors));
+
+    URL url = new URL("https://localhost:" + port);
+    HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+    conn.setSSLSocketFactory(getSocketFactory(pathTrustAnchors));
     conn.setRequestMethod("GET");
     conn.getResponseCode();
   }
