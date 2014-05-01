@@ -4,7 +4,7 @@
 
   <groupId>net.code-story</groupId>
   <artifactId>http</artifactId>
-  <version>1.49-SNAPSHOT</version>
+  <version>1.49</version>
   <packaging>jar</packaging>
 
   <name>CodeStory - Http Server</name>
@@ -22,7 +22,7 @@
     <connection>scm:git:git@github.com:CodeStory/fluent-http.git</connection>
     <url>scm:git:git@github.com:CodeStory/fluent-http.git</url>
     <developerConnection>scm:git:git@github.com:CodeStory/fluent-http.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>http-1.49</tag>
   </scm>
 
   <licenses>
