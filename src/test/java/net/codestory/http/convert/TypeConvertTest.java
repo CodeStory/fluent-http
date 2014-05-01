@@ -15,14 +15,24 @@
  */
 package net.codestory.http.convert;
 
+<<<<<<< HEAD
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
+=======
+import org.junit.Test;
+>>>>>>> 28f1c8f130d0810d14c6967774a013ebaa716893
 
-import java.util.*;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
+<<<<<<< HEAD
 import net.codestory.http.internal.*;
 
 import org.junit.*;
+=======
+import static org.assertj.core.api.Assertions.assertThat;
+>>>>>>> 28f1c8f130d0810d14c6967774a013ebaa716893
 
 public class TypeConvertTest {
   @Test
@@ -71,10 +81,11 @@ public class TypeConvertTest {
 
   @Test
   public void json_to_bean() {
-    Human human = TypeConvert.fromJson("{\"name\":\"jack\",\"age\":31}", Human.class);
+    Human human = TypeConvert.fromJson("{\"name\":\"jack\",\"age\":31,\"birthDate\":\"1980-01-01\"}", Human.class);
 
     assertThat(human.name).isEqualTo("jack");
     assertThat(human.age).isEqualTo(31);
+    assertThat(human.birthDate).isEqualTo(LocalDate.parse("1980-01-01"));
   }
 
   @Test
@@ -101,5 +112,6 @@ public class TypeConvertTest {
   static class Human {
     String name;
     int age;
+    LocalDate birthDate;
   }
 }

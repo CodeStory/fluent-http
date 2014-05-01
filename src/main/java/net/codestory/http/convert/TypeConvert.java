@@ -22,10 +22,13 @@ import net.codestory.http.internal.*;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.datatype.jsr310.*;
 
 public class TypeConvert {
   private static ObjectMapper OBJECT_MAPPER = new ObjectMapper()
       .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
+      .registerModule(new JSR310Module())
+      .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
       .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
   private TypeConvert() {
