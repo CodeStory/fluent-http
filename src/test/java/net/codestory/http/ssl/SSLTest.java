@@ -64,18 +64,72 @@ public class SSLTest {
     assertThat(conn.getServerCertificates()[1].getEncoded()).isEqualTo(getCertificateFromPath(pathSubCACertificate).getEncoded());
   }
 
+  @Test(expected = SocketException.class)
+  public void start_server_with_client_auth_failure() throws Exception {
+    Path pathEECertificate = resource("certificates/ee.crt");
+    Path pathSubCACertificate = resource("certificates/sub.crt");
+    Path pathPrivateKey = resource("certificates/ee.der");
+    Path pathTrustAnchors = resource("certificates/root.crt");
+
+    WebServer webServer = new WebServer();
+    int port = 8183 + new Random().nextInt(1000);
+    webServer.startSSL(port, Arrays.asList(pathEECertificate, pathSubCACertificate), pathPrivateKey, Arrays.asList(pathTrustAnchors));
+
+    URL url = new URL("https://localhost:" + port);
+    HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+    conn.setSSLSocketFactory(getSocketFactory(pathTrustAnchors));
+    conn.setRequestMethod("GET");
+    conn.getResponseCode();
+  }
+
+  @Test
+  public void start_server_with_client_auth() throws Exception {
+    Path pathEECertificate = resource("certificates/ee.crt");
+    Path pathSubCACertificate = resource("certificates/sub.crt");
+    Path pathPrivateKey = resource("certificates/ee.der");
+    Path pathTrustAnchors = resource("certificates/root.crt");
+    Path pathClientCertificate = resource("certificates/client.pfx");
+
+    WebServer webServer = new WebServer();
+    int port = 8183 + new Random().nextInt(1000);
+    webServer.startSSL(port, Arrays.asList(pathEECertificate, pathSubCACertificate), pathPrivateKey, Arrays.asList(pathTrustAnchors));
+
+    URL url = new URL("https://localhost:" + port);
+    HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+    conn.setSSLSocketFactory(getSocketFactory(pathTrustAnchors, pathClientCertificate));
+    conn.setRequestMethod("GET");
+    conn.getResponseCode();
+  }
+
   private static Path resource(String name) throws URISyntaxException {
     return Paths.get(Resources.getResource(name).toURI());
   }
 
   private static SSLSocketFactory getSocketFactory(Path caCertificate) throws Exception {
+    return getSocketFactory(caCertificate, null);
+  }
+
+  private static SSLSocketFactory getSocketFactory(Path caCertificate, Path clientCertificate) throws Exception {
+    System.setProperty("https.protocols", "SSLv3");
     SSLContext ctx = SSLContext.getInstance("TLS");
-    KeyStore ks = KeyStore.getInstance("JKS");
-    ks.load(null);
-    ks.setCertificateEntry("rootca", getCertificateFromPath(caCertificate));
+
+    KeyStore ts = KeyStore.getInstance("JKS");
+    ts.load(null);
+    ts.setCertificateEntry("rootca", getCertificateFromPath(caCertificate));
     TrustManagerFactory tmf = TrustManagerFactory.getInstance("PKIX");
-    tmf.init(ks);
-    ctx.init(null, tmf.getTrustManagers(), null);
+    tmf.init(ts);
+    TrustManager[] tm = tmf.getTrustManagers();
+
+    KeyManager[] km = null;
+    if (clientCertificate != null) {
+      KeyStore ks = KeyStore.getInstance("PKCS12");
+      ks.load(Files.newInputStream(clientCertificate), "password".toCharArray());
+      KeyManagerFactory kmf = KeyManagerFactory.getInstance("PKIX");
+      kmf.init(ks, "password".toCharArray());
+      km = kmf.getKeyManagers();
+    }
+
+    ctx.init(km, tm, null);
     return ctx.getSocketFactory();
   }
 
