@@ -60,7 +60,6 @@ public class WebServer {
         : new ConfigurationReloadingProxy(configuration));
   }
 
-
   public WebServer(Configuration configuration) {
     try {
       server = new ProxyServer(new ContainerServer(this::handle));

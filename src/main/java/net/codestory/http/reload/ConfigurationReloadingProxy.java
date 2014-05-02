@@ -23,24 +23,21 @@ import net.codestory.http.routes.*;
  * @author <a href="mailto:nicolas.deloof@gmail.com">Nicolas De Loof</a>
  */
 public class ConfigurationReloadingProxy implements Configuration {
-
-
-  private final ClassLoader parent;
   private final String fqcn;
+  private final ClassLoader parent;
 
   public ConfigurationReloadingProxy(Class<? extends Configuration> configuration) {
-    fqcn = configuration.getName();
-    parent = getClass().getClassLoader();
+    this.fqcn = configuration.getName();
+    this.parent = getClass().getClassLoader();
   }
 
-  public static final <T> T createInstance(Class<T> clazz) {
+  public static <T> T createInstance(Class<T> clazz) {
     try {
-      return (T) clazz.newInstance();
+      return clazz.newInstance();
     } catch (Exception e) {
       throw new IllegalStateException("Failed to instanciate " + clazz.getName(), e);
     }
   }
-
 
   @Override
   public void configure(Routes routes) {
