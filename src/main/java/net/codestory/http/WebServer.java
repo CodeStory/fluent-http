@@ -54,6 +54,13 @@ public class WebServer {
     });
   }
 
+    public WebServer(Class<? extends Configuration> configuration)  {
+        this( Env.INSTANCE.prodMode()
+               ? ConfigurationReloadingProxy.createInstance(configuration)
+               : new ConfigurationReloadingProxy(configuration) );
+    }
+
+
   public WebServer(Configuration configuration) {
     try {
       server = new ProxyServer(new ContainerServer(this::handle));
