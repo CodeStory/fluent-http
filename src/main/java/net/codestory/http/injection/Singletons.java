@@ -23,6 +23,11 @@ public class Singletons implements IocAdapter {
 
   public Singletons() {
     this.singletons = new HashMap<>();
+    register(Singletons.class, this);
+  }
+
+  public <T> void register(Class<? extends T> type, T singleton) {
+    singletons.put(type, singleton);
   }
 
   @SuppressWarnings("unchecked")
@@ -40,13 +45,13 @@ public class Singletons implements IocAdapter {
 
   @SuppressWarnings("unchecked")
   private <T> T _get(Class<T> type, Set<Class<?>> seenTypes) {
-    if (!seenTypes.add(type)) {
-      throw new IllegalStateException("Cycle in dependencies for " + type);
-    }
-
     Object singleton = singletons.get(type);
     if (singleton != null) {
       return (T) singleton;
+    }
+
+    if (!seenTypes.add(type)) {
+      throw new IllegalStateException("Cycle in dependencies for " + type);
     }
 
     try {
