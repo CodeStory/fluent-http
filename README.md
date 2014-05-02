@@ -16,12 +16,6 @@ This is the simplest fastest full fledged web server we could come up with.
 mvn clean verify
 ```
 
-## Generate missing licenses
-
-```bash
-mvn license:format
-```
-
 # Usage
 
 One of our goals was to make it as easy as possible to start with.
@@ -674,6 +668,12 @@ Note that we provide quite a few helper by default like the [StringHelper](https
 ## Etag
 
 TODO
+
+## Generate missing licenses
+
+```bash
+mvn license:format
+```
 
 # Deploy on Maven Central
 
