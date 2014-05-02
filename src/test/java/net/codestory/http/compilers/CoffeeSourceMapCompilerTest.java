@@ -15,22 +15,27 @@
  */
 package net.codestory.http.compilers;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.*;
 
-import java.io.IOException;
-import java.nio.file.Paths;
+import java.nio.file.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
+import org.junit.*;
 
 public class CoffeeSourceMapCompilerTest {
+  CoffeeSourceMapCompiler compiler = new CoffeeSourceMapCompiler();
 
   @Test
-  public void generate_sourcemapfile_with_filename_and_sources() throws IOException {
-    String result = new CoffeeSourceMapCompiler().compile(Paths.get("polka.coffee"), "a=b=3\nc=4\nd=(a+b)*c");
-    assertThat(result).isEqualTo(Resources.toString(Resources.getResource("polka.coffee.map"), Charsets.UTF_8));
-  }
+  public void generate_sourcemapfile_with_filename_and_sources() {
+    String result = compiler.compile(Paths.get("polka.coffee"), "a=b=3\nc=4\nd=(a+b)*c");
 
+    assertThat(result).isEqualTo("{\n" +
+        " \"version\": 3,\n" +
+        " \"file\": \"polka.coffee\",\n" +
+        " \"sources\": [\n" +
+        "  \"polka.coffee\"\n" +
+        " ],\n" +
+        " \"names\": [],\n" +
+        " \"mappings\": \"AAAA,IAAA,UAAA;;AAAA,CAAA,GAAE,CAAA,GAAE,CAAJ,CAAA;;AAAA,CACA,GAAE,CADF,CAAA;;AAAA,CAEA,GAAE,CAAC,CAAA,GAAE,CAAH,CAAA,GAAM,CAFR,CAAA\"\n" +
+        "}");
+  }
 }
