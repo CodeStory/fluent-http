@@ -15,12 +15,9 @@
  */
 package net.codestory.http.reload;
 
-import net.codestory.http.Configuration;
-import net.codestory.http.io.Resources;
-import net.codestory.http.routes.Routes;
-
-import java.net.URL;
-import java.net.URLClassLoader;
+import net.codestory.http.*;
+import net.codestory.http.io.*;
+import net.codestory.http.routes.*;
 
 /**
  * @author <a href="mailto:nicolas.deloof@gmail.com">Nicolas De Loof</a>
@@ -28,32 +25,32 @@ import java.net.URLClassLoader;
 public class ConfigurationReloadingProxy implements Configuration {
 
 
-    private final ClassLoader parent;
-    private final String fqcn;
+  private final ClassLoader parent;
+  private final String fqcn;
 
-    public ConfigurationReloadingProxy(Class<? extends Configuration> configuration) {
-        fqcn = configuration.getName();
-        parent = getClass().getClassLoader();
+  public ConfigurationReloadingProxy(Class<? extends Configuration> configuration) {
+    fqcn = configuration.getName();
+    parent = getClass().getClassLoader();
+  }
+
+  public static final <T> T createInstance(Class<T> clazz) {
+    try {
+      return (T) clazz.newInstance();
+    } catch (Exception e) {
+      throw new IllegalStateException("Failed to instanciate " + clazz.getName(), e);
     }
+  }
 
-    public static final <T> T createInstance(Class<T> clazz) {
-        try {
-            return (T) clazz.newInstance();
-        } catch (Exception e) {
-            throw new IllegalStateException("Failed to instanciate " + clazz.getName(), e);
-        }
+
+  @Override
+  public void configure(Routes routes) {
+    try {
+      ClassLoader cl = new ParentLastClassLoader(Resources.CLASSES_OUTPUT_DIR, parent);
+
+      Configuration delegate = createInstance((Class<Configuration>) cl.loadClass(fqcn));
+      delegate.configure(routes);
+    } catch (Exception e) {
+      throw new IllegalStateException("Failed to reload Configuration from classpath", e);
     }
-
-
-    @Override
-    public void configure(Routes routes) {
-        try {
-            ClassLoader cl = new ParentLastClassLoader(Resources.CLASSES_OUTPUT_DIR, parent);
-
-            Configuration delegate = createInstance((Class<Configuration>) cl.loadClass(fqcn));
-            delegate.configure(routes);
-        } catch (Exception e) {
-            throw new IllegalStateException("Failed to reload Configuration from classpath", e);
-        }
-    }
+  }
 }

@@ -15,7 +15,7 @@
  */
 package net.codestory.http;
 
-import static java.util.Arrays.asList;
+import static java.util.Arrays.*;
 
 import java.io.*;
 import java.net.*;
@@ -54,11 +54,11 @@ public class WebServer {
     });
   }
 
-    public WebServer(Class<? extends Configuration> configuration)  {
-        this( Env.INSTANCE.prodMode()
-               ? ConfigurationReloadingProxy.createInstance(configuration)
-               : new ConfigurationReloadingProxy(configuration) );
-    }
+  public WebServer(Class<? extends Configuration> configuration) {
+    this(Env.INSTANCE.prodMode()
+        ? ConfigurationReloadingProxy.createInstance(configuration)
+        : new ConfigurationReloadingProxy(configuration));
+  }
 
 
   public WebServer(Configuration configuration) {
