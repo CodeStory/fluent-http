@@ -57,4 +57,10 @@ class SimpleHttpQuery implements HttpQuery {
   public Map<String, String> keyValues() {
     return query;
   }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public <T> T unwrap(Class<T> type) {
+    return type.isInstance(query) ? (T) query : null;
+  }
 }

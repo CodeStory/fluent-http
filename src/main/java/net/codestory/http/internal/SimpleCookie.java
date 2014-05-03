@@ -63,4 +63,10 @@ class SimpleCookie implements Cookie {
   public String domain() {
     return cookie.getDomain();
   }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public <T> T unwrap(Class<T> type) {
+    return type.isInstance(cookie) ? (T) cookie : null;
+  }
 }

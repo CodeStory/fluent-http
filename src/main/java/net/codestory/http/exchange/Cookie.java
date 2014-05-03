@@ -16,6 +16,8 @@ public interface Cookie {
   String path();
 
   String domain();
+
+  <T> T unwrap(Class<T> type);
 }
 
 

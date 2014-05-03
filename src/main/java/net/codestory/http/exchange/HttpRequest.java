@@ -29,4 +29,6 @@ public interface HttpRequest {
 
   // TODO: Hide Simple implementation
   Certificate clientCertificate();
+
+  <T> T unwrap(Class<T> type);
 }

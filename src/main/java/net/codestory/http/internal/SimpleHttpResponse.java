@@ -57,4 +57,10 @@ class SimpleHttpResponse implements HttpResponse {
   public void setCookie(NewCookie cookie) {
     response.setCookie(cookie);
   }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public <T> T unwrap(Class<T> type) {
+    return type.isInstance(response) ? (T) response : null;
+  }
 }

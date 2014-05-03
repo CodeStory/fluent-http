@@ -14,4 +14,6 @@ public interface HttpQuery {
   boolean getBoolean(String name);
 
   Map<String, String> keyValues();
+
+  <T> T unwrap(Class<T> type);
 }

@@ -85,4 +85,10 @@ class SimpleHttpRequest implements HttpRequest {
   public Certificate clientCertificate() {
     return request.getClientCertificate();
   }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public <T> T unwrap(Class<T> type) {
+    return type.isInstance(request) ? (T) request : null;
+  }
 }

@@ -14,4 +14,6 @@ public interface HttpResponse {
   void setStatus(int statusCode);
 
   void setCookie(NewCookie cookie);
+
+  <T> T unwrap(Class<T> type);
 }
