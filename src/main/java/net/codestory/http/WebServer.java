@@ -57,7 +57,7 @@ public class WebServer {
 
   public WebServer(Configuration configuration) {
     try {
-      server = new SimpleHttpServerWrapper(this::handle);
+      server = new SimpleServerWrapper(this::handle);
     } catch (IOException e) {
       throw new IllegalStateException("Unable to create http server", e);
     }

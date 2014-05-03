@@ -22,10 +22,10 @@ import net.codestory.http.exchange.*;
 
 import org.simpleframework.http.*;
 
-class SimpleHttpResponse implements HttpResponse {
+class SimpleResponse implements HttpResponse {
   private final Response response;
 
-  SimpleHttpResponse(Response response) {
+  SimpleResponse(Response response) {
     this.response = response;
   }
 

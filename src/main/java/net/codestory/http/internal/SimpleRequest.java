@@ -23,10 +23,10 @@ import net.codestory.http.exchange.*;
 
 import org.simpleframework.http.*;
 
-class SimpleHttpRequest implements HttpRequest {
+class SimpleRequest implements HttpRequest {
   private final Request request;
 
-  SimpleHttpRequest(Request request) {
+  SimpleRequest(Request request) {
     this.request = request;
   }
 
@@ -77,7 +77,7 @@ class SimpleHttpRequest implements HttpRequest {
 
   @Override
   public HttpQuery query() {
-    return new SimpleHttpQuery(request.getQuery());
+    return new SimpleQuery(request.getQuery());
   }
 
   @Override

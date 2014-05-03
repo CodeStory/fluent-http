@@ -27,11 +27,11 @@ import org.simpleframework.transport.connect.*;
 
 import javax.net.ssl.*;
 
-public class SimpleHttpServerWrapper implements HttpServerWrapper {
+public class SimpleServerWrapper implements HttpServerWrapper {
   private final Server server;
 
-  public SimpleHttpServerWrapper(HttpHandler handler) throws IOException {
-    this.server = new ContainerServer((req, resp) -> handler.handle(new SimpleHttpRequest(req), new SimpleHttpResponse(resp)));
+  public SimpleServerWrapper(HttpHandler handler) throws IOException {
+    this.server = new ContainerServer((req, resp) -> handler.handle(new SimpleRequest(req), new SimpleResponse(resp)));
   }
 
   @Override

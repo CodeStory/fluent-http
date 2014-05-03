@@ -21,10 +21,10 @@ import net.codestory.http.exchange.*;
 
 import org.simpleframework.http.*;
 
-class SimpleHttpQuery implements HttpQuery {
+class SimpleQuery implements HttpQuery {
   private final Query query;
 
-  SimpleHttpQuery(Query query) {
+  SimpleQuery(Query query) {
     this.query = query;
   }
 
