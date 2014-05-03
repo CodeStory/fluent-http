@@ -18,6 +18,7 @@ package net.codestory.http.internal;
 import java.util.*;
 
 import net.codestory.http.convert.*;
+import net.codestory.http.exchange.Cookie;
 import net.codestory.http.exchange.*;
 
 import org.simpleframework.http.*;
@@ -31,31 +32,25 @@ class SimpleCookies implements Cookies {
 
   @Override
   public Iterator<Cookie> iterator() {
-    return list().iterator();
-  }
-
-  @Override
-  public List<Cookie> list() {
-    return request.getCookies();
+    return request.getCookies().stream().map(cookie -> (Cookie) new SimpleCookie(cookie)).iterator();
   }
 
   @Override
   public Cookie get(String name) {
-    return request.getCookie(name);
+    org.simpleframework.http.Cookie cookie = request.getCookie(name);
+    return (cookie == null) ? null : new SimpleCookie(cookie);
   }
 
   @Override
   public String value(String name) {
     Cookie cookie = get(name);
-    return (cookie == null) ? null : cookie.getValue();
+    return (cookie == null) ? null : cookie.value();
   }
 
   @Override
   public Map<String, String> keyValues() {
     Map<String, String> keyValues = new HashMap<>();
-    for (Cookie cookie : request.getCookies()) {
-      keyValues.put(cookie.getName(), cookie.getValue());
-    }
+    request.getCookies().forEach(cookie -> keyValues.put(cookie.getName(), cookie.getValue()));
     return keyValues;
   }
 

@@ -22,25 +22,19 @@ import net.codestory.http.filters.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.security.*;
 
-import org.simpleframework.transport.*;
-
 public class ClientCertificateAuthFilter implements Filter {
-  private final ClientCertificateMapper mapper;
+  private final UserMapper mapper;
 
-  public ClientCertificateAuthFilter(ClientCertificateMapper mapper) {
+  public ClientCertificateAuthFilter(UserMapper mapper) {
     this.mapper = mapper;
   }
 
   @Override
   public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
     if (context.request().isSecure()) {
-      User user = mapper.map(context.request().clientCertificate());
+      User user = mapper.map(context);
       context.setCurrentUser(user);
     }
     return nextFilter.get();
-  }
-
-  public static interface ClientCertificateMapper {
-    User map(Certificate clientCertificate);
   }
 }

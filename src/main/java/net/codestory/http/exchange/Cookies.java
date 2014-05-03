@@ -2,12 +2,7 @@ package net.codestory.http.exchange;
 
 import java.util.*;
 
-import org.simpleframework.http.*;
-
-// TODO: Hide Simple implementation
 public interface Cookies extends Iterable<Cookie> {
-  List<Cookie> list();
-
   Cookie get(String name);
 
   String value(String name);

@@ -13,23 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.exchange;
+package net.codestory.http.filters.ssl;
 
-// TODO: Hide Simple implementation
-public class NewCookie extends org.simpleframework.http.Cookie {
-  public NewCookie(String name, String value) {
-    super(name, value, "/");
-  }
+import net.codestory.http.exchange.*;
+import net.codestory.http.security.*;
 
-  public NewCookie(String name, String value, boolean created) {
-    super(name, value, "/", created);
-  }
-
-  public NewCookie(String name, String value, String path) {
-    super(name, value, path, false);
-  }
-
-  public NewCookie(String name, String value, String path, boolean created) {
-    super(name, value, path, created);
-  }
+public interface UserMapper {
+  User map(Context context);
 }
