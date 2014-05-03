@@ -21,7 +21,7 @@ public class NewCookie implements Cookie {
   private String path;
   private String domain;
   private boolean secure;
-  private boolean protect;
+  private boolean httpOnly;
   private boolean created;
   private int version;
   private int expiry;
@@ -84,12 +84,12 @@ public class NewCookie implements Cookie {
   }
 
   @Override
-  public boolean isProtected() {
-    return protect;
+  public boolean isHttpOnly() {
+    return httpOnly;
   }
 
-  public void setProtected(boolean protect) {
-    this.protect = protect;
+  public void setHttpOnly(boolean httpOnly) {
+    this.httpOnly = httpOnly;
   }
 
   @Override

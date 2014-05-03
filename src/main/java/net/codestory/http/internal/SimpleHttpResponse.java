@@ -17,8 +17,8 @@ package net.codestory.http.internal;
 
 import java.io.*;
 
-import net.codestory.http.exchange.*;
 import net.codestory.http.exchange.Cookie;
+import net.codestory.http.exchange.*;
 
 import org.simpleframework.http.*;
 
@@ -60,7 +60,7 @@ class SimpleHttpResponse implements HttpResponse {
     cookie.setExpiry(newCookie.expiry());
     cookie.setVersion(newCookie.version());
     cookie.setSecure(newCookie.isSecure());
-    cookie.setProtected(newCookie.isProtected());
+    cookie.setProtected(newCookie.isHttpOnly());
     cookie.setDomain(newCookie.domain());
 
     response.setCookie(cookie);

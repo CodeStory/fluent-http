@@ -34,23 +34,26 @@ class SimpleHttpQuery implements HttpQuery {
   }
 
   @Override
-  public List<String> all(String name) {
+  public Iterable<String> all(String name) {
     return query.getAll(name);
   }
 
   @Override
   public int getInteger(String name) {
-    return query.getInteger(name);
+    String value = get(name);
+    return (value != null) ? Integer.parseInt(value) : 0;
   }
 
   @Override
   public float getFloat(String name) {
-    return query.getFloat(name);
+    String value = get(name);
+    return (value != null) ? Float.parseFloat(value) : 0.0f;
   }
 
   @Override
   public boolean getBoolean(String name) {
-    return query.getBoolean(name);
+    String value = get(name);
+    return (value != null) ? Boolean.valueOf(value) : false;
   }
 
   @Override

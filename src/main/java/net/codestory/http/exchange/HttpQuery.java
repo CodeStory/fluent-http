@@ -20,7 +20,7 @@ import java.util.*;
 public interface HttpQuery {
   String get(String name);
 
-  List<String> all(String name);
+  Iterable<String> all(String name);
 
   int getInteger(String name);
 

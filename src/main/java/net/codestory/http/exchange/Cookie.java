@@ -26,7 +26,7 @@ public interface Cookie {
 
   boolean isSecure();
 
-  boolean isProtected();
+  boolean isHttpOnly();
 
   int expiry();
 

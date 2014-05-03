@@ -50,7 +50,7 @@ class SimpleCookie implements Cookie {
   }
 
   @Override
-  public boolean isProtected() {
+  public boolean isHttpOnly() {
     return cookie.isProtected();
   }
 
