@@ -26,6 +26,10 @@ public class HttpResponse {
     this.response = response;
   }
 
+  public void close() throws IOException {
+    response.close();
+  }
+
   public OutputStream outputStream() throws IOException {
     return response.getOutputStream();
   }

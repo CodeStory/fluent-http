@@ -19,7 +19,7 @@ import static java.util.Arrays.*;
 
 import java.io.*;
 import java.net.*;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.util.*;
 
 import net.codestory.http.compilers.*;
@@ -32,11 +32,6 @@ import net.codestory.http.reload.*;
 import net.codestory.http.routes.*;
 import net.codestory.http.ssl.*;
 
-import org.simpleframework.http.*;
-import org.simpleframework.http.core.*;
-import org.simpleframework.transport.*;
-import org.simpleframework.transport.Socket;
-import org.simpleframework.transport.connect.*;
 import org.slf4j.*;
 
 import javax.net.ssl.*;
@@ -44,8 +39,7 @@ import javax.net.ssl.*;
 public class WebServer {
   private final static Logger LOG = LoggerFactory.getLogger(WebServer.class);
 
-  private final ProxyServer server;
-  private final SocketConnection connection;
+  private final SimpleHttpWrapper server;
   private RoutesProvider routesProvider;
   private int port;
 
@@ -62,8 +56,7 @@ public class WebServer {
 
   public WebServer(Configuration configuration) {
     try {
-      server = new ProxyServer(new ContainerServer(this::handle));
-      connection = new SocketConnection(server);
+      server = new SimpleHttpWrapper(this::handle);
     } catch (IOException e) {
       throw new IllegalStateException("Unable to create http server", e);
     }
@@ -102,7 +95,7 @@ public class WebServer {
   }
 
   public WebServer start(int port) {
-    return startWithContext(port, null);
+    return startWithContext(port, null, false);
   }
 
   public WebServer startSSL(int port, Path pathCertificate, Path pathPrivateKey) {
@@ -120,17 +113,15 @@ public class WebServer {
     } catch (Exception e) {
       throw new IllegalStateException("Unable to read certificate or key", e);
     }
-    if (pathTrustAnchors != null) {
-      server.setClientAuthRequired(true);
-    }
-    return startWithContext(port, context);
+    boolean authReq = pathTrustAnchors != null;
+    return startWithContext(port, context, authReq);
   }
 
-  private WebServer startWithContext(int port, SSLContext context) {
-    try {
-      this.port = Env.INSTANCE.overriddenPort(port);
+  private WebServer startWithContext(int port, SSLContext context, boolean authReq) {
+    this.port = Env.INSTANCE.overriddenPort(port);
 
-      connection.connect(new InetSocketAddress(this.port), context);
+    try {
+      server.start(this.port, context, authReq);
 
       LOG.info("Server started on port {}", this.port);
     } catch (RuntimeException e) {
@@ -161,12 +152,12 @@ public class WebServer {
     }
   }
 
-  void handle(Request request, Response response) {
+  void handle(HttpRequest request, HttpResponse response) {
     Context context = null;
 
     try {
       RouteCollection routes = routesProvider.get();
-      context = new Context(new HttpRequest(request), new HttpResponse(response), routes.getIocAdapter());
+      context = new Context(request, response, routes.getIocAdapter());
 
       applyRoutes(routes, context);
     } catch (Exception e) {
@@ -174,7 +165,7 @@ public class WebServer {
         // Didn't manage to initialize a full context
         // because the routes failed to load
         //
-        context = new Context(new HttpRequest(request), new HttpResponse(response), null);
+        context = new Context(request, response, null);
       }
       handleServerError(context, e);
     } finally {
@@ -226,31 +217,5 @@ public class WebServer {
   protected Payload errorPage(Payload payload, Exception e) {
     Exception shownError = Env.INSTANCE.prodMode() ? null : e;
     return new ErrorPage(payload, shownError).payload();
-  }
-
-  private static class ProxyServer implements Server {
-    private final Server delegate;
-    private volatile boolean authReq;
-
-    ProxyServer(Server delegate) {
-      this.delegate = delegate;
-    }
-
-    void setClientAuthRequired(boolean authReq) {
-      this.authReq = authReq;
-    }
-
-    @Override
-    public void process(Socket socket) throws IOException {
-      if (authReq) {
-        socket.getEngine().setNeedClientAuth(authReq);
-      }
-      delegate.process(socket);
-    }
-
-    @Override
-    public void stop() throws IOException {
-      delegate.stop();
-    }
   }
 }
