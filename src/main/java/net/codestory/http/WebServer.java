@@ -40,7 +40,7 @@ import javax.net.ssl.*;
 public class WebServer {
   private final static Logger LOG = LoggerFactory.getLogger(WebServer.class);
 
-  private final SimpleHttpWrapper server;
+  private final HttpServerWrapper server;
   private RoutesProvider routesProvider;
   private int port;
 
@@ -57,7 +57,7 @@ public class WebServer {
 
   public WebServer(Configuration configuration) {
     try {
-      server = new SimpleHttpWrapper(this::handle);
+      server = new SimpleHttpServerWrapper(this::handle);
     } catch (IOException e) {
       throw new IllegalStateException("Unable to create http server", e);
     }

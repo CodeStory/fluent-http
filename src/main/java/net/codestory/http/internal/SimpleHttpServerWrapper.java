@@ -27,18 +27,20 @@ import org.simpleframework.transport.connect.*;
 
 import javax.net.ssl.*;
 
-public class SimpleHttpWrapper {
+public class SimpleHttpServerWrapper implements HttpServerWrapper {
   private final Server server;
 
-  public SimpleHttpWrapper(HttpHandler handler) throws IOException {
+  public SimpleHttpServerWrapper(HttpHandler handler) throws IOException {
     this.server = new ContainerServer((req, resp) -> handler.handle(new SimpleHttpRequest(req), new SimpleHttpResponse(resp)));
   }
 
+  @Override
   public void start(int port, SSLContext context, boolean authReq) throws IOException {
     SocketConnection socketConnection = new SocketConnection(authReq ? new AuthRequiredServer(server) : server);
     socketConnection.connect(new InetSocketAddress(port), context);
   }
 
+  @Override
   public void stop() throws IOException {
     server.stop();
   }
