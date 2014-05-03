@@ -132,23 +132,20 @@ public class CookieAuthFilter implements Filter {
     return sessionId;
   }
 
-  private static NewCookie loginCookie(String login) {
+  private static Cookie loginCookie(String login) {
     return cookie("login", login);
   }
 
-  private static NewCookie sessionCookie(String sessionId) {
+  private static Cookie sessionCookie(String sessionId) {
     return cookie("sessionId", sessionId);
   }
 
-  private static NewCookie redirectUrlCookie(String uri) {
+  private static Cookie redirectUrlCookie(String uri) {
     return cookie("redirectAfterLogin", uri);
   }
 
-  private static NewCookie cookie(String name, String value) {
-    return expire(new NewCookie(name, value, "/", true));
-  }
-
-  private static NewCookie expire(NewCookie cookie) {
+  private static Cookie cookie(String name, String value) {
+    NewCookie cookie = new NewCookie(name, value, "/", true);
     cookie.setExpiry(ONE_DAY);
     cookie.setDomain(null);
     cookie.setSecure(false);

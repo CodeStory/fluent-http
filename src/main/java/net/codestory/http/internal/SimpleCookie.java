@@ -25,6 +25,11 @@ class SimpleCookie implements Cookie {
   }
 
   @Override
+  public boolean isNew() {
+    return cookie.isNew();
+  }
+
+  @Override
   public String value() {
     return cookie.getValue();
   }

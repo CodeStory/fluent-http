@@ -147,9 +147,9 @@ public class PayloadTest {
 
     payload.withCookie("person", new Person("Bob", 42));
 
-    NewCookie cookie = payload.cookies().get(0);
-    assertThat(cookie.getName()).isEqualTo("person");
-    assertThat(cookie.getValue()).isEqualTo("{\"name\":\"Bob\",\"age\":42}");
+    Cookie cookie = payload.cookies().get(0);
+    assertThat(cookie.name()).isEqualTo("person");
+    assertThat(cookie.value()).isEqualTo("{\"name\":\"Bob\",\"age\":42}");
   }
 
   @Test

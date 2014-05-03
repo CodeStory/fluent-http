@@ -15,21 +15,112 @@
  */
 package net.codestory.http.exchange;
 
-// TODO: Hide Simple implementation
-public class NewCookie extends org.simpleframework.http.Cookie {
+public class NewCookie implements Cookie {
+  private String name;
+  private String value;
+  private String path;
+  private String domain;
+  private boolean secure;
+  private boolean protect;
+  private boolean created;
+  private int version;
+  private int expiry;
+
   public NewCookie(String name, String value) {
-    super(name, value, "/");
+    this(name, value, "/");
   }
 
   public NewCookie(String name, String value, boolean created) {
-    super(name, value, "/", created);
+    this(name, value, "/", created);
   }
 
   public NewCookie(String name, String value, String path) {
-    super(name, value, path, false);
+    this(name, value, path, false);
   }
 
   public NewCookie(String name, String value, String path, boolean created) {
-    super(name, value, path, created);
+    this.name = name;
+    this.value = value;
+    this.path = path;
+    this.created = created;
+    this.version = 1;
+    this.expiry = -1;
+  }
+
+  public boolean isNew() {
+    return created;
+  }
+
+  @Override
+  public int version() {
+    return version;
+  }
+
+  public void setVersion(int version) {
+    this.version = version;
+  }
+
+  @Override
+  public String name() {
+    return name;
+  }
+
+  @Override
+  public String value() {
+    return value;
+  }
+
+  public void setValue(String value) {
+    this.value = value;
+  }
+
+  @Override
+  public boolean isSecure() {
+    return secure;
+  }
+
+  public void setSecure(boolean secure) {
+    this.secure = secure;
+  }
+
+  @Override
+  public boolean isProtected() {
+    return protect;
+  }
+
+  public void setProtected(boolean protect) {
+    this.protect = protect;
+  }
+
+  @Override
+  public int expiry() {
+    return expiry;
+  }
+
+  public void setExpiry(int expiry) {
+    this.expiry = expiry;
+  }
+
+  @Override
+  public String path() {
+    return path;
+  }
+
+  public void setPath(String path) {
+    this.path = path;
+  }
+
+  @Override
+  public String domain() {
+    return domain;
+  }
+
+  public void setDomain(String domain) {
+    this.domain = domain;
+  }
+
+  @Override
+  public <T> T unwrap(Class<T> type) {
+    throw new UnsupportedOperationException();
   }
 }

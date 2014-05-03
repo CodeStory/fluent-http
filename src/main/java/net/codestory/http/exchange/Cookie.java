@@ -7,6 +7,8 @@ public interface Cookie {
 
   int version();
 
+  boolean isNew();
+
   boolean isSecure();
 
   boolean isProtected();

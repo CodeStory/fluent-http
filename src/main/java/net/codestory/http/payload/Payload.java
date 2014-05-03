@@ -41,7 +41,7 @@ public class Payload {
   private final String contentType;
   private final Object content;
   private final Map<String, String> headers;
-  private final List<NewCookie> cookies;
+  private final List<Cookie> cookies;
   private int code;
 
   public Payload(Object content) {
@@ -116,12 +116,12 @@ public class Payload {
     return withCookie(name, TypeConvert.toJson(value));
   }
 
-  public Payload withCookie(NewCookie cookie) {
+  public Payload withCookie(Cookie cookie) {
     cookies.add(cookie);
     return this;
   }
 
-  public Payload withCookies(List<NewCookie> cookies) {
+  public Payload withCookies(List<Cookie> cookies) {
     cookies.addAll(cookies);
     return this;
   }
@@ -143,7 +143,7 @@ public class Payload {
     return headers;
   }
 
-  public List<NewCookie> cookies() {
+  public List<Cookie> cookies() {
     return cookies;
   }
 

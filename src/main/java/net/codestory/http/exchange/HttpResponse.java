@@ -13,7 +13,7 @@ public interface HttpResponse {
 
   void setStatus(int statusCode);
 
-  void setCookie(NewCookie cookie);
+  void setCookie(Cookie cookie);
 
   <T> T unwrap(Class<T> type);
 }
