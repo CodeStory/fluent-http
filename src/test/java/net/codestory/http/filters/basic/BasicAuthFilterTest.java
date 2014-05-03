@@ -55,7 +55,9 @@ public class BasicAuthFilterTest {
 
   @Test
   public void authorized_query() throws IOException {
-    when(context.header("Authorization")).thenReturn(" Basic amw6cG9sa2E="); // "jl:polka" encoded in base64
+    System.out.println(Base64.getEncoder().encodeToString("jl:WRONG".getBytes()));
+
+    when(context.header("Authorization")).thenReturn("Basic amw6cG9sa2E="); // "jl:polka" encoded in base64
 
     Payload payload = filter.apply("/secure/foo", context, nextFilter);
 
@@ -65,13 +67,22 @@ public class BasicAuthFilterTest {
   }
 
   @Test
-  public void answer_401_on_unauthorized_query() throws IOException {
-    when(context.header("Authorization")).thenReturn(" Basic FOOBAR9sa2E=");
+  public void answer_401_on_invalid_password() throws IOException {
+    when(context.header("Authorization")).thenReturn("Basic amw6V1JPTkc="); // "jl:WRONG" encoded in base64
 
     Payload payload = filter.apply("/secure/foo", context, nextFilter);
 
     assertThat(payload.code()).isEqualTo(401);
     assertThat(payload.headers()).containsEntry("WWW-Authenticate", "Basic realm=\"codestory\"");
+  }
+
+  @Test
+  public void bad_request() throws IOException {
+    when(context.header("Authorization")).thenReturn("Basic INVALID");
+
+    Payload payload = filter.apply("/secure/foo", context, nextFilter);
+
+    assertThat(payload.code()).isEqualTo(400);
   }
 
   @Test

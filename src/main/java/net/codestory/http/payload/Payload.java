@@ -211,6 +211,10 @@ public class Payload {
     return new Payload(METHOD_NOT_ALLOWED);
   }
 
+  public static Payload badRequest() {
+    return new Payload(BAD_REQUEST);
+  }
+
   public void writeTo(Context context) throws IOException {
     HttpResponse response = context.response();
 

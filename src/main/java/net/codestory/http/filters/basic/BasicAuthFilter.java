@@ -15,6 +15,7 @@
  */
 package net.codestory.http.filters.basic;
 
+import static java.nio.charset.StandardCharsets.*;
 import static net.codestory.http.constants.Headers.*;
 import static net.codestory.http.payload.Payload.*;
 
@@ -25,8 +26,6 @@ import net.codestory.http.filters.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.security.*;
-
-import org.simpleframework.http.parse.*;
 
 public class BasicAuthFilter implements Filter {
   private final String uriPrefix;
@@ -51,12 +50,22 @@ public class BasicAuthFilter implements Filter {
   @Override
   public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
     String authorization = context.header(AUTHORIZATION);
-    if (authorization == null) {
+    if ((authorization == null) || (!authorization.toLowerCase(Locale.ENGLISH).startsWith("basic "))) {
       return unauthorized(realm);
     }
 
-    PrincipalParser parser = new PrincipalParser(authorization);
-    User user = users.find(parser.getName(), parser.getPassword());
+    String base64Pwd = authorization.substring("basic ".length());
+    String auth = new String(Base64.getDecoder().decode(base64Pwd), UTF_8);
+
+    int i = auth.indexOf(':');
+    if (i < 0) {
+      return Payload.badRequest();
+    }
+
+    String login = auth.substring(0, i);
+    String password = auth.substring(i + 1);
+
+    User user = users.find(login, password);
     if (user == null) {
       return unauthorized(realm);
     }
