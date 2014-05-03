@@ -146,7 +146,7 @@ public class AnnotationsTest extends AbstractWebServerTest {
   public void inject_parameters() {
     server.configure(routes -> routes.add(ResourceWithInjection.class));
 
-    get("/injection/first/second").produces("first/second/Context/HttpRequest/HttpResponse/Cookies");
+    get("/injection/first/second").produces("first/second/Context/SimpleRequest/SimpleResponse/SimpleCookies");
   }
 
   public static class TestResource {
