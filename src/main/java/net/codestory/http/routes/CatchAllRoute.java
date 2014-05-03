@@ -15,7 +15,7 @@
  */
 package net.codestory.http.routes;
 
-import net.codestory.http.internal.*;
+import net.codestory.http.exchange.*;
 
 class CatchAllRoute implements Route {
   private final AnyRoute route;

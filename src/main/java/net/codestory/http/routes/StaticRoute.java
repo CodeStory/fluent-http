@@ -20,7 +20,7 @@ import static net.codestory.http.constants.Methods.*;
 import java.nio.file.*;
 import java.util.function.*;
 
-import net.codestory.http.internal.*;
+import net.codestory.http.exchange.*;
 import net.codestory.http.io.*;
 import net.codestory.http.misc.*;
 

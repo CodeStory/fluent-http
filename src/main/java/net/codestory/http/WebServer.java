@@ -24,6 +24,7 @@ import java.util.*;
 
 import net.codestory.http.compilers.*;
 import net.codestory.http.errors.*;
+import net.codestory.http.exchange.*;
 import net.codestory.http.filters.log.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.misc.*;

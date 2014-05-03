@@ -22,8 +22,8 @@ import static net.codestory.http.payload.Payload.*;
 import java.io.*;
 import java.util.*;
 
+import net.codestory.http.exchange.*;
 import net.codestory.http.filters.*;
-import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.security.*;
 

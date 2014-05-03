@@ -16,7 +16,7 @@
 package net.codestory.http.routes;
 
 import static net.codestory.http.constants.Methods.*;
-import static net.codestory.http.internal.UriParser.*;
+import static net.codestory.http.exchange.UriParser.*;
 import static net.codestory.http.misc.ForEach.*;
 import static net.codestory.http.payload.Payload.*;
 
@@ -27,9 +27,9 @@ import java.util.function.*;
 
 import net.codestory.http.*;
 import net.codestory.http.annotations.*;
+import net.codestory.http.exchange.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.injection.*;
-import net.codestory.http.internal.*;
 import net.codestory.http.misc.*;
 import net.codestory.http.payload.*;
 

@@ -18,37 +18,39 @@ package net.codestory.http.internal;
 import java.util.*;
 
 import net.codestory.http.convert.*;
+import net.codestory.http.exchange.*;
 
 import org.simpleframework.http.*;
 
-public class Cookies implements Iterable<Cookie> {
+class SimpleCookies implements Cookies {
   private final Request request;
 
-  public Cookies(Request request) {
+  SimpleCookies(Request request) {
     this.request = request;
   }
 
   @Override
-  // TODO: Hide Simple implementation
   public Iterator<Cookie> iterator() {
     return list().iterator();
   }
 
-  // TODO: Hide Simple implementation
+  @Override
   public List<Cookie> list() {
     return request.getCookies();
   }
 
-  // TODO: Hide Simple implementation
+  @Override
   public Cookie get(String name) {
     return request.getCookie(name);
   }
 
+  @Override
   public String value(String name) {
     Cookie cookie = get(name);
     return (cookie == null) ? null : cookie.getValue();
   }
 
+  @Override
   public Map<String, String> keyValues() {
     Map<String, String> keyValues = new HashMap<>();
     for (Cookie cookie : request.getCookies()) {
@@ -58,32 +60,38 @@ public class Cookies implements Iterable<Cookie> {
   }
 
   @SuppressWarnings("unchecked")
+  @Override
   public <T> T value(String name, T defaultValue) {
     T value = value(name, (Class<T>) defaultValue.getClass());
     return (value == null) ? defaultValue : value;
   }
 
   @SuppressWarnings("unchecked")
+  @Override
   public <T> T value(String name, Class<T> type) {
     String value = value(name);
     return (value == null) ? null : TypeConvert.fromJson(value, type);
   }
 
+  @Override
   public String value(String name, String defaultValue) {
     String value = value(name);
     return (value == null) ? defaultValue : value;
   }
 
+  @Override
   public int value(String name, int defaultValue) {
     String value = value(name);
     return (value == null) ? defaultValue : Integer.parseInt(value);
   }
 
+  @Override
   public long value(String name, long defaultValue) {
     String value = value(name);
     return (value == null) ? defaultValue : Long.parseLong(value);
   }
 
+  @Override
   public boolean value(String name, boolean defaultValue) {
     String value = value(name);
     return (value == null) ? defaultValue : Boolean.parseBoolean(value);

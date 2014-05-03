@@ -20,7 +20,7 @@ import java.util.function.*;
 
 import net.codestory.http.annotations.*;
 import net.codestory.http.convert.*;
-import net.codestory.http.internal.*;
+import net.codestory.http.exchange.*;
 import net.codestory.http.payload.*;
 
 class ReflectionRoute implements AnyRoute {

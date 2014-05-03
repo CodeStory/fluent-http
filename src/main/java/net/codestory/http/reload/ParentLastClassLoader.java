@@ -15,37 +15,35 @@
  */
 package net.codestory.http.reload;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
+import java.io.*;
+import java.net.*;
 
 /**
  * @author <a href="mailto:nicolas.deloof@gmail.com">Nicolas De Loof</a>
  */
 public class ParentLastClassLoader extends URLClassLoader {
 
-    public ParentLastClassLoader(String classesOutputDir, ClassLoader parent) throws MalformedURLException {
-        super(new URL[] { new File(classesOutputDir).toURI().toURL() }, parent);
-    }
+  public ParentLastClassLoader(String classesOutputDir, ClassLoader parent) throws MalformedURLException {
+    super(new URL[]{new File(classesOutputDir).toURI().toURL()}, parent);
+  }
 
-    @Override
-    protected synchronized Class<?> loadClass(String name, boolean resolve)
-            throws ClassNotFoundException {
-        Class<?> c = findLoadedClass(name);
-        if (c == null) {
-            try {
-                c = findClass(name);
-            } catch (ClassNotFoundException e) {
-                c = super.loadClass(name, resolve);
-            }
-        }
-        if (resolve) {
-            resolveClass(c);
-        }
-        return c;
+  @Override
+  protected synchronized Class<?> loadClass(String name, boolean resolve)
+      throws ClassNotFoundException {
+    Class<?> c = findLoadedClass(name);
+    if (c == null) {
+      try {
+        c = findClass(name);
+      } catch (ClassNotFoundException e) {
+        c = super.loadClass(name, resolve);
+      }
     }
+    if (resolve) {
+      resolveClass(c);
+    }
+    return c;
+  }
 
-    // TODO classpath resources
+  // TODO classpath resources
 
 }

@@ -15,23 +15,46 @@
  */
 package net.codestory.http.internal;
 
+import java.util.*;
+
+import net.codestory.http.exchange.*;
+
 import org.simpleframework.http.*;
 
-// TODO: Hide Simple implementation
-public class NewCookie extends Cookie {
-  public NewCookie(String name, String value) {
-    super(name, value, "/");
+class SimpleHttpQuery implements HttpQuery {
+  private final Query query;
+
+  SimpleHttpQuery(Query query) {
+    this.query = query;
   }
 
-  public NewCookie(String name, String value, boolean created) {
-    super(name, value, "/", created);
+  @Override
+  public String get(String name) {
+    return query.get(name);
   }
 
-  public NewCookie(String name, String value, String path) {
-    super(name, value, path, false);
+  @Override
+  public List<String> all(String name) {
+    return query.getAll(name);
   }
 
-  public NewCookie(String name, String value, String path, boolean created) {
-    super(name, value, path, created);
+  @Override
+  public int getInteger(String name) {
+    return query.getInteger(name);
+  }
+
+  @Override
+  public float getFloat(String name) {
+    return query.getFloat(name);
+  }
+
+  @Override
+  public boolean getBoolean(String name) {
+    return query.getBoolean(name);
+  }
+
+  @Override
+  public Map<String, String> keyValues() {
+    return query;
   }
 }

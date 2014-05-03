@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 import java.time.*;
 import java.util.*;
 
-import net.codestory.http.internal.*;
+import net.codestory.http.exchange.*;
 
 import org.junit.*;
 

@@ -18,8 +18,8 @@ package net.codestory.http.filters.twitter;
 import java.io.*;
 import java.net.*;
 
+import net.codestory.http.exchange.*;
 import net.codestory.http.filters.*;
-import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
 
 import twitter4j.*;

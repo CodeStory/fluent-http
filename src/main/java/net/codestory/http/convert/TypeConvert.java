@@ -17,7 +17,7 @@ package net.codestory.http.convert;
 
 import java.io.*;
 
-import net.codestory.http.internal.*;
+import net.codestory.http.exchange.*;
 
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.*;

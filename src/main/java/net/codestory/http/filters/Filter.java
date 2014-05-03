@@ -17,7 +17,7 @@ package net.codestory.http.filters;
 
 import java.io.*;
 
-import net.codestory.http.internal.*;
+import net.codestory.http.exchange.*;
 import net.codestory.http.payload.*;
 
 @FunctionalInterface

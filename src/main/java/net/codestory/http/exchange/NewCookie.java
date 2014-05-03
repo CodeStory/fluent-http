@@ -13,40 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.internal;
-
-import java.util.*;
+package net.codestory.http.exchange;
 
 import org.simpleframework.http.*;
 
-public class HttpQuery {
-  private final Query query;
-
-  public HttpQuery(Query query) {
-    this.query = query;
+// TODO: Hide Simple implementation
+public class NewCookie extends Cookie {
+  public NewCookie(String name, String value) {
+    super(name, value, "/");
   }
 
-  public String get(String name) {
-    return query.get(name);
+  public NewCookie(String name, String value, boolean created) {
+    super(name, value, "/", created);
   }
 
-  public List<String> all(String name) {
-    return query.getAll(name);
+  public NewCookie(String name, String value, String path) {
+    super(name, value, path, false);
   }
 
-  public int getInteger(String name) {
-    return query.getInteger(name);
-  }
-
-  public float getFloat(String name) {
-    return query.getFloat(name);
-  }
-
-  public boolean getBoolean(String name) {
-    return query.getBoolean(name);
-  }
-
-  public Map<String, String> keyValues() {
-    return query;
+  public NewCookie(String name, String value, String path, boolean created) {
+    super(name, value, path, created);
   }
 }

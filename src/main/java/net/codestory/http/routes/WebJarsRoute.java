@@ -25,7 +25,7 @@ import java.io.*;
 import java.net.*;
 import java.nio.file.*;
 
-import net.codestory.http.internal.*;
+import net.codestory.http.exchange.*;
 import net.codestory.http.io.*;
 import net.codestory.http.misc.*;
 import net.codestory.http.payload.*;

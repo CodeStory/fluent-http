@@ -17,8 +17,8 @@ package net.codestory.http.filters.log;
 
 import java.io.*;
 
+import net.codestory.http.exchange.*;
 import net.codestory.http.filters.*;
-import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
 
 import org.slf4j.*;

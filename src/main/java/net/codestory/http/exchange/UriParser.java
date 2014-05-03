@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.internal;
+package net.codestory.http.exchange;
 
 import net.codestory.http.io.*;
 
@@ -28,7 +28,7 @@ public class UriParser {
     this.paramsCount = paramsCount(uriPattern);
   }
 
-  public String[] params(String uri, HttpQuery queryParams) {
+  public String[] params(String uri, HttpQuery query) {
     String[] uriParts = parts(uri);
 
     String[] params = new String[paramsCount];
@@ -41,7 +41,7 @@ public class UriParser {
     }
     for (int i = 0; i < queryParamsParts.length; i++) {
       if (queryParamsParts[i].startsWith(":")) {
-        params[index++] = queryParams.get(queryParamsParts[i - 1]);
+        params[index++] = query.get(queryParamsParts[i - 1]);
       }
     }
 

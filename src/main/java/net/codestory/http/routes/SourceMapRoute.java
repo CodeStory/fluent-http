@@ -22,7 +22,7 @@ import java.io.*;
 import java.nio.file.*;
 
 import net.codestory.http.compilers.*;
-import net.codestory.http.internal.*;
+import net.codestory.http.exchange.*;
 import net.codestory.http.io.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.types.*;

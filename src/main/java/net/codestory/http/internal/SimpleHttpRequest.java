@@ -19,57 +19,69 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import net.codestory.http.exchange.*;
+
 import org.simpleframework.http.*;
 import org.simpleframework.transport.*;
 
-public class HttpRequest {
+class SimpleHttpRequest implements HttpRequest {
   private final Request request;
 
-  public HttpRequest(Request request) {
+  SimpleHttpRequest(Request request) {
     this.request = request;
   }
 
+  @Override
   public String uri() {
     return request.getPath().getPath();
   }
 
+  @Override
   public String method() {
     return request.getMethod();
   }
 
+  @Override
   public String header(String name) {
     return request.getValue(name);
   }
 
+  @Override
   public String content() throws IOException {
     return request.getContent();
   }
 
+  @Override
   public InputStream inputStream() throws IOException {
     return request.getInputStream();
   }
 
+  @Override
   public List<String> headers(String name) {
     return request.getValues(name);
   }
 
+  @Override
   public InetSocketAddress clientAddress() {
     return request.getClientAddress();
   }
 
+  @Override
   public boolean isSecure() {
     return request.isSecure();
   }
 
+  @Override
   public Cookies cookies() {
-    return new Cookies(request);
+    return new SimpleCookies(request);
   }
 
+  @Override
   public HttpQuery query() {
-    return new HttpQuery(request.getQuery());
+    return new SimpleHttpQuery(request.getQuery());
   }
 
-  // TODO: Hide Simple implementation
+  @Override
   public Certificate clientCertificate() {
     return request.getClientCertificate();
   }

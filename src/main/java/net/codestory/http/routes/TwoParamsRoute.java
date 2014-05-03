@@ -15,7 +15,7 @@
  */
 package net.codestory.http.routes;
 
-import net.codestory.http.internal.*;
+import net.codestory.http.exchange.*;
 
 @FunctionalInterface
 public interface TwoParamsRoute extends AnyRoute {

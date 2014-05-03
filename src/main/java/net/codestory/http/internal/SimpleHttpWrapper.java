@@ -18,6 +18,8 @@ package net.codestory.http.internal;
 import java.io.*;
 import java.net.*;
 
+import net.codestory.http.exchange.*;
+
 import org.simpleframework.http.core.*;
 import org.simpleframework.transport.*;
 import org.simpleframework.transport.Socket;
@@ -29,7 +31,7 @@ public class SimpleHttpWrapper {
   private final Server server;
 
   public SimpleHttpWrapper(HttpHandler handler) throws IOException {
-    this.server = new ContainerServer((req, resp) -> handler.handle(new HttpRequest(req), new HttpResponse(resp)));
+    this.server = new ContainerServer((req, resp) -> handler.handle(new SimpleHttpRequest(req), new SimpleHttpResponse(resp)));
   }
 
   public void start(int port, SSLContext context, boolean authReq) throws IOException {

@@ -21,10 +21,10 @@ import static org.mockito.Mockito.*;
 import org.junit.*;
 import org.simpleframework.http.*;
 
-public class CookiesTest {
+public class SimpleCookiesTest {
   Request request = mock(Request.class);
 
-  Cookies cookies = new Cookies(request);
+  SimpleCookies cookies = new SimpleCookies(request);
 
   @Test
   public void missing() {

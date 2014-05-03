@@ -17,35 +17,43 @@ package net.codestory.http.internal;
 
 import java.io.*;
 
+import net.codestory.http.exchange.*;
+
 import org.simpleframework.http.*;
 
-public class HttpResponse {
+class SimpleHttpResponse implements HttpResponse {
   private final Response response;
 
-  public HttpResponse(Response response) {
+  SimpleHttpResponse(Response response) {
     this.response = response;
   }
 
+  @Override
   public void close() throws IOException {
     response.close();
   }
 
+  @Override
   public OutputStream outputStream() throws IOException {
     return response.getOutputStream();
   }
 
+  @Override
   public void setContentLength(long length) {
     response.setContentLength(length);
   }
 
+  @Override
   public void setValue(String name, String value) {
     response.setValue(name, value);
   }
 
+  @Override
   public void setStatus(int statusCode) {
     response.setStatus(Status.getStatus(statusCode));
   }
 
+  @Override
   public void setCookie(NewCookie cookie) {
     response.setCookie(cookie);
   }

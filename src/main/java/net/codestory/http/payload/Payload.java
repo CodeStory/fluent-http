@@ -31,7 +31,7 @@ import java.util.zip.*;
 
 import net.codestory.http.compilers.*;
 import net.codestory.http.convert.*;
-import net.codestory.http.internal.*;
+import net.codestory.http.exchange.*;
 import net.codestory.http.io.*;
 import net.codestory.http.misc.*;
 import net.codestory.http.templating.*;
