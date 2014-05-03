@@ -15,8 +15,6 @@
  */
 package net.codestory.http.internal;
 
-import java.util.*;
-
 import net.codestory.http.io.*;
 
 public class UriParser {
@@ -30,7 +28,7 @@ public class UriParser {
     this.paramsCount = paramsCount(uriPattern);
   }
 
-  public String[] params(String uri, Map<String, String> queryParams) {
+  public String[] params(String uri, HttpQuery queryParams) {
     String[] uriParts = parts(uri);
 
     String[] params = new String[paramsCount];

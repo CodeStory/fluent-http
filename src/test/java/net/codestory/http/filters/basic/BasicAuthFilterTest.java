@@ -55,7 +55,7 @@ public class BasicAuthFilterTest {
 
   @Test
   public void authorized_query() throws IOException {
-    when(context.getHeader("Authorization")).thenReturn(" Basic amw6cG9sa2E="); // "jl:polka" encoded in base64
+    when(context.header("Authorization")).thenReturn(" Basic amw6cG9sa2E="); // "jl:polka" encoded in base64
 
     Payload payload = filter.apply("/secure/foo", context, nextFilter);
 
@@ -66,7 +66,7 @@ public class BasicAuthFilterTest {
 
   @Test
   public void answer_401_on_unauthorized_query() throws IOException {
-    when(context.getHeader("Authorization")).thenReturn(" Basic FOOBAR9sa2E=");
+    when(context.header("Authorization")).thenReturn(" Basic FOOBAR9sa2E=");
 
     Payload payload = filter.apply("/secure/foo", context, nextFilter);
 

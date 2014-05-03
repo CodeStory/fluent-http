@@ -15,17 +15,16 @@
  */
 package net.codestory.http.filters.ssl;
 
-import net.codestory.http.filters.Filter;
-import net.codestory.http.filters.PayloadSupplier;
-import net.codestory.http.internal.Context;
-import net.codestory.http.payload.Payload;
-import net.codestory.http.security.User;
-import org.simpleframework.transport.Certificate;
+import java.io.*;
 
-import java.io.IOException;
+import net.codestory.http.filters.*;
+import net.codestory.http.internal.*;
+import net.codestory.http.payload.*;
+import net.codestory.http.security.*;
+
+import org.simpleframework.transport.*;
 
 public class ClientCertificateAuthFilter implements Filter {
-
   private final ClientCertificateMapper mapper;
 
   public ClientCertificateAuthFilter(ClientCertificateMapper mapper) {
@@ -35,7 +34,8 @@ public class ClientCertificateAuthFilter implements Filter {
   @Override
   public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
     if (context.request().isSecure()) {
-      context.setCurrentUser(mapper.map(context.request().getClientCertificate()));
+      User user = mapper.map(context.request().clientCertificate());
+      context.setCurrentUser(user);
     }
     return nextFilter.get();
   }

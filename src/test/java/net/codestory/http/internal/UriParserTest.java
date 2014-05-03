@@ -16,8 +16,7 @@
 package net.codestory.http.internal;
 
 import static org.assertj.core.api.Assertions.*;
-
-import java.util.*;
+import static org.mockito.Mockito.*;
 
 import org.junit.*;
 
@@ -52,8 +51,8 @@ public class UriParserTest {
 
   @Test
   public void find_query_params() {
-    assertThat(new UriParser("/hello/:name?opt=:option").params("/hello/Bob", map("opt", "OPTIONS"))).containsExactly("Bob", "OPTIONS");
-    assertThat(new UriParser("/hello/:name?opt=:option&lang=:language").params("/hello/Bob", map("opt", "OPTIONS", "lang", "FR"))).containsExactly("Bob", "OPTIONS", "FR");
+    assertThat(new UriParser("/hello/:name?opt=:option").params("/hello/Bob", query("opt", "OPTIONS"))).containsExactly("Bob", "OPTIONS");
+    assertThat(new UriParser("/hello/:name?opt=:option&lang=:language").params("/hello/Bob", query("opt", "OPTIONS", "lang", "FR"))).containsExactly("Bob", "OPTIONS", "FR");
   }
 
   @Test
@@ -85,16 +84,16 @@ public class UriParserTest {
     assertThat(new UriParser("/hello/:name?opt=:option").matches("/hello/?opt=OPTION")).isFalse();
   }
 
-  private static Map<String, String> map(String key, String value) {
-    return new LinkedHashMap<String, String>() {{
-      put(key, value);
-    }};
+  private static HttpQuery query(String key, String value) {
+    HttpQuery query = mock(HttpQuery.class);
+    when(query.get(key)).thenReturn(value);
+    return query;
   }
 
-  private static Map<String, String> map(String key1, String value1, String key2, String value2) {
-    return new LinkedHashMap<String, String>() {{
-      put(key1, value1);
-      put(key2, value2);
-    }};
+  private static HttpQuery query(String key1, String value1, String key2, String value2) {
+    HttpQuery query = mock(HttpQuery.class);
+    when(query.get(key1)).thenReturn(value1);
+    when(query.get(key2)).thenReturn(value2);
+    return query;
   }
 }

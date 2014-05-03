@@ -30,7 +30,6 @@ import net.codestory.http.payload.*;
 import net.codestory.http.security.*;
 
 import org.apache.commons.lang3.*;
-import org.simpleframework.http.*;
 
 public class CookieAuthFilter implements Filter {
   private static final int ONE_DAY = (int) TimeUnit.DAYS.toSeconds(1L);
@@ -92,14 +91,14 @@ public class CookieAuthFilter implements Filter {
       return seeOther("/auth/login"); // Unknown user. Go back to login
     }
 
-    return seeOther(notFavIcon(context.cookieValue("redirectAfterLogin", "/")))
+    return seeOther(notFavIcon(context.cookies().value("redirectAfterLogin", "/")))
         .withCookie(loginCookie(login))
         .withCookie(sessionCookie(newSessionId(login)))
         .withCookie(redirectUrlCookie("/"));
   }
 
   private Payload signout(Context context) {
-    String sessionId = context.cookieValue("sessionId");
+    String sessionId = context.cookies().value("sessionId");
     if (sessionId != null) {
       sessionIdStore.remove(sessionId);
     }
@@ -111,7 +110,7 @@ public class CookieAuthFilter implements Filter {
   }
 
   private Payload otherUri(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
-    String sessionId = context.cookieValue("sessionId");
+    String sessionId = context.cookies().value("sessionId");
     if (sessionId != null) {
       String login = sessionIdStore.getLogin(sessionId);
       if (login != null) {
@@ -133,23 +132,23 @@ public class CookieAuthFilter implements Filter {
     return sessionId;
   }
 
-  private static Cookie loginCookie(String login) {
+  private static NewCookie loginCookie(String login) {
     return cookie("login", login);
   }
 
-  private static Cookie sessionCookie(String sessionId) {
+  private static NewCookie sessionCookie(String sessionId) {
     return cookie("sessionId", sessionId);
   }
 
-  private static Cookie redirectUrlCookie(String uri) {
+  private static NewCookie redirectUrlCookie(String uri) {
     return cookie("redirectAfterLogin", uri);
   }
 
-  private static Cookie cookie(String name, String value) {
-    return expire(new Cookie(name, value, "/", true));
+  private static NewCookie cookie(String name, String value) {
+    return expire(new NewCookie(name, value, "/", true));
   }
 
-  private static Cookie expire(Cookie cookie) {
+  private static NewCookie expire(NewCookie cookie) {
     cookie.setExpiry(ONE_DAY);
     cookie.setDomain(null);
     cookie.setSecure(false);

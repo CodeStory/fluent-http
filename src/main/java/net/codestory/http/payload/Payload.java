@@ -19,22 +19,13 @@ import static java.nio.charset.StandardCharsets.*;
 import static java.util.Objects.*;
 import static net.codestory.http.constants.Encodings.*;
 import static net.codestory.http.constants.Headers.*;
-import static net.codestory.http.constants.HttpStatus.CREATED;
-import static net.codestory.http.constants.HttpStatus.FORBIDDEN;
-import static net.codestory.http.constants.HttpStatus.METHOD_NOT_ALLOWED;
-import static net.codestory.http.constants.HttpStatus.MOVED_PERMANENTLY;
-import static net.codestory.http.constants.HttpStatus.NOT_FOUND;
-import static net.codestory.http.constants.HttpStatus.OK;
-import static net.codestory.http.constants.HttpStatus.SEE_OTHER;
-import static net.codestory.http.constants.HttpStatus.TEMPORARY_REDIRECT;
-import static net.codestory.http.constants.HttpStatus.UNAUTHORIZED;
+import static net.codestory.http.constants.HttpStatus.*;
 import static net.codestory.http.constants.Methods.*;
 import static net.codestory.http.io.Strings.*;
-import static org.simpleframework.http.Status.NOT_MODIFIED;
 
 import java.io.*;
 import java.net.*;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.util.*;
 import java.util.zip.*;
 
@@ -46,13 +37,11 @@ import net.codestory.http.misc.*;
 import net.codestory.http.templating.*;
 import net.codestory.http.types.*;
 
-import org.simpleframework.http.*;
-
 public class Payload {
   private final String contentType;
   private final Object content;
   private final Map<String, String> headers;
-  private final List<Cookie> cookies;
+  private final List<NewCookie> cookies;
   private int code;
 
   public Payload(Object content) {
@@ -120,19 +109,19 @@ public class Payload {
   }
 
   public Payload withCookie(String name, String value) {
-    return withCookie(new Cookie(name, value, "/", true));
+    return withCookie(new NewCookie(name, value, "/", true));
   }
 
   public Payload withCookie(String name, Object value) {
     return withCookie(name, TypeConvert.toJson(value));
   }
 
-  public Payload withCookie(Cookie cookie) {
+  public Payload withCookie(NewCookie cookie) {
     cookies.add(cookie);
     return this;
   }
 
-  public Payload withCookies(List<Cookie> cookies) {
+  public Payload withCookies(List<NewCookie> cookies) {
     cookies.addAll(cookies);
     return this;
   }
@@ -154,7 +143,7 @@ public class Payload {
     return headers;
   }
 
-  public List<Cookie> cookies() {
+  public List<NewCookie> cookies() {
     return cookies;
   }
 
@@ -223,14 +212,14 @@ public class Payload {
   }
 
   public void writeTo(Context context) throws IOException {
-    Response response = context.response();
+    HttpResponse response = context.response();
 
     headers.forEach(response::setValue);
     cookies.forEach(response::setCookie);
 
     long lastModified = getLastModified();
     if (lastModified >= 0) {
-      String previousLastModified = stripQuotes(context.getHeader(IF_MODIFIED_SINCE));
+      String previousLastModified = stripQuotes(context.header(IF_MODIFIED_SINCE));
       if ((previousLastModified != null) && (lastModified < Dates.parse_rfc_1123(previousLastModified))) {
         response.setStatus(NOT_MODIFIED);
         return;
@@ -239,7 +228,7 @@ public class Payload {
     }
 
     if (content == null) {
-      response.setStatus(Status.getStatus(code));
+      response.setStatus(code);
       response.setContentLength(0);
       return;
     }
@@ -247,7 +236,7 @@ public class Payload {
     final String uri = context.uri();
     String type = getContentType(uri);
     response.setValue(CONTENT_TYPE, type);
-    response.setStatus(Status.getStatus(code));
+    response.setStatus(code);
 
     if (HEAD.equals(context.method()) || (code == 204) || (code == 304) || ((code >= 100) && (code < 200))) {
       return;
@@ -259,7 +248,7 @@ public class Payload {
       etag = etag(lazyData.get());
     }
 
-    String previousEtag = stripQuotes(context.getHeader(IF_NONE_MATCH));
+    String previousEtag = stripQuotes(context.header(IF_NONE_MATCH));
     if (etag.equals(previousEtag)) {
       response.setStatus(NOT_MODIFIED);
       return;
@@ -268,16 +257,16 @@ public class Payload {
 
     byte[] data = lazyData.get();
 
-    String acceptEncoding = context.getHeader(ACCEPT_ENCODING);
+    String acceptEncoding = context.header(ACCEPT_ENCODING);
     if ((acceptEncoding != null) && acceptEncoding.contains(GZIP) && Env.INSTANCE.prodMode() && !Env.INSTANCE.disableGzip()) {
       response.setValue(CONTENT_ENCODING, GZIP);
 
-      GZIPOutputStream gzip = new GZIPOutputStream(response.getOutputStream());
+      GZIPOutputStream gzip = new GZIPOutputStream(response.outputStream());
       gzip.write(data);
       gzip.finish();
     } else {
       response.setContentLength(data.length);
-      response.getOutputStream().write(data);
+      response.outputStream().write(data);
     }
   }
 
@@ -379,20 +368,13 @@ public class Payload {
   private static byte[] forModelAndView(ModelAndView modelAndView, Context context) {
     String view = modelAndView.view();
 
-    Model model = modelAndView.model();
-    model = model.merge(Model.of("cookies", cookieValues(context)));
+    Model model = modelAndView
+        .model()
+        .merge(Model.of("cookies", context.cookies().keyValues()));
 
     CacheEntry html = new Template(view).render(model);
 
     return html.toBytes();
-  }
-
-  private static Map<String, String> cookieValues(Context context) {
-    Map<String, String> keyValues = new HashMap<>();
-    for (Cookie cookie : context.cookies()) {
-      keyValues.put(cookie.getName(), cookie.getValue());
-    }
-    return keyValues;
   }
 
   private static byte[] forPath(Path path, Context context) throws IOException {

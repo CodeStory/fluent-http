@@ -166,7 +166,7 @@ public class WebServer {
 
     try {
       RouteCollection routes = routesProvider.get();
-      context = new Context(request, response, routes.getIocAdapter());
+      context = new Context(new HttpRequest(request), new HttpResponse(response), routes.getIocAdapter());
 
       applyRoutes(routes, context);
     } catch (Exception e) {
@@ -174,7 +174,7 @@ public class WebServer {
         // Didn't manage to initialize a full context
         // because the routes failed to load
         //
-        context = new Context(request, response, null);
+        context = new Context(new HttpRequest(request), new HttpResponse(response), null);
       }
       handleServerError(context, e);
     } finally {

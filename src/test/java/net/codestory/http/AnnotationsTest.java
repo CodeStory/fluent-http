@@ -25,7 +25,6 @@ import net.codestory.http.templating.*;
 import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
-import org.simpleframework.http.*;
 
 public class AnnotationsTest extends AbstractWebServerTest {
   @Test
@@ -147,7 +146,7 @@ public class AnnotationsTest extends AbstractWebServerTest {
   public void inject_parameters() {
     server.configure(routes -> routes.add(ResourceWithInjection.class));
 
-    get("/injection/first/second").produces("first/second/Context/RequestEntity/ResponseEntity");
+    get("/injection/first/second").produces("first/second/Context/HttpRequest/HttpResponse/Cookies");
   }
 
   public static class TestResource {
@@ -172,9 +171,8 @@ public class AnnotationsTest extends AbstractWebServerTest {
 
   public static class ResourceWithInjection {
     @Get("/injection/:param1/:param2")
-    public String route(String param1, String param2, Context context, Request request, Response response) {
-      return String.join("/", param1, param2, context.getClass().getSimpleName(), request.getClass().getSimpleName(), response.getClass().getSimpleName()
-      );
+    public String route(String param1, String param2, Context context, HttpRequest request, HttpResponse response, Cookies cookies) {
+      return String.join("/", param1, param2, context.getClass().getSimpleName(), request.getClass().getSimpleName(), response.getClass().getSimpleName(), cookies.getClass().getSimpleName());
     }
   }
 }

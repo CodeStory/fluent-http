@@ -16,6 +16,7 @@
 package net.codestory.http.payload;
 
 import static java.nio.charset.StandardCharsets.*;
+import static net.codestory.http.constants.HttpStatus.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -26,16 +27,17 @@ import java.util.*;
 import net.codestory.http.internal.*;
 
 import org.junit.*;
-import org.simpleframework.http.*;
 
 public class PayloadTest {
+  HttpResponse response = mock(HttpResponse.class);
+  Cookies cookies = mock(Cookies.class);
   Context context = mock(Context.class);
-  Response response = mock(Response.class);
 
   @Before
   public void setupContext() throws IOException {
     when(context.response()).thenReturn(response);
-    when(response.getOutputStream()).thenReturn(new ByteArrayOutputStream());
+    when(context.cookies()).thenReturn(cookies);
+    when(response.outputStream()).thenReturn(new ByteArrayOutputStream());
   }
 
   @Test
@@ -94,7 +96,7 @@ public class PayloadTest {
     Payload payload = new Payload("text/plain", Optional.empty());
     payload.writeTo(context);
 
-    verify(response).setStatus(Status.NOT_FOUND);
+    verify(response).setStatus(NOT_FOUND);
     verify(response).setContentLength(0);
     verifyNoMoreInteractions(response);
   }
@@ -105,7 +107,7 @@ public class PayloadTest {
     payload.writeTo(context);
 
     verify(response).setValue("Location", "/url");
-    verify(response).setStatus(Status.SEE_OTHER);
+    verify(response).setStatus(SEE_OTHER);
     verify(response).setContentLength(0);
     verifyNoMoreInteractions(response);
   }
@@ -115,7 +117,7 @@ public class PayloadTest {
     Payload payload = Payload.forbidden();
     payload.writeTo(context);
 
-    verify(response).setStatus(Status.FORBIDDEN);
+    verify(response).setStatus(FORBIDDEN);
     verify(response).setContentLength(0);
     verifyNoMoreInteractions(response);
   }
@@ -126,7 +128,7 @@ public class PayloadTest {
     payload.writeTo(context);
 
     verify(response).setValue("Location", "/url");
-    verify(response).setStatus(Status.MOVED_PERMANENTLY);
+    verify(response).setStatus(MOVED_PERMANENTLY);
     verify(response).setContentLength(0);
     verifyNoMoreInteractions(response);
   }
@@ -145,7 +147,7 @@ public class PayloadTest {
 
     payload.withCookie("person", new Person("Bob", 42));
 
-    Cookie cookie = payload.cookies().get(0);
+    NewCookie cookie = payload.cookies().get(0);
     assertThat(cookie.getName()).isEqualTo("person");
     assertThat(cookie.getValue()).isEqualTo("{\"name\":\"Bob\",\"age\":42}");
   }
@@ -155,18 +157,18 @@ public class PayloadTest {
     Payload payload = new Payload("Hello");
     payload.writeTo(context);
 
-    verify(response).setStatus(Status.OK);
+    verify(response).setStatus(OK);
     verify(response).setValue("ETag", "8b1a9953c4611296a827abf8c47804d7");
   }
 
   @Test
   public void not_modified() throws IOException {
-    when(context.getHeader("If-None-Match")).thenReturn("8b1a9953c4611296a827abf8c47804d7");
+    when(context.header("If-None-Match")).thenReturn("8b1a9953c4611296a827abf8c47804d7");
 
     Payload payload = new Payload("Hello");
     payload.writeTo(context);
 
-    verify(response).setStatus(Status.NOT_MODIFIED);
+    verify(response).setStatus(NOT_MODIFIED);
   }
 
   @Test
@@ -176,9 +178,9 @@ public class PayloadTest {
     Payload payload = new Payload("Hello");
     payload.writeTo(context);
 
-    verify(response).setStatus(Status.OK);
+    verify(response).setStatus(OK);
     verify(response, never()).setContentLength(anyInt());
-    verify(response, never()).getOutputStream();
+    verify(response, never()).outputStream();
   }
 
   static class Person {

@@ -50,7 +50,7 @@ public class BasicAuthFilter implements Filter {
 
   @Override
   public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
-    String authorization = context.getHeader(AUTHORIZATION);
+    String authorization = context.header(AUTHORIZATION);
     if (authorization == null) {
       return unauthorized(realm);
     }

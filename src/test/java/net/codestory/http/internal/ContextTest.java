@@ -24,65 +24,13 @@ import net.codestory.http.injection.*;
 import net.codestory.http.security.*;
 
 import org.junit.*;
-import org.simpleframework.http.*;
 
 public class ContextTest {
-  Request request = mock(Request.class);
-  Response response = mock(Response.class);
+  HttpRequest request = mock(HttpRequest.class);
+  HttpResponse response = mock(HttpResponse.class);
   IocAdapter iocAdapter = mock(IocAdapter.class);
 
   Context context = new Context(request, response, iocAdapter);
-
-  @Test
-  public void missing_cookie() {
-    String value = context.cookieValue("name");
-
-    assertThat(value).isNull();
-  }
-
-  @Test
-  public void default_value() {
-    String value = context.cookieValue("name", "default");
-
-    assertThat(value).isEqualTo("default");
-  }
-
-  @Test
-  public void cookie_value() {
-    when(request.getCookie("name")).thenReturn(new Cookie("name", "value"));
-
-    String value = context.cookieValue("name", "default");
-
-    assertThat(value).isEqualTo("value");
-  }
-
-  @Test
-  public void json_cookie_json_by_type() {
-    when(request.getCookie("name")).thenReturn(new Cookie("name", "{\"name\": \"Bob\", \"quantity\": 42}"));
-
-    Order order = context.cookieValue("name", Order.class);
-
-    assertThat(order.name).isEqualTo("Bob");
-    assertThat(order.quantity).isEqualTo(42);
-  }
-
-  @Test
-  public void json_cookie_default_value() {
-    Order order = context.cookieValue("name", new Order());
-
-    assertThat(order.name).isNull();
-    assertThat(order.quantity).isZero();
-  }
-
-  @Test
-  public void json_cookie() {
-    when(request.getCookie("name")).thenReturn(new Cookie("name", "{\"name\": \"Joe\", \"quantity\": 12}"));
-
-    Order order = context.cookieValue("name", new Order());
-
-    assertThat(order.name).isEqualTo("Joe");
-    assertThat(order.quantity).isEqualTo(12);
-  }
 
   @Test
   public void create_bean() {
@@ -98,21 +46,22 @@ public class ContextTest {
   public void extract() throws IOException {
     byte[] rawContent = "Content".getBytes();
     User user = mock(User.class);
+    Cookies cookies = mock(Cookies.class);
+    HttpQuery query = mock(HttpQuery.class);
     context.setCurrentUser(user);
-    when(request.getInputStream()).thenReturn(new ByteArrayInputStream(rawContent));
-    when(request.getContent()).thenReturn("Content");
+    when(request.inputStream()).thenReturn(new ByteArrayInputStream(rawContent));
+    when(request.content()).thenReturn("Content");
+    when(request.cookies()).thenReturn(cookies);
+    when(request.query()).thenReturn(query);
 
     assertThat(context.extract(Context.class)).isSameAs(context);
-    assertThat(context.extract(Request.class)).isSameAs(request);
-    assertThat(context.extract(Response.class)).isSameAs(response);
+    assertThat(context.extract(HttpRequest.class)).isSameAs(request);
+    assertThat(context.extract(HttpResponse.class)).isSameAs(response);
     assertThat(context.extract(User.class)).isSameAs(user);
     assertThat(context.extract(byte[].class)).isEqualTo(rawContent);
     assertThat(context.extract(String.class)).isSameAs("Content");
-  }
-
-  static class Order {
-    String name;
-    int quantity;
+    assertThat(context.extract(Cookies.class)).isSameAs(cookies);
+    assertThat(context.extract(HttpQuery.class)).isSameAs(query);
   }
 
   static class Service {

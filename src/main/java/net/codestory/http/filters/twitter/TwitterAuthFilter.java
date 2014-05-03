@@ -22,8 +22,6 @@ import net.codestory.http.filters.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.payload.*;
 
-import org.simpleframework.http.*;
-
 import twitter4j.*;
 import twitter4j.conf.*;
 
@@ -71,19 +69,19 @@ public class TwitterAuthFilter implements Filter {
       }
 
       return Payload.seeOther("/")
-          .withCookie(new Cookie("userId", user.id.toString(), "/", true))
-          .withCookie(new Cookie("screenName", user.screenName, "/", true))
-          .withCookie(new Cookie("userPhoto", user.imageUrl, "/", true));
+          .withCookie(new NewCookie("userId", user.id.toString(), "/", true))
+          .withCookie(new NewCookie("screenName", user.screenName, "/", true))
+          .withCookie(new NewCookie("userPhoto", user.imageUrl, "/", true));
     }
 
     if (uri.equals(uriPrefix + "logout")) {
       return Payload.seeOther("/")
-          .withCookie(new Cookie("userId", "", "/", false))
-          .withCookie(new Cookie("screenName", "", "/", false))
-          .withCookie(new Cookie("userPhoto", "", "/", false));
+          .withCookie(new NewCookie("userId", "", "/", false))
+          .withCookie(new NewCookie("screenName", "", "/", false))
+          .withCookie(new NewCookie("userPhoto", "", "/", false));
     }
 
-    String userId = context.cookieValue("userId");
+    String userId = context.cookies().value("userId");
     if ((userId != null) && !userId.isEmpty()) {
       context.setCurrentUser(net.codestory.http.security.User.forLogin(userId));
       return nextFilter.get(); // Authenticated

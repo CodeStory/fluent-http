@@ -42,7 +42,7 @@ class RouteWrapper implements Route {
 
   @Override
   public Object body(Context context) {
-    String[] parameters = uriParser.params(context.uri(), context.request().getQuery());
+    String[] parameters = uriParser.params(context.uri(), context.request().query());
     return route.body(context, parameters);
   }
 }
