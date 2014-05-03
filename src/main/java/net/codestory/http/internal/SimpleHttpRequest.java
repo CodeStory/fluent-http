@@ -22,7 +22,6 @@ import java.util.*;
 import net.codestory.http.exchange.*;
 
 import org.simpleframework.http.*;
-import org.simpleframework.transport.*;
 
 class SimpleHttpRequest implements HttpRequest {
   private final Request request;
@@ -79,11 +78,6 @@ class SimpleHttpRequest implements HttpRequest {
   @Override
   public HttpQuery query() {
     return new SimpleHttpQuery(request.getQuery());
-  }
-
-  @Override
-  public Certificate clientCertificate() {
-    return request.getClientCertificate();
   }
 
   @Override

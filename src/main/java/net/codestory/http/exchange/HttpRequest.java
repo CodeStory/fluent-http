@@ -4,8 +4,6 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.simpleframework.transport.*;
-
 public interface HttpRequest {
   String uri();
 
@@ -26,9 +24,6 @@ public interface HttpRequest {
   Cookies cookies();
 
   HttpQuery query();
-
-  // TODO: Hide Simple implementation
-  Certificate clientCertificate();
 
   <T> T unwrap(Class<T> type);
 }
