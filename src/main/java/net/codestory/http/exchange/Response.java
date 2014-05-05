@@ -17,7 +17,7 @@ package net.codestory.http.exchange;
 
 import java.io.*;
 
-public interface HttpResponse {
+public interface Response {
   void close() throws IOException;
 
   OutputStream outputStream() throws IOException;

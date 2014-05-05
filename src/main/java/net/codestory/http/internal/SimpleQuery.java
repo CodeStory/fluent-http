@@ -17,14 +17,12 @@ package net.codestory.http.internal;
 
 import java.util.*;
 
-import net.codestory.http.exchange.*;
+import net.codestory.http.exchange.Query;
 
-import org.simpleframework.http.*;
+class SimpleQuery implements Query {
+  private final org.simpleframework.http.Query query;
 
-class SimpleQuery implements HttpQuery {
-  private final Query query;
-
-  SimpleQuery(Query query) {
+  SimpleQuery(org.simpleframework.http.Query query) {
     this.query = query;
   }
 

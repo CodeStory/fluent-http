@@ -153,7 +153,7 @@ public class WebServer {
     }
   }
 
-  void handle(HttpRequest request, HttpResponse response) {
+  void handle(Request request, Response response) {
     Context context = null;
 
     try {

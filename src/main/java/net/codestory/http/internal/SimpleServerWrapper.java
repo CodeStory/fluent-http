@@ -30,7 +30,7 @@ import javax.net.ssl.*;
 public class SimpleServerWrapper implements HttpServerWrapper {
   private final Server server;
 
-  public SimpleServerWrapper(HttpHandler handler) throws IOException {
+  public SimpleServerWrapper(Handler handler) throws IOException {
     this.server = new ContainerServer((req, resp) -> handler.handle(new SimpleRequest(req), new SimpleResponse(resp)));
   }
 

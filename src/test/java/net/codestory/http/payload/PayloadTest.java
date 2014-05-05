@@ -29,7 +29,7 @@ import net.codestory.http.exchange.*;
 import org.junit.*;
 
 public class PayloadTest {
-  HttpResponse response = mock(HttpResponse.class);
+  Response response = mock(Response.class);
   Cookies cookies = mock(Cookies.class);
   Context context = mock(Context.class);
 

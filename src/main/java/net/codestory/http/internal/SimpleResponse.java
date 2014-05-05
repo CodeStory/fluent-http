@@ -18,14 +18,14 @@ package net.codestory.http.internal;
 import java.io.*;
 
 import net.codestory.http.exchange.Cookie;
-import net.codestory.http.exchange.*;
+import net.codestory.http.exchange.Response;
 
 import org.simpleframework.http.*;
 
-class SimpleResponse implements HttpResponse {
-  private final Response response;
+class SimpleResponse implements Response {
+  private final org.simpleframework.http.Response response;
 
-  SimpleResponse(Response response) {
+  SimpleResponse(org.simpleframework.http.Response response) {
     this.response = response;
   }
 

@@ -26,22 +26,22 @@ import net.codestory.http.io.*;
 import net.codestory.http.security.*;
 
 public class Context {
-  private final HttpRequest request;
-  private final HttpResponse response;
+  private final Request request;
+  private final Response response;
   private final IocAdapter iocAdapter;
   private User currentUser;
 
-  public Context(HttpRequest request, HttpResponse response, IocAdapter iocAdapter) {
+  public Context(Request request, Response response, IocAdapter iocAdapter) {
     this.request = request;
     this.response = response;
     this.iocAdapter = iocAdapter;
   }
 
-  public HttpRequest request() {
+  public Request request() {
     return request;
   }
 
-  public HttpResponse response() {
+  public Response response() {
     return response;
   }
 
@@ -53,7 +53,7 @@ public class Context {
     return request.cookies();
   }
 
-  public HttpQuery query() {
+  public Query query() {
     return request.query();
   }
 
@@ -129,16 +129,16 @@ public class Context {
     if (type.isAssignableFrom(Map.class)) {
       return (T) query().keyValues();
     }
-    if (type.isAssignableFrom(HttpRequest.class)) {
+    if (type.isAssignableFrom(Request.class)) {
       return (T) request();
     }
-    if (type.isAssignableFrom(HttpResponse.class)) {
+    if (type.isAssignableFrom(Response.class)) {
       return (T) response();
     }
     if (type.isAssignableFrom(Cookies.class)) {
       return (T) cookies();
     }
-    if (type.isAssignableFrom(HttpQuery.class)) {
+    if (type.isAssignableFrom(Query.class)) {
       return (T) query();
     }
     if (type.isAssignableFrom(User.class)) {

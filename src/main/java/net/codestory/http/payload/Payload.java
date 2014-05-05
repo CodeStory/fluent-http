@@ -216,7 +216,7 @@ public class Payload {
   }
 
   public void writeTo(Context context) throws IOException {
-    HttpResponse response = context.response();
+    Response response = context.response();
 
     headers.forEach(response::setValue);
     cookies.forEach(response::setCookie);

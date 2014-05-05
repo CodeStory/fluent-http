@@ -26,8 +26,8 @@ import net.codestory.http.security.*;
 import org.junit.*;
 
 public class ContextTest {
-  HttpRequest request = mock(HttpRequest.class);
-  HttpResponse response = mock(HttpResponse.class);
+  Request request = mock(Request.class);
+  Response response = mock(Response.class);
   IocAdapter iocAdapter = mock(IocAdapter.class);
 
   Context context = new Context(request, response, iocAdapter);
@@ -47,7 +47,7 @@ public class ContextTest {
     byte[] rawContent = "Content".getBytes();
     User user = mock(User.class);
     Cookies cookies = mock(Cookies.class);
-    HttpQuery query = mock(HttpQuery.class);
+    Query query = mock(Query.class);
     context.setCurrentUser(user);
     when(request.inputStream()).thenReturn(new ByteArrayInputStream(rawContent));
     when(request.content()).thenReturn("Content");
@@ -55,13 +55,13 @@ public class ContextTest {
     when(request.query()).thenReturn(query);
 
     assertThat(context.extract(Context.class)).isSameAs(context);
-    assertThat(context.extract(HttpRequest.class)).isSameAs(request);
-    assertThat(context.extract(HttpResponse.class)).isSameAs(response);
+    assertThat(context.extract(Request.class)).isSameAs(request);
+    assertThat(context.extract(Response.class)).isSameAs(response);
     assertThat(context.extract(User.class)).isSameAs(user);
     assertThat(context.extract(byte[].class)).isEqualTo(rawContent);
     assertThat(context.extract(String.class)).isSameAs("Content");
     assertThat(context.extract(Cookies.class)).isSameAs(cookies);
-    assertThat(context.extract(HttpQuery.class)).isSameAs(query);
+    assertThat(context.extract(Query.class)).isSameAs(query);
   }
 
   static class Service {

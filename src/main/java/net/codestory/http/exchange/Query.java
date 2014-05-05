@@ -15,30 +15,20 @@
  */
 package net.codestory.http.exchange;
 
-import java.io.*;
-import java.net.*;
 import java.util.*;
 
-public interface HttpRequest {
-  String uri();
+public interface Query {
+  String get(String name);
 
-  String method();
+  Iterable<String> all(String name);
 
-  String header(String name);
+  int getInteger(String name);
 
-  String content() throws IOException;
+  float getFloat(String name);
 
-  InputStream inputStream() throws IOException;
+  boolean getBoolean(String name);
 
-  List<String> headers(String name);
-
-  InetSocketAddress clientAddress();
-
-  boolean isSecure();
-
-  Cookies cookies();
-
-  HttpQuery query();
+  Map<String, String> keyValues();
 
   <T> T unwrap(Class<T> type);
 }

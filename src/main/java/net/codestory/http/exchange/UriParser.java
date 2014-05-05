@@ -28,7 +28,7 @@ public class UriParser {
     this.paramsCount = paramsCount(uriPattern);
   }
 
-  public String[] params(String uri, HttpQuery query) {
+  public String[] params(String uri, Query query) {
     String[] uriParts = parts(uri);
 
     String[] params = new String[paramsCount];

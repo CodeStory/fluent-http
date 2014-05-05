@@ -15,7 +15,30 @@
  */
 package net.codestory.http.exchange;
 
-@FunctionalInterface
-public interface HttpHandler {
-  void handle(HttpRequest request, HttpResponse response);
+import java.io.*;
+import java.net.*;
+import java.util.*;
+
+public interface Request {
+  String uri();
+
+  String method();
+
+  String header(String name);
+
+  String content() throws IOException;
+
+  InputStream inputStream() throws IOException;
+
+  List<String> headers(String name);
+
+  InetSocketAddress clientAddress();
+
+  boolean isSecure();
+
+  Cookies cookies();
+
+  Query query();
+
+  <T> T unwrap(Class<T> type);
 }

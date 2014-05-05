@@ -84,14 +84,14 @@ public class UriParserTest {
     assertThat(new UriParser("/hello/:name?opt=:option").matches("/hello/?opt=OPTION")).isFalse();
   }
 
-  private static HttpQuery query(String key, String value) {
-    HttpQuery query = mock(HttpQuery.class);
+  private static Query query(String key, String value) {
+    Query query = mock(Query.class);
     when(query.get(key)).thenReturn(value);
     return query;
   }
 
-  private static HttpQuery query(String key1, String value1, String key2, String value2) {
-    HttpQuery query = mock(HttpQuery.class);
+  private static Query query(String key1, String value1, String key2, String value2) {
+    Query query = mock(Query.class);
     when(query.get(key1)).thenReturn(value1);
     when(query.get(key2)).thenReturn(value2);
     return query;

@@ -21,7 +21,7 @@ import net.codestory.http.convert.*;
 import net.codestory.http.exchange.Cookie;
 import net.codestory.http.exchange.*;
 
-import org.simpleframework.http.*;
+import org.simpleframework.http.Request;
 
 class SimpleCookies implements Cookies {
   private final Request request;

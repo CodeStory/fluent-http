@@ -171,7 +171,7 @@ public class AnnotationsTest extends AbstractWebServerTest {
 
   public static class ResourceWithInjection {
     @Get("/injection/:param1/:param2")
-    public String route(String param1, String param2, Context context, HttpRequest request, HttpResponse response, Cookies cookies) {
+    public String route(String param1, String param2, Context context, Request request, Response response, Cookies cookies) {
       return String.join("/", param1, param2, context.getClass().getSimpleName(), request.getClass().getSimpleName(), response.getClass().getSimpleName(), cookies.getClass().getSimpleName());
     }
   }

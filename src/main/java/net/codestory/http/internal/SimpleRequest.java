@@ -20,13 +20,13 @@ import java.net.*;
 import java.util.*;
 
 import net.codestory.http.exchange.*;
+import net.codestory.http.exchange.Query;
+import net.codestory.http.exchange.Request;
 
-import org.simpleframework.http.*;
+class SimpleRequest implements Request {
+  private final org.simpleframework.http.Request request;
 
-class SimpleRequest implements HttpRequest {
-  private final Request request;
-
-  SimpleRequest(Request request) {
+  SimpleRequest(org.simpleframework.http.Request request) {
     this.request = request;
   }
 
@@ -76,7 +76,7 @@ class SimpleRequest implements HttpRequest {
   }
 
   @Override
-  public HttpQuery query() {
+  public Query query() {
     return new SimpleQuery(request.getQuery());
   }
 
