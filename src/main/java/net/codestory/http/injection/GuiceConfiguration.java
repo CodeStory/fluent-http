@@ -15,29 +15,28 @@
  */
 package net.codestory.http.injection;
 
-import net.codestory.http.Configuration;
+import net.codestory.http.*;
 import net.codestory.http.routes.*;
 
-import org.springframework.beans.factory.*;
-import org.springframework.context.annotation.*;
+import com.google.inject.*;
 
-public abstract class AbstractSpringConfiguration implements Configuration {
-  private final BeanFactory beanFactory;
+public class GuiceConfiguration implements Configuration {
+  private final Configuration configuration;
+  private final Injector injector;
 
-  protected AbstractSpringConfiguration(Class<?>... annotatedClasses) {
-    beanFactory = new AnnotationConfigApplicationContext(annotatedClasses);
-    onCreate(beanFactory);
+  protected GuiceConfiguration(Module module, Configuration configuration) {
+    this.configuration = configuration;
+    this.injector = Guice.createInjector(module);
+    onCreateInjector(this.injector);
   }
 
   @Override
   public final void configure(Routes routes) {
-    routes.setIocAdapter(new SpringAdapter(beanFactory));
-    configure(routes, beanFactory);
+    routes.setIocAdapter(new GuiceAdapter(injector));
+    configuration.configure(routes);
   }
 
-  protected void onCreate(BeanFactory beanFactory) {
+  protected void onCreateInjector(Injector injector) {
     // Do nothing by default
   }
-
-  protected abstract void configure(Routes routes, BeanFactory beanFactory);
 }

@@ -31,7 +31,7 @@ public class GuiceTest {
 
   @Test
   public void configuration() {
-    webServer.configure(new GuiceConfiguration());
+    webServer.configure(new MyAppConfiguration());
 
     RestAssured
         .given().port(webServer.port())
@@ -41,17 +41,7 @@ public class GuiceTest {
 
   @Test
   public void override_bean() {
-    Service service = mock(Service.class);
-
-    Module testModule = new AbstractModule() {
-      @Override
-      protected void configure() {
-        bind(Service.class).toInstance(service);
-      }
-    };
-
-    when(service.hello()).thenReturn("OVERRIDDEN");
-    webServer.configure(new GuiceConfiguration(testModule));
+    webServer.configure(new MyAppConfiguration(new TestModule()));
 
     RestAssured
         .given().port(webServer.port())
@@ -59,14 +49,23 @@ public class GuiceTest {
         .then().body(containsString("OVERRIDDEN"));
   }
 
-  static class GuiceConfiguration extends AbstractGuiceConfiguration {
-    protected GuiceConfiguration(Module... modules) {
+  static class MyAppConfiguration extends AbstractGuiceConfiguration {
+    MyAppConfiguration(Module... modules) {
       super(modules);
     }
 
     @Override
     protected void configure(Routes routes, Injector injector) {
       routes.get("/", () -> injector.getInstance(Service.class).hello());
+    }
+  }
+
+  static class TestModule extends AbstractModule {
+    @Override
+    protected void configure() {
+      Service service = mock(Service.class);
+      bind(Service.class).toInstance(service);
+      when(service.hello()).thenReturn("OVERRIDDEN");
     }
   }
 

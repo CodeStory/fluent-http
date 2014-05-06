@@ -21,18 +21,21 @@ import net.codestory.http.routes.*;
 import com.google.inject.*;
 
 public abstract class AbstractGuiceConfiguration implements Configuration {
-  private final Module[] modules;
+  private final Injector injector;
 
   protected AbstractGuiceConfiguration(Module... modules) {
-    this.modules = modules;
+    injector = Guice.createInjector(modules);
+    onCreate(injector);
   }
 
   @Override
   public final void configure(Routes routes) {
-    Injector injector = Guice.createInjector(modules);
-
     routes.setIocAdapter(new GuiceAdapter(injector));
     configure(routes, injector);
+  }
+
+  protected void onCreate(Injector injector) {
+    // Do nothing by default
   }
 
   protected abstract void configure(Routes routes, Injector injector);
