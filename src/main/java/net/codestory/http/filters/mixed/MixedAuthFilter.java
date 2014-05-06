@@ -37,19 +37,15 @@ public class MixedAuthFilter implements Filter {
 
   @Override
   public boolean matches(String uri, Context context) {
-    if (context.header(AUTHORIZATION) != null) {
-      return basicAuthFilter.matches(uri, context);
-    } else {
-      return cookieAuthFilter.matches(uri, context);
-    }
+    return authFilter(context).matches(uri, context);
   }
 
   @Override
   public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
-    if (context.header(AUTHORIZATION) != null) {
-      return basicAuthFilter.apply(uri, context, nextFilter);
-    } else {
-      return cookieAuthFilter.apply(uri, context, nextFilter);
-    }
+    return authFilter(context).apply(uri, context, nextFilter);
+  }
+
+  private Filter authFilter(Context context) {
+    return (context.header(AUTHORIZATION) == null) ? cookieAuthFilter : basicAuthFilter;
   }
 }
