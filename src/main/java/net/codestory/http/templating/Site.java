@@ -125,7 +125,11 @@ public class Site {
   }
 
   private static String[] tags(Map<String, Object> page) {
-    return page.getOrDefault("tags", "").toString().trim().split("\\s*,\\s*");
+    Object tags = page.getOrDefault("tags", "");
+    if (tags instanceof List) {
+      return ((List<String>) tags).toArray(new String[0]);
+    }
+    return tags.toString().trim().split("\\s*,\\s*");
   }
 
   @SuppressWarnings("unchecked")

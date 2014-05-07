@@ -1,5 +1,5 @@
 ---
 category: post
-tags: scala
+tags: ['scala']
 ---
 Bye

@@ -56,6 +56,6 @@ public class TemplatingTest extends AbstractWebServerTest {
 
   @Test
   public void site_variables() {
-    get("/testTags").produces("<p>scala</p>\n<p>java, scala</p>\n<p>scala</p>");
+    get("/testTags").produces("<p>[scala]</p>\n<p>java, scala</p>\n<p>[scala]</p>");
   }
 }
