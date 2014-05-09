@@ -24,6 +24,10 @@ public class CoffeeCompiler implements Compiler {
 
   @Override
   public String compile(Path path, String source) {
-    return nashornCompiler.compile(path, source) + "\n//# sourceMappingURL=" + path.getFileName() + ".map";
+    String javascript = nashornCompiler.compile(path, source);
+    //String sourceMapping = "\n//# sourceMappingURL=" + path.getFileName() + ".map";
+
+    //return javascript + sourceMapping;
+    return javascript;
   }
 }
