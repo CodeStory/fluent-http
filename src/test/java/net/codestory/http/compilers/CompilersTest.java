@@ -17,6 +17,7 @@ package net.codestory.http.compilers;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.io.*;
 import java.nio.file.*;
 
 import org.junit.*;
@@ -43,5 +44,23 @@ public class CompilersTest {
     String source = Compilers.INSTANCE.compile(Paths.get("file.copycat"), "Hello").content();
 
     assertThat(source).isEqualTo("HelloHello");
+  }
+
+  @Test
+  @Ignore("TODO fix")
+  public void supports_file_cache_being_destroyed() {
+    // Delete cache
+    File cacheFile = Paths.get(System.getProperty("user.home"), ".code-story", "cache", "V1", "less", "dcec144afa669dc921a4c9069d4c7d96fe28a833").toFile();
+    cacheFile.delete();
+
+    // Fill cache
+    Compilers.INSTANCE.compile(Paths.get("style.less"), "body { h1 { color: red; } }");
+    assertThat(cacheFile).exists();
+
+    // Delete cache
+    cacheFile.delete();
+    String css = Compilers.INSTANCE.compile(Paths.get("style.less"), "body { h1 { color: red; } }").content();
+
+    assertThat(css).isEqualTo("body h1 {\n  color: red;\n}\n/*# sourceMappingURL=style.css.map */\n");
   }
 }
