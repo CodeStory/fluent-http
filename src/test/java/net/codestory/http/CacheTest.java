@@ -39,10 +39,11 @@ public class CacheTest extends AbstractWebServerTest {
   }
 
   @Test
-  public void last_modified() {
+  public void last_modified() throws IOException {
     File file = createFile("Hello");
+    CacheEntry payload = CacheEntry.fromFile(file);
 
-    server.configure(routes -> routes.get("/", CacheEntry.disk(file)));
+    server.configure(routes -> routes.get("/", payload));
 
     get("/").produces(200, "text/html", "Hello").producesHeader("Last-Modified", to_rfc_1123(file.lastModified()));
     getWithHeader("/", "If-Modified-since", to_rfc_1123(file.lastModified() - 1000)).produces(200, "text/html", "Hello");

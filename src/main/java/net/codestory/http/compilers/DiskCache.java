@@ -33,13 +33,17 @@ public class DiskCache {
 
     File file = new File(new File(root, extension.substring(1)), sha1);
     if (file.exists()) {
-      return CacheEntry.disk(file);
+      try {
+        return CacheEntry.fromFile(file);
+      } catch (IOException e) {
+        // ignore cache entry
+      }
     }
 
     try {
       String compiled = compilerSupplier.get().compile(path, content);
       writeToCache(file, compiled);
-      return CacheEntry.disk(file);
+      return CacheEntry.fromString(compiled);
     } catch (IOException e) {
       throw new IllegalStateException(e);
     }

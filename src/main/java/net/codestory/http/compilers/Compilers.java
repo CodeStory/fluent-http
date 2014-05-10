@@ -61,6 +61,6 @@ public enum Compilers {
       }
     }
 
-    return CacheEntry.memory(content);
+    return CacheEntry.fromString(content);
   }
 }

@@ -47,20 +47,19 @@ public class CompilersTest {
   }
 
   @Test
-  @Ignore("TODO fix")
   public void supports_file_cache_being_destroyed() {
     // Delete cache
-    File cacheFile = Paths.get(System.getProperty("user.home"), ".code-story", "cache", "V1", "less", "dcec144afa669dc921a4c9069d4c7d96fe28a833").toFile();
+    File cacheFile = Paths.get(System.getProperty("user.home"), ".code-story", "cache", "V1", "less", "a4c0dac49e47ffe0dbcca7615f73b72ef6b71543").toFile();
     cacheFile.delete();
 
     // Fill cache
-    Compilers.INSTANCE.compile(Paths.get("style.less"), "body { h1 { color: red; } }");
+    Compilers.INSTANCE.compile(Paths.get("body.less"), "body{}").content();
     assertThat(cacheFile).exists();
 
     // Delete cache
     cacheFile.delete();
-    String css = Compilers.INSTANCE.compile(Paths.get("style.less"), "body { h1 { color: red; } }").content();
+    String css = Compilers.INSTANCE.compile(Paths.get("body.less"), "body{}").content();
 
-    assertThat(css).isEqualTo("body h1 {\n  color: red;\n}\n/*# sourceMappingURL=style.css.map */\n");
+    assertThat(css).isEqualTo("/*# sourceMappingURL=body.css.map */\n");
   }
 }

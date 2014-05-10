@@ -18,8 +18,7 @@ package net.codestory.http.compilers;
 import static java.nio.charset.StandardCharsets.*;
 
 import java.io.*;
-
-import net.codestory.http.io.*;
+import java.nio.file.*;
 
 public interface CacheEntry extends Serializable {
   String content();
@@ -28,38 +27,29 @@ public interface CacheEntry extends Serializable {
 
   long lastModified();
 
-  public static CacheEntry disk(File file) {
+  public static CacheEntry fromFile(File file) throws IOException {
+    byte[] data = Files.readAllBytes(file.toPath());
+    long lastModified = file.lastModified();
+
     return new CacheEntry() {
       @Override
       public String content() {
-        try {
-          try (InputStream input = new FileInputStream(file)) {
-            return InputStreams.readString(input, UTF_8);
-          }
-        } catch (IOException e) {
-          throw new IllegalStateException("Unable to read file", e);
-        }
+        return new String(data, UTF_8);
       }
 
       @Override
       public byte[] toBytes() {
-        try {
-          try (InputStream input = new FileInputStream(file)) {
-            return InputStreams.readBytes(input);
-          }
-        } catch (IOException e) {
-          throw new IllegalStateException("Unable to read file", e);
-        }
+        return data;
       }
 
       @Override
       public long lastModified() {
-        return file.lastModified();
+        return lastModified;
       }
     };
   }
 
-  public static CacheEntry memory(String content) {
+  public static CacheEntry fromString(String content) {
     return new CacheEntry() {
       private final long lastModified = System.currentTimeMillis();
 
