@@ -23,6 +23,8 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 
+import net.codestory.http.misc.*;
+
 public enum Compilers {
   INSTANCE;
 
@@ -57,7 +59,9 @@ public enum Compilers {
       String extension = entry.getKey();
 
       if (path.toString().endsWith(extension)) {
-        return diskCache.computeIfAbsent(path, content, entry.getValue(), extension);
+        String sha1 = Sha1.of(content);
+
+        return diskCache.computeIfAbsent(sha1, extension, () -> entry.getValue().get().compile(path, content));
       }
     }
 

@@ -17,9 +17,6 @@ package net.codestory.http.compilers;
 
 import java.io.*;
 import java.nio.file.*;
-import java.util.function.*;
-
-import net.codestory.http.misc.*;
 
 public class DiskCache {
   private final File root;
@@ -28,9 +25,7 @@ public class DiskCache {
     this.root = Paths.get(System.getProperty("user.home"), ".code-story", "cache", version).toFile();
   }
 
-  CacheEntry computeIfAbsent(Path path, String content, Supplier<Compiler> compilerSupplier, String extension) {
-    String sha1 = Sha1.of(content);
-
+  CacheEntry computeIfAbsent(String sha1, String extension, ToCompiled toCompiled) {
     File file = new File(new File(root, extension.substring(1)), sha1);
     if (file.exists()) {
       try {
@@ -41,7 +36,7 @@ public class DiskCache {
     }
 
     try {
-      String compiled = compilerSupplier.get().compile(path, content);
+      String compiled = toCompiled.get();
       writeToCache(file, compiled);
       return CacheEntry.fromString(compiled);
     } catch (IOException e) {
@@ -61,5 +56,10 @@ public class DiskCache {
     }
 
     tmpFile.renameTo(file);
+  }
+
+  @FunctionalInterface
+  static interface ToCompiled {
+    public String get() throws IOException;
   }
 }
