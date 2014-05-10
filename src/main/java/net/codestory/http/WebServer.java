@@ -183,7 +183,8 @@ public class WebServer {
     if (payload.isError()) {
       payload = errorPage(payload);
     }
-    payload.writeTo(context);
+
+    new PayloadWriter().write(payload, context);
   }
 
   protected void handleServerError(Context context, Exception e) {
@@ -194,7 +195,7 @@ public class WebServer {
     }
 
     try {
-      errorPage(e).writeTo(context);
+      new PayloadWriter().write(errorPage(e), context);
     } catch (IOException error) {
       LOG.warn("Unable to serve an error page", error);
     }
