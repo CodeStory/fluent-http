@@ -4,7 +4,7 @@ This is the simplest fastest full fledged web server we could come up with.
 
 # Build status
 
-[![Build Status](https://api.travis-ci.org/CodeStory/fluent-http.png)](https://api.travis-ci.org/CodeStory/fluent-http.png)
+[![Build Status](https://api.travis-ci.org/CodeStory/fluent-http.png)](https://travis-ci.org/CodeStory/fluent-http)
 
 # Environment
 
