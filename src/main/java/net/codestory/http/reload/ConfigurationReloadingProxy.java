@@ -31,21 +31,13 @@ public class ConfigurationReloadingProxy implements Configuration {
     this.parent = getClass().getClassLoader();
   }
 
-  public static <T> T createInstance(Class<T> clazz) {
-    try {
-      return clazz.newInstance();
-    } catch (Exception e) {
-      throw new IllegalStateException("Failed to instanciate " + clazz.getName(), e);
-    }
-  }
-
   @Override
   public void configure(Routes routes) {
     try {
-      ClassLoader cl = new ParentLastClassLoader(Resources.CLASSES_OUTPUT_DIR, parent);
+      ClassLoader classLoader = new ParentLastClassLoader(Resources.CLASSES_OUTPUT_DIR, parent);
 
-      Configuration delegate = createInstance((Class<Configuration>) cl.loadClass(fqcn));
-      delegate.configure(routes);
+      Class<? extends Configuration> type = (Class<? extends Configuration>) classLoader.loadClass(fqcn);
+      type.newInstance().configure(routes);
     } catch (Exception e) {
       throw new IllegalStateException("Failed to reload Configuration from classpath", e);
     }
