@@ -20,5 +20,5 @@ import java.nio.file.*;
 
 @FunctionalInterface
 public interface Compiler extends Serializable {
-  String compile(Path path, String source) throws IOException;
+  String compile(Path path, String source);
 }

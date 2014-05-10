@@ -69,4 +69,23 @@ public interface CacheEntry extends Serializable {
       }
     };
   }
+
+  public static CacheEntry noCache(String content) {
+    return new CacheEntry() {
+      @Override
+      public String content() {
+        return content;
+      }
+
+      @Override
+      public byte[] toBytes() {
+        return content.getBytes(UTF_8);
+      }
+
+      @Override
+      public long lastModified() {
+        return -1L;
+      }
+    };
+  }
 }

@@ -59,12 +59,23 @@ public enum Compilers {
       String extension = entry.getKey();
 
       if (path.toString().endsWith(extension)) {
-        String sha1 = Sha1.of(content);
+        // Hack until I find something better
+        if (extension.equals(".less")) {
+          if (content.contains("@import")) {
+            return CacheEntry.noCache(doCompile(path, content, entry.getValue()));
+          }
+        }
 
-        return diskCache.computeIfAbsent(sha1, extension, () -> entry.getValue().get().compile(path, content));
+        String sha1 = Sha1.of(content);
+        return diskCache.computeIfAbsent(sha1, extension, () -> doCompile(path, content, entry.getValue()));
       }
     }
 
     return CacheEntry.fromString(content);
+  }
+
+  private String doCompile(Path path, String content, Supplier<Compiler> compilerSupplier) {
+    Compiler compiler = compilerSupplier.get();
+    return compiler.compile(path, content);
   }
 }
