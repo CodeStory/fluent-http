@@ -104,7 +104,7 @@ public class PayloadWriter {
     }
   }
 
-  private String etag(byte[] data) {
+  protected String etag(byte[] data) {
     return Md5.of(data);
   }
 
@@ -181,7 +181,7 @@ public class PayloadWriter {
     return TypeConvert.toByteArray(content);
   }
 
-  private long getLastModified(Payload payload) {
+  protected long getLastModified(Payload payload) {
     Object content = payload.rawContent();
     if (content instanceof Path) {
       return ((Path) content).toFile().lastModified();
@@ -196,15 +196,15 @@ public class PayloadWriter {
     return -1;
   }
 
-  private static byte[] forString(String value) {
+  protected byte[] forString(String value) {
     return value.getBytes(UTF_8);
   }
 
-  private byte[] forInputStream(InputStream stream) throws IOException {
+  protected byte[] forInputStream(InputStream stream) throws IOException {
     return InputStreams.readBytes(stream);
   }
 
-  private byte[] forModelAndView(ModelAndView modelAndView) {
+  protected byte[] forModelAndView(ModelAndView modelAndView) {
     String view = modelAndView.view();
 
     Map<String, Object> keyValues = new HashMap<>();
@@ -217,7 +217,7 @@ public class PayloadWriter {
     return html.toBytes();
   }
 
-  private byte[] forPath(Path path) throws IOException {
+  protected byte[] forPath(Path path) throws IOException {
     if (ContentTypes.is_binary(path)) {
       return Resources.readBytes(path);
     }
