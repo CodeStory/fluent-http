@@ -36,15 +36,21 @@ import net.codestory.http.templating.*;
 import net.codestory.http.types.*;
 
 public class PayloadWriter {
-  public void write(Payload payload, Context context) throws IOException {
-    Response response = context.response();
+  private final Request request;
+  private final Response response;
 
+  public PayloadWriter(Request request, Response response) {
+    this.request = request;
+    this.response = response;
+  }
+
+  public void write(Payload payload) throws IOException {
     payload.headers().forEach(response::setValue);
     payload.cookies().forEach(response::setCookie);
 
     long lastModified = getLastModified(payload);
     if (lastModified >= 0) {
-      String previousLastModified = stripQuotes(context.header(IF_MODIFIED_SINCE));
+      String previousLastModified = stripQuotes(request.header(IF_MODIFIED_SINCE));
       if ((previousLastModified != null) && (lastModified < Dates.parse_rfc_1123(previousLastModified))) {
         response.setStatus(NOT_MODIFIED);
         return;
@@ -60,22 +66,22 @@ public class PayloadWriter {
       return;
     }
 
-    final String uri = context.uri();
+    final String uri = request.uri();
     String type = getContentType(payload, uri);
     response.setValue(CONTENT_TYPE, type);
     response.setStatus(code);
 
-    if (HEAD.equals(context.method()) || (code == 204) || (code == 304) || ((code >= 100) && (code < 200))) {
+    if (HEAD.equals(request.method()) || (code == 204) || (code == 304) || ((code >= 100) && (code < 200))) {
       return;
     }
 
-    DataSupplier lazyData = DataSupplier.cache(() -> getData(payload, uri, context));
+    DataSupplier lazyData = DataSupplier.cache(() -> getData(payload, uri));
     String etag = payload.headers().get(ETAG);
     if (etag == null) {
       etag = etag(lazyData.get());
     }
 
-    String previousEtag = stripQuotes(context.header(IF_NONE_MATCH));
+    String previousEtag = stripQuotes(request.header(IF_NONE_MATCH));
     if (etag.equals(previousEtag)) {
       response.setStatus(NOT_MODIFIED);
       return;
@@ -84,7 +90,7 @@ public class PayloadWriter {
 
     byte[] data = lazyData.get();
 
-    String acceptEncoding = context.header(ACCEPT_ENCODING);
+    String acceptEncoding = request.header(ACCEPT_ENCODING);
     if ((acceptEncoding != null) && acceptEncoding.contains(GZIP) && Env.INSTANCE.prodMode() && !Env.INSTANCE.disableGzip()) {
       response.setValue(CONTENT_ENCODING, GZIP);
 
@@ -141,16 +147,16 @@ public class PayloadWriter {
     return "application/json;charset=UTF-8";
   }
 
-  byte[] getData(Payload payload, String uri, Context context) throws IOException {
+  byte[] getData(Payload payload, String uri) throws IOException {
     Object content = payload.rawContent();
     if (content == null) {
       return null;
     }
     if (content instanceof File) {
-      return forPath(((File) content).toPath(), context);
+      return forPath(((File) content).toPath());
     }
     if (content instanceof Path) {
-      return forPath((Path) content, context);
+      return forPath((Path) content);
     }
     if (content instanceof byte[]) {
       return (byte[]) content;
@@ -165,10 +171,10 @@ public class PayloadWriter {
       return forInputStream((InputStream) content);
     }
     if (content instanceof ModelAndView) {
-      return forModelAndView((ModelAndView) content, context);
+      return forModelAndView((ModelAndView) content);
     }
     if (content instanceof Model) {
-      return forModelAndView(ModelAndView.of(uri, (Model) content), context);
+      return forModelAndView(ModelAndView.of(uri, (Model) content));
     }
 
     return TypeConvert.toByteArray(content);
@@ -197,25 +203,25 @@ public class PayloadWriter {
     return InputStreams.readBytes(stream);
   }
 
-  private byte[] forModelAndView(ModelAndView modelAndView, Context context) {
+  private byte[] forModelAndView(ModelAndView modelAndView) {
     String view = modelAndView.view();
 
     Model model = modelAndView
-        .model()
-        .merge(Model.of("cookies", context.cookies().keyValues()));
+      .model()
+      .merge(Model.of("cookies", request.cookies().keyValues()));
 
     CacheEntry html = new Template(view).render(model);
 
     return html.toBytes();
   }
 
-  private byte[] forPath(Path path, Context context) throws IOException {
+  private byte[] forPath(Path path) throws IOException {
     if (ContentTypes.is_binary(path)) {
       return Resources.readBytes(path);
     }
 
     if (ContentTypes.support_templating(path)) {
-      return forModelAndView(ModelAndView.of(Resources.toUnixString(path)), context);
+      return forModelAndView(ModelAndView.of(Resources.toUnixString(path)));
     }
 
     String content = Resources.read(path, UTF_8);

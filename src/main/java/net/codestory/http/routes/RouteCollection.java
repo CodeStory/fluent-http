@@ -46,7 +46,7 @@ public class RouteCollection implements Routes {
     this.filters = new LinkedList<>();
     this.iocAdapter = new Singletons();
     this.contextFactory = (request, response) -> new Context(request, response, iocAdapter);
-    this.payloadWriterFactory = (context) -> new PayloadWriter();
+    this.payloadWriterFactory = (request, response) -> new PayloadWriter(request, response);
   }
 
   @Override
@@ -416,8 +416,8 @@ public class RouteCollection implements Routes {
     return contextFactory.create(request, response);
   }
 
-  public PayloadWriter createPayloadWriter(Context context) {
-    return payloadWriterFactory.create(context);
+  public PayloadWriter createPayloadWriter(Request request, Response response) {
+    return payloadWriterFactory.create(request, response);
   }
 
   private static String checkParametersCount(String uriPattern, int count) {

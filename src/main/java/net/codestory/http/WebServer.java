@@ -64,14 +64,14 @@ public class WebServer {
 
   public static void main(String[] args) throws Exception {
     new WebServer(routes -> routes
-        .filter(new LogRequestFilter()))
-        .start(8080);
+      .filter(new LogRequestFilter()))
+      .start(8080);
   }
 
   public WebServer configure(Configuration configuration) {
     routesProvider = Env.INSTANCE.prodMode()
-        ? RoutesProvider.fixed(configuration)
-        : RoutesProvider.reloading(configuration);
+      ? RoutesProvider.fixed(configuration)
+      : RoutesProvider.reloading(configuration);
     return this;
   }
 
@@ -152,22 +152,20 @@ public class WebServer {
   }
 
   void handle(Request request, Response response) {
-    Context context = null;
-
     try {
       RouteCollection routes = routesProvider.get();
 
-      context = routes.createContext(request, response);
+      Context context = routes.createContext(request, response);
+      PayloadWriter payloadWriter = routes.createPayloadWriter(request, response);
 
-      applyRoutes(routes, context);
-    } catch (Exception e) {
-      if (context == null) {
-        // Didn't manage to initialize a full context
-        // because the routes failed to load
-        //
-        context = new Context(request, response, null);
+      Payload payload = routes.apply(context);
+      if (payload.isError()) {
+        payload = errorPage(payload);
       }
-      handleServerError(context, e);
+
+      payloadWriter.write(payload);
+    } catch (Exception e) {
+      handleServerError(request, response, e);
     } finally {
       try {
         response.close();
@@ -177,25 +175,16 @@ public class WebServer {
     }
   }
 
-  protected void applyRoutes(RouteCollection routeCollection, Context context) throws IOException {
-    Payload payload = routeCollection.apply(context);
-    if (payload.isError()) {
-      payload = errorPage(payload);
-    }
-
-    PayloadWriter payloadWriter = routeCollection.createPayloadWriter(context);
-    payloadWriter.write(payload, context);
-  }
-
-  protected void handleServerError(Context context, Exception e) {
-    if (e instanceof CompilerException) {
-      LOG.error(e.getMessage());
-    } else if (!(e instanceof HttpException) && !(e instanceof NoSuchElementException)) {
-      e.printStackTrace();
-    }
-
+  protected void handleServerError(Request request, Response response, Exception e) {
     try {
-      new PayloadWriter().write(errorPage(e), context);
+      if (e instanceof CompilerException) {
+        LOG.error(e.getMessage());
+      } else if (!(e instanceof HttpException) && !(e instanceof NoSuchElementException)) {
+        e.printStackTrace();
+      }
+
+      PayloadWriter payloadWriter = new PayloadWriter(request, response);
+      payloadWriter.write(errorPage(e));
     } catch (IOException error) {
       LOG.warn("Unable to serve an error page", error);
     }

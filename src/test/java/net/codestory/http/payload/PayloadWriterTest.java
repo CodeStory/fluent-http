@@ -29,16 +29,15 @@ import net.codestory.http.exchange.*;
 import org.junit.*;
 
 public class PayloadWriterTest {
+  Request request = mock(Request.class);
   Response response = mock(Response.class);
   Cookies cookies = mock(Cookies.class);
-  Context context = mock(Context.class);
 
-  PayloadWriter writer = new PayloadWriter();
+  PayloadWriter writer = new PayloadWriter(request, response);
 
   @Before
   public void setupContext() throws IOException {
-    when(context.response()).thenReturn(response);
-    when(context.cookies()).thenReturn(cookies);
+    when(request.cookies()).thenReturn(cookies);
     when(response.outputStream()).thenReturn(new ByteArrayOutputStream());
   }
 
@@ -47,7 +46,7 @@ public class PayloadWriterTest {
     Payload payload = new Payload("Hello");
 
     assertThat(payload.code()).isEqualTo(200);
-    assertThat(writer.getData(payload, "/", context)).isEqualTo("Hello".getBytes(UTF_8));
+    assertThat(writer.getData(payload, "/")).isEqualTo("Hello".getBytes(UTF_8));
     assertThat(writer.getContentType(payload, "/")).isEqualTo("text/html;charset=UTF-8");
   }
 
@@ -57,7 +56,7 @@ public class PayloadWriterTest {
 
     Payload payload = new Payload(bytes);
 
-    assertThat(writer.getData(payload, "/", context)).isSameAs(bytes);
+    assertThat(writer.getData(payload, "/")).isSameAs(bytes);
     assertThat(writer.getContentType(payload, "/")).isEqualTo("application/octet-stream");
   }
 
@@ -65,7 +64,7 @@ public class PayloadWriterTest {
   public void support_bean_to_json() throws IOException {
     Payload payload = new Payload(new Person("NAME", 42));
 
-    assertThat(writer.getData(payload, "/", context)).isEqualTo("{\"name\":\"NAME\",\"age\":42}".getBytes(UTF_8));
+    assertThat(writer.getData(payload, "/")).isEqualTo("{\"name\":\"NAME\",\"age\":42}".getBytes(UTF_8));
     assertThat(writer.getContentType(payload, "/")).isEqualTo("application/json;charset=UTF-8");
   }
 
@@ -73,7 +72,7 @@ public class PayloadWriterTest {
   public void support_custom_content_type() throws IOException {
     Payload payload = new Payload("text/plain", "Hello");
 
-    assertThat(writer.getData(payload, "/", context)).isEqualTo("Hello".getBytes(UTF_8));
+    assertThat(writer.getData(payload, "/")).isEqualTo("Hello".getBytes(UTF_8));
     assertThat(writer.getContentType(payload, "/")).isEqualTo("text/plain");
   }
 
@@ -81,7 +80,7 @@ public class PayloadWriterTest {
   public void support_stream() throws IOException {
     Payload payload = new Payload("text/plain", new ByteArrayInputStream("Hello".getBytes()));
 
-    assertThat(writer.getData(payload, "/", context)).isEqualTo("Hello".getBytes(UTF_8));
+    assertThat(writer.getData(payload, "/")).isEqualTo("Hello".getBytes(UTF_8));
     assertThat(writer.getContentType(payload, "/")).isEqualTo("text/plain");
   }
 
@@ -89,7 +88,7 @@ public class PayloadWriterTest {
   public void support_present_optional() throws IOException {
     Payload payload = new Payload("text/plain", Optional.of("TEXT"));
 
-    assertThat(writer.getData(payload, "/", context)).isEqualTo("TEXT".getBytes(UTF_8));
+    assertThat(writer.getData(payload, "/")).isEqualTo("TEXT".getBytes(UTF_8));
     assertThat(writer.getContentType(payload, "/")).isEqualTo("text/plain");
   }
 
@@ -107,7 +106,7 @@ public class PayloadWriterTest {
   @Test
   public void support_absent_optional() throws IOException {
     Payload payload = new Payload("text/plain", Optional.empty());
-    writer.write(payload, context);
+    writer.write(payload);
 
     verify(response).setStatus(NOT_FOUND);
     verify(response).setContentLength(0);
@@ -117,7 +116,7 @@ public class PayloadWriterTest {
   @Test
   public void redirect() throws IOException {
     Payload payload = Payload.seeOther("/url");
-    writer.write(payload, context);
+    writer.write(payload);
 
     verify(response).setValue("Location", "/url");
     verify(response).setStatus(SEE_OTHER);
@@ -128,7 +127,7 @@ public class PayloadWriterTest {
   @Test
   public void forbidden() throws IOException {
     Payload payload = Payload.forbidden();
-    writer.write(payload, context);
+    writer.write(payload);
 
     verify(response).setStatus(FORBIDDEN);
     verify(response).setContentLength(0);
@@ -138,7 +137,7 @@ public class PayloadWriterTest {
   @Test
   public void permanent_move() throws IOException {
     Payload payload = Payload.movedPermanently("/url");
-    writer.write(payload, context);
+    writer.write(payload);
 
     verify(response).setValue("Location", "/url");
     verify(response).setStatus(MOVED_PERMANENTLY);
@@ -149,7 +148,7 @@ public class PayloadWriterTest {
   @Test
   public void last_modified() throws IOException {
     Payload payload = new Payload(Paths.get("hello.md"));
-    writer.write(payload, context);
+    writer.write(payload);
 
     verify(response).setValue(eq("Last-Modified"), anyString());
   }
@@ -157,7 +156,7 @@ public class PayloadWriterTest {
   @Test
   public void etag() throws IOException {
     Payload payload = new Payload("Hello");
-    writer.write(payload, context);
+    writer.write(payload);
 
     verify(response).setStatus(OK);
     verify(response).setValue("ETag", "8b1a9953c4611296a827abf8c47804d7");
@@ -165,20 +164,20 @@ public class PayloadWriterTest {
 
   @Test
   public void not_modified() throws IOException {
-    when(context.header("If-None-Match")).thenReturn("8b1a9953c4611296a827abf8c47804d7");
+    when(request.header("If-None-Match")).thenReturn("8b1a9953c4611296a827abf8c47804d7");
 
     Payload payload = new Payload("Hello");
-    writer.write(payload, context);
+    writer.write(payload);
 
     verify(response).setStatus(NOT_MODIFIED);
   }
 
   @Test
   public void head() throws IOException {
-    when(context.method()).thenReturn("HEAD");
+    when(request.method()).thenReturn("HEAD");
 
     Payload payload = new Payload("Hello");
-    writer.write(payload, context);
+    writer.write(payload);
 
     verify(response).setStatus(OK);
     verify(response, never()).setContentLength(anyInt());

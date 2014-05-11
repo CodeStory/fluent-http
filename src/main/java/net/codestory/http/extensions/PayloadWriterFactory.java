@@ -20,5 +20,5 @@ import net.codestory.http.payload.*;
 
 @FunctionalInterface
 public interface PayloadWriterFactory {
-  PayloadWriter create(Context context);
+  PayloadWriter create(Request request, Response response);
 }
