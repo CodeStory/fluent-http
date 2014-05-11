@@ -36,12 +36,12 @@ import com.github.jknack.handlebars.*;
 public class Site {
   private static Site INSTANCE = new Site();
 
-  private Env env;
-  private Supplier<Map<String, Object>> yaml;
-  private Supplier<Map<String, Object>> data;
-  private Supplier<List<Map<String, Object>>> pages;
-  private Supplier<Map<String, List<Map<String, Object>>>> tags;
-  private Supplier<Map<String, List<Map<String, Object>>>> categories;
+  private final Env env;
+  private final Supplier<Map<String, Object>> yaml;
+  private final Supplier<Map<String, Object>> data;
+  private final Supplier<List<Map<String, Object>>> pages;
+  private final Supplier<Map<String, List<Map<String, Object>>>> tags;
+  private final Supplier<Map<String, List<Map<String, Object>>>> categories;
 
   private Site() {
     env = Env.INSTANCE;
