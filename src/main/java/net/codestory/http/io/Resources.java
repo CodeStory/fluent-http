@@ -15,16 +15,11 @@
  */
 package net.codestory.http.io;
 
-import static java.nio.file.Files.*;
-import static net.codestory.http.io.FileVisitor.*;
-
 import java.io.*;
 import java.net.*;
 import java.nio.charset.*;
 import java.nio.file.*;
-import java.util.*;
 
-import net.codestory.http.misc.*;
 import net.codestory.http.types.*;
 
 public class Resources {
@@ -33,28 +28,6 @@ public class Resources {
 
   private Resources() {
     // Static utility class
-  }
-
-  public static Set<String> list() {
-    Set<String> paths = new TreeSet<>();
-
-    Path parentPath = Paths.get(ROOT);
-
-    try {
-      if (new File(CLASSES_OUTPUT_DIR).exists() && !Env.INSTANCE.disableClassPath()) {
-        new ClasspathScanner().getResources(ROOT).forEach(resource -> paths.add(relativePath(parentPath, Paths.get(resource))));
-      }
-
-      if (!Env.INSTANCE.disableFilesystem()) {
-        walkFileTree(Paths.get(ROOT), onFile(path -> paths.add(relativePath(parentPath, path))));
-      }
-    } catch (IOException e) {
-      // Ignore
-    }
-
-    paths.remove("");
-
-    return paths;
   }
 
   public static String relativePath(Path parent, Path path) {

@@ -16,6 +16,9 @@
 package net.codestory.http.templating;
 
 import static java.nio.charset.StandardCharsets.*;
+import static java.nio.file.Files.*;
+import static net.codestory.http.io.FileVisitor.*;
+import static net.codestory.http.io.Resources.*;
 import static net.codestory.http.misc.MemoizingSupplier.*;
 
 import java.io.*;
@@ -42,16 +45,16 @@ public class Site {
   private Site() {
     yaml = memoize(() -> loadYamlConfig("_config.yml"));
 
-    data = memoize(() -> Resources.list()
-        .stream()
-        .filter(path -> path.startsWith("_data/"))
-        .collect(Collectors.toMap(path -> nameWithoutExtension(path), path -> readYaml(path))));
+    data = memoize(() -> list()
+      .stream()
+      .filter(path -> path.startsWith("_data/"))
+      .collect(Collectors.toMap(path -> nameWithoutExtension(path), path -> readYaml(path))));
 
-    pages = memoize(() -> Resources.list()
-        .stream()
-        .filter(path -> !path.startsWith("_"))
-        .map(path -> Site.pathToMap(path))
-        .collect(Collectors.<Map<String, Object>>toList())
+    pages = memoize(() -> list()
+      .stream()
+      .filter(path -> !path.startsWith("_"))
+      .map(path -> Site.pathToMap(path))
+      .collect(Collectors.<Map<String, Object>>toList())
     );
 
     tags = memoize(() -> {
@@ -66,11 +69,34 @@ public class Site {
 
     categories = memoize(() -> {
       Map<String, List<Map<String, Object>>> sorted = getPages()
-          .stream()
-          .collect(Collectors.groupingBy(page -> Site.category(page), TreeMap::new, Collectors.toList()));
+        .stream()
+        .collect(Collectors.groupingBy(page -> Site.category(page), TreeMap::new, Collectors.toList()));
       return sorted;
     });
   }
+
+  private static Set<String> list() {
+    Set<String> paths = new TreeSet<>();
+
+    Path parentPath = Paths.get(ROOT);
+
+    try {
+      if (new File(Resources.CLASSES_OUTPUT_DIR).exists() && !Env.INSTANCE.disableClassPath()) {
+        new ClasspathScanner().getResources(ROOT).forEach(resource -> paths.add(relativePath(parentPath, Paths.get(resource))));
+      }
+
+      if (!Env.INSTANCE.disableFilesystem()) {
+        walkFileTree(Paths.get(ROOT), onFile(path -> paths.add(relativePath(parentPath, path))));
+      }
+    } catch (IOException e) {
+      // Ignore
+    }
+
+    paths.remove("");
+
+    return paths;
+  }
+
 
   public static Site get() {
     return Env.INSTANCE.prodMode() ? INSTANCE : new Site();
