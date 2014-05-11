@@ -24,7 +24,7 @@ public class Model {
     // Static constructor
   }
 
-  Map<String, Object> getKeyValues() {
+  public Map<String, Object> keyValues() {
     return keyValues;
   }
 
@@ -50,17 +50,6 @@ public class Model {
 
   public static Model of(String k1, Object v1, String k2, Object v2, String k3, Object v3, String k4, Object v4) {
     return of().add(k1, v1).add(k2, v2).add(k3, v3).add(k4, v4);
-  }
-
-  public Model merge(Model model) {
-    return merge(model.keyValues);
-  }
-
-  public Model merge(Map<String, Object> moreKeyValues) {
-    Model merged = new Model();
-    merged.keyValues.putAll(keyValues);
-    merged.keyValues.putAll(moreKeyValues);
-    return merged;
   }
 
   private Model add(String key, Object value) {

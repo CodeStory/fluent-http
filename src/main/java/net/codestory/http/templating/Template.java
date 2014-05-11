@@ -25,12 +25,12 @@ import net.codestory.http.io.*;
 public class Template {
   private final Path path;
 
-  public Template(String folder, String name) {
-    this(folder + "/" + name, Resources.findExistingPath(folder, name));
-  }
-
   public Template(String uri) {
     this(uri, Resources.findExistingPath(uri));
+  }
+
+  private Template(String folder, String name) {
+    this(folder + "/" + name, Resources.findExistingPath(folder, name));
   }
 
   private Template(String uri, Path path) {
@@ -40,27 +40,7 @@ public class Template {
     this.path = path;
   }
 
-  public String renderAsString() {
-    return render().content();
-  }
-
-  public String renderAsString(Model model) {
-    return render(model).content();
-  }
-
-  public String renderAsString(Map<String, ?> keyValues) {
-    return render(keyValues).content();
-  }
-
-  public CacheEntry render() {
-    return render(Collections.emptyMap());
-  }
-
-  public CacheEntry render(Model model) {
-    return render(model.getKeyValues());
-  }
-
-  CacheEntry render(Map<String, ?> keyValues) {
+  public CacheEntry render(Map<String, ?> keyValues) {
     try {
       YamlFrontMatter yamlFrontMatter = YamlFrontMatter.parse(path);
 

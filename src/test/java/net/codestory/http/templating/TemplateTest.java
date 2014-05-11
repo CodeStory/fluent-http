@@ -15,87 +15,119 @@
  */
 package net.codestory.http.templating;
 
+import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
+
+import java.util.*;
 
 import org.junit.*;
 
 public class TemplateTest {
+  String render(String name, Map<String, Object> model) {
+    return new Template(name).render(model).content();
+  }
+
+  String render(String name) {
+    return render(name, emptyMap());
+  }
+
   @Test
-  public void render() {
-    assertThat(new Template("0variable.txt").render().content()).isEqualTo("0 variables");
-    assertThat(new Template("1variable.txt").render(Model.of("name", "Bob")).content()).isEqualTo("Hello Bob");
-    assertThat(new Template("2variables.txt").render(Model.of("verb", "Hello", "name", "Bob")).content()).isEqualTo("Hello Bob");
+  public void empty_model() {
+    String content = render("0variable.txt");
+
+    assertThat(content).isEqualTo("0 variables");
+  }
+
+  @Test
+  public void one_variable() {
+    Map<String, Object> model = new HashMap<>();
+    model.put("name", "Bob");
+
+    String content = render("1variable.txt", model);
+
+    assertThat(content).isEqualTo("Hello Bob");
+  }
+
+  @Test
+  public void two_variables() {
+    Map<String, Object> model = new HashMap<>();
+    model.put("verb", "Hello");
+    model.put("name", "Bob");
+
+    String content = render("2variables.txt", model);
+
+    assertThat(content).isEqualTo("Hello Bob");
   }
 
   @Test
   public void yaml_front_matter() {
-    assertThat(new Template("indexYaml.html").renderAsString()).contains("Hello Yaml");
+    assertThat(render("indexYaml.html")).contains("Hello Yaml");
   }
 
   @Test
   public void layout_decorator() {
-    assertThat(new Template("pageYaml.html").renderAsString()).contains("PREFIX_LAYOUT<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_LAYOUT");
-    assertThat(new Template("pageYamlWithMarkdownLayout.html").renderAsString()).contains("<em>TITLE</em>: PREFIX_MD<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_MD");
-    assertThat(new Template("markdownWithLayout.md").renderAsString()).startsWith("<!DOCTYPE html>").contains("<p>Hello World</p>").endsWith("</html>\n");
+    assertThat(render("pageYaml.html")).contains("PREFIX_LAYOUT<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_LAYOUT");
+    assertThat(render("pageYamlWithMarkdownLayout.html")).contains("<em>TITLE</em>: PREFIX_MD<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_MD");
+    assertThat(render("markdownWithLayout.md")).startsWith("<!DOCTYPE html>").contains("<p>Hello World</p>").endsWith("</html>\n");
   }
 
   @Test
   public void site_variables() {
-    assertThat(new Template("useSiteVariables.html").renderAsString()).contains("Hello, customer Bob wants to buy p1 for parkr");
+    assertThat(render("useSiteVariables.html")).contains("Hello, customer Bob wants to buy p1 for parkr");
   }
 
   @Test
   public void markdown_list() {
-    String html = new Template("list.md").renderAsString();
+    String html = render("list.md");
 
     assertThat(ignoreLineEndings(html)).contains("<ul><li><p>Doc</p></li><li><p>Grumpy</p></li><li><p>Happy</p></li></ul>");
   }
 
   @Test
   public void default_layout() {
-    String html = new Template("minimal.html").renderAsString();
+    String html = render("minimal.html");
 
     assertThat(ignoreLineEndings(html)).isEqualTo("" +
-        "<!DOCTYPE html>" +
-        "<html lang=\"en\">" +
-        "<head>" +
-        "  <meta charset=\"UTF-8\">" +
-        "  <title></title>" +
-        "  " +
-        "  " +
-        "  " +
-        "  " +
-        "  " +
-        "  " +
-        "</head>" +
-        "<body>" +
-        "Hello World" +
-        "</body>" +
-        "</html>");
+      "<!DOCTYPE html>" +
+      "<html lang=\"en\">" +
+      "<head>" +
+      "  <meta charset=\"UTF-8\">" +
+      "  <title></title>" +
+      "  " +
+      "  " +
+      "  " +
+      "  " +
+      "  " +
+      "  " +
+      "</head>" +
+      "<body>" +
+      "Hello World" +
+      "</body>" +
+      "</html>");
   }
 
   @Test
   public void standard_head_fields() {
-    String html = new Template("full_header").renderAsString();
+    String html = render("full_header");
 
     assertThat(ignoreLineEndings(html)).isEqualTo("<!DOCTYPE html>" +
-        "<html lang=\"FR\" ng-app=\"app\">" +
-        "<head>" +
-        "  <meta charset=\"UTF-8\">" +
-        "  <title>TITLE</title>" +
-        "  <meta name=\"viewport\" content=\"viewport\">" +
-        "  <meta name=\"keywords\" content=\"keyword1, keyword2\">" +
-        "  <meta name=\"description\" content=\"description\">" +
-        "  <meta name=\"author\" content=\"author\">" +
-        "  <link rel=\"stylesheet\" href=\"style.less\">" +
-        "  " +
-        "  <link rel=\"stylesheet\" href=\"style1.css\">" +
-        "  <link rel=\"stylesheet\" href=\"style2.css\">" +
-        "</head>" +
-        "<body>" +
-        "Hello World" +
-        "</body>" +
-        "</html>");
+      "<html lang=\"FR\" ng-app=\"app\">" +
+      "<head>" +
+      "  <meta charset=\"UTF-8\">" +
+      "  <title>TITLE</title>" +
+      "  <meta name=\"viewport\" content=\"viewport\">" +
+      "  <meta name=\"keywords\" content=\"keyword1, keyword2\">" +
+      "  <meta name=\"description\" content=\"description\">" +
+      "  <meta name=\"author\" content=\"author\">" +
+      "  <link rel=\"stylesheet\" href=\"style.less\">" +
+      "  " +
+      "  <link rel=\"stylesheet\" href=\"style1.css\">" +
+      "  <link rel=\"stylesheet\" href=\"style2.css\">" +
+      "</head>" +
+      "<body>" +
+      "Hello World" +
+      "</body>" +
+      "</html>");
   }
 
   private static String ignoreLineEndings(String text) {

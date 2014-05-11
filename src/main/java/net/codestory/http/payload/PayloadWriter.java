@@ -25,6 +25,7 @@ import static net.codestory.http.io.Strings.*;
 
 import java.io.*;
 import java.nio.file.*;
+import java.util.*;
 import java.util.zip.*;
 
 import net.codestory.http.compilers.*;
@@ -206,11 +207,11 @@ public class PayloadWriter {
   private byte[] forModelAndView(ModelAndView modelAndView) {
     String view = modelAndView.view();
 
-    Model model = modelAndView
-      .model()
-      .merge(Model.of("cookies", request.cookies().keyValues()));
+    Map<String, Object> keyValues = new HashMap<>();
+    keyValues.putAll(modelAndView.model().keyValues());
+    keyValues.put("cookies", request.cookies().keyValues());
 
-    CacheEntry html = new Template(view).render(model);
+    CacheEntry html = new Template(view).render(keyValues);
 
     return html.toBytes();
   }
