@@ -156,7 +156,8 @@ public class WebServer {
 
     try {
       RouteCollection routes = routesProvider.get();
-      context = new Context(request, response, routes.getIocAdapter());
+
+      context = routes.createContext(request, response);
 
       applyRoutes(routes, context);
     } catch (Exception e) {

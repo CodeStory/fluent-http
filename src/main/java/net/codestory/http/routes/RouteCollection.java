@@ -28,6 +28,7 @@ import java.util.function.*;
 import net.codestory.http.*;
 import net.codestory.http.annotations.*;
 import net.codestory.http.exchange.*;
+import net.codestory.http.extensions.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.injection.*;
 import net.codestory.http.misc.*;
@@ -36,15 +37,25 @@ import net.codestory.http.payload.*;
 public class RouteCollection implements Routes {
   private final Deque<Route> routes;
   private final Deque<Supplier<Filter>> filters;
-  private IocAdapter iocAdapter = new Singletons();
+  private IocAdapter iocAdapter;
+  private ContextFactory contextFactory;
 
   public RouteCollection() {
     this.routes = new LinkedList<>();
     this.filters = new LinkedList<>();
+    this.iocAdapter = new Singletons();
+    this.contextFactory = (request, response) -> new Context(request, response, iocAdapter);
   }
 
+  @Override
   public RouteCollection setIocAdapter(IocAdapter iocAdapter) {
     this.iocAdapter = iocAdapter;
+    return this;
+  }
+
+  @Override
+  public Routes setContextFactory(ContextFactory contextFactory) {
+    this.contextFactory = contextFactory;
     return this;
   }
 
@@ -393,8 +404,8 @@ public class RouteCollection implements Routes {
     return payloadSupplier.get();
   }
 
-  public IocAdapter getIocAdapter() {
-    return iocAdapter;
+  public Context createContext(Request request, Response response) {
+    return contextFactory.create(request, response);
   }
 
   private static String checkParametersCount(String uriPattern, int count) {
