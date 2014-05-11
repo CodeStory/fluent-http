@@ -35,15 +35,12 @@ public class ReflectionRouteTest {
   }
 
   @Test
-  public void inject_context_content_as_bean() {
-    Human human = mock(Human.class);
-    when(context.extract(Human.class)).thenReturn(human);
+  public void inject_request() {
+    Request request = mock(Request.class);
+    when(context.extract(Request.class)).thenReturn(request);
 
-    Object[] parameters = ReflectionRoute.convert(context, new String[]{"param"}, String.class, Human.class);
+    Object[] parameters = ReflectionRoute.convert(context, new String[]{"param"}, String.class, Request.class);
 
-    assertThat(parameters).containsExactly("param", human);
-  }
-
-  static class Human {
+    assertThat(parameters).containsExactly("param", request);
   }
 }
