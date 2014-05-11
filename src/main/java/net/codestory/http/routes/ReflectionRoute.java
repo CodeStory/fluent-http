@@ -37,7 +37,7 @@ class ReflectionRoute implements AnyRoute {
     try {
       Object target = resource.get();
 
-      Object[] arguments = TypeConvert.convert(context, pathParameters, method.getParameterTypes());
+      Object[] arguments = TypeConvert.convert(context, pathParameters, method.getGenericParameterTypes());
       Object response = invoke(target, method, arguments);
       Object payload = emptyIfNull(response);
       String contentType = findContentType(method);

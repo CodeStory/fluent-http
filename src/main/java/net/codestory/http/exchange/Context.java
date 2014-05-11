@@ -18,6 +18,7 @@ package net.codestory.http.exchange;
 import static net.codestory.http.constants.Headers.*;
 
 import java.io.*;
+import java.lang.reflect.*;
 import java.util.*;
 
 import net.codestory.http.convert.*;
@@ -51,6 +52,10 @@ public class Context {
 
   public Cookies cookies() {
     return request.cookies();
+  }
+
+  public List<Part> parts() {
+    return request.parts();
   }
 
   public Query query() {
@@ -121,39 +126,67 @@ public class Context {
     return (contentType != null) && (contentType.contains("application/x-www-form-urlencoded"));
   }
 
-  @SuppressWarnings("unchecked")
-  public <T> T extract(Class<T> type) {
-    if (type.isAssignableFrom(Context.class)) {
-      return (T) this;
+  public Object extract(Type type) {
+    if (type instanceof Class) {
+      Class<?> clazz = (Class<?>) type;
+
+      if (clazz.isAssignableFrom(Context.class)) {
+        return this;
+      }
+      if (clazz.isAssignableFrom(Request.class)) {
+        return request();
+      }
+      if (clazz.isAssignableFrom(Response.class)) {
+        return response();
+      }
+      if (clazz.isAssignableFrom(Cookies.class)) {
+        return cookies();
+      }
+      if (clazz.isAssignableFrom(Query.class)) {
+        return query();
+      }
+      if (clazz.isAssignableFrom(User.class)) {
+        return currentUser();
+      }
+      if (clazz.isAssignableFrom(byte[].class)) {
+        return content();
+      }
+      if (clazz.isAssignableFrom(String.class)) {
+        return contentAsString();
+      }
     }
-    if (type.isAssignableFrom(Map.class)) {
-      return (T) query().keyValues();
+
+    if (type instanceof ParameterizedType) {
+      ParameterizedType parameterizedType = (ParameterizedType) type;
+
+      Type rawType = parameterizedType.getRawType();
+      if (rawType instanceof Class) {
+        if (List.class.isAssignableFrom((Class<?>) rawType)) {
+          Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+          if (actualTypeArguments.length == 1) {
+            Type argument = actualTypeArguments[0];
+            if (argument instanceof Class) {
+              if (Part.class.isAssignableFrom((Class<?>) argument)) {
+                return parts();
+              }
+            }
+          }
+        } else if (Map.class.isAssignableFrom((Class<?>) rawType)) {
+          return query().keyValues();
+        }
+      }
     }
-    if (type.isAssignableFrom(Request.class)) {
-      return (T) request();
-    }
-    if (type.isAssignableFrom(Response.class)) {
-      return (T) response();
-    }
-    if (type.isAssignableFrom(Cookies.class)) {
-      return (T) cookies();
-    }
-    if (type.isAssignableFrom(Query.class)) {
-      return (T) query();
-    }
-    if (type.isAssignableFrom(User.class)) {
-      return (T) currentUser();
-    }
-    if (type.isAssignableFrom(byte[].class)) {
-      return (T) content();
-    }
-    if (type.isAssignableFrom(String.class)) {
-      return (T) contentAsString();
-    }
+
     if (isUrlEncodedForm()) {
       return TypeConvert.convertValue(query().keyValues(), type);
     }
 
-    return contentAs(type);
+    try {
+      String json = request.content();
+
+      return TypeConvert.fromJson(json, type);
+    } catch (IOException e) {
+      throw new IllegalArgumentException("Unable read content", e);
+    }
   }
 }

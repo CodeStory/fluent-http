@@ -15,6 +15,8 @@
  */
 package net.codestory.http.internal;
 
+import static net.codestory.http.misc.Fluent.*;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -76,6 +78,11 @@ class SimpleRequest implements Request {
   @Override
   public Query query() {
     return new SimpleQuery(request.getQuery());
+  }
+
+  @Override
+  public List<Part> parts() {
+    return of(request.getParts()).map(part -> (Part) new SimplePart(part)).toList();
   }
 
   @Override

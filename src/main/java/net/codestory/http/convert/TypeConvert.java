@@ -16,20 +16,23 @@
 package net.codestory.http.convert;
 
 import java.io.*;
+import java.lang.reflect.*;
 
 import net.codestory.http.exchange.*;
 
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.core.type.*;
 import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.type.*;
 import com.fasterxml.jackson.datatype.jsr310.*;
 
 public class TypeConvert {
   private static ObjectMapper OBJECT_MAPPER = new ObjectMapper()
-      .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
-      .registerModule(new JSR310Module())
-      .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-      .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
+    .registerModule(new JSR310Module())
+    .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
   private TypeConvert() {
     // static class
@@ -39,7 +42,7 @@ public class TypeConvert {
     OBJECT_MAPPER = mapper;
   }
 
-  public static Object[] convert(Context context, String[] pathParameters, Class<?>... types) {
+  public static Object[] convert(Context context, String[] pathParameters, Type... types) {
     Object[] converted = new Object[types.length];
 
     // String parameters
@@ -63,7 +66,31 @@ public class TypeConvert {
     }
   }
 
+  public static <T> T fromJson(String json, Type type) {
+    try {
+      return OBJECT_MAPPER.readValue(json, TypeFactory.defaultInstance().constructType(type));
+    } catch (IOException e) {
+      throw new IllegalArgumentException("Unable to parse json", e);
+    }
+  }
+
+  public static <T> T fromJson(String json, TypeReference<T> type) {
+    try {
+      return OBJECT_MAPPER.readValue(json, type);
+    } catch (IOException e) {
+      throw new IllegalArgumentException("Unable to parse json", e);
+    }
+  }
+
   public static <T> T convertValue(Object value, Class<T> type) {
+    return OBJECT_MAPPER.convertValue(value, type);
+  }
+
+  public static Object convertValue(Object value, Type type) {
+    return OBJECT_MAPPER.convertValue(value, TypeFactory.defaultInstance().constructType(type));
+  }
+
+  public static <T> T convertValue(Object value, TypeReference<T> type) {
     return OBJECT_MAPPER.convertValue(value, type);
   }
 

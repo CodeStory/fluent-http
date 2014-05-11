@@ -16,13 +16,13 @@
 package net.codestory.http.exchange;
 
 import java.io.*;
-import java.net.*;
-import java.util.*;
 
-public interface Request {
-  String uri();
+public interface Part {
+  boolean isFile();
 
-  String method();
+  String name();
+
+  String fileName();
 
   String header(String name);
 
@@ -30,17 +30,9 @@ public interface Request {
 
   InputStream inputStream() throws IOException;
 
-  List<String> headers(String name);
-
-  InetSocketAddress clientAddress();
-
-  boolean isSecure();
-
-  Cookies cookies();
-
-  Query query();
-
-  List<Part> parts();
+  String contentType();
 
   <T> T unwrap(Class<T> type);
 }
+
+
