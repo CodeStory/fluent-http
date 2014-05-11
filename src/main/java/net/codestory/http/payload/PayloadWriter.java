@@ -39,10 +39,12 @@ import net.codestory.http.types.*;
 public class PayloadWriter {
   private final Request request;
   private final Response response;
+  private final Env env;
 
   public PayloadWriter(Request request, Response response) {
     this.request = request;
     this.response = response;
+    this.env = Env.INSTANCE;
   }
 
   public void write(Payload payload) throws IOException {
@@ -92,7 +94,7 @@ public class PayloadWriter {
     byte[] data = lazyData.get();
 
     String acceptEncoding = request.header(ACCEPT_ENCODING);
-    if ((acceptEncoding != null) && acceptEncoding.contains(GZIP) && Env.INSTANCE.prodMode() && !Env.INSTANCE.disableGzip()) {
+    if ((acceptEncoding != null) && acceptEncoding.contains(GZIP) && env.prodMode() && !env.disableGzip()) {
       response.setValue(CONTENT_ENCODING, GZIP);
 
       GZIPOutputStream gzip = new GZIPOutputStream(response.outputStream());

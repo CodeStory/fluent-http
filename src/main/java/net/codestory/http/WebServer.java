@@ -41,6 +41,7 @@ public class WebServer {
   private final static Logger LOG = LoggerFactory.getLogger(WebServer.class);
 
   private final HttpServerWrapper server;
+  private final Env env;
   private RoutesProvider routesProvider;
   private int port;
 
@@ -54,6 +55,7 @@ public class WebServer {
   }
 
   public WebServer(Configuration configuration) {
+    env = Env.INSTANCE;
     try {
       server = new SimpleServerWrapper(this::handle);
     } catch (IOException e) {
@@ -69,7 +71,7 @@ public class WebServer {
   }
 
   public WebServer configure(Configuration configuration) {
-    routesProvider = Env.INSTANCE.prodMode()
+    routesProvider = env.prodMode()
       ? RoutesProvider.fixed(configuration)
       : RoutesProvider.reloading(configuration);
     return this;
@@ -117,7 +119,7 @@ public class WebServer {
   }
 
   private WebServer startWithContext(int port, SSLContext context, boolean authReq) {
-    this.port = Env.INSTANCE.overriddenPort(port);
+    this.port = env.overriddenPort(port);
 
     try {
       server.start(this.port, context, authReq);
@@ -206,7 +208,7 @@ public class WebServer {
   }
 
   protected Payload errorPage(Payload payload, Exception e) {
-    Exception shownError = Env.INSTANCE.prodMode() ? null : e;
+    Exception shownError = env.prodMode() ? null : e;
     return new ErrorPage(payload, shownError).payload();
   }
 }

@@ -36,6 +36,7 @@ import com.github.jknack.handlebars.*;
 public class Site {
   private static Site INSTANCE = new Site();
 
+  private Env env;
   private Supplier<Map<String, Object>> yaml;
   private Supplier<Map<String, Object>> data;
   private Supplier<List<Map<String, Object>>> pages;
@@ -43,6 +44,8 @@ public class Site {
   private Supplier<Map<String, List<Map<String, Object>>>> categories;
 
   private Site() {
+    env = Env.INSTANCE;
+
     yaml = memoize(() -> loadYamlConfig("_config.yml"));
 
     data = memoize(() -> list()
@@ -75,17 +78,17 @@ public class Site {
     });
   }
 
-  private static Set<String> list() {
+  private Set<String> list() {
     Set<String> paths = new TreeSet<>();
 
     Path parentPath = Paths.get(ROOT);
 
     try {
-      if (new File(Resources.CLASSES_OUTPUT_DIR).exists() && !Env.INSTANCE.disableClassPath()) {
+      if (new File(Resources.CLASSES_OUTPUT_DIR).exists() && !env.disableClassPath()) {
         new ClasspathScanner().getResources(ROOT).forEach(resource -> paths.add(relativePath(parentPath, Paths.get(resource))));
       }
 
-      if (!Env.INSTANCE.disableFilesystem()) {
+      if (!env.disableFilesystem()) {
         walkFileTree(Paths.get(ROOT), onFile(path -> paths.add(relativePath(parentPath, path))));
       }
     } catch (IOException e) {
