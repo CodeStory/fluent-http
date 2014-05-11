@@ -27,6 +27,8 @@ public interface Routes extends Serializable {
 
   Routes setContextFactory(ContextFactory contextFactory);
 
+  Routes setPayloadWriterFactory(PayloadWriterFactory payloadWriterFactory);
+
   Routes include(Class<? extends Configuration> configurationClass);
 
   Routes include(Configuration configuration);

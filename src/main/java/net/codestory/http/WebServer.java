@@ -183,7 +183,8 @@ public class WebServer {
       payload = errorPage(payload);
     }
 
-    new PayloadWriter().write(payload, context);
+    PayloadWriter payloadWriter = routeCollection.createPayloadWriter(context);
+    payloadWriter.write(payload, context);
   }
 
   protected void handleServerError(Context context, Exception e) {

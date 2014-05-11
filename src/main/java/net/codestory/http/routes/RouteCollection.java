@@ -39,12 +39,14 @@ public class RouteCollection implements Routes {
   private final Deque<Supplier<Filter>> filters;
   private IocAdapter iocAdapter;
   private ContextFactory contextFactory;
+  private PayloadWriterFactory payloadWriterFactory;
 
   public RouteCollection() {
     this.routes = new LinkedList<>();
     this.filters = new LinkedList<>();
     this.iocAdapter = new Singletons();
     this.contextFactory = (request, response) -> new Context(request, response, iocAdapter);
+    this.payloadWriterFactory = (context) -> new PayloadWriter();
   }
 
   @Override
@@ -56,6 +58,12 @@ public class RouteCollection implements Routes {
   @Override
   public Routes setContextFactory(ContextFactory contextFactory) {
     this.contextFactory = contextFactory;
+    return this;
+  }
+
+  @Override
+  public Routes setPayloadWriterFactory(PayloadWriterFactory payloadWriterFactory) {
+    this.payloadWriterFactory = payloadWriterFactory;
     return this;
   }
 
@@ -406,6 +414,10 @@ public class RouteCollection implements Routes {
 
   public Context createContext(Request request, Response response) {
     return contextFactory.create(request, response);
+  }
+
+  public PayloadWriter createPayloadWriter(Context context) {
+    return payloadWriterFactory.create(context);
   }
 
   private static String checkParametersCount(String uriPattern, int count) {
