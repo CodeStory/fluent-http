@@ -53,7 +53,7 @@ class ReloadingRoutesProvider implements RoutesProvider {
 
       routes = new RouteCollection();
       configuration.configure(routes);
-      routes.addStaticRoutes();
+      routes.addStaticRoutes(false);
 
       dirty.set(false);
     }
