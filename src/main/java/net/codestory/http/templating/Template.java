@@ -70,7 +70,6 @@ public class Template {
     merged.putAll(first);
     merged.putAll(second);
     merged.put("body", "[[body]]");
-    merged.put("site", Site.get());
     return merged;
   }
 }

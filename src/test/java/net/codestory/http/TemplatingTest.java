@@ -56,6 +56,11 @@ public class TemplatingTest extends AbstractWebServerTest {
 
   @Test
   public void site_variables() {
+    get("/useSiteVariables.html").produces("Hello, customer Bob wants to buy p1 for parkr");
+  }
+
+  @Test
+  public void site_tags() {
     get("/testTags").produces("<p>[scala]</p>\n<p>java, scala</p>\n<p>[scala]</p>");
   }
 }

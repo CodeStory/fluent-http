@@ -210,6 +210,7 @@ public class PayloadWriter {
     Map<String, Object> keyValues = new HashMap<>();
     keyValues.putAll(modelAndView.model().keyValues());
     keyValues.put("cookies", request.cookies().keyValues());
+    keyValues.put("site", Site.get());
 
     CacheEntry html = new Template(view).render(keyValues);
 

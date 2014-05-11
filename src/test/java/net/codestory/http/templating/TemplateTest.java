@@ -72,11 +72,6 @@ public class TemplateTest {
   }
 
   @Test
-  public void site_variables() {
-    assertThat(render("useSiteVariables.html")).contains("Hello, customer Bob wants to buy p1 for parkr");
-  }
-
-  @Test
   public void markdown_list() {
     String html = render("list.md");
 
