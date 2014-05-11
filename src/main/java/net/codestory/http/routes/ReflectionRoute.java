@@ -37,7 +37,7 @@ class ReflectionRoute implements AnyRoute {
     try {
       Object target = resource.get();
 
-      Object[] arguments = TypeConvert.convert(context, pathParameters, method.getGenericParameterTypes());
+      Object[] arguments = convert(context, pathParameters, method.getGenericParameterTypes());
       Object response = invoke(target, method, arguments);
       Object payload = emptyIfNull(response);
       String contentType = findContentType(method);
@@ -48,6 +48,22 @@ class ReflectionRoute implements AnyRoute {
     } catch (Throwable e) {
       throw new IllegalStateException("Unable to apply route", e);
     }
+  }
+
+  static Object[] convert(Context context, String[] pathParameters, Type... types) {
+    Object[] converted = new Object[types.length];
+
+    // String parameters
+    for (int i = 0; i < pathParameters.length; i++) {
+      converted[i] = TypeConvert.convertValue(pathParameters[i], types[i]);
+    }
+
+    // Other parameters
+    for (int i = pathParameters.length; i < converted.length; i++) {
+      converted[i] = context.extract(types[i]);
+    }
+
+    return converted;
   }
 
   private static Object invoke(Object target, Method method, Object[] arguments) throws Throwable {

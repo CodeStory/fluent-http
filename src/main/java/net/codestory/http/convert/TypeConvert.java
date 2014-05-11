@@ -18,8 +18,6 @@ package net.codestory.http.convert;
 import java.io.*;
 import java.lang.reflect.*;
 
-import net.codestory.http.exchange.*;
-
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.core.type.*;
@@ -40,22 +38,6 @@ public class TypeConvert {
 
   public static void overrideMapper(ObjectMapper mapper) {
     OBJECT_MAPPER = mapper;
-  }
-
-  public static Object[] convert(Context context, String[] pathParameters, Type... types) {
-    Object[] converted = new Object[types.length];
-
-    // String parameters
-    for (int i = 0; i < pathParameters.length; i++) {
-      converted[i] = convertValue(pathParameters[i], types[i]);
-    }
-
-    // Other parameters
-    for (int i = pathParameters.length; i < converted.length; i++) {
-      converted[i] = context.extract(types[i]);
-    }
-
-    return converted;
   }
 
   public static <T> T fromJson(String json, Class<T> type) {

@@ -16,12 +16,9 @@
 package net.codestory.http.convert;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 import java.time.*;
 import java.util.*;
-
-import net.codestory.http.exchange.*;
 
 import org.junit.*;
 
@@ -77,27 +74,6 @@ public class TypeConvertTest {
     assertThat(human.name).isEqualTo("jack");
     assertThat(human.age).isEqualTo(31);
     assertThat(human.birthDate).isEqualTo(LocalDate.parse("1980-01-01"));
-  }
-
-  @Test
-  public void inject_context() {
-    Context context = mock(Context.class);
-    when(context.extract(Context.class)).thenReturn(context);
-
-    Object[] parameters = TypeConvert.convert(context, new String[]{"param1", "param2"}, String.class, String.class, Context.class);
-
-    assertThat(parameters).containsExactly("param1", "param2", context);
-  }
-
-  @Test
-  public void inject_context_content_as_bean() {
-    Context context = mock(Context.class);
-    Human human = mock(Human.class);
-    when(context.extract(Human.class)).thenReturn(human);
-
-    Object[] parameters = TypeConvert.convert(context, new String[]{"param"}, String.class, Human.class);
-
-    assertThat(parameters).containsExactly("param", human);
   }
 
   static class Human {
