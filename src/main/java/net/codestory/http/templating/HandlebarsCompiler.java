@@ -80,11 +80,9 @@ public enum HandlebarsCompiler {
     return hb;
   }
 
-
   private Context context(Map<String, ?> variables) {
     return Context.newBuilder(null)
       .resolver(resolvers.toArray(new ValueResolver[resolvers.size()]))
-      .combine("site", Site.get())
       .combine(variables)
       .build();
   }
