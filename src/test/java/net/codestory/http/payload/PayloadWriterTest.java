@@ -25,6 +25,7 @@ import java.nio.file.*;
 import java.util.*;
 
 import net.codestory.http.exchange.*;
+import net.codestory.http.misc.*;
 
 import org.junit.*;
 
@@ -33,7 +34,7 @@ public class PayloadWriterTest {
   Response response = mock(Response.class);
   Cookies cookies = mock(Cookies.class);
 
-  PayloadWriter writer = new PayloadWriter(request, response);
+  PayloadWriter writer = new PayloadWriter(new Env(), request, response);
 
   @Before
   public void setupContext() throws IOException {

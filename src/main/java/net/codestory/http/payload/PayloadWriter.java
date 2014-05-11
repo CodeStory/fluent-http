@@ -37,14 +37,25 @@ import net.codestory.http.templating.*;
 import net.codestory.http.types.*;
 
 public class PayloadWriter {
+  private static Site INSTANCE = new Site();
+
   private final Request request;
   private final Response response;
   private final Env env;
+  private final Site site;
 
-  public PayloadWriter(Request request, Response response) {
+  public PayloadWriter(Env env, Request request, Response response) {
     this.request = request;
     this.response = response;
-    this.env = Env.INSTANCE;
+    this.env = env;
+    this.site = env.prodMode() ? INSTANCE : new Site();
+  }
+
+  protected PayloadWriter(Env env, Site site, Request request, Response response) {
+    this.request = request;
+    this.response = response;
+    this.env = env;
+    this.site = site; // TODO: Supplier<Site>
   }
 
   public void write(Payload payload) throws IOException {
@@ -212,7 +223,7 @@ public class PayloadWriter {
     Map<String, Object> keyValues = new HashMap<>();
     keyValues.putAll(modelAndView.model().keyValues());
     keyValues.put("cookies", request.cookies().keyValues());
-    keyValues.put("site", Site.get());
+    keyValues.put("site", site);
 
     CacheEntry html = new Template(view).render(keyValues);
 

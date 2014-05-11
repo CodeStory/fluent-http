@@ -15,15 +15,13 @@
  */
 package net.codestory.http.misc;
 
-public enum Env {
-  INSTANCE;
-
+public class Env {
   private final boolean prodMode;
   private final boolean disableClassPath;
   private final boolean disableFilesystem;
   private final boolean disableGzip;
 
-  private Env() {
+  public Env() {
     prodMode = getBoolean("PROD_MODE", false);
     disableClassPath = getBoolean("http.disable.classpath", false);
     disableFilesystem = getBoolean("http.disable.filesystem", false);

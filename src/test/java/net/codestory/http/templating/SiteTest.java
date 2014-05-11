@@ -22,7 +22,7 @@ import java.util.*;
 import org.junit.*;
 
 public class SiteTest {
-  private static Site site = Site.get();
+  private static Site site = new Site();
 
   @Test
   public void pages() {

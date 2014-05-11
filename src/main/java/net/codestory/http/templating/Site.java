@@ -34,8 +34,6 @@ import net.codestory.http.misc.*;
 import com.github.jknack.handlebars.*;
 
 public class Site {
-  private static Site INSTANCE = new Site();
-
   private final Env env;
   private final Supplier<Map<String, Object>> yaml;
   private final Supplier<Map<String, Object>> data;
@@ -43,8 +41,8 @@ public class Site {
   private final Supplier<Map<String, List<Map<String, Object>>>> tags;
   private final Supplier<Map<String, List<Map<String, Object>>>> categories;
 
-  private Site() {
-    env = Env.INSTANCE;
+  public Site() {
+    env = new Env();
 
     yaml = memoize(() -> loadYamlConfig("_config.yml"));
 
@@ -98,11 +96,6 @@ public class Site {
     paths.remove("");
 
     return paths;
-  }
-
-
-  public static Site get() {
-    return Env.INSTANCE.prodMode() ? INSTANCE : new Site();
   }
 
   private Map<String, Object> configYaml() {
