@@ -42,11 +42,11 @@ public enum HandlebarsCompiler {
   HandlebarsCompiler() {
     this.handlebars = handlebars();
     this.resolvers = new ArrayList<>(asList(
-        MapValueResolver.INSTANCE,
-        JavaBeanValueResolver.INSTANCE,
-        FieldValueResolver.INSTANCE,
-        MethodValueResolver.INSTANCE,
-        Site.SiteValueResolver.INSTANCE
+      MapValueResolver.INSTANCE,
+      JavaBeanValueResolver.INSTANCE,
+      FieldValueResolver.INSTANCE,
+      MethodValueResolver.INSTANCE,
+      Site.SiteValueResolver.INSTANCE
     ));
   }
 
@@ -77,38 +77,27 @@ public enum HandlebarsCompiler {
       }
     });
 
-    if (isThereACustomHandleBarHelperToLoad()) {
-      hb.registerHelpers(findHandleBarHelpers());
-    }
-
     return hb;
   }
 
-  private static boolean isThereACustomHandleBarHelperToLoad() {
-    return null != Site.get().get("handleBarHelper");
-  }
-
-  private static Class<?> findHandleBarHelpers() {
-    String helperClassName = (String) Site.get().get("handleBarHelper");
-    try {
-      return Class.forName(helperClassName);
-    } catch (Exception e) {
-      throw new IllegalStateException("Unable to register " + helperClassName);
-    }
-  }
 
   private Context context(Map<String, ?> variables) {
     return Context.newBuilder(null)
-        .resolver(resolvers.toArray(new ValueResolver[resolvers.size()]))
-        .combine("site", Site.get())
-        .combine(variables)
-        .build();
+      .resolver(resolvers.toArray(new ValueResolver[resolvers.size()]))
+      .combine("site", Site.get())
+      .combine(variables)
+      .build();
   }
 
   public void addResolver(ValueResolver resolver) {
     resolvers.add(resolver);
   }
 
-  private static class NopRegister {
+  public void registerHelper(Class<?> helperSource) {
+    handlebars.registerHelpers(helperSource);
+  }
+
+  public void registerHelper(Object helperSource) {
+    handlebars.registerHelpers(helperSource);
   }
 }
