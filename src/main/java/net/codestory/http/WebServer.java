@@ -55,8 +55,8 @@ public class WebServer {
   }
 
   public WebServer(Configuration configuration) {
-    env = new Env();
     try {
+      env = new Env();
       server = new SimpleServerWrapper(this::handle);
     } catch (IOException e) {
       throw new IllegalStateException("Unable to create http server", e);
@@ -72,8 +72,8 @@ public class WebServer {
 
   public WebServer configure(Configuration configuration) {
     routesProvider = env.prodMode()
-      ? RoutesProvider.fixed(configuration)
-      : RoutesProvider.reloading(configuration);
+      ? RoutesProvider.fixed(env, configuration)
+      : RoutesProvider.reloading(env, configuration);
     return this;
   }
 

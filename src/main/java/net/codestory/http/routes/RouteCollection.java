@@ -41,12 +41,12 @@ public class RouteCollection implements Routes {
   private ContextFactory contextFactory;
   private PayloadWriterFactory payloadWriterFactory;
 
-  public RouteCollection() {
+  public RouteCollection(Env env) {
     this.routes = new LinkedList<>();
     this.filters = new LinkedList<>();
     this.iocAdapter = new Singletons();
     this.contextFactory = (request, response) -> new Context(request, response, iocAdapter);
-    this.payloadWriterFactory = (request, response) -> new PayloadWriter(new Env(), request, response);
+    this.payloadWriterFactory = (request, response) -> new PayloadWriter(env, request, response);
   }
 
   @Override
