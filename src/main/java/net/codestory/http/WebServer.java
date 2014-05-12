@@ -123,6 +123,8 @@ public class WebServer {
     this.port = env.overriddenPort(port);
 
     try {
+      LOG.info(env.prodMode() ? "Production mode" : "Dev mode");
+
       server.start(this.port, context, authReq);
 
       LOG.info("Server started on port {}", this.port);
