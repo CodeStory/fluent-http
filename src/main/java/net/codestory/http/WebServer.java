@@ -168,7 +168,11 @@ public class WebServer {
 
       payloadWriter.write(payload);
     } catch (Exception e) {
-      handleServerError(request, response, e);
+      // Cannot be created by routes since it was not initialized properly
+      // TODO: get rid of new Site() here
+      //
+      PayloadWriter payloadWriter = new PayloadWriter(env, new Site(), request, response);
+      handleServerError(payloadWriter, e);
     } finally {
       try {
         response.close();
@@ -178,7 +182,7 @@ public class WebServer {
     }
   }
 
-  protected void handleServerError(Request request, Response response, Exception e) {
+  protected void handleServerError(PayloadWriter payloadWriter, Exception e) {
     try {
       if (e instanceof CompilerException) {
         LOG.error(e.getMessage());
@@ -186,7 +190,6 @@ public class WebServer {
         e.printStackTrace();
       }
 
-      PayloadWriter payloadWriter = new PayloadWriter(env, new Site(), request, response); // TODO get rid of new Site() here
       payloadWriter.write(errorPage(e));
     } catch (IOException error) {
       LOG.warn("Unable to serve an error page", error);
