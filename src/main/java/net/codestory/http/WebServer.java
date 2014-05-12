@@ -186,7 +186,7 @@ public class WebServer {
         e.printStackTrace();
       }
 
-      PayloadWriter payloadWriter = new PayloadWriter(env, new Site(), request, response);
+      PayloadWriter payloadWriter = new PayloadWriter(env, new Site(), request, response); // TODO get rid of new Site() here
       payloadWriter.write(errorPage(e));
     } catch (IOException error) {
       LOG.warn("Unable to serve an error page", error);
