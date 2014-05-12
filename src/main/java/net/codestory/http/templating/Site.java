@@ -34,7 +34,7 @@ import net.codestory.http.misc.*;
 import com.github.jknack.handlebars.*;
 
 public class Site {
-  private final Env env;
+  private final Supplier<Set<String>> resourceList;
   private final Supplier<Map<String, Object>> yaml;
   private final Supplier<Map<String, Object>> data;
   private final Supplier<List<Map<String, Object>>> pages;
@@ -42,16 +42,16 @@ public class Site {
   private final Supplier<Map<String, List<Map<String, Object>>>> categories;
 
   public Site() {
-    env = new Env();
+    resourceList = memoize(() -> list(new Env()));
 
     yaml = memoize(() -> loadYamlConfig("_config.yml"));
 
-    data = memoize(() -> list()
+    data = memoize(() -> resourceList.get()
       .stream()
       .filter(path -> path.startsWith("_data/"))
       .collect(Collectors.toMap(path -> nameWithoutExtension(path), path -> readYaml(path))));
 
-    pages = memoize(() -> list()
+    pages = memoize(() -> resourceList.get()
       .stream()
       .filter(path -> !path.startsWith("_"))
       .map(path -> Site.pathToMap(path))
@@ -76,7 +76,7 @@ public class Site {
     });
   }
 
-  private Set<String> list() {
+  private static Set<String> list(Env env) {
     Set<String> paths = new TreeSet<>();
 
     Path parentPath = Paths.get(ROOT);
