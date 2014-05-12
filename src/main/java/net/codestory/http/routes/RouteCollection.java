@@ -36,7 +36,8 @@ import net.codestory.http.payload.*;
 import net.codestory.http.templating.*;
 
 public class RouteCollection implements Routes {
-  private final Site site = new Site();
+  private final Env env;
+  private final Site site;
   private final Deque<Route> routes;
   private final Deque<Supplier<Filter>> filters;
 
@@ -44,7 +45,9 @@ public class RouteCollection implements Routes {
   private ContextFactory contextFactory;
   private PayloadWriterFactory payloadWriterFactory;
 
-  public RouteCollection(Env env) {
+  public RouteCollection() {
+    this.site = new Site();
+    this.env = new Env();
     this.routes = new LinkedList<>();
     this.filters = new LinkedList<>();
     this.iocAdapter = new Singletons();

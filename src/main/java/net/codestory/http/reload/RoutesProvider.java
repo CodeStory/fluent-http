@@ -18,18 +18,17 @@ package net.codestory.http.reload;
 import java.io.*;
 
 import net.codestory.http.*;
-import net.codestory.http.misc.*;
 import net.codestory.http.routes.*;
 
 @FunctionalInterface
 public interface RoutesProvider extends Serializable {
   RouteCollection get();
 
-  static RoutesProvider fixed(Env env, Configuration configuration) {
-    return new FixedRoutesProvider(env, configuration);
+  static RoutesProvider fixed(Configuration configuration) {
+    return new FixedRoutesProvider(configuration);
   }
 
-  static RoutesProvider reloading(Env env, Configuration configuration) {
-    return new ReloadingRoutesProvider(env, configuration);
+  static RoutesProvider reloading(Configuration configuration) {
+    return new ReloadingRoutesProvider(configuration);
   }
 }

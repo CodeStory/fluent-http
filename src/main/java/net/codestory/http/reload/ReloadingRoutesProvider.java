@@ -20,7 +20,6 @@ import java.util.concurrent.atomic.*;
 
 import net.codestory.http.*;
 import net.codestory.http.io.*;
-import net.codestory.http.misc.*;
 import net.codestory.http.routes.*;
 
 import org.slf4j.*;
@@ -28,7 +27,6 @@ import org.slf4j.*;
 class ReloadingRoutesProvider implements RoutesProvider {
   private final static Logger LOG = LoggerFactory.getLogger(ReloadingRoutesProvider.class);
 
-  private final Env env;
   private final Configuration configuration;
   private final AtomicBoolean dirty;
   private final FolderWatcher targetFolderWatcher;
@@ -36,8 +34,7 @@ class ReloadingRoutesProvider implements RoutesProvider {
 
   private RouteCollection routes;
 
-  ReloadingRoutesProvider(Env env, Configuration configuration) {
-    this.env = env;
+  ReloadingRoutesProvider(Configuration configuration) {
     this.configuration = configuration;
     this.dirty = new AtomicBoolean(true);
     this.targetFolderWatcher = new FolderWatcher(Paths.get(Resources.CLASSES_OUTPUT_DIR), ev -> dirty.set(true));
@@ -54,7 +51,7 @@ class ReloadingRoutesProvider implements RoutesProvider {
         appFolderWatcher.ensureStarted();
       }
 
-      routes = new RouteCollection(env);
+      routes = new RouteCollection();
       configuration.configure(routes);
       routes.addStaticRoutes(false);
 

@@ -73,8 +73,8 @@ public class WebServer {
 
   public WebServer configure(Configuration configuration) {
     routesProvider = env.prodMode()
-      ? RoutesProvider.fixed(env, configuration)
-      : RoutesProvider.reloading(env, configuration);
+      ? RoutesProvider.fixed(configuration)
+      : RoutesProvider.reloading(configuration);
     return this;
   }
 
