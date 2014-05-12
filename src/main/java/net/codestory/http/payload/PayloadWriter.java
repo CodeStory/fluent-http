@@ -37,25 +37,16 @@ import net.codestory.http.templating.*;
 import net.codestory.http.types.*;
 
 public class PayloadWriter {
-  private static Site INSTANCE = new Site();
-
-  private final Request request;
-  private final Response response;
   private final Env env;
   private final Site site;
+  private final Request request;
+  private final Response response;
 
-  public PayloadWriter(Env env, Request request, Response response) {
+  public PayloadWriter(Env env, Site site, Request request, Response response) {
     this.request = request;
     this.response = response;
     this.env = env;
-    this.site = env.prodMode() ? INSTANCE : new Site();
-  }
-
-  protected PayloadWriter(Env env, Site site, Request request, Response response) {
-    this.request = request;
-    this.response = response;
-    this.env = env;
-    this.site = site; // TODO: Supplier<Site>
+    this.site = site;
   }
 
   public void write(Payload payload) throws IOException {

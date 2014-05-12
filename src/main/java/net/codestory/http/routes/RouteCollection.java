@@ -33,10 +33,13 @@ import net.codestory.http.filters.*;
 import net.codestory.http.injection.*;
 import net.codestory.http.misc.*;
 import net.codestory.http.payload.*;
+import net.codestory.http.templating.*;
 
 public class RouteCollection implements Routes {
+  private final Site site = new Site();
   private final Deque<Route> routes;
   private final Deque<Supplier<Filter>> filters;
+
   private IocAdapter iocAdapter;
   private ContextFactory contextFactory;
   private PayloadWriterFactory payloadWriterFactory;
@@ -46,7 +49,7 @@ public class RouteCollection implements Routes {
     this.filters = new LinkedList<>();
     this.iocAdapter = new Singletons();
     this.contextFactory = (request, response) -> new Context(request, response, iocAdapter);
-    this.payloadWriterFactory = (request, response) -> new PayloadWriter(env, request, response);
+    this.payloadWriterFactory = (request, response) -> new PayloadWriter(env, site, request, response);
   }
 
   @Override

@@ -32,6 +32,7 @@ import net.codestory.http.payload.*;
 import net.codestory.http.reload.*;
 import net.codestory.http.routes.*;
 import net.codestory.http.ssl.*;
+import net.codestory.http.templating.*;
 
 import org.slf4j.*;
 
@@ -185,7 +186,7 @@ public class WebServer {
         e.printStackTrace();
       }
 
-      PayloadWriter payloadWriter = new PayloadWriter(env, request, response);
+      PayloadWriter payloadWriter = new PayloadWriter(env, new Site(), request, response);
       payloadWriter.write(errorPage(e));
     } catch (IOException error) {
       LOG.warn("Unable to serve an error page", error);
