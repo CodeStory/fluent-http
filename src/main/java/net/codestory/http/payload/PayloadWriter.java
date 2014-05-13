@@ -127,6 +127,10 @@ public class PayloadWriter {
       Path path = (Path) content;
       return ContentTypes.get(path);
     }
+    if (content instanceof CompiledPath) {
+      CompiledPath compiledPath = (CompiledPath) content;
+      return ContentTypes.get(compiledPath.getPath());
+    }
     if (content instanceof byte[]) {
       return "application/octet-stream";
     }
@@ -163,6 +167,9 @@ public class PayloadWriter {
     if (content instanceof Path) {
       return forPath((Path) content);
     }
+    if (content instanceof CompiledPath) {
+      return forCompiledPath((CompiledPath) content);
+    }
     if (content instanceof byte[]) {
       return (byte[]) content;
     }
@@ -185,13 +192,16 @@ public class PayloadWriter {
     return TypeConvert.toByteArray(content);
   }
 
-  protected long getLastModified(Payload payload) {
+  protected long getLastModified(Payload payload) throws IOException {
     Object content = payload.rawContent();
+    if (content instanceof File) {
+      return ((File) content).lastModified();
+    }
     if (content instanceof Path) {
       return ((Path) content).toFile().lastModified();
     }
-    if (content instanceof File) {
-      return ((File) content).lastModified();
+    if (content instanceof CompiledPath) {
+      return ((CompiledPath) content).compile().lastModified();
     }
     if (content instanceof CacheEntry) {
       return ((CacheEntry) content).lastModified();
@@ -230,8 +240,10 @@ public class PayloadWriter {
       return forModelAndView(ModelAndView.of(Resources.toUnixString(path)));
     }
 
-    String content = Resources.read(path, UTF_8);
-    CacheEntry compiled = Compilers.INSTANCE.compile(path, content);
-    return compiled.toBytes();
+    return forCompiledPath(new CompiledPath(path));
+  }
+
+  protected byte[] forCompiledPath(CompiledPath compiledPath) throws IOException {
+    return compiledPath.compile().toBytes();
   }
 }
