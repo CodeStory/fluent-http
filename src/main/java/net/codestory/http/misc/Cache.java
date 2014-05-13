@@ -15,12 +15,13 @@
  */
 package net.codestory.http.misc;
 
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 
 public class Cache<K, V> implements Function<K, V> {
   private final Function<K, V> delegate;
-  private final ConcurrentMap<K, V> cache;
+  private final Map<K, V> cache;
 
   public Cache(Function<K, V> delegate) {
     this.delegate = delegate;
