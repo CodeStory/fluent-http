@@ -29,7 +29,7 @@ public enum Compilers {
   INSTANCE;
 
   private final Map<String, Supplier<Compiler>> compilerByExtension = new HashMap<>();
-  private final ConcurrentMap<String, CacheEntry> cache = new ConcurrentHashMap<>();
+  private final Map<String, CacheEntry> cache = new ConcurrentHashMap<>();
   private final DiskCache diskCache = new DiskCache("V1");
 
   private Compilers() {
