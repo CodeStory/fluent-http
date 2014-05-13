@@ -55,8 +55,6 @@ public class BasicAuthFilterTest {
 
   @Test
   public void authorized_query() throws IOException {
-    System.out.println(Base64.getEncoder().encodeToString("jl:WRONG".getBytes()));
-
     when(context.header("Authorization")).thenReturn("Basic amw6cG9sa2E="); // "jl:polka" encoded in base64
 
     Payload payload = filter.apply("/secure/foo", context, nextFilter);
