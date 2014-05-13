@@ -70,7 +70,7 @@ class WebJarsRoute implements Route {
   }
 
   @Override
-  public Object body(Context context) throws IOException {
+  public Payload body(Context context) throws IOException {
     String uri = context.uri();
 
     URL classpathUrl = webJarUrlFinder.url(uri);

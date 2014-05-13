@@ -48,7 +48,7 @@ class StaticRoute implements Route {
   }
 
   @Override
-  public Object body(Context context) {
+  public Path body(Context context) {
     return findPath.apply(context.uri());
   }
 

@@ -39,7 +39,7 @@ class SourceMapRoute implements Route {
   }
 
   @Override
-  public Object body(Context context) throws IOException {
+  public Payload body(Context context) throws IOException {
     String uri = context.uri();
     Path pathLess = pathSource(uri);
     Path pathMap = Paths.get(uri);
