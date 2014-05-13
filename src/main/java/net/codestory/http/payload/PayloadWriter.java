@@ -232,18 +232,23 @@ public class PayloadWriter {
   }
 
   protected byte[] forPath(Path path) throws IOException {
-    if (ContentTypes.is_binary(path)) {
-      return Resources.readBytes(path);
-    }
-
     if (ContentTypes.support_templating(path)) {
-      return forModelAndView(ModelAndView.of(Resources.toUnixString(path)));
+      return forTemplatePath(path);
     }
 
-    return forCompiledPath(new CompiledPath(path));
+    return Resources.readBytes(path);
   }
 
   protected byte[] forCompiledPath(CompiledPath compiledPath) throws IOException {
+    Path path = compiledPath.getPath();
+    if (ContentTypes.support_templating(path)) {
+      return forTemplatePath(path);
+    }
+
     return compiledPath.compile().toBytes();
+  }
+
+  protected byte[] forTemplatePath(Path path) {
+    return forModelAndView(ModelAndView.of(Resources.toUnixString(path)));
   }
 }

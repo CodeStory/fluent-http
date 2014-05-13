@@ -21,13 +21,15 @@ import java.nio.file.*;
 import java.util.function.*;
 
 import net.codestory.http.*;
+import net.codestory.http.compilers.*;
 import net.codestory.http.io.*;
 import net.codestory.http.misc.*;
+import net.codestory.http.types.*;
 
 class StaticRoute implements Route {
   private static final Path NOT_FOUND = Paths.get("");
 
-  private final Function<String, Path> findPath;
+  private final Function<String, Object> findPath;
 
   StaticRoute(boolean cached) {
     if (cached) {
@@ -48,12 +50,16 @@ class StaticRoute implements Route {
   }
 
   @Override
-  public Path body(Context context) {
+  public Object body(Context context) {
     return findPath.apply(context.uri());
   }
 
-  private static Path findPath(String uri) {
+  private static Object findPath(String uri) {
     Path path = Resources.findExistingPath(uri);
-    return (path != null) && Resources.isPublic(path) ? path : NOT_FOUND;
+    if ((path == null) || !Resources.isPublic(path)) {
+      return NOT_FOUND;
+    }
+
+    return ContentTypes.is_binary(path) ? path : new CompiledPath(path);
   }
 }
