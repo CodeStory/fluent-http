@@ -24,7 +24,7 @@ import org.junit.*;
 
 public class ContentTypesTest {
   @Test
-  public void find_content_type_from_extension() {
+  public void content_type_from_extension() {
     assertThat(get(Paths.get("index.html"))).isEqualTo("text/html;charset=UTF-8");
     assertThat(get(Paths.get("data.xml"))).isEqualTo("application/xml;charset=UTF-8");
     assertThat(get(Paths.get("style.css"))).isEqualTo("text/css;charset=UTF-8");
@@ -54,7 +54,7 @@ public class ContentTypesTest {
   }
 
   @Test
-  public void find_compatibility_with_templating() {
+  public void compatibility_with_templating() {
     assertThat(support_templating(Paths.get("index.html"))).isTrue();
     assertThat(support_templating(Paths.get("data.xml"))).isTrue();
     assertThat(support_templating(Paths.get("style.css"))).isTrue();

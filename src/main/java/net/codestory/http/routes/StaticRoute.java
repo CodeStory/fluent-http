@@ -60,6 +60,10 @@ class StaticRoute implements Route {
       return NOT_FOUND;
     }
 
-    return ContentTypes.is_binary(path) ? path : new CompiledPath(path);
+    if (ContentTypes.is_binary(path)) {
+      return path;
+    }
+
+    return new CompiledPath(path);
   }
 }
