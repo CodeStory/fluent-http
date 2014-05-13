@@ -17,7 +17,7 @@ package net.codestory.http.routes;
 
 import static net.codestory.http.constants.Methods.*;
 
-import net.codestory.http.exchange.*;
+import net.codestory.http.*;
 
 class RouteWrapper implements Route {
   private final String method;

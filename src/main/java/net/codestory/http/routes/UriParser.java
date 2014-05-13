@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.exchange;
+package net.codestory.http.routes;
 
+import net.codestory.http.*;
 import net.codestory.http.io.*;
 
 public class UriParser {
@@ -84,6 +85,6 @@ public class UriParser {
 
   public static int paramsCount(String uriPattern) {
     return Strings.countMatches(uriPattern, "/:") +
-        Strings.countMatches(uriPattern, "=:");
+      Strings.countMatches(uriPattern, "=:");
   }
 }

@@ -13,22 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.exchange;
+package net.codestory.http.internal;
 
-import java.util.*;
+import net.codestory.http.*;
 
-public interface Query {
-  String get(String name);
-
-  Iterable<String> all(String name);
-
-  int getInteger(String name);
-
-  float getFloat(String name);
-
-  boolean getBoolean(String name);
-
-  Map<String, String> keyValues();
-
-  <T> T unwrap(Class<T> type);
+@FunctionalInterface
+public interface Handler {
+  void handle(Request request, Response response);
 }

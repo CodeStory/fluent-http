@@ -13,28 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.exchange;
+package net.codestory.http;
 
-public interface Cookie {
-  String name();
+import java.util.*;
 
-  String value();
+public interface Cookies extends Iterable<Cookie> {
+  Cookie get(String name);
 
-  int version();
+  String value(String name);
 
-  boolean isNew();
+  Map<String, String> keyValues();
 
-  boolean isSecure();
+  <T> T value(String name, T defaultValue);
 
-  boolean isHttpOnly();
+  <T> T value(String name, Class<T> type);
 
-  int expiry();
+  String value(String name, String defaultValue);
 
-  String path();
+  int value(String name, int defaultValue);
 
-  String domain();
+  long value(String name, long defaultValue);
 
-  <T> T unwrap(Class<T> type);
+  boolean value(String name, boolean defaultValue);
 }
-
-

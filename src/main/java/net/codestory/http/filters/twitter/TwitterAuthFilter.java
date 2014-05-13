@@ -18,11 +18,12 @@ package net.codestory.http.filters.twitter;
 import java.io.*;
 import java.net.*;
 
-import net.codestory.http.exchange.*;
+import net.codestory.http.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.payload.*;
 
 import twitter4j.*;
+import twitter4j.conf.Configuration;
 import twitter4j.conf.*;
 
 public class TwitterAuthFilter implements Filter {
@@ -47,9 +48,9 @@ public class TwitterAuthFilter implements Filter {
 
   private static Authenticator createAuthenticator(String oAuthKey, String oAuthSecret) {
     Configuration config = new ConfigurationBuilder()
-        .setOAuthConsumerKey(oAuthKey)
-        .setOAuthConsumerSecret(oAuthSecret)
-        .build();
+      .setOAuthConsumerKey(oAuthKey)
+      .setOAuthConsumerSecret(oAuthSecret)
+      .build();
 
     TwitterFactory twitterFactory = new TwitterFactory(config);
 
@@ -69,16 +70,16 @@ public class TwitterAuthFilter implements Filter {
       }
 
       return Payload.seeOther("/")
-          .withCookie(new NewCookie("userId", user.id.toString(), "/", true))
-          .withCookie(new NewCookie("screenName", user.screenName, "/", true))
-          .withCookie(new NewCookie("userPhoto", user.imageUrl, "/", true));
+        .withCookie(new NewCookie("userId", user.id.toString(), "/", true))
+        .withCookie(new NewCookie("screenName", user.screenName, "/", true))
+        .withCookie(new NewCookie("userPhoto", user.imageUrl, "/", true));
     }
 
     if (uri.equals(uriPrefix + "logout")) {
       return Payload.seeOther("/")
-          .withCookie(new NewCookie("userId", "", "/", false))
-          .withCookie(new NewCookie("screenName", "", "/", false))
-          .withCookie(new NewCookie("userPhoto", "", "/", false));
+        .withCookie(new NewCookie("userId", "", "/", false))
+        .withCookie(new NewCookie("screenName", "", "/", false))
+        .withCookie(new NewCookie("userPhoto", "", "/", false));
     }
 
     String userId = context.cookies().value("userId");

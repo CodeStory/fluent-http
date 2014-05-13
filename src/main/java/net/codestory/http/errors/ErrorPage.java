@@ -36,8 +36,8 @@ public class ErrorPage {
     String filename = filename();
 
     return new Payload("text/html", ModelAndView.of(filename, "ERROR", error), payload.code())
-        .withHeaders(payload.headers())
-        .withCookies(payload.cookies());
+      .withHeaders(payload.headers())
+      .withCookies(payload.cookies());
   }
 
   private String filename() {

@@ -25,7 +25,7 @@ import java.io.*;
 import java.net.*;
 import java.nio.file.*;
 
-import net.codestory.http.exchange.*;
+import net.codestory.http.*;
 import net.codestory.http.io.*;
 import net.codestory.http.misc.*;
 import net.codestory.http.payload.*;
@@ -80,9 +80,9 @@ class WebJarsRoute implements Route {
       byte[] data = InputStreams.readBytes(stream);
 
       return new Payload(contentType, data)
-          .withHeader(CACHE_CONTROL, "public, max-age=31536000")
-          .withHeader(LAST_MODIFIED, RFC_1123_DATE_TIME.format(now().minusMonths(1L)))
-          .withHeader(EXPIRES, RFC_1123_DATE_TIME.format(now().plusWeeks(1L)));
+        .withHeader(CACHE_CONTROL, "public, max-age=31536000")
+        .withHeader(LAST_MODIFIED, RFC_1123_DATE_TIME.format(now().minusMonths(1L)))
+        .withHeader(EXPIRES, RFC_1123_DATE_TIME.format(now().plusWeeks(1L)));
     }
   }
 

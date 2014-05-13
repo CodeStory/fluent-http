@@ -19,7 +19,6 @@ import static org.mockito.Mockito.*;
 
 import net.codestory.http.annotations.*;
 import net.codestory.http.errors.*;
-import net.codestory.http.exchange.*;
 import net.codestory.http.injection.*;
 import net.codestory.http.templating.*;
 import net.codestory.http.testhelpers.*;

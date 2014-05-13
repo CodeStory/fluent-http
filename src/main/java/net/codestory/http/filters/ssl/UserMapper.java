@@ -15,7 +15,7 @@
  */
 package net.codestory.http.filters.ssl;
 
-import net.codestory.http.exchange.*;
+import net.codestory.http.*;
 import net.codestory.http.security.*;
 
 public interface UserMapper {

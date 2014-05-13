@@ -13,22 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.exchange;
+package net.codestory.http;
 
-import java.io.*;
+public interface Cookie {
+  String name();
 
-public interface Response {
-  void close() throws IOException;
+  String value();
 
-  OutputStream outputStream() throws IOException;
+  int version();
 
-  void setContentLength(long length);
+  boolean isNew();
 
-  void setValue(String name, String value);
+  boolean isSecure();
 
-  void setStatus(int statusCode);
+  boolean isHttpOnly();
 
-  void setCookie(Cookie cookie);
+  int expiry();
+
+  String path();
+
+  String domain();
 
   <T> T unwrap(Class<T> type);
 }
+
+

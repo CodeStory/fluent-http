@@ -27,14 +27,14 @@ public class RoutesWithPatternTest {
   @Test
   public void has_all_methods() {
     List<Method> methodsWithExplicitUri = of(Routes.class.getDeclaredMethods())
-        .filter(method -> method.getParameterCount() > 1)
-        .filter(method -> method.getParameterTypes()[0].isAssignableFrom(String.class))
-        .exclude(method -> method.getName().equals("add"))
-        .toList();
+      .filter(method -> method.getParameterCount() > 1)
+      .filter(method -> method.getParameterTypes()[0].isAssignableFrom(String.class))
+      .exclude(method -> method.getName().equals("add"))
+      .toList();
 
     List<Method> methodsWithImplicitUri = of(RoutesWithPattern.class.getDeclaredMethods())
-        .exclude(method -> method.getName().equals("with"))
-        .toList();
+      .exclude(method -> method.getName().equals("with"))
+      .toList();
 
     assertThat(methodsWithExplicitUri).hasSameSizeAs(methodsWithImplicitUri);
   }

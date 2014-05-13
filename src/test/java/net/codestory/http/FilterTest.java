@@ -17,7 +17,6 @@ package net.codestory.http;
 
 import static java.nio.charset.StandardCharsets.*;
 
-import net.codestory.http.exchange.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.misc.*;
 import net.codestory.http.payload.*;

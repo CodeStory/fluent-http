@@ -17,7 +17,7 @@ package net.codestory.http.routes;
 
 import java.io.*;
 
-import net.codestory.http.exchange.*;
+import net.codestory.http.*;
 import net.codestory.http.payload.*;
 
 public interface Route extends Serializable {

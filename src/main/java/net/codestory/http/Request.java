@@ -13,26 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.exchange;
+package net.codestory.http;
 
+import java.io.*;
+import java.net.*;
 import java.util.*;
 
-public interface Cookies extends Iterable<Cookie> {
-  Cookie get(String name);
+public interface Request {
+  String uri();
 
-  String value(String name);
+  String method();
 
-  Map<String, String> keyValues();
+  String header(String name);
 
-  <T> T value(String name, T defaultValue);
+  String content() throws IOException;
 
-  <T> T value(String name, Class<T> type);
+  InputStream inputStream() throws IOException;
 
-  String value(String name, String defaultValue);
+  List<String> headers(String name);
 
-  int value(String name, int defaultValue);
+  InetSocketAddress clientAddress();
 
-  long value(String name, long defaultValue);
+  boolean isSecure();
 
-  boolean value(String name, boolean defaultValue);
+  Cookies cookies();
+
+  Query query();
+
+  List<Part> parts();
+
+  <T> T unwrap(Class<T> type);
 }

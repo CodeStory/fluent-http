@@ -17,8 +17,8 @@ package net.codestory.http.internal;
 
 import java.io.*;
 
-import net.codestory.http.exchange.Cookie;
-import net.codestory.http.exchange.Response;
+import net.codestory.http.Cookie;
+import net.codestory.http.Response;
 
 import org.simpleframework.http.*;
 

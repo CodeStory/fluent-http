@@ -17,7 +17,7 @@ package net.codestory.http.filters.ssl;
 
 import java.io.*;
 
-import net.codestory.http.exchange.*;
+import net.codestory.http.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.security.*;

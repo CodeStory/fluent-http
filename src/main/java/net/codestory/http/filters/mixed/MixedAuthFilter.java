@@ -19,7 +19,7 @@ import static net.codestory.http.constants.Headers.*;
 
 import java.io.*;
 
-import net.codestory.http.exchange.*;
+import net.codestory.http.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.filters.auth.*;
 import net.codestory.http.filters.basic.*;

@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 import java.io.*;
 import java.util.*;
 
-import net.codestory.http.exchange.*;
+import net.codestory.http.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.security.*;

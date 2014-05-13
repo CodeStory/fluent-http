@@ -18,7 +18,7 @@ package net.codestory.http.routes;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import net.codestory.http.exchange.*;
+import net.codestory.http.*;
 
 import org.junit.*;
 

@@ -33,10 +33,10 @@ class FormulaPlugin extends Plugin {
     lines.forEach(line -> {
       if (!line.trim().isEmpty()) {
         result.append("<img src=\"http://latex.codecogs.com/")
-            .append(type)
-            .append(".download?")
-            .append(encode(line))
-            .append("\" />");
+          .append(type)
+          .append(".download?")
+          .append(encode(line))
+          .append("\" />");
       }
     });
   }

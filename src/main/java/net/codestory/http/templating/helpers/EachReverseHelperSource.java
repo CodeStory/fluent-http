@@ -29,8 +29,8 @@ public class EachReverseHelperSource {
     }
 
     return (context instanceof Iterable<?>)
-        ? iterableContext((Iterable<?>) context, options)
-        : hashContext(context, options);
+      ? iterableContext((Iterable<?>) context, options)
+      : hashContext(context, options);
   }
 
   private CharSequence hashContext(Object context, Options options) throws IOException {
@@ -41,7 +41,7 @@ public class EachReverseHelperSource {
     while (iterator.hasNext()) {
       Map.Entry<String, Object> entry = iterator.next();
       Context current = Context.newContext(parent, entry.getValue())
-          .data("key", entry.getKey());
+        .data("key", entry.getKey());
       buffer.append(options.fn(current));
     }
 
@@ -66,11 +66,11 @@ public class EachReverseHelperSource {
       boolean last = !iterator.hasNext();
 
       Context current = Context.newContext(parent, element)
-          .data("index", index)
-          .data("first", first ? "first" : "")
-          .data("last", last ? "last" : "")
-          .data("odd", even ? "" : "odd")
-          .data("even", even ? "even" : "");
+        .data("index", index)
+        .data("first", first ? "first" : "")
+        .data("last", last ? "last" : "")
+        .data("odd", even ? "" : "odd")
+        .data("even", even ? "even" : "");
       buffer.append(options.fn(current));
 
       index++;

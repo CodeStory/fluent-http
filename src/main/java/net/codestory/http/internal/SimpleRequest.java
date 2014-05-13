@@ -21,7 +21,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import net.codestory.http.exchange.*;
+import net.codestory.http.*;
 
 class SimpleRequest implements Request {
   private final org.simpleframework.http.Request request;

@@ -20,6 +20,7 @@ import static org.mockito.Mockito.*;
 
 import java.io.*;
 
+import net.codestory.http.*;
 import net.codestory.http.injection.*;
 import net.codestory.http.security.*;
 

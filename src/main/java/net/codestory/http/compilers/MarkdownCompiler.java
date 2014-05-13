@@ -26,10 +26,10 @@ public class MarkdownCompiler implements Compiler {
 
   public MarkdownCompiler() {
     configuration = Configuration.builder()
-        .forceExtentedProfile()
-        .registerPlugins(new YumlPlugin(), new WebSequencePlugin(), new IncludePlugin(), new FormulaPlugin(), new TablePlugin())
-        .setDecorator(new ExtDecorator())
-        .setCodeBlockEmitter(new CodeBlockEmitter()).build();
+      .forceExtentedProfile()
+      .registerPlugins(new YumlPlugin(), new WebSequencePlugin(), new IncludePlugin(), new FormulaPlugin(), new TablePlugin())
+      .setDecorator(new ExtDecorator())
+      .setCodeBlockEmitter(new CodeBlockEmitter()).build();
   }
 
   @Override

@@ -56,10 +56,10 @@ class FolderWatcher {
 
       walkFileTree(folder, onDirectory(dir -> {
         dir.register(watcher, new WatchEvent.Kind[]{
-            StandardWatchEventKinds.ENTRY_CREATE,
-            StandardWatchEventKinds.ENTRY_MODIFY,
-            StandardWatchEventKinds.ENTRY_DELETE},
-            SensitivityWatchEventModifier.HIGH);
+          StandardWatchEventKinds.ENTRY_CREATE,
+          StandardWatchEventKinds.ENTRY_MODIFY,
+          StandardWatchEventKinds.ENTRY_DELETE},
+          SensitivityWatchEventModifier.HIGH);
       }));
 
       return watcher;

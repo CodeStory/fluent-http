@@ -71,8 +71,8 @@ public final class NashornCompiler {
 
   private static String cleanMessage(Path path, String message) {
     return message.replace(
-        "Unable to compile CoffeeScript [stdin]:",
-        "Unable to compile " + path + ":"
+      "Unable to compile CoffeeScript [stdin]:",
+      "Unable to compile " + path + ":"
     );
   }
 }

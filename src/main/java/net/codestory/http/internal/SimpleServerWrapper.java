@@ -18,8 +18,6 @@ package net.codestory.http.internal;
 import java.io.*;
 import java.net.*;
 
-import net.codestory.http.exchange.*;
-
 import org.simpleframework.http.core.*;
 import org.simpleframework.transport.*;
 import org.simpleframework.transport.Socket;

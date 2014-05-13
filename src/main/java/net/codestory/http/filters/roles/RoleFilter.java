@@ -18,7 +18,7 @@ package net.codestory.http.filters.roles;
 import java.io.*;
 import java.util.*;
 
-import net.codestory.http.exchange.*;
+import net.codestory.http.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.payload.*;
 

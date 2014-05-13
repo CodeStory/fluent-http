@@ -31,8 +31,8 @@ public class EachValueHelperSource {
     Object param = options.param(0);
 
     return (param instanceof Iterable<?>)
-        ? iterableContext(context, (Iterable<?>) param, options)
-        : hashContext(context, param, options);
+      ? iterableContext(context, (Iterable<?>) param, options)
+      : hashContext(context, param, options);
   }
 
   private CharSequence hashContext(Object context, Object param, Options options) throws IOException {
@@ -43,9 +43,9 @@ public class EachValueHelperSource {
     Context parent = options.context;
     for (Map.Entry<String, Object> key : keys) {
       Context current = Context
-          .newContext(parent, options.wrap(context).get(key.getKey()))
-          .data("value", key.getValue())
-          .data("key", key.getKey());
+        .newContext(parent, options.wrap(context).get(key.getKey()))
+        .data("value", key.getValue())
+        .data("key", key.getKey());
       buffer.append(options.fn(current));
     }
 
@@ -58,8 +58,8 @@ public class EachValueHelperSource {
     Context parent = options.context;
     for (Object key : keys) {
       Context current = Context
-          .newContext(parent, options.wrap(context).get(key.toString()))
-          .data("key", key);
+        .newContext(parent, options.wrap(context).get(key.toString()))
+        .data("key", key);
       buffer.append(options.fn(current));
     }
 

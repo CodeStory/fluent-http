@@ -15,7 +15,7 @@
  */
 package net.codestory.http.extensions;
 
-import net.codestory.http.exchange.*;
+import net.codestory.http.*;
 
 @FunctionalInterface
 public interface ContextFactory {

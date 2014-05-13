@@ -17,7 +17,7 @@ package net.codestory.http.internal;
 
 import java.util.*;
 
-import net.codestory.http.exchange.*;
+import net.codestory.http.*;
 
 class SimpleQuery implements Query {
   private final org.simpleframework.http.Query query;

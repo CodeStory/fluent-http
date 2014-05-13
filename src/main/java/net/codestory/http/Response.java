@@ -13,26 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.exchange;
+package net.codestory.http;
 
 import java.io.*;
 
-public interface Part {
-  boolean isFile();
+public interface Response {
+  void close() throws IOException;
 
-  String name();
+  OutputStream outputStream() throws IOException;
 
-  String fileName();
+  void setContentLength(long length);
 
-  String header(String name);
+  void setValue(String name, String value);
 
-  String content() throws IOException;
+  void setStatus(int statusCode);
 
-  InputStream inputStream() throws IOException;
-
-  String contentType();
+  void setCookie(Cookie cookie);
 
   <T> T unwrap(Class<T> type);
 }
-
-

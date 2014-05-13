@@ -13,9 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.exchange;
+package net.codestory.http;
 
-@FunctionalInterface
-public interface Handler {
-  void handle(Request request, Response response);
+import java.io.*;
+
+public interface Part {
+  boolean isFile();
+
+  String name();
+
+  String fileName();
+
+  String header(String name);
+
+  String content() throws IOException;
+
+  InputStream inputStream() throws IOException;
+
+  String contentType();
+
+  <T> T unwrap(Class<T> type);
 }
+
+

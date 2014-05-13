@@ -15,7 +15,7 @@
  */
 package net.codestory.http.internal;
 
-import net.codestory.http.exchange.*;
+import net.codestory.http.*;
 
 class SimpleCookie implements Cookie {
   private final org.simpleframework.http.Cookie cookie;

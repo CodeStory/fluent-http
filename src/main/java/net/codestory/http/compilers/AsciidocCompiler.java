@@ -19,9 +19,9 @@ import java.nio.file.*;
 
 public class AsciidocCompiler implements Compiler {
   private final NashornCompiler nashornCompiler = new NashornCompiler(
-      "asciidoc/opal.js",
-      "asciidoc/asciidoctor.js",
-      "asciidoc/render.js");
+    "asciidoc/opal.js",
+    "asciidoc/asciidoctor.js",
+    "asciidoc/render.js");
 
   @Override
   public String compile(Path path, String source) {

@@ -17,7 +17,7 @@ package net.codestory.http.internal;
 
 import java.io.*;
 
-import net.codestory.http.exchange.*;
+import net.codestory.http.*;
 
 class SimplePart implements Part {
   private final org.simpleframework.http.Part part;

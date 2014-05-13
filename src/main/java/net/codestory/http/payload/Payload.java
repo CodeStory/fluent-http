@@ -21,8 +21,8 @@ import static net.codestory.http.constants.HttpStatus.*;
 import java.net.*;
 import java.util.*;
 
+import net.codestory.http.*;
 import net.codestory.http.convert.*;
-import net.codestory.http.exchange.*;
 
 public class Payload {
   private final String contentType;

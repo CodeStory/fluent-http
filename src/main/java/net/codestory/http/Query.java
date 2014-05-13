@@ -13,34 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.exchange;
+package net.codestory.http;
 
-import java.io.*;
-import java.net.*;
 import java.util.*;
 
-public interface Request {
-  String uri();
+public interface Query {
+  String get(String name);
 
-  String method();
+  Iterable<String> all(String name);
 
-  String header(String name);
+  int getInteger(String name);
 
-  String content() throws IOException;
+  float getFloat(String name);
 
-  InputStream inputStream() throws IOException;
+  boolean getBoolean(String name);
 
-  List<String> headers(String name);
-
-  InetSocketAddress clientAddress();
-
-  boolean isSecure();
-
-  Cookies cookies();
-
-  Query query();
-
-  List<Part> parts();
+  Map<String, String> keyValues();
 
   <T> T unwrap(Class<T> type);
 }

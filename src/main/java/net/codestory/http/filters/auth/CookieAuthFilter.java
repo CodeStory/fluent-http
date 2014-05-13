@@ -23,7 +23,7 @@ import static net.codestory.http.payload.Payload.*;
 import java.io.*;
 import java.util.concurrent.*;
 
-import net.codestory.http.exchange.*;
+import net.codestory.http.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.misc.*;
 import net.codestory.http.payload.*;
@@ -92,9 +92,9 @@ public class CookieAuthFilter implements Filter {
     }
 
     return seeOther(notFavIcon(context.cookies().value("redirectAfterLogin", "/")))
-        .withCookie(loginCookie(login))
-        .withCookie(sessionCookie(newSessionId(login)))
-        .withCookie(redirectUrlCookie("/"));
+      .withCookie(loginCookie(login))
+      .withCookie(sessionCookie(newSessionId(login)))
+      .withCookie(redirectUrlCookie("/"));
   }
 
   private Payload signout(Context context) {
@@ -104,9 +104,9 @@ public class CookieAuthFilter implements Filter {
     }
 
     return seeOther("/?signout")
-        .withCookie(loginCookie(null))
-        .withCookie(sessionCookie(null))
-        .withCookie(redirectUrlCookie(null));
+      .withCookie(loginCookie(null))
+      .withCookie(sessionCookie(null))
+      .withCookie(redirectUrlCookie(null));
   }
 
   private Payload otherUri(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
@@ -121,9 +121,9 @@ public class CookieAuthFilter implements Filter {
     }
 
     return seeOther("/auth/login")
-        .withCookie(loginCookie(null))
-        .withCookie(sessionCookie(null))
-        .withCookie(redirectUrlCookie(uri));
+      .withCookie(loginCookie(null))
+      .withCookie(sessionCookie(null))
+      .withCookie(redirectUrlCookie(uri));
   }
 
   private String newSessionId(String login) {
