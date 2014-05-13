@@ -172,9 +172,7 @@ public interface Fluent<T> extends Iterable<T> {
   public default String join(CharSequence delimiter) {
     requireNonNull(delimiter);
     StringJoiner joiner = new StringJoiner(delimiter);
-    for (T value : this) {
-      joiner.add(String.valueOf(value));
-    }
+    forEach(value -> joiner.add(String.valueOf(value)));
     return joiner.toString();
   }
 
@@ -335,12 +333,12 @@ public interface Fluent<T> extends Iterable<T> {
     requireNonNull(toKey);
     Map<K, T> map = new HashMap<>();
 
-    for (T value : this) {
+    forEach(value -> {
       K key = toKey.apply(value);
       if (null != map.put(key, value)) {
         throw new IllegalArgumentException("Same key used twice" + key);
       }
-    }
+    });
 
     return map;
   }
@@ -349,12 +347,12 @@ public interface Fluent<T> extends Iterable<T> {
     requireNonNull(toKey);
     Map<K, List<T>> multiMap = new HashMap<>();
 
-    for (T value : this) {
+    forEach(value -> {
       K key = toKey.apply(value);
 
       List<T> list = multiMap.computeIfAbsent(key, k -> new ArrayList<T>());
       list.add(value);
-    }
+    });
 
     return multiMap;
   }
@@ -363,12 +361,12 @@ public interface Fluent<T> extends Iterable<T> {
     requireNonNull(toValue);
     Map<T, V> map = new HashMap<>();
 
-    for (T key : this) {
+    forEach(key -> {
       V value = toValue.apply(key);
       if (null != map.put(key, value)) {
         throw new IllegalArgumentException("Same key used twice" + key);
       }
-    }
+    });
 
     return map;
   }
