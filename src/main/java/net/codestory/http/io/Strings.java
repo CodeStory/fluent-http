@@ -60,4 +60,12 @@ public class Strings {
     }
     return text;
   }
+
+  public static String replaceLast(String in, String what, String replaceWith) {
+    int index = in.lastIndexOf(what);
+    if (index == -1) {
+      return in;
+    }
+    return in.substring(0, index) + replaceWith;
+  }
 }

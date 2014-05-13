@@ -53,4 +53,12 @@ public class StringsTest {
     assertThat(Strings.substringAfter("name.jar", "name.jar")).isEmpty();
     assertThat(Strings.substringAfter("name.jar", "unknown")).isEmpty();
   }
+
+  @Test
+  public void replace_last() {
+    assertThat(Strings.replaceLast("", "", "")).isEqualTo("");
+    assertThat(Strings.replaceLast("", ".jar", ".txt")).isEqualTo("");
+    assertThat(Strings.replaceLast("name.jar", ".jar", ".txt")).isEqualTo("name.txt");
+    assertThat(Strings.replaceLast("name.jar", ".toto", ".txt")).isEqualTo("name.jar");
+  }
 }
