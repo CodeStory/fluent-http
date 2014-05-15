@@ -371,6 +371,22 @@ public interface Fluent<T> extends Iterable<T> {
     return map;
   }
 
+  public default <K,V> Map<K, V> toMap(Function<? super T, K> toKey, Function<? super T, V> toValue) {
+    requireNonNull(toKey);
+    requireNonNull(toValue);
+    Map<K, V> map = new HashMap<>();
+
+    forEach(item -> {
+      K key = toKey.apply(item);
+      V value = toValue.apply(item);
+      if (null != map.put(key, value)) {
+        throw new IllegalArgumentException("Same key used twice" + key);
+      }
+    });
+
+    return map;
+  }
+
   public default T get(int index) {
     if (index < 0) {
       throw new IllegalArgumentException("index is negative");
