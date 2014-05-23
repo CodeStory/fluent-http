@@ -28,6 +28,8 @@ public interface Request {
 
   String content() throws IOException;
 
+  String contentType();
+
   InputStream inputStream() throws IOException;
 
   List<String> headers(String name);

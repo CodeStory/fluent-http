@@ -44,7 +44,7 @@ public class CORSTest extends AbstractWebServerTest {
       options("/corspf", context -> {
         if (!context.isCORS()) throw new HttpException(403);
         if (!context.isPreflight()) throw new HttpException(404);
-        if (!"PUT".equals(context.getHeader(Headers.ACCESS_CONTROL_REQUEST_METHOD))) throw new HttpException(405);
+        if (!"PUT".equals(context.header(Headers.ACCESS_CONTROL_REQUEST_METHOD))) throw new HttpException(405);
         return new Payload("")
            .withCode(200)
            .withAllowOrigin("*")

@@ -130,12 +130,12 @@ public class RouteCollection implements Routes {
     String classPrefix = (prefixAnnotation != null) ? prefixAnnotation.value() : "";
 
     for (Method method : type.getMethods()) {
-      forEach(method.getAnnotationsByType(Get.class)).then(get -> addResource(GET, method, resource, prefix + get.value()));
-      forEach(method.getAnnotationsByType(Post.class)).then(post -> addResource(POST, method, resource, prefix + post.value()));
-      forEach(method.getAnnotationsByType(Put.class)).then(put -> addResource(PUT, method, resource, prefix + put.value()));
-      forEach(method.getAnnotationsByType(Delete.class)).then(delete -> addResource(DELETE, method, resource, prefix + delete.value()));
-      forEach(method.getAnnotationsByType(Head.class)).then(delete -> addResource(HEAD, method, resource, prefix + delete.value()));
-      forEach(method.getAnnotationsByType(Options.class)).then(opts -> addResource(OPTIONS, method, resource, prefix + opts.value()));
+      forEach(method.getAnnotationsByType(Get.class)).then(get -> addResource(GET, method, resource, url(urlPrefix, classPrefix, get.value())));
+      forEach(method.getAnnotationsByType(Post.class)).then(post -> addResource(POST, method, resource, url(urlPrefix, classPrefix, post.value())));
+      forEach(method.getAnnotationsByType(Put.class)).then(put -> addResource(PUT, method, resource, url(urlPrefix, classPrefix, put.value())));
+      forEach(method.getAnnotationsByType(Delete.class)).then(delete -> addResource(DELETE, method, resource, url(urlPrefix, classPrefix, delete.value())));
+      forEach(method.getAnnotationsByType(Head.class)).then(head -> addResource(HEAD, method, resource, url(urlPrefix, classPrefix, head.value())));
+      forEach(method.getAnnotationsByType(Options.class)).then(opts -> addResource(OPTIONS, method, resource, url(urlPrefix, classPrefix, opts.value())));
     }
   }
 
