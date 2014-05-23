@@ -20,7 +20,11 @@ import java.io.*;
 public interface Response {
   void close() throws IOException;
 
+  void commit() throws IOException;
+
   OutputStream outputStream() throws IOException;
+
+   PrintStream printStream() throws IOException;
 
   void setContentLength(long length);
 

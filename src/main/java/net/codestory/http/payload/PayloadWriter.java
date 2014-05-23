@@ -15,26 +15,47 @@
  */
 package net.codestory.http.payload;
 
-import static java.nio.charset.StandardCharsets.*;
-import static java.util.Objects.*;
-import static net.codestory.http.constants.Encodings.*;
-import static net.codestory.http.constants.Headers.*;
-import static net.codestory.http.constants.HttpStatus.*;
-import static net.codestory.http.constants.Methods.*;
-import static net.codestory.http.io.Strings.*;
+import net.codestory.http.Request;
+import net.codestory.http.Response;
+import net.codestory.http.compilers.CacheEntry;
+import net.codestory.http.compilers.CompiledPath;
+import net.codestory.http.convert.TypeConvert;
+import net.codestory.http.io.InputStreams;
+import net.codestory.http.io.Resources;
+import net.codestory.http.misc.Dates;
+import net.codestory.http.misc.Env;
+import net.codestory.http.misc.Md5;
+import net.codestory.http.templating.Model;
+import net.codestory.http.templating.ModelAndView;
+import net.codestory.http.templating.Site;
+import net.codestory.http.templating.Template;
+import net.codestory.http.types.ContentTypes;
 
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
-import java.util.zip.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Stream;
+import java.util.zip.GZIPOutputStream;
 
-import net.codestory.http.*;
-import net.codestory.http.compilers.*;
-import net.codestory.http.convert.*;
-import net.codestory.http.io.*;
-import net.codestory.http.misc.*;
-import net.codestory.http.templating.*;
-import net.codestory.http.types.*;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Objects.requireNonNull;
+import static net.codestory.http.constants.Encodings.GZIP;
+import static net.codestory.http.constants.Headers.ACCEPT_ENCODING;
+import static net.codestory.http.constants.Headers.CACHE_CONTROL;
+import static net.codestory.http.constants.Headers.CONNECTION;
+import static net.codestory.http.constants.Headers.CONTENT_ENCODING;
+import static net.codestory.http.constants.Headers.CONTENT_TYPE;
+import static net.codestory.http.constants.Headers.ETAG;
+import static net.codestory.http.constants.Headers.IF_MODIFIED_SINCE;
+import static net.codestory.http.constants.Headers.IF_NONE_MATCH;
+import static net.codestory.http.constants.Headers.LAST_MODIFIED;
+import static net.codestory.http.constants.HttpStatus.NOT_MODIFIED;
+import static net.codestory.http.constants.Methods.HEAD;
+import static net.codestory.http.io.Strings.stripQuotes;
 
 public class PayloadWriter {
   private final Env env;
@@ -49,7 +70,25 @@ public class PayloadWriter {
     this.site = site;
   }
 
-  public void write(Payload payload) throws IOException {
+  public void writeAndClose(Payload payload) throws IOException {
+    try {
+      write(payload);
+    } finally {
+      if (!isStream(payload)) {
+        close();
+      }
+    }
+  }
+
+  protected void close() {
+    try {
+      response.close();
+    } catch (IOException e) {
+      // Ignore
+    }
+  }
+
+  protected void write(Payload payload) throws IOException {
     payload.headers().forEach(response::setValue);
     payload.cookies().forEach(response::setCookie);
 
@@ -80,21 +119,46 @@ public class PayloadWriter {
       return;
     }
 
-    DataSupplier lazyData = DataSupplier.cache(() -> getData(payload, uri));
-    String etag = payload.headers().get(ETAG);
-    if (etag == null) {
-      etag = etag(lazyData.get());
-    }
+    if (isStream(payload)) {
+      streamPayload(payload);
+    } else {
+      DataSupplier lazyData = DataSupplier.cache(() -> getData(payload, uri));
+      String etag = payload.headers().get(ETAG);
+      if (etag == null) {
+        etag = etag(lazyData.get());
+      }
 
-    String previousEtag = stripQuotes(request.header(IF_NONE_MATCH));
-    if (etag.equals(previousEtag)) {
-      response.setStatus(NOT_MODIFIED);
-      return;
-    }
-    response.setValue(ETAG, etag);
+      String previousEtag = stripQuotes(request.header(IF_NONE_MATCH));
+      if (etag.equals(previousEtag)) {
+        response.setStatus(NOT_MODIFIED);
+        return;
+      }
+      response.setValue(ETAG, etag);
 
-    byte[] data = lazyData.get();
-    write(data);
+      byte[] data = lazyData.get();
+      write(data);
+    }
+  }
+
+  protected void streamPayload(Payload payload) throws IOException {
+    response.setValue(CACHE_CONTROL, "no-cache");
+    response.setValue(CONNECTION, "keep-alive");
+
+    PrintStream printStream = response.printStream();
+
+    Stream<?> stream = (Stream<?>) payload.rawContent();
+
+    new Thread(() -> {
+      stream.forEach(item -> printStream
+        .append("id: ")
+        .append(Long.toString(System.currentTimeMillis()))
+        .append("\n")
+        .append("data: ")
+        .append(TypeConvert.toJson(item))
+        .append("\n\n")
+        .flush());
+      close();
+    }).start();
   }
 
   protected void write(byte[] data) throws IOException {
@@ -138,7 +202,15 @@ public class PayloadWriter {
     return Md5.of(data);
   }
 
-  String getContentType(Payload payload, String uri) {
+  protected boolean isStream(Payload payload) {
+    Object content = payload.rawContent();
+    if (content instanceof Stream<?>) {
+      return true;
+    }
+    return false;
+  }
+
+  protected String getContentType(Payload payload, String uri) {
     String contentType = payload.rawContentType();
     if (contentType != null) {
       return contentType;
@@ -169,6 +241,9 @@ public class PayloadWriter {
     if (content instanceof InputStream) {
       return "application/octet-stream";
     }
+    if (content instanceof Stream<?>) {
+      return "text/event-stream";
+    }
     if (content instanceof ModelAndView) {
       Path path = Resources.findExistingPath(((ModelAndView) content).view());
       requireNonNull(path, "View not found for " + uri);
@@ -182,7 +257,7 @@ public class PayloadWriter {
     return "application/json;charset=UTF-8";
   }
 
-  byte[] getData(Payload payload, String uri) throws IOException {
+  protected byte[] getData(Payload payload, String uri) throws IOException {
     Object content = payload.rawContent();
     if (content == null) {
       return null;

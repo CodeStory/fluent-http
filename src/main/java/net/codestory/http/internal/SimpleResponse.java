@@ -17,6 +17,7 @@ package net.codestory.http.internal;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -40,6 +41,16 @@ class SimpleResponse implements Response {
   @Override
   public void close() throws IOException {
     response.close();
+  }
+
+  @Override
+  public void commit() throws IOException {
+    response.commit();
+  }
+
+  @Override
+  public PrintStream printStream() throws IOException {
+    return response.getPrintStream();
   }
 
   @Override
