@@ -56,6 +56,11 @@ class SimpleRequest implements Request {
   }
 
   @Override
+  public List<String> headerNames() {
+    return request.getNames();
+  }
+
+  @Override
   public List<String> headers(String name) {
     return request.getValues(name);
   }

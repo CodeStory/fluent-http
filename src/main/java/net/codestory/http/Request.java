@@ -32,6 +32,8 @@ public interface Request {
 
   List<String> headers(String name);
 
+  List<String> headerNames();
+
   InetSocketAddress clientAddress();
 
   boolean isSecure();
