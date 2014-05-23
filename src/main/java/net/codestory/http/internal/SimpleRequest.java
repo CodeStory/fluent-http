@@ -15,13 +15,17 @@
  */
 package net.codestory.http.internal;
 
-import static net.codestory.http.misc.Fluent.*;
+import net.codestory.http.Cookies;
+import net.codestory.http.Part;
+import net.codestory.http.Query;
+import net.codestory.http.Request;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetSocketAddress;
+import java.util.List;
 
-import net.codestory.http.*;
+import static net.codestory.http.misc.Fluent.of;
 
 class SimpleRequest implements Request {
   private final org.simpleframework.http.Request request;
@@ -48,6 +52,11 @@ class SimpleRequest implements Request {
   @Override
   public String content() throws IOException {
     return request.getContent();
+  }
+
+  @Override
+  public String contentType() {
+    return request.getContentType().getType();
   }
 
   @Override
