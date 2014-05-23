@@ -94,18 +94,44 @@ public class PayloadWriter {
     response.setValue(ETAG, etag);
 
     byte[] data = lazyData.get();
+    write(data);
+  }
 
-    String acceptEncoding = request.header(ACCEPT_ENCODING);
-    if ((acceptEncoding != null) && acceptEncoding.contains(GZIP) && env.prodMode() && !env.disableGzip()) {
-      response.setValue(CONTENT_ENCODING, GZIP);
+  protected void write(byte[] data) throws IOException {
+    try {
+      if (shouldGzip()) {
+        response.setValue(CONTENT_ENCODING, GZIP);
 
-      GZIPOutputStream gzip = new GZIPOutputStream(response.outputStream());
-      gzip.write(data);
-      gzip.finish();
-    } else {
-      response.setContentLength(data.length);
-      response.outputStream().write(data);
+        GZIPOutputStream gzip = new GZIPOutputStream(response.outputStream());
+        gzip.write(data);
+        gzip.finish();
+      } else {
+        response.setContentLength(data.length);
+        response.outputStream().write(data);
+      }
+    } catch (IOException e) {
+      if (!shouldIgnoreError(e)) {
+        throw e;
+      }
     }
+  }
+
+  protected boolean shouldGzip() {
+    String acceptEncoding = request.header(ACCEPT_ENCODING);
+    return (acceptEncoding != null) && acceptEncoding.contains(GZIP) && env.prodMode() && !env.disableGzip();
+  }
+
+  protected boolean shouldIgnoreError(IOException e) {
+    Throwable cause = e.getCause();
+    if (cause != null) {
+      String message = cause.getMessage();
+      if (message != null) {
+        if (message.contains("Connection reset by peer") || message.contains("Broken pipe")) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   protected String etag(byte[] data) {
