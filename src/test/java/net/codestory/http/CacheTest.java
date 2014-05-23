@@ -15,15 +15,15 @@
  */
 package net.codestory.http;
 
-import static net.codestory.http.misc.Dates.*;
+import net.codestory.http.testhelpers.AbstractWebServerTest;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
-import java.io.*;
-
-import net.codestory.http.compilers.*;
-import net.codestory.http.testhelpers.*;
-
-import org.junit.*;
-import org.junit.rules.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 
 public class CacheTest extends AbstractWebServerTest {
   @Rule
@@ -36,20 +36,6 @@ public class CacheTest extends AbstractWebServerTest {
     get("/").produces(200, "text/html", "Hello").producesHeader("Etag", "8b1a9953c4611296a827abf8c47804d7");
     getWithHeader("/", "If-None-Match", "8b1a9953c4611296a827abf8c47804d7").produces(304);
     getWithHeader("/", "If-None-Match", "\"8b1a9953c4611296a827abf8c47804d7\"").produces(304);
-  }
-
-  @Test
-  public void last_modified() throws IOException {
-    File file = createFile("Hello");
-    CacheEntry payload = CacheEntry.fromFile(file);
-
-    server.configure(routes -> routes.get("/", payload));
-
-    get("/").produces(200, "text/html", "Hello").producesHeader("Last-Modified", to_rfc_1123(file.lastModified()));
-    getWithHeader("/", "If-Modified-since", to_rfc_1123(file.lastModified() - 1000)).produces(200, "text/html", "Hello");
-    getWithHeader("/", "If-Modified-since", to_rfc_1123(file.lastModified())).produces(200); // Fast refresh
-    getWithHeader("/", "If-Modified-since", to_rfc_1123(file.lastModified() + 1000)).produces(304);
-    getWithHeader("/", "If-Modified-since", "\"" + to_rfc_1123(file.lastModified() + 1000) + "\"").produces(304);
   }
 
   private File createFile(String hello) {

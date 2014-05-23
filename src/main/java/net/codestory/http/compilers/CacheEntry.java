@@ -15,21 +15,20 @@
  */
 package net.codestory.http.compilers;
 
-import static java.nio.charset.StandardCharsets.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import java.nio.file.Files;
 
-import java.io.*;
-import java.nio.file.*;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public interface CacheEntry extends Serializable {
   String content();
 
   byte[] toBytes();
 
-  long lastModified();
-
   public static CacheEntry fromFile(File file) throws IOException {
     byte[] data = Files.readAllBytes(file.toPath());
-    long lastModified = file.lastModified();
 
     return new CacheEntry() {
       @Override
@@ -41,18 +40,11 @@ public interface CacheEntry extends Serializable {
       public byte[] toBytes() {
         return data;
       }
-
-      @Override
-      public long lastModified() {
-        return lastModified;
-      }
     };
   }
 
   public static CacheEntry fromString(String content) {
     return new CacheEntry() {
-      private final long lastModified = System.currentTimeMillis();
-
       @Override
       public String content() {
         return content;
@@ -61,11 +53,6 @@ public interface CacheEntry extends Serializable {
       @Override
       public byte[] toBytes() {
         return content.getBytes(UTF_8);
-      }
-
-      @Override
-      public long lastModified() {
-        return lastModified;
       }
     };
   }
@@ -80,11 +67,6 @@ public interface CacheEntry extends Serializable {
       @Override
       public byte[] toBytes() {
         return content.getBytes(UTF_8);
-      }
-
-      @Override
-      public long lastModified() {
-        return -1L;
       }
     };
   }

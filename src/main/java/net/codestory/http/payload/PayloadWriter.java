@@ -301,12 +301,6 @@ public class PayloadWriter {
     if (content instanceof Path) {
       return ((Path) content).toFile().lastModified();
     }
-    if (content instanceof CompiledPath) {
-      return ((CompiledPath) content).compile().lastModified();
-    }
-    if (content instanceof CacheEntry) {
-      return ((CacheEntry) content).lastModified();
-    }
 
     return -1;
   }
