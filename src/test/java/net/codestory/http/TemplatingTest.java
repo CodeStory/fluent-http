@@ -57,7 +57,9 @@ public class TemplatingTest extends AbstractWebServerTest {
   @Test
   public void google_analytics() {
     get("/indexGoogleAnalytics.html").produces(
-      "<script type=\"text/javascript\">\n" +
+      "<body>\n" +
+        "</body>\n" +
+        "<script type=\"text/javascript\">\n" +
         "  var _gaq = _gaq || [];\n" +
         "  _gaq.push(['_setAccount', 'UA-12345']);\n" +
         "  _gaq.push(['_trackPageview']);\n" +
@@ -66,7 +68,19 @@ public class TemplatingTest extends AbstractWebServerTest {
         "    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';\n" +
         "    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);\n" +
         "  })();\n" +
-        "</script>\n");
+        "</script>\n" +
+        "</html>");
+  }
+
+  @Test
+  public void google_analytics_in_dev_mode() {
+    // Switch to dev mode
+    // TODO: Find something better
+    System.setProperty("PROD_MODE", "false");
+    server.configure(routes -> {
+    });
+
+    get("/indexGoogleAnalytics.html").produces("<body>\n</body>\n\n</html>");
   }
 
   @Test
