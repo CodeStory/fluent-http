@@ -270,6 +270,10 @@ public class PayloadWriter {
       return forModelAndView(ModelAndView.of(uri, (Model) content));
     }
 
+    return toJson(content);
+  }
+
+  protected byte[] toJson(Object content) {
     return TypeConvert.toByteArray(content);
   }
 
