@@ -26,6 +26,7 @@ import static net.codestory.http.io.Strings.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.stream.*;
 import java.util.zip.*;
 
@@ -42,12 +43,26 @@ public class PayloadWriter {
   private final Site site;
   private final Request request;
   private final Response response;
+  private final ExecutorService executor;
 
-  public PayloadWriter(Env env, Site site, Request request, Response response) {
+  public PayloadWriter(Env env, Site site, Request request, Response response, ExecutorService executor) {
     this.request = request;
     this.response = response;
     this.env = env;
     this.site = site;
+    this.executor = executor;
+  }
+
+  public PayloadWriter(Env env, Site site, Request request, Response response) {
+    this(env, site, request, response, 8);
+  }
+
+  public PayloadWriter(Env env, Site site, Request request, Response response, int executorThreads) {
+    this(env, site, request, response, Executors.newFixedThreadPool(executorThreads, task -> {
+      Thread thread = new Thread(task);
+      thread.setDaemon(true);
+      return thread;
+    }));
   }
 
   public void writeAndClose(Payload payload) throws IOException {
@@ -134,7 +149,7 @@ public class PayloadWriter {
 
       PrintStream printStream = response.printStream();
 
-      new Thread(() -> {
+      executor.submit(() -> {
         stream.forEach(item -> printStream
           .append("id: ")
           .append(Long.toString(System.currentTimeMillis()))
@@ -144,20 +159,20 @@ public class PayloadWriter {
           .append("\n\n")
           .flush());
         close();
-      }).start();
+      });
     } else if (payload.rawContent() instanceof InputStream) {
       InputStream stream = (InputStream) payload.rawContent();
 
       OutputStream outputStream = response.outputStream();
 
-      new Thread(() -> {
+      executor.submit(() -> {
         try {
           InputStreams.copy(stream, outputStream);
           close();
         } catch (IOException e) {
           throw new IllegalStateException("Unable to stream", e);
         }
-      }).start();
+      });
     }
   }
 
