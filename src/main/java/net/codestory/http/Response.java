@@ -24,7 +24,7 @@ public interface Response {
 
   OutputStream outputStream() throws IOException;
 
-   PrintStream printStream() throws IOException;
+  PrintStream printStream() throws IOException;
 
   void setContentLength(long length);
 

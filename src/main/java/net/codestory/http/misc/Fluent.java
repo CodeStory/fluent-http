@@ -371,7 +371,7 @@ public interface Fluent<T> extends Iterable<T> {
     return map;
   }
 
-  public default <K,V> Map<K, V> toMap(Function<? super T, K> toKey, Function<? super T, V> toValue) {
+  public default <K, V> Map<K, V> toMap(Function<? super T, K> toKey, Function<? super T, V> toValue) {
     requireNonNull(toKey);
     requireNonNull(toValue);
     Map<K, V> map = new HashMap<>();
