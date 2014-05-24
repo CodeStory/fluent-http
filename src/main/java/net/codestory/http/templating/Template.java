@@ -59,7 +59,7 @@ public class Template {
       String layoutContent = new Template("_layouts", layout).render(allKeyValues).content();
       String bodyWithLayout = layoutContent.replace("[[body]]", entry.content());
 
-      return CacheEntry.fromString(bodyWithLayout); // Could have a more aggressive lastModified()
+      return CacheEntry.fromString(bodyWithLayout);
     } catch (IOException e) {
       throw new IllegalStateException("Unable to render template", e);
     }
