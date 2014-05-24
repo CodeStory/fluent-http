@@ -61,6 +61,7 @@ public enum HandlebarsCompiler {
     hb.endDelimiter("]]");
     hb.registerHelpers(new EachReverseHelperSource());
     hb.registerHelpers(new EachValueHelperSource());
+    hb.registerHelpers(new GoogleAnalyticsHelper());
     hb.registerHelpers(StringHelpers.class);
     hb.with(new ConcurrentMapTemplateCache());
     hb.with(new AbstractTemplateLoader() {

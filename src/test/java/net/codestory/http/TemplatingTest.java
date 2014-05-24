@@ -55,6 +55,21 @@ public class TemplatingTest extends AbstractWebServerTest {
   }
 
   @Test
+  public void google_analytics() {
+    get("/indexGoogleAnalytics.html").produces(
+      "<script type=\"text/javascript\">\n" +
+        "  var _gaq = _gaq || [];\n" +
+        "  _gaq.push(['_setAccount', 'UA-12345']);\n" +
+        "  _gaq.push(['_trackPageview']);\n" +
+        "  (function() {\n" +
+        "    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;\n" +
+        "    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';\n" +
+        "    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);\n" +
+        "  })();\n" +
+        "</script>\n");
+  }
+
+  @Test
   public void site_variables() {
     get("/useSiteVariables.html").produces("Hello, customer Bob wants to buy p1 for parkr");
   }

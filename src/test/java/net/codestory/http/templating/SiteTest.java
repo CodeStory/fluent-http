@@ -28,7 +28,7 @@ public class SiteTest {
   public void pages() {
     List<Map<String, Object>> pages = site.getPages();
 
-    assertThat(pages).hasSize(27);
+    assertThat(pages).hasSize(28);
   }
 
   @Test
@@ -36,7 +36,7 @@ public class SiteTest {
     Map<String, List<Map<String, Object>>> tags = site.getTags();
 
     assertThat(tags).hasSize(3);
-    assertThat(tags.get("")).hasSize(25);
+    assertThat(tags.get("")).hasSize(26);
     assertThat(tags.get("scala")).hasSize(2);
     assertThat(tags.get("java")).hasSize(1);
   }
@@ -46,7 +46,7 @@ public class SiteTest {
     Map<String, List<Map<String, Object>>> categories = site.getCategories();
 
     assertThat(categories).hasSize(3);
-    assertThat(categories.get("")).hasSize(25);
+    assertThat(categories.get("")).hasSize(26);
     assertThat(categories.get("post")).hasSize(1);
     assertThat(categories.get("test")).hasSize(1);
   }

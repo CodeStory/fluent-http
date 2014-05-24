@@ -38,6 +38,11 @@ public class GoogleAnalyticsHelper {
       return EMPTY;
     }
 
+    Boolean prodMode = options.get("env.prodMode");
+    if ((prodMode != null) && (!prodMode)) {
+      return EMPTY;
+    }
+
     return new SafeString("<script type=\"text/javascript\">\n" +
       "  var _gaq = _gaq || [];\n" +
       "  _gaq.push(['_setAccount', '" + escapeExpression(trackingId) + "']);\n" +

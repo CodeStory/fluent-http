@@ -17,10 +17,12 @@ package net.codestory.http.templating;
 
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import java.io.*;
 import java.util.*;
 
+import net.codestory.http.misc.*;
 import net.codestory.http.templating.helpers.*;
 
 import org.junit.*;
@@ -187,6 +189,28 @@ public class HandlebarsCompilerTest {
     String result = compiler.compile("[[google_analytics UA]]", map("UA", "12345"));
 
     assertThat(result).startsWith("<script ").contains("12345").endsWith("</script>");
+  }
+
+  @Test
+  public void skip_google_analytics_in_dev_mode() throws IOException {
+    Env env = mock(Env.class);
+    when(env.prodMode()).thenReturn(false);
+
+    compiler.registerHelper(new GoogleAnalyticsHelper("ID"));
+
+    String result = compiler.compile("[[google_analytics UA]]", map("env", env));
+
+    assertThat(result).isEmpty();
+  }
+
+  @Test
+  public void can_override_helper() throws IOException {
+    compiler.registerHelper(new GoogleAnalyticsHelper("DEFAULT_ID"));
+    compiler.registerHelper(new GoogleAnalyticsHelper("OVERRIDEN"));
+
+    String result = compiler.compile("[[google_analytics]]", new TreeMap<String, Object>());
+
+    assertThat(result).contains("OVERRIDEN").doesNotContain("DEFAULT_ID");
   }
 
   private static Map<String, Object> map(String key, Object value) {
