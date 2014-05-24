@@ -15,6 +15,8 @@
  */
 package net.codestory.http;
 
+import static net.codestory.http.Configuration.NO_ROUTE;
+
 import net.codestory.http.templating.*;
 import net.codestory.http.testhelpers.*;
 
@@ -77,8 +79,7 @@ public class TemplatingTest extends AbstractWebServerTest {
     // Switch to dev mode
     // TODO: Find something better
     System.setProperty("PROD_MODE", "false");
-    server.configure(routes -> {
-    });
+    server.configure(NO_ROUTE);
 
     get("/indexGoogleAnalytics.html").produces("<body>\n</body>\n\n</html>");
   }

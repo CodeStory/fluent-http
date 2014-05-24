@@ -16,6 +16,7 @@
 package net.codestory.http;
 
 import static java.util.Arrays.*;
+import static net.codestory.http.Configuration.NO_ROUTE;
 
 import javax.net.ssl.*;
 import java.io.*;
@@ -45,8 +46,7 @@ public class WebServer {
   private int port;
 
   public WebServer() {
-    this(routes -> {
-    });
+    this(NO_ROUTE);
   }
 
   public WebServer(Class<? extends Configuration> configuration) {
@@ -142,8 +142,7 @@ public class WebServer {
   }
 
   public void reset() {
-    configure(routes -> {
-    });
+    configure(NO_ROUTE);
   }
 
   public void stop() {

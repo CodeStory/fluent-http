@@ -21,5 +21,8 @@ import net.codestory.http.routes.*;
 
 @FunctionalInterface
 public interface Configuration extends Serializable {
+  Configuration NO_ROUTE = routes -> {
+  };
+
   void configure(Routes routes);
 }
