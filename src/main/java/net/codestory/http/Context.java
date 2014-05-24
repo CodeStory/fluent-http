@@ -15,16 +15,23 @@
  */
 package net.codestory.http;
 
-import static net.codestory.http.constants.Headers.*;
+import net.codestory.http.constants.Headers;
+import net.codestory.http.constants.Methods;
+import net.codestory.http.convert.TypeConvert;
+import net.codestory.http.injection.IocAdapter;
+import net.codestory.http.io.InputStreams;
+import net.codestory.http.security.User;
+import net.codestory.http.types.ContentTypes;
 
-import java.io.*;
-import java.lang.reflect.*;
-import java.util.*;
+import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Map;
 
-import net.codestory.http.convert.*;
-import net.codestory.http.injection.*;
-import net.codestory.http.io.*;
-import net.codestory.http.security.*;
+import static net.codestory.http.constants.Headers.X_FORWARDED_FOR;
 
 public class Context {
   private final Request request;
@@ -45,6 +52,82 @@ public class Context {
   public Response response() {
     return response;
   }
+
+    public static enum CORSRequestType {
+        SIMPLE,
+        ACTUAL,
+        PRE_FLIGHT,
+        NOT_CORS,
+        INVALID_CORS
+    }
+
+    public CORSRequestType corsRequestType() {
+        CORSRequestType requestType = CORSRequestType.INVALID_CORS;
+        String originHeader = header(Headers.ORIGIN);
+        if (originHeader != null) {
+            if (originHeader.isEmpty()) {
+                requestType = CORSRequestType.INVALID_CORS;
+            } else if (!isValidOrigin(originHeader)) {
+                requestType = CORSRequestType.INVALID_CORS;
+            } else {
+                String method = method();
+                if (method != null && Methods.HTTP_METHODS.contains(method)) {
+                    if (Methods.OPTIONS.equals(method)) {
+                        String accessControlRequestMethodHeader =
+                                header(Headers.ACCESS_CONTROL_REQUEST_METHOD);
+                        if (accessControlRequestMethodHeader != null
+                                && !accessControlRequestMethodHeader.isEmpty()) {
+                            requestType = CORSRequestType.PRE_FLIGHT;
+                        } else if (accessControlRequestMethodHeader != null) {
+                            requestType = CORSRequestType.INVALID_CORS;
+                        } else {
+                            requestType = CORSRequestType.ACTUAL;
+                        }
+                    } else if (Methods.GET.equals(method) || Methods.HEAD.equals(method)) {
+                        requestType = CORSRequestType.SIMPLE;
+                    } else if (Methods.POST.equals(method)) {
+                        String contentType = request.contentType();
+                        if (contentType != null) {
+                            contentType = contentType.toLowerCase().trim();
+                            if (ContentTypes.SIMPLE_HTTP_REQUEST_CONTENT_TYPE_VALUES
+                                    .contains(contentType)) {
+                                requestType = CORSRequestType.SIMPLE;
+                            } else {
+                                requestType = CORSRequestType.ACTUAL;
+                            }
+                        }
+                    } else if (Methods.COMPLEX_HTTP_METHODS.contains(method)) {
+                        requestType = CORSRequestType.ACTUAL;
+                    }
+                }
+            }
+        } else {
+            requestType = CORSRequestType.NOT_CORS;
+        }
+        return requestType;
+    }
+
+
+    public boolean isCORS() {
+        return !corsRequestType().equals(CORSRequestType.NOT_CORS);
+    }
+
+    public boolean isPreflight() {
+        return corsRequestType().equals(CORSRequestType.PRE_FLIGHT);
+    }
+
+    private boolean isValidOrigin(String origin) {
+        if (origin.contains("%")) {
+            return false;
+        }
+        URI originURI;
+        try {
+            originURI = new URI(origin);
+        } catch (URISyntaxException e) {
+            return false;
+        }
+        return originURI.getScheme() != null;
+    }
 
   public String uri() {
     return request.uri();

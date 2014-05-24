@@ -56,6 +56,15 @@ public abstract class AbstractWebServerTest {
     return new RestAssert(request -> request.head(path));
   }
 
+  // OPTIONS
+  protected RestAssert options(String path) {
+    return new RestAssert(request -> request.options(path));
+  }
+
+  protected RestAssert optionsWithHeader(String path, String name, String value) {
+    return new RestAssert(given -> given.header(name, value), request -> request.options(path));
+  }
+
   // POST
   protected RestAssert post(String path) {
     return new RestAssert(request -> request.post(path));
@@ -78,7 +87,7 @@ public abstract class AbstractWebServerTest {
     private final ValidatableResponse then;
 
     private RestAssert(Function<RequestSpecification, RequestSpecification> configuration, Function<RequestSender, Response> action) {
-      this.then = action.apply(configuration.apply(RestAssured.given().port(server.port()))).then();
+      this.then = action.apply(configuration.apply(RestAssured.given().header(new Header("Origin", "http://www.code-story.net")).port(server.port()))).then();
     }
 
     private RestAssert(Function<RequestSender, Response> action) {

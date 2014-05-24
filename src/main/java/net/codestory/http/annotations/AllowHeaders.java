@@ -13,38 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http;
+package net.codestory.http.annotations;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-public interface Request {
-  String uri();
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-  String method();
-
-  String header(String name);
-
-  String content() throws IOException;
-
-  String contentType();
-
-  InputStream inputStream() throws IOException;
-
-  List<String> headers(String name);
-
-  List<String> headerNames();
-
-  InetSocketAddress clientAddress();
-
-  boolean isSecure();
-
-  Cookies cookies();
-
-  Query query();
-
-  List<Part> parts();
-
-  <T> T unwrap(Class<T> type);
+@Documented
+@Target(METHOD)
+@Retention(RUNTIME)
+public @interface AllowHeaders {
+  String[] value();
 }

@@ -15,6 +15,9 @@
  */
 package net.codestory.http.constants;
 
+import java.util.Arrays;
+import java.util.List;
+
 public abstract class Methods {
   private Methods() {
     // Do not allow subclassing
@@ -28,4 +31,27 @@ public abstract class Methods {
   public static final String OPTIONS = "OPTIONS";
   public static final String TRACE = "TRACE";
   public static final String CONNECT = "CONNECT";
+
+  public static final List<String> HTTP_METHODS = Arrays.asList(
+    GET,
+    POST,
+    PUT,
+    DELETE,
+    HEAD,
+    OPTIONS,
+    TRACE,
+    CONNECT
+  );
+
+  public static final List<String> COMPLEX_HTTP_METHODS = Arrays.asList(
+    PUT,
+    DELETE,
+    TRACE,
+    CONNECT
+  );
+  public static final List<String> SIMPLE_HTTP_METHODS = Arrays.asList(
+    GET,
+    POST,
+    HEAD
+  );
 }

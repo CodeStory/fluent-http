@@ -18,6 +18,8 @@ package net.codestory.http.types;
 import static net.codestory.http.io.Resources.*;
 
 import java.nio.file.*;
+import java.util.Arrays;
+import java.util.List;
 
 public class ContentTypes {
   public static final String[] TEMPLATE_EXTENSIONS = {"", ".html", ".md", ".markdown", ".txt", ".asciidoc"};
@@ -25,6 +27,12 @@ public class ContentTypes {
   private ContentTypes() {
     // Static class
   }
+
+  public static final List<String> SIMPLE_HTTP_REQUEST_CONTENT_TYPE_VALUES = Arrays.asList(
+    "application/x-www-form-urlencoded",
+    "multipart/form-data",
+    "text/plain"
+  );
 
   public static String get(Path path) {
     switch (extension(path)) {

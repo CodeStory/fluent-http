@@ -15,14 +15,17 @@
  */
 package net.codestory.http.payload;
 
-import static net.codestory.http.constants.Headers.*;
-import static net.codestory.http.constants.HttpStatus.*;
+import net.codestory.http.Cookie;
+import net.codestory.http.NewCookie;
+import net.codestory.http.constants.Headers;
+import net.codestory.http.convert.TypeConvert;
+import net.codestory.http.misc.Fluent;
 
-import java.net.*;
+import java.net.URI;
 import java.util.*;
 
-import net.codestory.http.*;
-import net.codestory.http.convert.*;
+import static net.codestory.http.constants.Headers.*;
+import static net.codestory.http.constants.HttpStatus.*;
 
 public class Payload {
   private final String contentType;
@@ -71,6 +74,51 @@ public class Payload {
     this.contentType = contentType;
     this.headers = new LinkedHashMap<>();
     this.cookies = new ArrayList<>();
+  }
+
+  public Payload withMaxAge(int maxAge) {
+    headers.put(Headers.ACCESS_CONTROL_MAX_AGE, maxAge + "");
+    return this;
+  }
+
+  public Payload withAllowOrigin(String allowedOrigin) {
+    if (allowedOrigin != null) headers.put(Headers.ACCESS_CONTROL_ALLOW_ORIGIN, allowedOrigin);
+    return this;
+  }
+
+  public Payload withAllowMethods(String... allowedMethods) {
+    if (allowedMethods != null) headers.put(ACCESS_CONTROL_ALLOW_METHODS, Fluent.of(allowedMethods).join(", "));
+    return this;
+  }
+
+  public Payload withAllowMethods(List<String> allowedMethods) {
+    if (allowedMethods != null) headers.put(Headers.ACCESS_CONTROL_ALLOW_METHODS, Fluent.of(allowedMethods).join(", "));
+    return this;
+  }
+
+  public Payload withAllowCredentials(Boolean allowedCredentials) {
+    if (allowedCredentials != null) headers.put(Headers.ACCESS_CONTROL_ALLOW_CREDENTIALS, allowedCredentials.toString());
+    return this;
+  }
+
+  public Payload withAllowHeaders(String... allowedHeaders) {
+    if (allowedHeaders != null) headers.put(Headers.ACCESS_CONTROL_ALLOW_HEADERS, Fluent.of(Arrays.asList(allowedHeaders)).join(", "));
+    return this;
+  }
+
+  public Payload withExposeHeaders(String... allowedHeaders) {
+    if (allowedHeaders != null) headers.put(Headers.ACCESS_CONTROL_EXPOSE_HEADERS, Fluent.of(Arrays.asList(allowedHeaders)).join(", "));
+    return this;
+  }
+
+  public Payload withAllowHeaders(List<String> allowedHeaders) {
+    if (allowedHeaders != null) headers.put(Headers.ACCESS_CONTROL_ALLOW_HEADERS, Fluent.of(allowedHeaders).join(", "));
+    return this;
+  }
+
+  public Payload withExposeHeaders(List<String> allowedHeaders) {
+    if (allowedHeaders != null) headers.put(Headers.ACCESS_CONTROL_EXPOSE_HEADERS, Fluent.of(allowedHeaders).join(", "));
+    return this;
   }
 
   public Payload withHeader(String key, String value) {
