@@ -15,14 +15,19 @@
  */
 package net.codestory.http.testhelpers;
 
+import static net.codestory.http.misc.MemoizingSupplier.memoize;
+
+import java.util.function.*;
+
 import net.codestory.http.*;
+import net.codestory.http.misc.*;
 
 import org.junit.rules.*;
 
 public class WebServerRule extends ExternalResource {
   private final String previousProdMode = System.getProperty("PROD_MODE");
 
-  private static WebServer server;
+  private static Supplier<WebServer> server = memoize(() -> new WebServer().startOnRandomPort());
 
   @Override
   protected void before() {
@@ -31,7 +36,7 @@ public class WebServerRule extends ExternalResource {
 
   @Override
   protected void after() {
-    server().reset();
+    server.get().reset();
 
     if (previousProdMode == null) {
       System.clearProperty("PROD_MODE");
@@ -40,19 +45,11 @@ public class WebServerRule extends ExternalResource {
     }
   }
 
-  public WebServer configure(Configuration configuration) {
-    return server().configure(configuration);
+  public void configure(Configuration configuration) {
+    server.get().configure(configuration);
   }
 
   public int port() {
-    return server().port();
-  }
-
-  private static WebServer server() {
-    if (server == null) {
-      server = new WebServer();
-      server.startOnRandomPort();
-    }
-    return server;
+    return server.get().port();
   }
 }
