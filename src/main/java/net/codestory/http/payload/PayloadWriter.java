@@ -300,6 +300,7 @@ public class PayloadWriter {
     keyValues.putAll(modelAndView.model().keyValues());
     keyValues.put("cookies", request.cookies().keyValues());
     keyValues.put("site", site);
+    keyValues.put("env", env);
 
     CacheEntry html = new Template(view).render(keyValues);
 
