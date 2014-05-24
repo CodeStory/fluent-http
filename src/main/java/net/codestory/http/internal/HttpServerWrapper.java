@@ -15,9 +15,8 @@
  */
 package net.codestory.http.internal;
 
-import java.io.*;
-
 import javax.net.ssl.*;
+import java.io.*;
 
 public interface HttpServerWrapper {
   void start(int port, SSLContext context, boolean authReq) throws IOException;

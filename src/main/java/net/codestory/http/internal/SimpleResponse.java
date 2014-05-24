@@ -15,21 +15,14 @@
  */
 package net.codestory.http.internal;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-import java.util.SimpleTimeZone;
-import java.util.TimeZone;
+import java.io.*;
+import java.text.*;
+import java.util.*;
 
 import net.codestory.http.Cookie;
 import net.codestory.http.Response;
 
-import org.simpleframework.http.Status;
+import org.simpleframework.http.*;
 
 class SimpleResponse implements Response {
   private final org.simpleframework.http.Response response;

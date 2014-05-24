@@ -15,11 +15,11 @@
  */
 package net.codestory.http.templating.helpers;
 
-import com.github.jknack.handlebars.Options;
+import static com.github.jknack.handlebars.Handlebars.*;
+import static com.github.jknack.handlebars.Handlebars.Utils.*;
+import static org.apache.commons.lang3.StringUtils.*;
 
-import static com.github.jknack.handlebars.Handlebars.SafeString;
-import static com.github.jknack.handlebars.Handlebars.Utils.escapeExpression;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
+import com.github.jknack.handlebars.*;
 
 public class GoogleAnalyticsHelper {
   private final String id;

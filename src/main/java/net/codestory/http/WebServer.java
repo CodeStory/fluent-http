@@ -17,6 +17,7 @@ package net.codestory.http;
 
 import static java.util.Arrays.*;
 
+import javax.net.ssl.*;
 import java.io.*;
 import java.net.*;
 import java.nio.file.*;
@@ -34,8 +35,6 @@ import net.codestory.http.ssl.*;
 import net.codestory.http.templating.*;
 
 import org.slf4j.*;
-
-import javax.net.ssl.*;
 
 public class WebServer {
   private final static Logger LOG = LoggerFactory.getLogger(WebServer.class);

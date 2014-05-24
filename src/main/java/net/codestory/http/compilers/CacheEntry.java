@@ -15,12 +15,10 @@
  */
 package net.codestory.http.compilers;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
-import java.nio.file.Files;
+import static java.nio.charset.StandardCharsets.*;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import java.io.*;
+import java.nio.file.*;
 
 public interface CacheEntry extends Serializable {
   String content();

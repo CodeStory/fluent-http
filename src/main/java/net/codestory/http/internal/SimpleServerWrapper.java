@@ -15,6 +15,7 @@
  */
 package net.codestory.http.internal;
 
+import javax.net.ssl.*;
 import java.io.*;
 import java.net.*;
 
@@ -22,8 +23,6 @@ import org.simpleframework.http.core.*;
 import org.simpleframework.transport.*;
 import org.simpleframework.transport.Socket;
 import org.simpleframework.transport.connect.*;
-
-import javax.net.ssl.*;
 
 public class SimpleServerWrapper implements HttpServerWrapper {
   private final Server server;

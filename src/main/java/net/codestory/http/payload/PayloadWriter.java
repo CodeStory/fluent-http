@@ -15,47 +15,27 @@
  */
 package net.codestory.http.payload;
 
-import net.codestory.http.Request;
-import net.codestory.http.Response;
-import net.codestory.http.compilers.CacheEntry;
-import net.codestory.http.compilers.CompiledPath;
-import net.codestory.http.convert.TypeConvert;
-import net.codestory.http.io.InputStreams;
-import net.codestory.http.io.Resources;
-import net.codestory.http.misc.Dates;
-import net.codestory.http.misc.Env;
-import net.codestory.http.misc.Md5;
-import net.codestory.http.templating.Model;
-import net.codestory.http.templating.ModelAndView;
-import net.codestory.http.templating.Site;
-import net.codestory.http.templating.Template;
-import net.codestory.http.types.ContentTypes;
+import static java.nio.charset.StandardCharsets.*;
+import static java.util.Objects.*;
+import static net.codestory.http.constants.Encodings.*;
+import static net.codestory.http.constants.Headers.*;
+import static net.codestory.http.constants.HttpStatus.*;
+import static net.codestory.http.constants.Methods.*;
+import static net.codestory.http.io.Strings.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Stream;
-import java.util.zip.GZIPOutputStream;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+import java.util.stream.*;
+import java.util.zip.*;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Objects.requireNonNull;
-import static net.codestory.http.constants.Encodings.GZIP;
-import static net.codestory.http.constants.Headers.ACCEPT_ENCODING;
-import static net.codestory.http.constants.Headers.CACHE_CONTROL;
-import static net.codestory.http.constants.Headers.CONNECTION;
-import static net.codestory.http.constants.Headers.CONTENT_ENCODING;
-import static net.codestory.http.constants.Headers.CONTENT_TYPE;
-import static net.codestory.http.constants.Headers.ETAG;
-import static net.codestory.http.constants.Headers.IF_MODIFIED_SINCE;
-import static net.codestory.http.constants.Headers.IF_NONE_MATCH;
-import static net.codestory.http.constants.Headers.LAST_MODIFIED;
-import static net.codestory.http.constants.HttpStatus.NOT_MODIFIED;
-import static net.codestory.http.constants.Methods.HEAD;
-import static net.codestory.http.io.Strings.stripQuotes;
+import net.codestory.http.*;
+import net.codestory.http.compilers.*;
+import net.codestory.http.convert.*;
+import net.codestory.http.io.*;
+import net.codestory.http.misc.*;
+import net.codestory.http.templating.*;
+import net.codestory.http.types.*;
 
 public class PayloadWriter {
   private final Env env;
