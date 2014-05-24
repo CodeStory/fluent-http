@@ -90,7 +90,7 @@ public class PayloadWriter {
       return;
     }
 
-    final String uri = request.uri();
+    String uri = request.uri();
     String type = getContentType(payload, uri);
     response.setValue(CONTENT_TYPE, type);
     response.setStatus(code);
@@ -100,45 +100,65 @@ public class PayloadWriter {
     }
 
     if (isStream(payload)) {
-      streamPayload(payload);
+      streamPayload(uri, payload);
     } else {
-      DataSupplier lazyData = DataSupplier.cache(() -> getData(payload, uri));
-      String etag = payload.headers().get(ETAG);
-      if (etag == null) {
-        etag = etag(lazyData.get());
-      }
-
-      String previousEtag = stripQuotes(request.header(IF_NONE_MATCH));
-      if (etag.equals(previousEtag)) {
-        response.setStatus(NOT_MODIFIED);
-        return;
-      }
-      response.setValue(ETAG, etag);
-
-      byte[] data = lazyData.get();
-      write(data);
+      writeBytes(uri, payload);
     }
   }
 
-  protected void streamPayload(Payload payload) throws IOException {
+  protected void writeBytes(String uri, Payload payload) throws IOException {
+    DataSupplier lazyData = DataSupplier.cache(() -> getData(payload, uri));
+
+    String etag = payload.headers().get(ETAG);
+    if (etag == null) {
+      etag = etag(lazyData.get());
+    }
+
+    String previousEtag = stripQuotes(request.header(IF_NONE_MATCH));
+    if (etag.equals(previousEtag)) {
+      response.setStatus(NOT_MODIFIED);
+      return;
+    }
+    response.setValue(ETAG, etag);
+
+    byte[] data = lazyData.get();
+    write(data);
+  }
+
+  protected void streamPayload(String uri, Payload payload) throws IOException {
     response.setValue(CACHE_CONTROL, "no-cache");
     response.setValue(CONNECTION, "keep-alive");
 
-    PrintStream printStream = response.printStream();
+    if (payload.rawContent() instanceof Stream<?>) {
+      Stream<?> stream = (Stream<?>) payload.rawContent();
 
-    Stream<?> stream = (Stream<?>) payload.rawContent();
+      PrintStream printStream = response.printStream();
 
-    new Thread(() -> {
-      stream.forEach(item -> printStream
-        .append("id: ")
-        .append(Long.toString(System.currentTimeMillis()))
-        .append("\n")
-        .append("data: ")
-        .append(TypeConvert.toJson(item))
-        .append("\n\n")
-        .flush());
-      close();
-    }).start();
+      new Thread(() -> {
+        stream.forEach(item -> printStream
+          .append("id: ")
+          .append(Long.toString(System.currentTimeMillis()))
+          .append("\n")
+          .append("data: ")
+          .append(TypeConvert.toJson(item))
+          .append("\n\n")
+          .flush());
+        close();
+      }).start();
+    } else if (payload.rawContent() instanceof InputStream) {
+      InputStream stream = (InputStream) payload.rawContent();
+
+      OutputStream outputStream = response.outputStream();
+
+      new Thread(() -> {
+        try {
+          InputStreams.copy(stream, outputStream);
+          close();
+        } catch (IOException e) {
+          throw new IllegalStateException("Unable to stream", e);
+        }
+      }).start();
+    }
   }
 
   protected void write(byte[] data) throws IOException {
@@ -185,6 +205,9 @@ public class PayloadWriter {
   protected boolean isStream(Payload payload) {
     Object content = payload.rawContent();
     if (content instanceof Stream<?>) {
+      return true;
+    }
+    if (content instanceof InputStream) {
       return true;
     }
     return false;
