@@ -15,15 +15,19 @@
  */
 package net.codestory.http.templating;
 
-import static java.util.Arrays.*;
-import static org.assertj.core.api.Assertions.*;
+import com.github.jknack.handlebars.HandlebarsException;
+import com.github.jknack.handlebars.ValueResolver;
+import net.codestory.http.templating.helpers.GoogleAnalyticsHelper;
+import org.junit.Test;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
-import org.junit.*;
-
-import com.github.jknack.handlebars.*;
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class HandlebarsCompilerTest {
   HandlebarsCompiler compiler = HandlebarsCompiler.INSTANCE;
@@ -167,6 +171,24 @@ public class HandlebarsCompilerTest {
     String result = compiler.compile("[[additional]]", new TreeMap<>());
 
     assertThat(result).isEqualTo("SUCCESS");
+  }
+
+  @Test
+  public void google_analytics_with_fixed_id() throws IOException {
+    compiler.registerHelper(new GoogleAnalyticsHelper("ID"));
+
+    String result = compiler.compile("[[google_analytics]]", new TreeMap<>());
+
+    assertThat(result).startsWith("<script ").contains("ID").endsWith("</script>");
+  }
+
+  @Test
+  public void google_analytics_with_dynamic_id() throws IOException {
+    compiler.registerHelper(new GoogleAnalyticsHelper());
+
+    String result = compiler.compile("[[google_analytics UA]]", map("UA", "12345"));
+
+    assertThat(result).startsWith("<script ").contains("12345").endsWith("</script>");
   }
 
   private static Map<String, Object> map(String key, Object value) {
