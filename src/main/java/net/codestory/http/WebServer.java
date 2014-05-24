@@ -40,7 +40,7 @@ public class WebServer {
   private final static Logger LOG = LoggerFactory.getLogger(WebServer.class);
 
   private final HttpServerWrapper server;
-  private final Env env;
+  private Env env;
   private RoutesProvider routesProvider;
   private int port;
 
@@ -55,7 +55,6 @@ public class WebServer {
 
   public WebServer(Configuration configuration) {
     try {
-      env = new Env();
       server = new SimpleServerWrapper(this::handle);
     } catch (IOException e) {
       throw new IllegalStateException("Unable to create http server", e);
@@ -70,6 +69,7 @@ public class WebServer {
   }
 
   public WebServer configure(Configuration configuration) {
+    env = new Env();
     routesProvider = env.prodMode()
       ? RoutesProvider.fixed(configuration)
       : RoutesProvider.reloading(configuration);
