@@ -22,10 +22,18 @@ public class Env {
   private final boolean disableGzip;
 
   public Env() {
-    prodMode = getBoolean("PROD_MODE", false);
-    disableClassPath = getBoolean("http.disable.classpath", false);
-    disableFilesystem = getBoolean("http.disable.filesystem", false);
-    disableGzip = getBoolean("http.disable.gzip", false);
+    this.prodMode = getBoolean("PROD_MODE", false);
+    this.disableClassPath = getBoolean("http.disable.classpath", false);
+    this.disableFilesystem = getBoolean("http.disable.filesystem", false);
+    this.disableGzip = getBoolean("http.disable.gzip", false);
+  }
+
+  // Useful for tests or to force a configuration without system properties
+  public Env(boolean prodMode, boolean disableClassPath, boolean disableFilesystem, boolean disableGzip) {
+    this.prodMode = prodMode;
+    this.disableClassPath = disableClassPath;
+    this.disableFilesystem = disableFilesystem;
+    this.disableGzip = disableGzip;
   }
 
   public boolean prodMode() {
