@@ -39,29 +39,49 @@ class ReflectionRoute implements AnyRoute {
 
       Object[] arguments = convert(context, pathParameters, method.getGenericParameterTypes());
       Object response = invoke(target, method, arguments);
-      Object payload = emptyIfNull(response);
+      Object body = emptyIfNull(response);
       String contentType = findContentType(method);
 
-      Payload finalPayload = new Payload(contentType, payload);
+      Payload payload = new Payload(contentType, body);
+      setCorsHeaders(payload);
 
-      AllowOrigin origin = method.getDeclaredAnnotation(AllowOrigin.class);
-      AllowMethods methods = method.getDeclaredAnnotation(AllowMethods.class);
-      AllowCredentials credentials = method.getDeclaredAnnotation(AllowCredentials.class);
-      AllowHeaders allowedHeaders = method.getDeclaredAnnotation(AllowHeaders.class);
-      ExposeHeaders exposedHeaders = method.getDeclaredAnnotation(ExposeHeaders.class);
-      MaxAge maxAge = method.getDeclaredAnnotation(MaxAge.class);
-      if (origin != null) finalPayload.withAllowOrigin(origin.value());
-      if (methods != null) finalPayload.withAllowMethods(methods.value());
-      if (credentials != null) finalPayload.withAllowCredentials(credentials.value());
-      if (allowedHeaders != null) finalPayload.withAllowHeaders(allowedHeaders.value());
-      if (exposedHeaders != null) finalPayload.withExposeHeaders(exposedHeaders.value());
-      if (maxAge != null) finalPayload.withMaxAge(maxAge.value());
-
-      return finalPayload;
+      return payload;
     } catch (RuntimeException e) {
       throw e;
     } catch (Throwable e) {
       throw new IllegalStateException("Unable to apply route", e);
+    }
+  }
+
+  private void setCorsHeaders(Payload finalPayload) {
+    AllowOrigin origin = method.getDeclaredAnnotation(AllowOrigin.class);
+    if (origin != null) {
+      finalPayload.withAllowOrigin(origin.value());
+    }
+
+    AllowMethods methods = method.getDeclaredAnnotation(AllowMethods.class);
+    if (methods != null) {
+      finalPayload.withAllowMethods(methods.value());
+    }
+
+    AllowCredentials credentials = method.getDeclaredAnnotation(AllowCredentials.class);
+    if (credentials != null) {
+      finalPayload.withAllowCredentials(credentials.value());
+    }
+
+    AllowHeaders allowedHeaders = method.getDeclaredAnnotation(AllowHeaders.class);
+    if (allowedHeaders != null) {
+      finalPayload.withAllowHeaders(allowedHeaders.value());
+    }
+
+    ExposeHeaders exposedHeaders = method.getDeclaredAnnotation(ExposeHeaders.class);
+    if (exposedHeaders != null) {
+      finalPayload.withExposeHeaders(exposedHeaders.value());
+    }
+
+    MaxAge maxAge = method.getDeclaredAnnotation(MaxAge.class);
+    if (maxAge != null) {
+      finalPayload.withMaxAge(maxAge.value());
     }
   }
 

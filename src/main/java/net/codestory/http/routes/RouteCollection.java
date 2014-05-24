@@ -197,48 +197,47 @@ public class RouteCollection implements Routes {
 
   @Override
   public RouteCollection options(String uriPattern, Object payload) {
-      options(uriPattern, () -> payload);
-      return this;
+    options(uriPattern, () -> payload);
+    return this;
   }
 
   @Override
   public RouteCollection options(String uriPattern, NoParamRoute route) {
-      add(OPTIONS, checkParametersCount(uriPattern, 0), route);
-      return this;
+    add(OPTIONS, checkParametersCount(uriPattern, 0), route);
+    return this;
   }
 
   @Override
   public RouteCollection options(String uriPattern, NoParamRouteWithContext route) {
-      add(OPTIONS, checkParametersCount(uriPattern, 0), route);
-      return this;
+    add(OPTIONS, checkParametersCount(uriPattern, 0), route);
+    return this;
   }
 
   @Override
   public RouteCollection options(String uriPattern, OneParamRoute route) {
-      add(OPTIONS, checkParametersCount(uriPattern, 1), route);
-      return this;
+    add(OPTIONS, checkParametersCount(uriPattern, 1), route);
+    return this;
   }
 
   @Override
   public RouteCollection options(String uriPattern, TwoParamsRoute route) {
-      add(OPTIONS, checkParametersCount(uriPattern, 2), route);
-      return this;
+    add(OPTIONS, checkParametersCount(uriPattern, 2), route);
+    return this;
   }
 
   @Override
   public RouteCollection options(String uriPattern, ThreeParamsRoute route) {
-      add(OPTIONS, checkParametersCount(uriPattern, 3), route);
-      return this;
+    add(OPTIONS, checkParametersCount(uriPattern, 3), route);
+    return this;
   }
 
   @Override
   public RouteCollection options(String uriPattern, FourParamsRoute route) {
-      add(OPTIONS, checkParametersCount(uriPattern, 4), route);
-      return this;
+    add(OPTIONS, checkParametersCount(uriPattern, 4), route);
+    return this;
   }
 
-
-    @Override
+  @Override
   public RouteCollection head(String uriPattern, Object payload) {
     head(uriPattern, () -> payload);
     return this;

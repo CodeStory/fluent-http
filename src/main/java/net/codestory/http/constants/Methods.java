@@ -15,8 +15,9 @@
  */
 package net.codestory.http.constants;
 
-import java.util.Arrays;
-import java.util.List;
+import static java.util.Arrays.*;
+
+import java.util.*;
 
 public abstract class Methods {
   private Methods() {
@@ -32,26 +33,7 @@ public abstract class Methods {
   public static final String TRACE = "TRACE";
   public static final String CONNECT = "CONNECT";
 
-  public static final List<String> HTTP_METHODS = Arrays.asList(
-    GET,
-    POST,
-    PUT,
-    DELETE,
-    HEAD,
-    OPTIONS,
-    TRACE,
-    CONNECT
-  );
-
-  public static final List<String> COMPLEX_HTTP_METHODS = Arrays.asList(
-    PUT,
-    DELETE,
-    TRACE,
-    CONNECT
-  );
-  public static final List<String> SIMPLE_HTTP_METHODS = Arrays.asList(
-    GET,
-    POST,
-    HEAD
-  );
+  public static final List<String> HTTP_METHODS = asList(GET, POST, PUT, DELETE, HEAD, OPTIONS, TRACE, CONNECT);
+  public static final List<String> COMPLEX_HTTP_METHODS = asList(PUT, DELETE, TRACE, CONNECT);
+  public static final List<String> SIMPLE_HTTP_METHODS = asList(GET, POST, HEAD);
 }

@@ -15,6 +15,7 @@
  */
 package net.codestory.http.types;
 
+import static java.util.Arrays.asList;
 import static net.codestory.http.io.Resources.*;
 
 import java.nio.file.*;
@@ -28,7 +29,7 @@ public class ContentTypes {
     // Static class
   }
 
-  public static final List<String> SIMPLE_HTTP_REQUEST_CONTENT_TYPE_VALUES = Arrays.asList(
+  public static final List<String> SIMPLE_HTTP_REQUEST_CONTENT_TYPE_VALUES = asList(
     "application/x-www-form-urlencoded",
     "multipart/form-data",
     "text/plain"
