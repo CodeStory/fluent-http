@@ -24,9 +24,9 @@ public class RedirectTest extends AbstractWebServerTest {
   @Test
   public void redirect() {
     server.configure(routes -> routes.
-        get("/", Payload.seeOther("/login")).
-        get("/login", "LOGIN").
-        get("/dynamic/", "Dynamic"));
+      get("/", Payload.seeOther("/login")).
+      get("/login", "LOGIN").
+      get("/dynamic/", "Dynamic"));
 
     get("/").produces("LOGIN");
     get("/section/").produces("text/plain", "Hello index");

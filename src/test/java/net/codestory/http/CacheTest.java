@@ -15,15 +15,12 @@
  */
 package net.codestory.http;
 
-import net.codestory.http.testhelpers.AbstractWebServerTest;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import java.io.*;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
+import net.codestory.http.testhelpers.*;
+
+import org.junit.*;
+import org.junit.rules.*;
 
 public class CacheTest extends AbstractWebServerTest {
   @Rule

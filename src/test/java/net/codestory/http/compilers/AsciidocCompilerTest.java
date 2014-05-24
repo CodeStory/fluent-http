@@ -36,7 +36,7 @@ public class AsciidocCompilerTest {
     String html = compiler.compile(Paths.get("doc.asciidoc"), "== Title\ntext http://asciidoc.org[AsciiDoc]");
 
     assertThat(html)
-        .contains("<h2 id=\"_title\">Title</h2>")
-        .contains("<p>text <a href=\"http://asciidoc.org\">AsciiDoc</a></p>");
+      .contains("<h2 id=\"_title\">Title</h2>")
+      .contains("<p>text <a href=\"http://asciidoc.org\">AsciiDoc</a></p>");
   }
 }

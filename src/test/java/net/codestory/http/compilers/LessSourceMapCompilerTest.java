@@ -33,23 +33,23 @@ public class LessSourceMapCompilerTest {
     String css = compiler.compile(Paths.get("/path/file.css.map"), "body { h1 { color: red; } }");
 
     assertThat(css).isEqualTo("{\n" +
-        "\"version\":3,\n" +
-        "\"file\":\"/path/file.css.css\",\n" +
-        "\"lineCount\":1,\n" +
-        "\"mappings\":\"AAAAA,I,CAAOC;\",\n" +
-        "\"sources\":[\"/path/file.css.map\"],\n" +
-        "\"names\":[\"body\",\"h1\"]\n" +
-        "}\n");
+      "\"version\":3,\n" +
+      "\"file\":\"/path/file.css.css\",\n" +
+      "\"lineCount\":1,\n" +
+      "\"mappings\":\"AAAAA,I,CAAOC;\",\n" +
+      "\"sources\":[\"/path/file.css.map\"],\n" +
+      "\"names\":[\"body\",\"h1\"]\n" +
+      "}\n");
   }
 
   @Test
   public void invalid_file() {
     thrown.expect(CompilerException.class);
     thrown.expectMessage(
-        "Unable to compile less invalid.css.map: 3 error(s) occurred:\n" +
-            "ERROR 1:6 no viable alternative at input 'body' in ruleset (which started at 1:1)\n" +
-            "ERROR 1:6 required (...)+ loop did not match anything at input 'body' in selectors (which started at 1:6)\n" +
-            "...");
+      "Unable to compile less invalid.css.map: 3 error(s) occurred:\n" +
+        "ERROR 1:6 no viable alternative at input 'body' in ruleset (which started at 1:1)\n" +
+        "ERROR 1:6 required (...)+ loop did not match anything at input 'body' in selectors (which started at 1:6)\n" +
+        "...");
 
     compiler.compile(Paths.get("invalid.css.map"), "body body");
   }

@@ -34,9 +34,9 @@ public class SpringTest {
     webServer.configure(new SpringConfiguration(App.class));
 
     RestAssured
-        .given().port(webServer.port())
-        .when().get("/")
-        .then().body(containsString("PRODUCTION"));
+      .given().port(webServer.port())
+      .when().get("/")
+      .then().body(containsString("PRODUCTION"));
   }
 
   static class SpringConfiguration extends AbstractSpringConfiguration {

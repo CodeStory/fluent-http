@@ -34,9 +34,9 @@ public class GuiceTest {
     webServer.configure(new MyAppConfiguration());
 
     RestAssured
-        .given().port(webServer.port())
-        .when().get("/")
-        .then().body(containsString("PRODUCTION"));
+      .given().port(webServer.port())
+      .when().get("/")
+      .then().body(containsString("PRODUCTION"));
   }
 
   @Test
@@ -44,9 +44,9 @@ public class GuiceTest {
     webServer.configure(new MyAppConfiguration(new TestModule()));
 
     RestAssured
-        .given().port(webServer.port())
-        .when().get("/")
-        .then().body(containsString("OVERRIDDEN"));
+      .given().port(webServer.port())
+      .when().get("/")
+      .then().body(containsString("OVERRIDDEN"));
   }
 
   static class MyAppConfiguration extends AbstractGuiceConfiguration {

@@ -18,6 +18,7 @@ package net.codestory.http.ssl;
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
+import javax.net.ssl.*;
 import java.io.*;
 import java.net.*;
 import java.nio.file.*;
@@ -30,8 +31,6 @@ import net.codestory.http.*;
 import net.codestory.http.io.*;
 
 import org.junit.*;
-
-import javax.net.ssl.*;
 
 public class SSLTest {
   @Test
@@ -130,6 +129,6 @@ public class SSLTest {
 
   private static Certificate getCertificateFromPath(Path certPath) throws CertificateException, IOException {
     return CertificateFactory.getInstance("X.509").generateCertificate(
-        new ByteArrayInputStream(Files.readAllBytes(certPath)));
+      new ByteArrayInputStream(Files.readAllBytes(certPath)));
   }
 }

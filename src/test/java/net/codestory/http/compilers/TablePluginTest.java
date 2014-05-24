@@ -41,8 +41,8 @@ public class TablePluginTest {
     plugin.emit(out, asList("H1|H2|H3"), new HashMap<>());
 
     assertThat(out.toString()).isEqualTo("<table>\n" +
-        "<tr><th>H1</th><th>H2</th><th>H3</th></tr>\n" +
-        "</table>\n");
+      "<tr><th>H1</th><th>H2</th><th>H3</th></tr>\n" +
+      "</table>\n");
   }
 
   @Test
@@ -52,10 +52,10 @@ public class TablePluginTest {
     plugin.emit(out, asList("H1|H2|H3", "A1|A2|A3", "B1|B2|B3"), new HashMap<>());
 
     assertThat(out.toString()).isEqualTo("<table>\n" +
-        "<tr><th>H1</th><th>H2</th><th>H3</th></tr>\n" +
-        "<tr><td>A1</td><td>A2</td><td>A3</td></tr>\n" +
-        "<tr><td>B1</td><td>B2</td><td>B3</td></tr>\n" +
-        "</table>\n");
+      "<tr><th>H1</th><th>H2</th><th>H3</th></tr>\n" +
+      "<tr><td>A1</td><td>A2</td><td>A3</td></tr>\n" +
+      "<tr><td>B1</td><td>B2</td><td>B3</td></tr>\n" +
+      "</table>\n");
   }
 
   @Test

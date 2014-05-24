@@ -26,23 +26,23 @@ public class PostTest extends AbstractWebServerTest {
   @Test
   public void post() {
     server.configure(routes -> routes.
-        post("/post", () -> "Done").
-        get("/get", () -> "Done").
-        get("/action", () -> "Done GET").
-        post("/action", () -> "Done POST").
-        post("/post/:who", (context, who) -> "Done " + who).
-        add(new Object() {
-          @Post("/person")
-          @Post("/person_alt")
-          public String create() {
-            return "CREATED";
-          }
+      post("/post", () -> "Done").
+      get("/get", () -> "Done").
+      get("/action", () -> "Done GET").
+      post("/action", () -> "Done POST").
+      post("/post/:who", (context, who) -> "Done " + who).
+      add(new Object() {
+        @Post("/person")
+        @Post("/person_alt")
+        public String create() {
+          return "CREATED";
+        }
 
-          @Post("/order/:id")
-          public String order(String id, Order order) {
-            return "order " + id + " : " + order.quantity + "x" + order.name;
-          }
-        }));
+        @Post("/order/:id")
+        public String order(String id, Order order) {
+          return "order " + id + " : " + order.quantity + "x" + order.name;
+        }
+      }));
 
     post("/post").produces("Done");
     post("/post/Bob").produces("Done Bob");
@@ -59,20 +59,20 @@ public class PostTest extends AbstractWebServerTest {
   @Test
   public void forms() {
     server.configure(routes -> routes.
-        post("/postForm", context -> "CREATED " + context.get("firstName") + " " + context.get("lastName")).
-        post("/postForm", context -> "CREATED " + context.get("firstName") + " " + context.get("lastName")).
-        add(new Object() {
-          @Post("/postFormResource")
-          public String create(Map<String, String> keyValues) {
-            return "CREATED " + keyValues.get("firstName") + " " + keyValues.get("lastName");
-          }
-        }).
-        add(new Object() {
-          @Post("/postBean")
-          public String create(Human human) {
-            return "CREATED " + human.firstName + " " + human.lastName;
-          }
-        }));
+      post("/postForm", context -> "CREATED " + context.get("firstName") + " " + context.get("lastName")).
+      post("/postForm", context -> "CREATED " + context.get("firstName") + " " + context.get("lastName")).
+      add(new Object() {
+        @Post("/postFormResource")
+        public String create(Map<String, String> keyValues) {
+          return "CREATED " + keyValues.get("firstName") + " " + keyValues.get("lastName");
+        }
+      }).
+      add(new Object() {
+        @Post("/postBean")
+        public String create(Human human) {
+          return "CREATED " + human.firstName + " " + human.lastName;
+        }
+      }));
 
     post("/postForm", "firstName", "John", "lastName", "Doe").produces("CREATED John Doe");
     post("/postFormResource", "firstName", "Jane", "lastName", "Doe").produces("CREATED Jane Doe");

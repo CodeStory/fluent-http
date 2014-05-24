@@ -29,13 +29,13 @@ public class CoffeeSourceMapCompilerTest {
     String result = compiler.compile(Paths.get("polka.coffee"), "a=b=3\nc=4\nd=(a+b)*c");
 
     assertThat(result).isEqualTo("{\n" +
-        " \"version\": 3,\n" +
-        " \"file\": \"polka.coffee\",\n" +
-        " \"sources\": [\n" +
-        "  \"polka.coffee\"\n" +
-        " ],\n" +
-        " \"names\": [],\n" +
-        " \"mappings\": \"AAAA,IAAA,UAAA;;AAAA,CAAA,GAAE,CAAA,GAAE,CAAJ,CAAA;;AAAA,CACA,GAAE,CADF,CAAA;;AAAA,CAEA,GAAE,CAAC,CAAA,GAAE,CAAH,CAAA,GAAM,CAFR,CAAA\"\n" +
-        "}");
+      " \"version\": 3,\n" +
+      " \"file\": \"polka.coffee\",\n" +
+      " \"sources\": [\n" +
+      "  \"polka.coffee\"\n" +
+      " ],\n" +
+      " \"names\": [],\n" +
+      " \"mappings\": \"AAAA,IAAA,UAAA;;AAAA,CAAA,GAAE,CAAA,GAAE,CAAJ,CAAA;;AAAA,CACA,GAAE,CADF,CAAA;;AAAA,CAEA,GAAE,CAAC,CAAA,GAAE,CAAH,CAAA,GAAM,CAFR,CAAA\"\n" +
+      "}");
   }
 }

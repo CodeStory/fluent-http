@@ -15,19 +15,17 @@
  */
 package net.codestory.http.templating;
 
-import com.github.jknack.handlebars.HandlebarsException;
-import com.github.jknack.handlebars.ValueResolver;
-import net.codestory.http.templating.helpers.GoogleAnalyticsHelper;
-import org.junit.Test;
+import static java.util.Arrays.*;
+import static org.assertj.core.api.Assertions.*;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.io.*;
+import java.util.*;
 
-import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
+import net.codestory.http.templating.helpers.*;
+
+import org.junit.*;
+
+import com.github.jknack.handlebars.*;
 
 public class HandlebarsCompilerTest {
   HandlebarsCompiler compiler = HandlebarsCompiler.INSTANCE;

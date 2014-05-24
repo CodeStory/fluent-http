@@ -28,14 +28,14 @@ public class FilterTest extends AbstractWebServerTest {
   @Test
   public void filter() {
     server.configure(routes -> routes.
-        get("/", "NOT FILTERED").
-        get("/other", "OTHER").
-        filter((uri, context, nextFilter) -> {
-          if ("/".equals(uri)) {
-            return new Payload("FILTERED");
-          }
-          return nextFilter.get();
-        }));
+      get("/", "NOT FILTERED").
+      get("/other", "OTHER").
+      filter((uri, context, nextFilter) -> {
+        if ("/".equals(uri)) {
+          return new Payload("FILTERED");
+        }
+        return nextFilter.get();
+      }));
 
     get("/").produces("FILTERED");
     get("/other").produces("OTHER");
@@ -59,9 +59,9 @@ public class FilterTest extends AbstractWebServerTest {
   @Test
   public void filter_are_executed_in_order_of_definition() {
     server.configure(routes -> routes
-        .get("/", "NOT FILTERED")
-        .filter((uri, context, next) -> new Payload("FILTER1>" + next.get().rawContent()))
-        .filter((uri, context, next) -> new Payload("FILTER2>" + next.get().rawContent())));
+      .get("/", "NOT FILTERED")
+      .filter((uri, context, next) -> new Payload("FILTER1>" + next.get().rawContent()))
+      .filter((uri, context, next) -> new Payload("FILTER2>" + next.get().rawContent())));
 
     get("/").produces("FILTER1>FILTER2>NOT FILTERED");
   }

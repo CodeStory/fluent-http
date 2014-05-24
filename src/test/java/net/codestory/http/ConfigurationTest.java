@@ -31,8 +31,8 @@ public class ConfigurationTest extends AbstractWebServerTest {
   @Test
   public void first_route_serves_first() {
     server.configure(routes -> routes.
-        get("/", "FIRST").
-        get("/", "SECOND"));
+      get("/", "FIRST").
+      get("/", "SECOND"));
 
     get("/").produces("FIRST");
   }
@@ -40,12 +40,12 @@ public class ConfigurationTest extends AbstractWebServerTest {
   @Test
   public void multiple_routes_same_uri() {
     server.configure(routes -> routes
-        .with("/").
-            get(() -> "Index GET").
-            post(() -> "Index POST")
-        .with("/action").
-            get(() -> "Action GET").
-            post(() -> "Action POST")
+      .with("/").
+        get(() -> "Index GET").
+        post(() -> "Index POST")
+      .with("/action").
+        get(() -> "Action GET").
+        post(() -> "Action POST")
     );
 
     get("/").produces("Index GET");
@@ -65,9 +65,9 @@ public class ConfigurationTest extends AbstractWebServerTest {
   @Test
   public void includes() {
     server.configure(routes -> routes.
-        get("/", "MAIN").
-        include(moreRoutes -> moreRoutes.get("/more", "MORE")).
-        include(EvenMoreRoutes.class));
+      get("/", "MAIN").
+      include(moreRoutes -> moreRoutes.get("/more", "MORE")).
+      include(EvenMoreRoutes.class));
 
     get("/").produces("MAIN");
     get("/more").produces("MORE");

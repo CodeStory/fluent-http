@@ -135,8 +135,8 @@ public class AnnotationsTest extends AbstractWebServerTest {
     when(resource.hello()).thenReturn("Hello from Spy");
 
     server.configure(routes -> routes.
-        add(TestResource.class).
-        setIocAdapter(singletons));
+      add(TestResource.class).
+      setIocAdapter(singletons));
 
     get("/hello").produces("Hello from Spy");
   }

@@ -15,37 +15,20 @@
  */
 package net.codestory.http.payload;
 
-import net.codestory.http.Cookie;
-import net.codestory.http.Cookies;
-import net.codestory.http.Request;
-import net.codestory.http.Response;
-import net.codestory.http.misc.Env;
-import net.codestory.http.templating.Site;
-import org.junit.Before;
-import org.junit.Test;
+import static java.nio.charset.StandardCharsets.*;
+import static net.codestory.http.constants.HttpStatus.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.Optional;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static net.codestory.http.constants.HttpStatus.FORBIDDEN;
-import static net.codestory.http.constants.HttpStatus.MOVED_PERMANENTLY;
-import static net.codestory.http.constants.HttpStatus.NOT_FOUND;
-import static net.codestory.http.constants.HttpStatus.NOT_MODIFIED;
-import static net.codestory.http.constants.HttpStatus.OK;
-import static net.codestory.http.constants.HttpStatus.SEE_OTHER;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.anyInt;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import net.codestory.http.*;
+import net.codestory.http.misc.*;
+import net.codestory.http.templating.*;
+
+import org.junit.*;
 
 public class PayloadWriterTest {
   Request request = mock(Request.class);

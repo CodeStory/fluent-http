@@ -30,12 +30,12 @@ public class GetTest extends AbstractWebServerTest {
   @Test
   public void content_types() {
     server.configure(routes -> routes.
-        get("/index", "Index").
-        get("/text", new Payload("text/plain", "TEXT")).
-        get("/html", new Payload("text/html", "<body>HTML</body>")).
-        get("/raw", "RAW".getBytes(UTF_8)).
-        get("/json", new Person("NAME", 42)).
-        get("/optionalIndex", Optional.of("Index")));
+      get("/index", "Index").
+      get("/text", new Payload("text/plain", "TEXT")).
+      get("/html", new Payload("text/html", "<body>HTML</body>")).
+      get("/raw", "RAW".getBytes(UTF_8)).
+      get("/json", new Person("NAME", 42)).
+      get("/optionalIndex", Optional.of("Index")));
 
     get("/index").produces("text/html", "Index");
     get("/text").produces("text/plain", "TEXT");
@@ -48,9 +48,9 @@ public class GetTest extends AbstractWebServerTest {
   @Test
   public void request_params() {
     server.configure(routes -> routes.
-        get("/hello/:name", (context, name) -> "Hello " + name).
-        get("/say/:what/how/:loud", (context, what, loud) -> what + " " + loud).
-        get("/:one/:two/:three", (context, one, two, three) -> one + " " + two + " " + three));
+      get("/hello/:name", (context, name) -> "Hello " + name).
+      get("/say/:what/how/:loud", (context, what, loud) -> what + " " + loud).
+      get("/:one/:two/:three", (context, one, two, three) -> one + " " + two + " " + three));
 
     get("/hello/Dave").produces("Hello Dave");
     get("/hello/John Doe").produces("Hello John Doe");
@@ -61,14 +61,14 @@ public class GetTest extends AbstractWebServerTest {
   @Test
   public void query_params() {
     server.configure(routes -> routes.
-        get("/index", "Hello").
-        get("/hello?name=:name", (context, name) -> "Hello " + name).
-        add(new Object() {
-          @Get("/keyValues")
-          public String keyValues(Map<String, String> keyValues) {
-            return keyValues.toString();
-          }
-        }));
+      get("/index", "Hello").
+      get("/hello?name=:name", (context, name) -> "Hello " + name).
+      add(new Object() {
+        @Get("/keyValues")
+        public String keyValues(Map<String, String> keyValues) {
+          return keyValues.toString();
+        }
+      }));
 
     get("/index?query=useless").produces("Hello");
     get("/hello?name=Dave").produces("Hello Dave");
