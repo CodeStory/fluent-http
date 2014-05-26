@@ -17,6 +17,7 @@ package net.codestory.http.io;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.io.*;
 import java.nio.file.*;
 
 import org.junit.*;
@@ -37,5 +38,14 @@ public class ResourcesTest {
     assertThat(Resources.extension(Paths.get("file"))).isEmpty();
     assertThat(Resources.extension(Paths.get(".dotfile"))).isEmpty();
     assertThat(Resources.extension(Paths.get("."))).isEmpty();
+  }
+
+  @Test
+  public void read_resource_from_sources_not_from_target_to_accelerate_feedback() {
+    File file = Resources.fileForClasspath(Resources.getResource("app/_layouts/default.html"));
+
+    assertThat(file.getAbsolutePath())
+      .contains("src/main/resources/app/_layouts/default.html")
+      .doesNotContain("target/classes/app/_layouts/default.html");
   }
 }
