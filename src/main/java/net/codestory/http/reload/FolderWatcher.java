@@ -15,14 +15,14 @@
  */
 package net.codestory.http.reload;
 
+import static com.sun.nio.file.SensitivityWatchEventModifier.*;
 import static java.nio.file.Files.*;
+import static java.nio.file.StandardWatchEventKinds.*;
 import static net.codestory.http.io.FileVisitor.*;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.function.*;
-
-import com.sun.nio.file.*;
 
 class FolderWatcher {
   private final Path folder;
@@ -55,11 +55,7 @@ class FolderWatcher {
       WatchService watcher = folder.getFileSystem().newWatchService();
 
       walkFileTree(folder, onDirectory(dir -> {
-        dir.register(watcher, new WatchEvent.Kind[]{
-          StandardWatchEventKinds.ENTRY_CREATE,
-          StandardWatchEventKinds.ENTRY_MODIFY,
-          StandardWatchEventKinds.ENTRY_DELETE},
-          SensitivityWatchEventModifier.HIGH);
+        dir.register(watcher, new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE}, HIGH);
       }));
 
       return watcher;
