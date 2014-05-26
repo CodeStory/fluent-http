@@ -18,6 +18,7 @@ package net.codestory.http.misc;
 import static java.util.Objects.*;
 
 import java.util.*;
+import java.util.concurrent.atomic.*;
 import java.util.function.*;
 import java.util.stream.*;
 
@@ -82,6 +83,11 @@ public interface Fluent<T> extends Iterable<T> {
     requireNonNull(text);
     requireNonNull(regex);
     return of(text.split(regex));
+  }
+
+  public default void forEach(Consumer<? super T> action) {
+    requireNonNull(action);
+    stream().forEach(action);
   }
 
   public default <R> Fluent<R> map(Function<? super T, ? extends R> transform) {
@@ -253,9 +259,14 @@ public interface Fluent<T> extends Iterable<T> {
 
   public default void forEachWithIndex(BiConsumer<Integer, T> consumer) {
     requireNonNull(consumer);
-    int index = 0;
-    for (T value : this) {
-      consumer.accept(index++, value);
+    if (isParallel()) {
+      AtomicInteger index = new AtomicInteger(0);
+      forEach(value -> consumer.accept(index.getAndIncrement(), value));
+    } else {
+      int index = 0;
+      for (T value : this) {
+        consumer.accept(index++, value);
+      }
     }
   }
 
