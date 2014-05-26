@@ -15,11 +15,12 @@
  */
 package net.codestory.http.reload;
 
+import static net.codestory.http.io.Resources.*;
+
 import java.nio.file.*;
 import java.util.concurrent.atomic.*;
 
 import net.codestory.http.*;
-import net.codestory.http.io.*;
 import net.codestory.http.routes.*;
 
 import org.slf4j.*;
@@ -29,16 +30,16 @@ class ReloadingRoutesProvider implements RoutesProvider {
 
   private final Configuration configuration;
   private final AtomicBoolean dirty;
-  private final FolderWatcher targetFolderWatcher;
-  private final FolderWatcher appFolderWatcher;
+  private final FolderWatcher classesWatcher;
+  private final FolderWatcher appWatcher;
 
   private RouteCollection routes;
 
   ReloadingRoutesProvider(Configuration configuration) {
     this.configuration = configuration;
     this.dirty = new AtomicBoolean(true);
-    this.targetFolderWatcher = new FolderWatcher(Paths.get(Resources.CLASSES_OUTPUT_DIR), ev -> dirty.set(true));
-    this.appFolderWatcher = new FolderWatcher(Paths.get(Resources.ROOT), ev -> System.out.println("Change detected in app folder"));
+    this.classesWatcher = new FolderWatcher(Paths.get(CLASSES_OUTPUT_DIR), ev -> dirty.set(true));
+    this.appWatcher = new FolderWatcher(Paths.get(ROOT), ev -> dirty.set(true));
   }
 
   @Override
@@ -46,10 +47,8 @@ class ReloadingRoutesProvider implements RoutesProvider {
     if (dirty.get()) {
       LOG.info("Reloading configuration...");
 
-      targetFolderWatcher.ensureStarted();
-      if (false) {
-        appFolderWatcher.ensureStarted();
-      }
+      classesWatcher.ensureStarted();
+      appWatcher.ensureStarted();
 
       routes = new RouteCollection();
       configuration.configure(routes);
