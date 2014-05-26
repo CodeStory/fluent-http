@@ -26,7 +26,14 @@ public class ResourcesTest {
   @Test
   public void exists() {
     assertThat(Resources.exists(Paths.get("index.html"))).isTrue();
+    assertThat(Resources.exists(Paths.get("/index.html"))).isTrue();
+    assertThat(Resources.exists(Paths.get("assets/style.css"))).isTrue();
     assertThat(Resources.exists(Paths.get("js"))).isFalse();
+  }
+
+  @Test
+  public void normalize_windows_path() {
+    assertThat(Resources.exists(Paths.get("assets\\style.css"))).isTrue();
   }
 
   @Test

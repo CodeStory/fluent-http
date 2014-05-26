@@ -81,8 +81,7 @@ public class Resources {
   }
 
   private static String withPrefix(Path path) {
-    String unixPath = toUnixString(path);
-    return APP_DIR + (unixPath.startsWith("/") ? "" : "/") + unixPath;
+    return toUnixString(Paths.get(appPath().toString(), path.toString()));
   }
 
   public static String toUnixString(Path path) {
