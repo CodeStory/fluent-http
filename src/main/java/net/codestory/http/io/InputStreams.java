@@ -59,6 +59,10 @@ public class InputStreams {
     }
   }
 
+  public static InputStream getResourceAsStream(String path) {
+    return Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
+  }
+
   @FunctionalInterface
   private static interface ForBytes<T> {
     T apply(ByteArrayOutputStream bytes) throws IOException;

@@ -44,7 +44,7 @@ public final class NashornCompiler {
     StringBuilder concatenatedScript = new StringBuilder();
 
     for (String scriptPath : scriptPaths) {
-      try (InputStream input = Resources.getResourceAsStream(scriptPath)) {
+      try (InputStream input = InputStreams.getResourceAsStream(scriptPath)) {
         String content = InputStreams.readString(input, UTF_8);
 
         concatenatedScript.append(content).append("\n");

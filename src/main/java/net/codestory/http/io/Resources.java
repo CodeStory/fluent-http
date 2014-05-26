@@ -194,8 +194,4 @@ public class Resources {
   public static URL getResource(String path) {
     return Thread.currentThread().getContextClassLoader().getResource(path);
   }
-
-  public static InputStream getResourceAsStream(String path) {
-    return Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
-  }
 }
