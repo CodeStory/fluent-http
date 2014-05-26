@@ -25,6 +25,14 @@ import net.codestory.http.io.*;
 import org.junit.*;
 
 public class CompilersTest {
+  @After
+  public void tearDown() throws Exception {
+    //Remove file created in test compile_less_file_with_import
+    URL rootURL = Resources.getResource("private.txt");
+    Path otherPath = Paths.get(new File(rootURL.getFile()).getParent(), "app/assets/other.less");
+    Files.deleteIfExists(otherPath);
+  }
+
   @Test
   public void compile_less_file() {
     String css = Compilers.INSTANCE.compile(Paths.get("style.less"), "body { h1 { color: red; } }").content();
