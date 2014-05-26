@@ -146,14 +146,15 @@ public class PayloadWriter {
       PrintStream printStream = response.printStream();
 
       executor.submit(() -> {
-        stream.forEach(item -> printStream
-          .append("id: ")
-          .append(Long.toString(System.currentTimeMillis()))
-          .append("\n")
-          .append("data: ")
-          .append(TypeConvert.toJson(item))
-          .append("\n\n")
-          .flush());
+        stream.forEach(item -> {
+          String json = (item instanceof String) ? (String) item : TypeConvert.toJson(item);
+
+          printStream
+            .append("data: ")
+            .append(json)
+            .append("\n\n")
+            .flush();
+        });
         close();
       });
     } else if (payload.rawContent() instanceof InputStream) {
