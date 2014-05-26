@@ -51,7 +51,7 @@ public class CookieAuthFilterTest {
   }
 
   @Test
-  public void filter_pivate_extensions() {
+  public void filter_private_extensions() {
     assertThat(filter.matches("/secure/index.html", null)).isTrue();
     assertThat(filter.matches("/secure/app.js", null)).isTrue();
   }
