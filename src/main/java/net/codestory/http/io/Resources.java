@@ -23,19 +23,16 @@ import java.nio.file.*;
 import net.codestory.http.types.*;
 
 public class Resources {
-  private static final String CLASSES_OUTPUT_DIR = "target/classes/";
-  private static final String APP_DIR = "app";
-
   private Resources() {
     // Static utility class
   }
 
   public static Path classesOutputPath() {
-    return Paths.get(CLASSES_OUTPUT_DIR);
+    return Paths.get("target/classes/");
   }
 
   public static Path appPath() {
-    return Paths.get(APP_DIR);
+    return Paths.get("app");
   }
 
   public static String relativePath(Path parent, Path path) {
@@ -180,7 +177,7 @@ public class Resources {
     }
 
     try {
-      return new File(URLDecoder.decode(filename, "US-ASCII").replace("/" + CLASSES_OUTPUT_DIR, "/src/main/resources/"));
+      return new File(URLDecoder.decode(filename, "US-ASCII").replace("/" + classesOutputPath().toString(), "/src/main/resources/"));
     } catch (UnsupportedEncodingException e) {
       throw new IllegalArgumentException("Invalid filename classpath: " + url, e);
     }
