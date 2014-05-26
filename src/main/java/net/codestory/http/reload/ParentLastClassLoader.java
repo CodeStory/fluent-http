@@ -15,16 +15,16 @@
  */
 package net.codestory.http.reload;
 
-import java.io.*;
 import java.net.*;
+import java.nio.file.*;
 
 /**
  * @author <a href="mailto:nicolas.deloof@gmail.com">Nicolas De Loof</a>
  */
 public class ParentLastClassLoader extends URLClassLoader {
 
-  public ParentLastClassLoader(String classesOutputDir, ClassLoader parent) throws MalformedURLException {
-    super(new URL[]{new File(classesOutputDir).toURI().toURL()}, parent);
+  public ParentLastClassLoader(Path classesOutputDir, ClassLoader parent) throws MalformedURLException {
+    super(new URL[]{classesOutputDir.toFile().toURI().toURL()}, parent);
   }
 
   @Override

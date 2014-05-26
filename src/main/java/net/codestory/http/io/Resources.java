@@ -19,15 +19,28 @@ import java.io.*;
 import java.net.*;
 import java.nio.charset.*;
 import java.nio.file.*;
+import java.util.*;
 
 import net.codestory.http.types.*;
 
 public class Resources {
-  public static final String CLASSES_OUTPUT_DIR = "target/classes/";
-  public static final String ROOT = "app";
+  private static final String CLASSES_OUTPUT_DIR = "target/classes/";
+  private static final String APP_DIR = "app";
 
   private Resources() {
     // Static utility class
+  }
+
+  public static Path classesOutputPath() {
+    return Paths.get(CLASSES_OUTPUT_DIR);
+  }
+
+  public static Path appPath() {
+    return Paths.get(APP_DIR);
+  }
+
+  public static Set<String> scanApp() {
+    return new ClasspathScanner().getResources(APP_DIR);
   }
 
   public static String relativePath(Path parent, Path path) {
@@ -76,7 +89,7 @@ public class Resources {
   }
 
   private static String withPrefix(Path path) {
-    return ROOT + (toUnixString(path).startsWith("/") ? "" : "/") + toUnixString(path);
+    return APP_DIR + (toUnixString(path).startsWith("/") ? "" : "/") + toUnixString(path);
   }
 
   public static String toUnixString(Path path) {

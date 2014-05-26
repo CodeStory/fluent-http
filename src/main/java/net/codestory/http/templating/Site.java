@@ -79,15 +79,15 @@ public class Site {
   private static Set<String> list(Env env) {
     Set<String> paths = new TreeSet<>();
 
-    Path parentPath = Paths.get(ROOT);
+    Path rootPath = Resources.appPath();
 
     try {
-      if (new File(Resources.CLASSES_OUTPUT_DIR).exists() && !env.disableClassPath()) {
-        new ClasspathScanner().getResources(ROOT).forEach(resource -> paths.add(relativePath(parentPath, Paths.get(resource))));
+      if (Resources.classesOutputPath().toFile().exists() && !env.disableClassPath()) {
+        Resources.scanApp().forEach(resource -> paths.add(relativePath(rootPath, Paths.get(resource))));
       }
 
       if (!env.disableFilesystem()) {
-        walkFileTree(Paths.get(ROOT), onFile(path -> paths.add(relativePath(parentPath, path))));
+        walkFileTree(rootPath, onFile(path -> paths.add(relativePath(rootPath, path))));
       }
     } catch (IOException e) {
       // Ignore

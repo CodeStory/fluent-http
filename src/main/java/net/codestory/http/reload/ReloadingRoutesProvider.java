@@ -15,12 +15,10 @@
  */
 package net.codestory.http.reload;
 
-import static net.codestory.http.io.Resources.*;
-
-import java.nio.file.*;
 import java.util.concurrent.atomic.*;
 
 import net.codestory.http.*;
+import net.codestory.http.io.*;
 import net.codestory.http.routes.*;
 
 import org.slf4j.*;
@@ -38,8 +36,8 @@ class ReloadingRoutesProvider implements RoutesProvider {
   ReloadingRoutesProvider(Configuration configuration) {
     this.configuration = configuration;
     this.dirty = new AtomicBoolean(true);
-    this.classesWatcher = new FolderWatcher(Paths.get(CLASSES_OUTPUT_DIR), ev -> dirty.set(true));
-    this.appWatcher = new FolderWatcher(Paths.get(ROOT), ev -> dirty.set(true));
+    this.classesWatcher = new FolderWatcher(Resources.classesOutputPath(), ev -> dirty.set(true));
+    this.appWatcher = new FolderWatcher(Resources.appPath(), ev -> dirty.set(true));
   }
 
   @Override

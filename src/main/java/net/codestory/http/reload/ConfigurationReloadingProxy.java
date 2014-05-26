@@ -34,7 +34,7 @@ public class ConfigurationReloadingProxy implements Configuration {
   @Override
   public void configure(Routes routes) {
     try {
-      ClassLoader classLoader = new ParentLastClassLoader(Resources.CLASSES_OUTPUT_DIR, parent);
+      ClassLoader classLoader = new ParentLastClassLoader(Resources.classesOutputPath(), parent);
 
       Class<? extends Configuration> type = (Class<? extends Configuration>) classLoader.loadClass(fqcn);
       type.newInstance().configure(routes);
