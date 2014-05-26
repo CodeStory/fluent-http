@@ -19,7 +19,6 @@ import java.io.*;
 import java.net.*;
 import java.nio.charset.*;
 import java.nio.file.*;
-import java.util.*;
 
 import net.codestory.http.types.*;
 
@@ -37,10 +36,6 @@ public class Resources {
 
   public static Path appPath() {
     return Paths.get(APP_DIR);
-  }
-
-  public static Set<String> scanApp() {
-    return new ClasspathScanner().getResources(APP_DIR);
   }
 
   public static String relativePath(Path parent, Path path) {

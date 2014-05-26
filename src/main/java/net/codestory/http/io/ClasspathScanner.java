@@ -17,10 +17,13 @@ package net.codestory.http.io;
 
 import java.io.*;
 import java.net.*;
+import java.nio.file.*;
 import java.util.*;
 
 public class ClasspathScanner {
-  public Set<String> getResources(String prefix) {
+  public Set<String> getResources(Path root) {
+    String prefix = root.toString();
+
     Set<String> resources = new LinkedHashSet<>();
 
     for (URL url : urls(prefix)) {

@@ -59,7 +59,7 @@ class WebJarsRoute implements Route {
 
   private void printKnownWebjars() {
     LOG.info("Found these webjars files:");
-    for (String uri : new ClasspathScanner().getResources("META-INF/resources/webjars/")) {
+    for (String uri : new ClasspathScanner().getResources(Paths.get("META-INF/resources/webjars/"))) {
       LOG.info(" + " + substringAfter(uri, "META-INF/resources"));
     }
   }
