@@ -15,11 +15,10 @@
  */
 package net.codestory.http;
 
-import static net.codestory.http.constants.Headers.*;
+import static net.codestory.http.payload.Payload.*;
 
 import net.codestory.http.annotations.*;
 import net.codestory.http.errors.*;
-import net.codestory.http.payload.*;
 import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
@@ -27,23 +26,24 @@ import org.junit.*;
 public class CORSTest extends AbstractWebServerTest {
   @Test
   public void preflight() {
-    server.configure(routes -> routes.
-      options("/cors", context -> {
-        if (!context.isCORS()) throw new HttpException(401);
-        if (context.isPreflight()) throw new HttpException(402);
-        return new Payload("")
-          .withCode(200)
+    server.configure(routes -> routes
+      .options("/cors", context -> {
+        if (!context.isCORS() || context.isPreflight()) {
+          throw new BadRequestException();
+        }
+
+        return ok()
           .withAllowOrigin("*")
           .withAllowCredentials(true)
           .withExposeHeaders("X-TOTO")
           .withMaxAge(3600);
-      }).
-      options("/corspf", context -> {
-        if (!context.isCORS()) throw new HttpException(403);
-        if (!context.isPreflight()) throw new HttpException(404);
-        if (!"PUT".equals(context.header(ACCESS_CONTROL_REQUEST_METHOD))) throw new HttpException(405);
-        return new Payload("")
-          .withCode(200)
+      })
+      .options("/corspf", context -> {
+        if (!context.isCORS() || !context.isPreflight() || !"PUT".equals(context.header("Access-Control-Request-Method"))) {
+          throw new BadRequestException();
+        }
+
+        return ok()
           .withAllowOrigin("*")
           .withAllowMethods("PUT")
           .withAllowHeaders("X-TOTO")
@@ -53,20 +53,20 @@ public class CORSTest extends AbstractWebServerTest {
     );
 
     options("/cors").produces(200);
-    optionsWithHeader("/corspf", ACCESS_CONTROL_REQUEST_METHOD, "PUT").produces(200);
-    optionsWithHeader("/corspf", ACCESS_CONTROL_REQUEST_METHOD, "PUT").producesHeader(ACCESS_CONTROL_ALLOW_METHODS, "PUT");
+    optionsWithHeader("/corspf", "Access-Control-Request-Method", "PUT").produces(200);
+    optionsWithHeader("/corspf", "Access-Control-Request-Method", "PUT").producesHeader("Access-Control-Allow-Methods", "PUT");
   }
 
   @Test
   public void programmatic() {
     server.configure(routes -> routes.
-      options("/origin", new Payload("").withCode(200).withAllowOrigin("http://www.code-story.net")).
-      options("/originall", new Payload("").withCode(200).withAllowOrigin("*")).
-      options("/methods", new Payload("").withCode(200).withAllowMethods("GET")).
-      options("/methodsmore", new Payload("").withCode(200).withAllowMethods("GET", "POST")).
-      options("/credentials", new Payload("").withCode(200).withAllowCredentials(true)).
-      options("/headers", new Payload("").withCode(200).withAllowHeaders("X-TOTO")).
-      options("/headersmore", new Payload("").withCode(200).withAllowHeaders("X-TOTO", "X-BIDULE"))
+      options("/origin", ok().withAllowOrigin("http://www.code-story.net")).
+      options("/originall", ok().withAllowOrigin("*")).
+      options("/methods", ok().withAllowMethods("GET")).
+      options("/methodsmore", ok().withAllowMethods("GET", "POST")).
+      options("/credentials", ok().withAllowCredentials(true)).
+      options("/headers", ok().withAllowHeaders("X-TOTO")).
+      options("/headersmore", ok().withAllowHeaders("X-TOTO", "X-BIDULE"))
     );
 
     options("/origin").producesHeader("Access-Control-Allow-Origin", "http://www.code-story.net");
@@ -94,44 +94,37 @@ public class CORSTest extends AbstractWebServerTest {
   public static class CorsResource {
     @Options("/origin")
     @AllowOrigin("http://www.code-story.net")
-    public String route1() {
-      return "";
+    public void route1() {
     }
 
     @Options("/originall")
     @AllowOrigin("*")
-    public String route2() {
-      return "";
+    public void route2() {
     }
 
     @Options("/methods")
     @AllowMethods("GET")
-    public String route3() {
-      return "";
+    public void route3() {
     }
 
     @Options("/methodsmore")
     @AllowMethods({"GET", "POST"})
-    public String route4() {
-      return "";
+    public void route4() {
     }
 
     @Options("/credentials")
     @AllowCredentials(true)
-    public String route5() {
-      return "";
+    public void route5() {
     }
 
     @Options("/headers")
     @AllowHeaders("X-TOTO")
-    public String route6() {
-      return "";
+    public void route6() {
     }
 
     @Options("/headersmore")
     @AllowHeaders({"X-TOTO", "X-BIDULE"})
-    public String route7() {
-      return "";
+    public void route7() {
     }
   }
 }
