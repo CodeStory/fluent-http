@@ -27,6 +27,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
 import java.util.stream.*;
 import java.util.zip.*;
 
@@ -58,10 +59,16 @@ public class PayloadWriter {
   }
 
   public PayloadWriter(Env env, Site site, Request request, Response response, int executorThreads) {
-    this(env, site, request, response, Executors.newFixedThreadPool(executorThreads, task -> {
-      Thread thread = new Thread(task);
-      thread.setDaemon(true);
-      return thread;
+    this(env, site, request, response, Executors.newFixedThreadPool(executorThreads, new ThreadFactory() {
+      AtomicLong threadIndex = new AtomicLong(0);
+
+      @Override
+      public Thread newThread(Runnable task) {
+        String name = "HttpWorker" + threadIndex.getAndIncrement();
+        Thread thread = new Thread(task, name);
+        thread.setDaemon(true);
+        return thread;
+      }
     }));
   }
 
