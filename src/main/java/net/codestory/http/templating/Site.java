@@ -19,14 +19,13 @@ import static java.nio.charset.StandardCharsets.*;
 import static java.nio.file.Files.*;
 import static net.codestory.http.io.Resources.*;
 import static net.codestory.http.io.FileVisitor.*;
-import static net.codestory.http.misc.Fluent.of;
+import static net.codestory.http.misc.Fluent.*;
 import static net.codestory.http.misc.MemoizingSupplier.*;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.*;
 
 import net.codestory.http.convert.*;
 import net.codestory.http.io.*;
@@ -68,12 +67,7 @@ public class Site {
       return tags;
     });
 
-    categories = memoize(() -> {
-      Map<String, List<Map<String, Object>>> sorted = getPages()
-        .stream()
-        .collect(Collectors.groupingBy(page -> Site.category(page), TreeMap::new, Collectors.toList()));
-      return sorted;
-    });
+    categories = memoize(() -> of(getPages()).groupBy(page -> Site.category(page), TreeMap::new));
   }
 
   private static Set<String> list(Env env) {

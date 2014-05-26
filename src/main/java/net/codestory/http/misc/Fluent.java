@@ -461,4 +461,14 @@ public interface Fluent<T> extends Iterable<T> {
   public default Fluent<T> notNulls() {
     return filter(v -> v != null);
   }
+
+  public default <K> Map<K, List<T>> groupBy(Function<? super T, ? extends K> classifier) {
+    requireNonNull(classifier);
+    return stream().collect(Collectors.groupingBy(classifier, HashMap::new, Collectors.toList()));
+  }
+
+  public default <K, M extends Map<K, List<T>>> Map<K, List<T>> groupBy(Function<? super T, ? extends K> classifier, Supplier<M> mapFactory) {
+    requireNonNull(classifier);
+    return stream().collect(Collectors.groupingBy(classifier, mapFactory, Collectors.toList()));
+  }
 }
