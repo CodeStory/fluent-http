@@ -27,7 +27,6 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.*;
 import java.util.stream.*;
 import java.util.zip.*;
 
@@ -46,6 +45,10 @@ public class PayloadWriter {
   private final Response response;
   private final ExecutorService executor;
 
+  public PayloadWriter(Env env, Site site, Request request, Response response) {
+    this(env, site, request, response, Executors.newCachedThreadPool(new NamedDaemonThreadFactory()));
+  }
+
   public PayloadWriter(Env env, Site site, Request request, Response response, ExecutorService executor) {
     this.request = request;
     this.response = response;
@@ -54,22 +57,8 @@ public class PayloadWriter {
     this.executor = executor;
   }
 
-  public PayloadWriter(Env env, Site site, Request request, Response response) {
-    this(env, site, request, response, 8);
-  }
-
   public PayloadWriter(Env env, Site site, Request request, Response response, int executorThreads) {
-    this(env, site, request, response, Executors.newFixedThreadPool(executorThreads, new ThreadFactory() {
-      AtomicLong threadIndex = new AtomicLong(0);
-
-      @Override
-      public Thread newThread(Runnable task) {
-        String name = "HttpWorker" + threadIndex.getAndIncrement();
-        Thread thread = new Thread(task, name);
-        thread.setDaemon(true);
-        return thread;
-      }
-    }));
+    this(env, site, request, response, Executors.newFixedThreadPool(executorThreads, new NamedDaemonThreadFactory()));
   }
 
   public void writeAndClose(Payload payload) throws IOException {
