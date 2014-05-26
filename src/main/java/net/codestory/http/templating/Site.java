@@ -17,8 +17,9 @@ package net.codestory.http.templating;
 
 import static java.nio.charset.StandardCharsets.*;
 import static java.nio.file.Files.*;
-import static net.codestory.http.io.FileVisitor.*;
 import static net.codestory.http.io.Resources.*;
+import static net.codestory.http.io.FileVisitor.*;
+import static net.codestory.http.misc.Fluent.of;
 import static net.codestory.http.misc.MemoizingSupplier.*;
 
 import java.io.*;
@@ -46,16 +47,15 @@ public class Site {
 
     yaml = memoize(() -> loadYamlConfig("_config.yml"));
 
-    data = memoize(() -> resourceList.get()
-      .stream()
+    data = memoize(() -> of(resourceList.get())
       .filter(path -> path.startsWith("_data/"))
-      .collect(Collectors.toMap(path -> nameWithoutExtension(path), path -> readYaml(path))));
+      .toMap(path -> nameWithoutExtension(path), path -> readYaml(path))
+    );
 
-    pages = memoize(() -> resourceList.get()
-      .stream()
+    pages = memoize(() -> of(resourceList.get())
       .filter(path -> !path.startsWith("_"))
       .map(path -> Site.pathToMap(path))
-      .collect(Collectors.<Map<String, Object>>toList())
+      .toList()
     );
 
     tags = memoize(() -> {
