@@ -25,6 +25,7 @@ import org.junit.*;
 public class ResourcesTest {
   @Test
   public void exists() {
+    assertThat(Resources.exists(Paths.get("_layouts/default.html"))).isTrue();
     assertThat(Resources.exists(Paths.get("index.html"))).isTrue();
     assertThat(Resources.exists(Paths.get("/index.html"))).isTrue();
     assertThat(Resources.exists(Paths.get("assets/style.css"))).isTrue();

@@ -28,11 +28,6 @@ public class Resources {
   }
 
   @Deprecated
-  private static Path classesOutputPath() {
-    return Paths.get("target/classes/");
-  }
-
-  @Deprecated
   public static Path appPath() {
     return Paths.get("app");
   }
@@ -178,7 +173,16 @@ public class Resources {
     }
 
     try {
-      return new File(URLDecoder.decode(filename, "US-ASCII").replace("/" + classesOutputPath().toString(), "/src/main/resources/"));
+      String path = URLDecoder.decode(filename, "US-ASCII");
+
+      // Sear for file in sources instead of target to speed up live reload
+      String sourcePath = Paths.get("src/main/resources/", appPath().toString(), Strings.substringAfter(path, "/" + appPath().toString() + "/")).toString();
+      File file = new File(sourcePath);
+      if (file.exists()) {
+        return file;
+      }
+
+      return new File(path);
     } catch (UnsupportedEncodingException e) {
       throw new IllegalArgumentException("Invalid filename classpath: " + url, e);
     }
