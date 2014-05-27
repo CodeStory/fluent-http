@@ -28,7 +28,7 @@ public class Resources {
   }
 
   @Deprecated
-  public static Path classesOutputPath() {
+  private static Path classesOutputPath() {
     return Paths.get("target/classes/");
   }
 

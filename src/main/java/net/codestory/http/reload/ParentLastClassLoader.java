@@ -15,25 +15,17 @@
  */
 package net.codestory.http.reload;
 
-import static net.codestory.http.misc.Fluent.*;
-
 import java.net.*;
+
+import net.codestory.http.io.*;
 
 /**
  * @author <a href="mailto:nicolas.deloof@gmail.com">Nicolas De Loof</a>
  */
 public class ParentLastClassLoader extends URLClassLoader {
 
-  public ParentLastClassLoader(ClassLoader parent) throws MalformedURLException {
-    super(getUrls(parent), parent);
-  }
-
-  private static URL[] getUrls(ClassLoader parent) throws MalformedURLException {
-    if (!(parent instanceof URLClassLoader)) {
-      return new URL[0];
-    }
-
-    return of(((URLClassLoader) parent).getURLs()).exclude(url -> url.toString().endsWith(".jar")).toArray(URL[]::new);
+  public ParentLastClassLoader(ClassLoader parent) {
+    super(ClassPaths.getUrls(parent), parent);
   }
 
   @Override

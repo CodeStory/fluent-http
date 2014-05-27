@@ -40,10 +40,6 @@ public class Env {
     this.disableGzip = disableGzip;
   }
 
-  public Path classesOutputPath() {
-    return Resources.classesOutputPath();
-  }
-
   public Path appPath() {
     return Resources.appPath();
   }

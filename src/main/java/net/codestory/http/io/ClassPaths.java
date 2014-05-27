@@ -19,6 +19,7 @@ import static java.nio.charset.StandardCharsets.*;
 import static java.nio.file.Files.*;
 import static net.codestory.http.io.FileVisitor.*;
 import static net.codestory.http.io.Resources.*;
+import static net.codestory.http.misc.Fluent.of;
 
 import java.io.*;
 import java.net.*;
@@ -27,8 +28,15 @@ import java.util.*;
 import java.util.jar.*;
 import java.util.zip.*;
 
-class ClassPaths {
-  static List<String> fromURL(URL url) {
+public class ClassPaths {
+  public static URL[] getUrls(ClassLoader parent) {
+    if (!(parent instanceof URLClassLoader)) {
+      return new URL[0];
+    }
+    return of(((URLClassLoader) parent).getURLs()).exclude(url -> url.toString().endsWith(".jar")).toArray(URL[]::new);
+  }
+
+  public static List<String> fromURL(URL url) {
     String protocol = url.getProtocol();
     String name = url.toExternalForm();
 
