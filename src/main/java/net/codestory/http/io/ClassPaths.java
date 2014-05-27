@@ -36,6 +36,10 @@ public class ClassPaths {
     return of(((URLClassLoader) parent).getURLs()).exclude(url -> url.toString().endsWith(".jar")).toArray(URL[]::new);
   }
 
+  public static URL getResource(String path) {
+    return Thread.currentThread().getContextClassLoader().getResource(path);
+  }
+
   public static List<String> fromURL(URL url) {
     String protocol = url.getProtocol();
     String name = url.toExternalForm();

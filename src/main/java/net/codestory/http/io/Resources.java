@@ -15,6 +15,8 @@
  */
 package net.codestory.http.io;
 
+import static net.codestory.http.io.ClassPaths.getResource;
+
 import java.io.*;
 import java.net.*;
 import java.nio.charset.*;
@@ -186,9 +188,5 @@ public class Resources {
     } catch (UnsupportedEncodingException e) {
       throw new IllegalArgumentException("Invalid filename classpath: " + url, e);
     }
-  }
-
-  public static URL getResource(String path) {
-    return Thread.currentThread().getContextClassLoader().getResource(path);
   }
 }

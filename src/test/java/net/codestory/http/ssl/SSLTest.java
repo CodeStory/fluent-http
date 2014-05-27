@@ -96,7 +96,7 @@ public class SSLTest {
   }
 
   private static Path resource(String name) throws URISyntaxException {
-    return Paths.get(Resources.getResource(name).toURI());
+    return Paths.get(ClassPaths.getResource(name).toURI());
   }
 
   private static SSLSocketFactory getSocketFactory(Path caCertificate) throws Exception {

@@ -37,7 +37,7 @@ class PathSource extends LessSource {
   @Override
   public LessSource relativeSource(String filename) throws CannotReadFile, FileNotFound {
     if (filename.startsWith("/webjars/")) {
-      URL webjarResource = Resources.getResource("META-INF/resources" + filename);
+      URL webjarResource = ClassPaths.getResource("META-INF/resources" + filename);
       if (webjarResource == null) {
         throw new FileNotFound();
       }

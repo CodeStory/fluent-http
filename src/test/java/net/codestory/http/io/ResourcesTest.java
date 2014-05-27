@@ -50,7 +50,7 @@ public class ResourcesTest {
 
   @Test
   public void read_resource_from_sources_not_from_target_to_accelerate_feedback() {
-    File file = Resources.fileForClasspath(Resources.getResource("app/_layouts/default.html"));
+    File file = Resources.fileForClasspath(ClassPaths.getResource("app/_layouts/default.html"));
 
     assertThat(file.getAbsolutePath())
       .contains("src/main/resources/app/_layouts/default.html")
