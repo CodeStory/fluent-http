@@ -15,6 +15,8 @@
  */
 package net.codestory.http.reload;
 
+import static net.codestory.http.misc.Fluent.*;
+
 import java.net.*;
 
 /**
@@ -27,7 +29,11 @@ public class ParentLastClassLoader extends URLClassLoader {
   }
 
   private static URL[] getUrls(ClassLoader parent) throws MalformedURLException {
-    return (parent instanceof URLClassLoader) ? ((URLClassLoader) parent).getURLs() : new URL[0];
+    if (!(parent instanceof URLClassLoader)) {
+      return new URL[0];
+    }
+
+    return of(((URLClassLoader) parent).getURLs()).exclude(url -> url.toString().endsWith(".jar")).toArray(URL[]::new);
   }
 
   @Override
