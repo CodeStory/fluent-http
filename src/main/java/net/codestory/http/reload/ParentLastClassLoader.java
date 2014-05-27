@@ -24,7 +24,11 @@ import java.nio.file.*;
 public class ParentLastClassLoader extends URLClassLoader {
 
   public ParentLastClassLoader(Path classesOutputDir, ClassLoader parent) throws MalformedURLException {
-    super(new URL[]{classesOutputDir.toFile().toURI().toURL()}, parent);
+    super(getUrls(classesOutputDir), parent);
+  }
+
+  private static URL[] getUrls(Path classesOutputDir) throws MalformedURLException {
+    return new URL[]{classesOutputDir.toUri().toURL()};
   }
 
   @Override
