@@ -77,7 +77,7 @@ public class Site {
 
     try {
       if (classesOutputPath().toFile().exists() && !env.disableClassPath()) {
-        new ClasspathScanner().getResources(appPath()).forEach(resource -> paths.add(relativePath(rootPath, Paths.get(resource))));
+        new ClasspathScanner().getResources(rootPath).forEach(resource -> paths.add(relativePath(rootPath, Paths.get(resource))));
       }
 
       if (!env.disableFilesystem()) {
