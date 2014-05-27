@@ -27,10 +27,12 @@ public class Resources {
     // Static utility class
   }
 
+  @Deprecated
   public static Path classesOutputPath() {
     return Paths.get("target/classes/");
   }
 
+  @Deprecated
   public static Path appPath() {
     return Paths.get("app");
   }

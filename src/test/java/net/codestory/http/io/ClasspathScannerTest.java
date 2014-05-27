@@ -20,14 +20,17 @@ import static org.assertj.core.api.Assertions.*;
 import java.nio.file.*;
 import java.util.*;
 
+import net.codestory.http.misc.*;
+
 import org.junit.*;
 
 public class ClasspathScannerTest {
   ClasspathScanner classpathScanner = new ClasspathScanner();
+  Env env = new Env();
 
   @Test
   public void scan_main_resources() {
-    Set<String> resources = classpathScanner.getResources(Resources.appPath());
+    Set<String> resources = classpathScanner.getResources(env.appPath());
 
     assertThat(resources)
       .contains("app/404.html")
@@ -37,7 +40,7 @@ public class ClasspathScannerTest {
 
   @Test
   public void scan_test_resources() {
-    Set<String> resources = classpathScanner.getResources(Resources.appPath());
+    Set<String> resources = classpathScanner.getResources(env.appPath());
 
     assertThat(resources)
       .contains("app/0variable.txt")

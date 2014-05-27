@@ -15,6 +15,10 @@
  */
 package net.codestory.http.misc;
 
+import java.nio.file.*;
+
+import net.codestory.http.io.*;
+
 public class Env {
   private final boolean prodMode;
   private final boolean disableClassPath;
@@ -34,6 +38,14 @@ public class Env {
     this.disableClassPath = disableClassPath;
     this.disableFilesystem = disableFilesystem;
     this.disableGzip = disableGzip;
+  }
+
+  public Path classesOutputPath() {
+    return Resources.classesOutputPath();
+  }
+
+  public Path appPath() {
+    return Resources.appPath();
   }
 
   public boolean prodMode() {

@@ -18,7 +18,7 @@ package net.codestory.http.reload;
 import java.util.concurrent.atomic.*;
 
 import net.codestory.http.*;
-import net.codestory.http.io.*;
+import net.codestory.http.misc.*;
 import net.codestory.http.routes.*;
 
 import org.slf4j.*;
@@ -33,11 +33,11 @@ class ReloadingRoutesProvider implements RoutesProvider {
 
   private RouteCollection routes;
 
-  ReloadingRoutesProvider(Configuration configuration) {
+  ReloadingRoutesProvider(Env env, Configuration configuration) {
     this.configuration = configuration;
     this.dirty = new AtomicBoolean(true);
-    this.classesWatcher = new FolderWatcher(Resources.classesOutputPath(), ev -> dirty.set(true));
-    this.appWatcher = new FolderWatcher(Resources.appPath(), ev -> dirty.set(true));
+    this.classesWatcher = new FolderWatcher(env.classesOutputPath(), ev -> dirty.set(true));
+    this.appWatcher = new FolderWatcher(env.appPath(), ev -> dirty.set(true));
   }
 
   @Override

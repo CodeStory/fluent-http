@@ -73,10 +73,10 @@ public class Site {
   private static Set<String> list(Env env) {
     Set<String> paths = new TreeSet<>();
 
-    Path rootPath = Resources.appPath();
+    Path rootPath = env.appPath();
 
     try {
-      if (classesOutputPath().toFile().exists() && !env.disableClassPath()) {
+      if (env.classesOutputPath().toFile().exists() && !env.disableClassPath()) {
         new ClasspathScanner().getResources(rootPath).forEach(resource -> paths.add(relativePath(rootPath, Paths.get(resource))));
       }
 
