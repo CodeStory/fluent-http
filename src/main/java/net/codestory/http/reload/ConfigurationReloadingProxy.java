@@ -16,7 +16,6 @@
 package net.codestory.http.reload;
 
 import net.codestory.http.*;
-import net.codestory.http.io.*;
 import net.codestory.http.routes.*;
 
 /**
@@ -34,7 +33,7 @@ public class ConfigurationReloadingProxy implements Configuration {
   @Override
   public void configure(Routes routes) {
     try {
-      ClassLoader classLoader = new ParentLastClassLoader(Resources.classesOutputPath(), parent);
+      ClassLoader classLoader = new ParentLastClassLoader(parent);
 
       Class<? extends Configuration> type = (Class<? extends Configuration>) classLoader.loadClass(fqcn);
       type.newInstance().configure(routes);
