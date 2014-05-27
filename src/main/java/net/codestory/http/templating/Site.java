@@ -76,7 +76,7 @@ public class Site {
     Path rootPath = env.appPath();
 
     try {
-      if (env.classesOutputPath().toFile().exists() && !env.disableClassPath()) {
+      if (!env.disableClassPath()) {
         new ClasspathScanner().getResources(rootPath).forEach(resource -> paths.add(relativePath(rootPath, Paths.get(resource))));
       }
 
