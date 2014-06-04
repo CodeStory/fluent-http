@@ -55,4 +55,11 @@ public class CookieAuthFilterTest {
     assertThat(filter.matches("/secure/index.html", null)).isTrue();
     assertThat(filter.matches("/secure/app.js", null)).isTrue();
   }
+
+  @Test
+  public void robots_txt_is_public() {
+    filter = new CookieAuthFilter("/", Users.singleUser("", ""));
+
+    assertThat(filter.matches("/robots.txt", null)).isFalse();
+  }
 }

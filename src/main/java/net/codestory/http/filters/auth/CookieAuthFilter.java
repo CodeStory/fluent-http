@@ -33,7 +33,7 @@ import org.apache.commons.lang3.*;
 
 public class CookieAuthFilter implements Filter {
   private static final int ONE_DAY = (int) TimeUnit.DAYS.toSeconds(1L);
-  private static final String[] DEFAULT_EXCLUDE = {".less", ".css", ".map", ".js", ".coffee", ".ico", ".jpeg", ".jpg", ".gif", ".png", ".svg", ".eot", ".ttf", ".woff", ".js", ".coffee"};
+  private static final String[] DEFAULT_EXCLUDE = {".less", ".css", ".map", ".js", ".coffee", ".ico", ".jpeg", ".jpg", ".gif", ".png", ".svg", ".eot", ".ttf", ".woff", ".js", ".coffee", "robots.txt"};
 
   private final String uriPrefix;
   private final Users users;
