@@ -25,13 +25,15 @@ import java.nio.file.*;
 import net.codestory.http.types.*;
 
 public class Resources {
+  public static String APP_FOLDER = "app";
+
   private Resources() {
     // Static utility class
   }
 
   @Deprecated
   public static Path appPath() {
-    return Paths.get("app");
+    return Paths.get(APP_FOLDER);
   }
 
   public static String relativePath(Path parent, Path path) {
