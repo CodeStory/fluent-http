@@ -82,7 +82,7 @@ public class Resources {
   }
 
   private static String withPrefix(Path path) {
-    return toUnixString(Paths.get(appPath().toString(), path.toString()));
+    return toUnixString(Paths.get(APP_FOLDER, path.toString()));
   }
 
   public static String toUnixString(Path path) {
@@ -179,8 +179,8 @@ public class Resources {
     try {
       String path = URLDecoder.decode(filename, "US-ASCII");
 
-      // Sear for file in sources instead of target to speed up live reload
-      String sourcePath = Paths.get("src/main/resources/", appPath().toString(), Strings.substringAfter(path, "/" + appPath().toString() + "/")).toString();
+      // Search for file in sources instead of target to speed up live reload
+      String sourcePath = Paths.get("src/main/resources/", APP_FOLDER, Strings.substringAfter(path, "/" + APP_FOLDER + "/")).toString();
       File file = new File(sourcePath);
       if (file.exists()) {
         return file;
