@@ -183,7 +183,8 @@ public class WebServer {
         e.printStackTrace();
       }
 
-      payloadWriter.writeAndClose(errorPage(e));
+      Payload errorPage = errorPage(e).withHeader("reason", e.getMessage());
+      payloadWriter.writeAndClose(errorPage);
     } catch (IOException error) {
       LOG.warn("Unable to serve an error page", error);
     }

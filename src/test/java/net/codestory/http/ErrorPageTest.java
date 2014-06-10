@@ -74,4 +74,12 @@ public class ErrorPageTest extends AbstractWebServerTest {
     get("/hello/Dave").produces(404, "text/html", "Page not found");
   }
 
+  @Test
+  public void error_message_header() {
+    server.configure(routes -> routes.get("/error", () -> {
+      throw new RuntimeException("NASTY BUG");
+    }));
+
+    get("/error").produces(500, "text/html", "An error occurred on the server").producesHeader("reason", "NASTY BUG");
+  }
 }
