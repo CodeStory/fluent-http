@@ -16,8 +16,11 @@
 package net.codestory.http.extensions;
 
 import net.codestory.http.*;
+import net.codestory.http.injection.IocAdapter;
 
 @FunctionalInterface
 public interface ContextFactory {
-  Context create(Request request, Response response);
+  ContextFactory DEFAULT = Context::new;
+
+  Context create(Request request, Response response, IocAdapter iocAdapter);
 }

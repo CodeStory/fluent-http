@@ -16,9 +16,13 @@
 package net.codestory.http.extensions;
 
 import net.codestory.http.*;
+import net.codestory.http.misc.Env;
 import net.codestory.http.payload.*;
+import net.codestory.http.templating.Site;
 
 @FunctionalInterface
 public interface PayloadWriterFactory {
-  PayloadWriter create(Request request, Response response);
+  PayloadWriterFactory DEFAULT = PayloadWriter::new;
+
+  PayloadWriter create(Env env, Site site, Request request, Response response);
 }
