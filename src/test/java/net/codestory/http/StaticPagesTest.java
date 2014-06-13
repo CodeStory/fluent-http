@@ -43,6 +43,9 @@ public class StaticPagesTest extends AbstractWebServerTest {
   @Test
   public void coffeescript() {
     get("/js/script.coffee").produces("application/javascript", "console.log('Hello');");
+    get("/js/anotherscript.js").produces("application/javascript", "console.log('foobar');");
+    get("/js/non-existing.js").produces(404);
+    get("/js/non-existing.coffee").produces(404);
   }
 
   @Test
@@ -54,6 +57,9 @@ public class StaticPagesTest extends AbstractWebServerTest {
   public void less() {
     get("/assets/style.less").produces("text/css", "body h1 {\n  color: red;\n}");
     get("/assets/style.css.map").produces("text/plain", "\"file\":\"/assets/style.css.css\"");
+    get("/assets/anotherstyle.less").produces("text/css", "body {\n  color: red;\n}");
+    get("/assets/non-existing.css").produces(404);
+    get("/assets/non-existing.less").produces(404);
   }
 
   @Test

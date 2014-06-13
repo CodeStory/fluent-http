@@ -15,11 +15,12 @@
  */
 package net.codestory.http.templating;
 
-import static org.assertj.core.api.Assertions.*;
+import org.junit.Test;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
-import org.junit.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class SiteTest {
   private static Site site = new Site();
@@ -28,7 +29,7 @@ public class SiteTest {
   public void pages() {
     List<Map<String, Object>> pages = site.getPages();
 
-    assertThat(pages).hasSize(28);
+    assertThat(pages).hasSize(30);
   }
 
   @Test
@@ -36,7 +37,7 @@ public class SiteTest {
     Map<String, List<Map<String, Object>>> tags = site.getTags();
 
     assertThat(tags).hasSize(3);
-    assertThat(tags.get("")).hasSize(26);
+    assertThat(tags.get("")).hasSize(28);
     assertThat(tags.get("scala")).hasSize(2);
     assertThat(tags.get("java")).hasSize(1);
   }
@@ -46,7 +47,7 @@ public class SiteTest {
     Map<String, List<Map<String, Object>>> categories = site.getCategories();
 
     assertThat(categories).hasSize(3);
-    assertThat(categories.get("")).hasSize(26);
+    assertThat(categories.get("")).hasSize(28);
     assertThat(categories.get("post")).hasSize(1);
     assertThat(categories.get("test")).hasSize(1);
   }

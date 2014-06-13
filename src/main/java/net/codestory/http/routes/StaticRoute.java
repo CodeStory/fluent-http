@@ -15,16 +15,18 @@
  */
 package net.codestory.http.routes;
 
-import static net.codestory.http.constants.Methods.*;
+import net.codestory.http.Context;
+import net.codestory.http.compilers.CompiledPath;
+import net.codestory.http.io.Resources;
+import net.codestory.http.misc.Cache;
+import net.codestory.http.types.ContentTypes;
 
-import java.nio.file.*;
-import java.util.function.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.function.Function;
 
-import net.codestory.http.*;
-import net.codestory.http.compilers.*;
-import net.codestory.http.io.*;
-import net.codestory.http.misc.*;
-import net.codestory.http.types.*;
+import static net.codestory.http.constants.Methods.GET;
+import static net.codestory.http.constants.Methods.HEAD;
 
 class StaticRoute implements Route {
   private static final Path NOT_FOUND = Paths.get("");
@@ -51,12 +53,21 @@ class StaticRoute implements Route {
 
   @Override
   public Object body(Context context) {
-    return findPath.apply(context.uri());
+    String uri = context.uri();
+
+    return findPath.apply(uri);
   }
 
   private static Object findPath(String uri) {
+
     Path path = Resources.findExistingPath(uri);
     if ((path == null) || !Resources.isPublic(path)) {
+      if (uri.endsWith(".js")) {
+        return findPath(uri.replace(".js", ".coffee"));
+      }
+      if (uri.endsWith(".css")) {
+        return findPath(uri.replace(".css", ".less"));
+      }
       return NOT_FOUND;
     }
 
