@@ -61,7 +61,7 @@ class StaticRoute implements Route {
   private static Object findPath(String uri) {
 
     Path path = Resources.findExistingPath(uri);
-    if ((path == null) || !Resources.isPublic(path)) {
+    if (pathDoesNotExist(path)) {
       if (uri.endsWith(".js")) {
         return findPath(uri.replace(".js", ".coffee"));
       }
@@ -76,5 +76,9 @@ class StaticRoute implements Route {
     }
 
     return new CompiledPath(path);
+  }
+
+  private static boolean pathDoesNotExist(Path path) {
+    return (path == null) || !Resources.isPublic(path);
   }
 }
