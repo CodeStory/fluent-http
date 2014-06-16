@@ -28,7 +28,7 @@ public class DiskCache {
 
   public DiskCache(String version) {
     this.root = Paths.get(System.getProperty("user.home"), ".code-story", "cache", version).toFile();
-    LOG.info("Caching on disk @ " + this.root.getAbsolutePath());
+    LOG.debug("Caching on disk @ " + this.root.getAbsolutePath());
   }
 
   CacheEntry computeIfAbsent(String sha1, String extension, Supplier<String> toCompiled) {
