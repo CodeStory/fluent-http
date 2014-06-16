@@ -466,7 +466,11 @@ new Webserver().startSSL(9443, Arrays.asList(Paths.get("server.crt"), Paths.get(
 
 ## Errors
 
-TODO
+You have probably noticed, fluent-http comes with pre-rendered kitten ready 404 & 500 error pages.
+
+If you want to customize them or are member of the CCC "Comité Contre les Chats" then you'll probably want to override them.
+Just put a 404.html or 500.html at the root of your app folder and they will be served instead of the kitten's one.
+
 
 ## Json support
 
