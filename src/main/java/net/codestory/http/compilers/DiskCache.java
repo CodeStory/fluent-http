@@ -15,15 +15,20 @@
  */
 package net.codestory.http.compilers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.nio.file.*;
 import java.util.function.*;
 
 public class DiskCache {
   private final File root;
+  private final static Logger LOG = LoggerFactory.getLogger(DiskCache.class);
 
   public DiskCache(String version) {
     this.root = Paths.get(System.getProperty("user.home"), ".code-story", "cache", version).toFile();
+    LOG.info("Caching on disk @ " + this.root.getAbsolutePath());
   }
 
   CacheEntry computeIfAbsent(String sha1, String extension, Supplier<String> toCompiled) {
