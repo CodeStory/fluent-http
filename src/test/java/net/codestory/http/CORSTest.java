@@ -23,7 +23,7 @@ import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
 
-public class CORSTest extends AbstractWebServerTest {
+public class CORSTest extends AbstractProdWebServerTest {
   @Test
   public void preflight() {
     server.configure(routes -> routes

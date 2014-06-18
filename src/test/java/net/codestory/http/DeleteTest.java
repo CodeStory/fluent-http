@@ -20,7 +20,7 @@ import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
 
-public class DeleteTest extends AbstractWebServerTest {
+public class DeleteTest extends AbstractProdWebServerTest {
   @Test
   public void delete() {
     server.configure(routes -> routes.delete("/delete", () -> "Deleted"));

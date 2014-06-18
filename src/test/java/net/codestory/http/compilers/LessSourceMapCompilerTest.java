@@ -30,14 +30,14 @@ public class LessSourceMapCompilerTest {
 
   @Test
   public void source_map() {
-    String css = compiler.compile(Paths.get("/path/file.css.map"), "body { h1 { color: red; } }");
+    String css = compiler.compile(Paths.get("/path/file.less.map"), "body { h1 { color: red; } }");
 
     assertThat(css).isEqualTo("{\n" +
       "\"version\":3,\n" +
-      "\"file\":\"/path/file.css.css\",\n" +
+      "\"file\":\"/path/file.less.source\",\n" +
       "\"lineCount\":1,\n" +
       "\"mappings\":\"AAAAA,I,CAAOC;\",\n" +
-      "\"sources\":[\"/path/file.css.map\"],\n" +
+      "\"sources\":[\"/path/file.less.source\"],\n" +
       "\"names\":[\"body\",\"h1\"]\n" +
       "}\n");
   }

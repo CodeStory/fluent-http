@@ -22,7 +22,7 @@ import net.codestory.http.testhelpers.*;
 import org.junit.*;
 import org.junit.rules.*;
 
-public class CacheTest extends AbstractWebServerTest {
+public class CacheTest extends AbstractProdWebServerTest {
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
 

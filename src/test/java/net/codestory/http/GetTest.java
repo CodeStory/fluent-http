@@ -26,7 +26,7 @@ import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
 
-public class GetTest extends AbstractWebServerTest {
+public class GetTest extends AbstractProdWebServerTest {
   @Test
   public void content_types() {
     server.configure(routes -> routes.

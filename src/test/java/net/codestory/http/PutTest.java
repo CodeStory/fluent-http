@@ -20,7 +20,7 @@ import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
 
-public class PutTest extends AbstractWebServerTest {
+public class PutTest extends AbstractProdWebServerTest {
   @Test
   public void put() {
     server.configure(routes -> routes.put("/put", () -> "Done"));

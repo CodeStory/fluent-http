@@ -57,14 +57,14 @@ public class ContentTypesTest {
   public void compatibility_with_templating() {
     assertThat(support_templating(Paths.get("index.html"))).isTrue();
     assertThat(support_templating(Paths.get("data.xml"))).isTrue();
-    assertThat(support_templating(Paths.get("style.css"))).isTrue();
-    assertThat(support_templating(Paths.get("style.less"))).isTrue();
     assertThat(support_templating(Paths.get("test.md"))).isTrue();
     assertThat(support_templating(Paths.get("test.markdown"))).isTrue();
     assertThat(support_templating(Paths.get("test.asciidoc"))).isTrue();
     assertThat(support_templating(Paths.get("test.adoc"))).isTrue();
     assertThat(support_templating(Paths.get("text.txt"))).isTrue();
-    assertThat(support_templating(Paths.get("style.css.map"))).isTrue();
+    assertThat(support_templating(Paths.get("style.css.map"))).isFalse();
+    assertThat(support_templating(Paths.get("style.css"))).isFalse();
+    assertThat(support_templating(Paths.get("style.less"))).isFalse();
     assertThat(support_templating(Paths.get("text.zip"))).isFalse();
     assertThat(support_templating(Paths.get("text.gz"))).isFalse();
     assertThat(support_templating(Paths.get("text.pdf"))).isFalse();

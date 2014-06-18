@@ -24,7 +24,13 @@ public class LessSourceMapCompiler implements Compiler {
   @Override
   public String compile(Path path, String source) {
     try {
-      return new ThreadUnsafeLessCompiler().compile(new PathSource(path, source)).getSourceMap();
+      Path sourcePath = Paths.get(path.toString().replace(".map", ""));
+
+      String sourceMap = new ThreadUnsafeLessCompiler().compile(new PathSource(sourcePath, source)).getSourceMap();
+      // now it's time to close your eyes, correcting hardcoded things done with filename in the less compiler
+      String sourcePathAsString = sourcePath.toString();
+      sourceMap = sourceMap.replaceAll(".css",".less").replaceAll(sourcePathAsString, sourcePathAsString.replace(".less", ".less.source"));
+      return sourceMap;
     } catch (Less4jException e) {
       String message = cleanMessage(path, e.getMessage());
       throw new CompilerException(message);

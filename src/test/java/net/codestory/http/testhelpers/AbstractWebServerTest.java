@@ -26,8 +26,6 @@ import com.jayway.restassured.response.*;
 import com.jayway.restassured.specification.*;
 
 public abstract class AbstractWebServerTest {
-  @ClassRule
-  public static WebServerRule server = new WebServerRule();
 
   // GET
   protected RestAssert get(String path) {
@@ -87,7 +85,7 @@ public abstract class AbstractWebServerTest {
     private final ValidatableResponse then;
 
     private RestAssert(Function<RequestSpecification, RequestSpecification> configuration, Function<RequestSender, Response> action) {
-      this.then = action.apply(configuration.apply(RestAssured.given().header(new Header("Origin", "http://www.code-story.net")).port(server.port()))).then();
+      this.then = action.apply(configuration.apply(RestAssured.given().header(new Header("Origin", "http://www.code-story.net")).port(getPort()))).then();
     }
 
     private RestAssert(Function<RequestSender, Response> action) {
@@ -125,4 +123,6 @@ public abstract class AbstractWebServerTest {
       return this;
     }
   }
+
+  protected abstract int getPort();
 }

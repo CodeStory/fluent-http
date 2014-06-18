@@ -31,7 +31,7 @@ public class SourceRoute implements Route {
 
   @Override
   public boolean matchUri(String uri) {
-    return uri.endsWith(".source") && Resources.isPublic(findPath(uri,getSourcePath(uri)));
+    return uri.endsWith(".source") && Resources.isPublic(findPath(uri, getSourcePath(uri)));
   }
 
   @Override

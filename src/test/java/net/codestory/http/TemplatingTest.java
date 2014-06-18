@@ -22,7 +22,7 @@ import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
 
-public class TemplatingTest extends AbstractWebServerTest {
+public class TemplatingTest extends AbstractProdWebServerTest {
   @Test
   public void static_page() {
     get("/pageYaml").produces("text/html", "<div>_PREFIX_TEXT_SUFFIX_</div>");

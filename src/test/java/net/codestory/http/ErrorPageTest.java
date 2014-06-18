@@ -25,7 +25,7 @@ import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
 
-public class ErrorPageTest extends AbstractWebServerTest {
+public class ErrorPageTest extends AbstractProdWebServerTest {
   @Test
   public void not_found_exception() {
     server.configure(routes -> routes.get("/error", () -> {

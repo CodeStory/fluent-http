@@ -20,7 +20,7 @@ import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
 
-public class HeadTest extends AbstractWebServerTest {
+public class HeadTest extends AbstractProdWebServerTest {
   @Test
   public void implicit_head() {
     server.configure(routes -> routes.get("/", "Hello"));

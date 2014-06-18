@@ -27,7 +27,7 @@ public class CompilersTest {
   public void compile_less_file() {
     String css = Compilers.INSTANCE.compile(Paths.get("style.less"), "body { h1 { color: red; } }").content();
 
-    assertThat(css).isEqualTo("body h1 {\n  color: red;\n}\n/*# sourceMappingURL=style.css.map */\n");
+    assertThat(css).isEqualTo("body h1 {\n  color: red;\n}\n/*# sourceMappingURL=style.less.map */");
   }
 
   @Test
@@ -60,6 +60,6 @@ public class CompilersTest {
     cacheFile.delete();
     String css = Compilers.INSTANCE.compile(Paths.get("body.less"), "body{}").content();
 
-    assertThat(css).isEqualTo("/*# sourceMappingURL=body.css.map */\n");
+    assertThat(css).isEqualTo("/*# sourceMappingURL=body.less.map */");
   }
 }

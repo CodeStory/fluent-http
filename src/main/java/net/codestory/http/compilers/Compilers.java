@@ -37,7 +37,7 @@ public enum Compilers {
     register(CoffeeSourceMapCompiler::new, ".coffee.map", ".litcoffee.map");
     register(MarkdownCompiler::new, ".md", ".markdown");
     register(LessCompiler::new, ".less");
-    register(LessSourceMapCompiler::new, ".css.map");
+    register(LessSourceMapCompiler::new, ".less.map");
     register(AsciidocCompiler::new, ".asciidoc", ".adoc");
   }
 
@@ -60,7 +60,7 @@ public enum Compilers {
 
       if (path.toString().endsWith(extension)) {
         // Hack until I find something better
-        if (extension.equals(".less")) {
+        if (extension.equals(".less")) { // TODO: handle ".less.source"
           if (content.contains("@import")) {
             return CacheEntry.noCache(doCompile(path, content, entry.getValue()));
           }

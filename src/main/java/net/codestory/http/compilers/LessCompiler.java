@@ -15,23 +15,33 @@
  */
 package net.codestory.http.compilers;
 
-import static com.github.sommeri.less4j.LessCompiler.*;
+import com.github.sommeri.less4j.Less4jException;
+import com.github.sommeri.less4j.core.ThreadUnsafeLessCompiler;
+import net.codestory.http.misc.Env;
 
-import java.nio.file.*;
+import java.nio.file.Path;
 
-import com.github.sommeri.less4j.*;
-import com.github.sommeri.less4j.core.*;
+import static com.github.sommeri.less4j.LessCompiler.Configuration;
 
 public class LessCompiler implements Compiler {
-  public static boolean linkSourceMap = true;
+  Env env;
+
+  public LessCompiler() {
+    env = new Env();// TODO: inject me instead.
+  }
 
   @Override
   public String compile(Path path, String source) {
     try {
       Configuration configuration = new Configuration();
-      configuration.setLinkSourceMap(linkSourceMap);
+      configuration.setLinkSourceMap(false);
 
-      return new ThreadUnsafeLessCompiler().compile(new PathSource(path, source), configuration).getCss();
+      String css = new ThreadUnsafeLessCompiler().compile(new PathSource(path, source), configuration).getCss();
+      if (env.prodMode()) {
+        return css;
+      }
+      String sourceMapping = "/*# sourceMappingURL=" + path.getFileName() + ".map */";
+      return css + sourceMapping;
     } catch (Less4jException e) {
       String message = cleanMessage(path, e.getMessage());
       throw new CompilerException(message);

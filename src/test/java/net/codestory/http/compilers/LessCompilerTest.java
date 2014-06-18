@@ -32,21 +32,21 @@ public class LessCompilerTest {
   public void empty() {
     String css = compiler.compile(Paths.get("empty.less"), "");
 
-    assertThat(css).isEqualTo("/*# sourceMappingURL=empty.css.map */\n");
+    assertThat(css).isEqualTo("/*# sourceMappingURL=empty.less.map */");
   }
 
   @Test
   public void to_css() {
     String css = compiler.compile(Paths.get("file.less"), "body { h1 { color: red; } }");
 
-    assertThat(css).isEqualTo("body h1 {\n  color: red;\n}\n/*# sourceMappingURL=file.css.map */\n");
+    assertThat(css).isEqualTo("body h1 {\n  color: red;\n}\n/*# sourceMappingURL=file.less.map */");
   }
 
   @Test
   public void import_less() {
     String css = compiler.compile(Paths.get("style.less"), "@import 'assets/style.less';");
 
-    assertThat(css).isEqualTo("body h1 {\n  color: red;\n}\n/*# sourceMappingURL=style.css.map */\n");
+    assertThat(css).isEqualTo("body h1 {\n  color: red;\n}\n/*# sourceMappingURL=style.less.map */");
   }
 
   @Test

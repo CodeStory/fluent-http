@@ -22,7 +22,7 @@ import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
 
-public class AuthenticationTest extends AbstractWebServerTest {
+public class AuthenticationTest extends AbstractProdWebServerTest {
   @Test
   public void public_page() {
     server.configure(routes -> routes.

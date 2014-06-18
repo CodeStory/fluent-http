@@ -28,6 +28,7 @@ import net.codestory.http.payload.*;
 import net.codestory.http.types.*;
 
 class SourceMapRoute implements Route {
+
   @Override
   public boolean matchUri(String uri) {
     return uri.endsWith(".map") && Resources.isPublic(pathSource(uri));
@@ -41,19 +42,15 @@ class SourceMapRoute implements Route {
   @Override
   public Payload body(Context context) throws IOException {
     String uri = context.uri();
-    Path pathLess = pathSource(uri);
-    Path pathMap = Paths.get(uri);
-    String contentType = ContentTypes.get(pathMap);
-    String less = Resources.read(pathLess, UTF_8);
-    CacheEntry map = Compilers.INSTANCE.compile(pathMap, less);
-
+    Path sourcePath = pathSource(uri);
+    Path mapPath = Paths.get(uri);
+    String contentType = ContentTypes.get(mapPath);
+    String source = Resources.read(sourcePath, UTF_8);
+    CacheEntry map = Compilers.INSTANCE.compile(mapPath, source);
     return new Payload(contentType, map);
   }
 
   private static Path pathSource(String uri) {
-    if (uri.endsWith(".css.map")) { // special case for css/less map
-      return Paths.get(Strings.substringBeforeLast(uri, ".css.map") + ".less");
-    }
     return Paths.get(Strings.substringBeforeLast(uri, ".map"));
   }
 }

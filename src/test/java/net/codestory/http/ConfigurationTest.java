@@ -20,7 +20,7 @@ import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
 
-public class ConfigurationTest extends AbstractWebServerTest {
+public class ConfigurationTest extends AbstractProdWebServerTest {
   @Test
   public void priority_to_route_over_file() {
     server.configure(routes -> routes.get("/", "PRIORITY"));

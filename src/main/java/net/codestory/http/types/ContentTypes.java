@@ -89,9 +89,6 @@ public class ContentTypes {
       case ".adoc":
       case ".html":
       case ".xml":
-      case ".css":
-      case ".less":
-      case ".map":
         return true;
       default:
         return false;

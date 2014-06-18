@@ -20,7 +20,7 @@ import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
 
-public class RedirectTest extends AbstractWebServerTest {
+public class RedirectTest extends AbstractProdWebServerTest {
   @Test
   public void redirect() {
     server.configure(routes -> routes.

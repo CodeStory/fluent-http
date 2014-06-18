@@ -24,7 +24,7 @@ import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
 
-public class FilterTest extends AbstractWebServerTest {
+public class FilterTest extends AbstractProdWebServerTest {
   @Test
   public void filter() {
     server.configure(routes -> routes.

@@ -19,7 +19,7 @@ import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
 
-public class StaticPagesTest extends AbstractWebServerTest {
+public class StaticPagesTest extends AbstractProdWebServerTest {
   @Test
   public void webJars() {
     get("/webjars/bootstrap/3.1.1/css/bootstrap.min.css").produces(200, "text/css", "Bootstrap v3.1.1");
@@ -49,12 +49,6 @@ public class StaticPagesTest extends AbstractWebServerTest {
   }
 
   @Test
-  public void honorSourceMaps() {
-    get("/js/script.coffee.source").produces("application/javascript", "console.log 'Hello'");
-    get("/js/anotherscript.js.source").produces("application/javascript", "console.log 'foobar'");
-  }
-
-  @Test
   public void css() {
     get("/assets/style.css").produces("text/css", "* {}");
   }
@@ -62,8 +56,7 @@ public class StaticPagesTest extends AbstractWebServerTest {
   @Test
   public void less() {
     get("/assets/style.less").produces("text/css", "body h1 {\n  color: red;\n}");
-    get("/assets/style.css.map").produces("text/plain", "\"file\":\"/assets/style.css.css\"");
-    get("/assets/anotherstyle.css").produces("text/css", "body {\n  color: red;\n}");
+    get("/assets/anotherstyle.css").produces("text/css", "body h1 {\n  color: red;\n}");
     get("/assets/non-existing.css").produces(404);
     get("/assets/non-existing.less").produces(404);
   }

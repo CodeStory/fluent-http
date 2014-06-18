@@ -15,17 +15,20 @@
  */
 package net.codestory.http;
 
-import static org.mockito.Mockito.*;
+import net.codestory.http.annotations.Get;
+import net.codestory.http.annotations.Prefix;
+import net.codestory.http.annotations.Produces;
+import net.codestory.http.errors.NotFoundException;
+import net.codestory.http.injection.Singletons;
+import net.codestory.http.templating.Model;
+import net.codestory.http.templating.ModelAndView;
+import net.codestory.http.testhelpers.AbstractProdWebServerTest;
+import org.junit.Test;
 
-import net.codestory.http.annotations.*;
-import net.codestory.http.errors.*;
-import net.codestory.http.injection.*;
-import net.codestory.http.templating.*;
-import net.codestory.http.testhelpers.*;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
-import org.junit.*;
-
-public class AnnotationsTest extends AbstractWebServerTest {
+public class AnnotationsTest extends AbstractProdWebServerTest {
   @Test
   public void annotated_resources() {
     server.configure(routes -> routes.add(new MyResource()));

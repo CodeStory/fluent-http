@@ -26,7 +26,7 @@ import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
 
-public class StreamTest extends AbstractWebServerTest {
+public class StreamTest extends AbstractProdWebServerTest {
   @Test
   public void server_sent_events() {
     AtomicLong index = new AtomicLong(0);

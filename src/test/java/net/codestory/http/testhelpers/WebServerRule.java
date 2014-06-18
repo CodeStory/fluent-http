@@ -28,10 +28,19 @@ public class WebServerRule extends ExternalResource {
   private final String previousProdMode = System.getProperty("PROD_MODE");
 
   private static Supplier<WebServer> server = memoize(() -> new WebServer().startOnRandomPort());
+  private final String prodMode;
+
+  public WebServerRule(boolean prodMode) {
+    if (prodMode) {
+      this.prodMode = "true";
+    } else {
+      this.prodMode = "false";
+    }
+  }
 
   @Override
   protected void before() {
-    System.setProperty("PROD_MODE", "true");
+    System.setProperty("PROD_MODE", this.prodMode);
   }
 
   @Override

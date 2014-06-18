@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http;
+package net.codestory.http.testhelpers;
 
-import net.codestory.http.payload.*;
-import net.codestory.http.testhelpers.*;
+import org.junit.ClassRule;
 
-import org.junit.*;
+public abstract class AbstractProdWebServerTest extends AbstractWebServerTest {
+  @ClassRule
+  public static WebServerRule server = new WebServerRule(true);
 
-public class CookiesTest extends AbstractProdWebServerTest {
-  @Test
-  public void cookies() {
-    server.configure(routes -> routes.get("/set", () -> new Payload("").withCookie("id", "Bob")));
-
-    get("/set").producesCookie("id", "Bob");
+  @Override
+  protected int getPort() {
+    return server.port();
   }
+
 }
