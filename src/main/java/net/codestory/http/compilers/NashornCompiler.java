@@ -57,7 +57,7 @@ public final class NashornCompiler {
   }
 
   public synchronized String compile(Path path, String source) {
-    bindings.put("__filename", path.getFileName());
+    bindings.put("__filename", getFileName(path));
     bindings.put("__source", source);
 
     try {
@@ -66,6 +66,10 @@ public final class NashornCompiler {
       String message = cleanMessage(path, e.getCause().getMessage());
       throw new CompilerException(message);
     }
+  }
+
+  private String getFileName(Path path) {
+    return path.getFileName().toString().replace(".map",".source");
   }
 
   private static String cleanMessage(Path path, String message) {

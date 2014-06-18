@@ -15,12 +15,13 @@
  */
 package net.codestory.http.compilers;
 
-import static org.assertj.core.api.Assertions.*;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-import java.nio.file.*;
+import java.nio.file.Paths;
 
-import org.junit.*;
-import org.junit.rules.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CoffeeCompilerTest {
   private static CoffeeCompiler compiler = new CoffeeCompiler();
@@ -32,16 +33,14 @@ public class CoffeeCompilerTest {
   public void empty() {
     String js = compiler.compile(Paths.get("empty.coffee"), "");
 
-    assertThat(js).isEqualTo("\n");
-    //assertThat(js).isEqualTo("\n\n//# sourceMappingURL=empty.coffee.map");
+    assertThat(js).isEqualTo("\n\n//# sourceMappingURL=empty.coffee.map");
   }
 
   @Test
   public void to_javascript() {
     String js = compiler.compile(Paths.get("file.coffee"), "life=42");
 
-    //assertThat(js).isEqualTo("var life;\n\nlife = 42;\n\n//# sourceMappingURL=file.coffee.map");
-    assertThat(js).isEqualTo("var life;\n\nlife = 42;\n");
+    assertThat(js).isEqualTo("var life;\n\nlife = 42;\n\n//# sourceMappingURL=file.coffee.map");
   }
 
   @Test

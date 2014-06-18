@@ -26,7 +26,7 @@ public class CoffeeSourceMapCompilerTest {
 
   @Test
   public void generate_sourcemapfile_with_filename_and_sources() {
-    String result = compiler.compile(Paths.get("polka.coffee"), "a=b=3\nc=4\nd=(a+b)*c");
+    String result = compiler.compile(Paths.get("polka.coffee.map"), "a=b=3\nc=4\nd=(a+b)*c");
 
     assertThat(result).isEqualTo("{\n" +
       " \"version\": 3,\n" +
