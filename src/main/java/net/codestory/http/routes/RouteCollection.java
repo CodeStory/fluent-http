@@ -418,8 +418,10 @@ public class RouteCollection implements Routes {
   public void addStaticRoutes(boolean prodMode) {
     routes.add(new WebJarsRoute(prodMode));
     routes.add(new StaticRoute(prodMode));
-    routes.add(new SourceMapRoute());
-    routes.add(new SourceRoute());
+    if (!prodMode) {
+      routes.add(new SourceMapRoute());
+      routes.add(new SourceRoute());
+    }
   }
 
   public Payload apply(Context context) throws IOException {
