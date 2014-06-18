@@ -49,6 +49,11 @@ public class StaticPagesTest extends AbstractWebServerTest {
   }
 
   @Test
+  public void honorSourceMaps() {
+    get("/js/script.coffee.source").produces("application/javascript", "console.log 'Hello'");
+  }
+
+  @Test
   public void css() {
     get("/assets/style.css").produces("text/css", "* {}");
   }

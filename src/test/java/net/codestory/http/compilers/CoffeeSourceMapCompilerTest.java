@@ -15,11 +15,11 @@
  */
 package net.codestory.http.compilers;
 
-import static org.assertj.core.api.Assertions.*;
+import org.junit.Test;
 
-import java.nio.file.*;
+import java.nio.file.Paths;
 
-import org.junit.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CoffeeSourceMapCompilerTest {
   CoffeeSourceMapCompiler compiler = new CoffeeSourceMapCompiler();
@@ -30,9 +30,9 @@ public class CoffeeSourceMapCompilerTest {
 
     assertThat(result).isEqualTo("{\n" +
       " \"version\": 3,\n" +
-      " \"file\": \"polka.coffee\",\n" +
+      " \"file\": \"polka.coffee.source\",\n" +
       " \"sources\": [\n" +
-      "  \"polka.coffee\"\n" +
+      "  \"polka.coffee.source\"\n" +
       " ],\n" +
       " \"names\": [],\n" +
       " \"mappings\": \"AAAA,IAAA,UAAA;;AAAA,CAAA,GAAE,CAAA,GAAE,CAAJ,CAAA;;AAAA,CACA,GAAE,CADF,CAAA;;AAAA,CAEA,GAAE,CAAC,CAAA,GAAE,CAAH,CAAA,GAAM,CAFR,CAAA\"\n" +
