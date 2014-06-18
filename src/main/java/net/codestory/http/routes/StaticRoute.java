@@ -62,7 +62,7 @@ class StaticRoute implements Route {
 
     Path path = Resources.findExistingPath(uri);
     if (pathDoesNotExist(path)) {
-      if (uri.endsWith(".js")) { // TODO: handle .js.source to .coffee.source
+      if (uri.endsWith(".js")) {
         return findPath(uri.replace(".js", ".coffee"));
       }
       if (uri.endsWith(".css")) {

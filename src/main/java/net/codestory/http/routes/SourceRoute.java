@@ -31,7 +31,7 @@ public class SourceRoute implements Route {
 
   @Override
   public boolean matchUri(String uri) {
-    return uri.endsWith(".source") && Resources.isPublic(Paths.get(getSourcePath(uri)));
+    return uri.endsWith(".source") && Resources.isPublic(findPath(uri,getSourcePath(uri)));
   }
 
   @Override
@@ -42,11 +42,23 @@ public class SourceRoute implements Route {
   @Override
   public Object body(Context context) throws IOException {
     String sourceUri = getSourcePath(context.uri());
-    Path path = Resources.findExistingPath(sourceUri);
-    if ((path == null) || !Resources.isPublic(path)) {
+    return findPath(context.uri(), sourceUri);
+  }
+
+  public Path findPath(String uri, String sourceUri) {
+    Path sourcePath = Resources.findExistingPath(sourceUri);
+    if ((sourcePath == null) || !Resources.isPublic(sourcePath)) {
+      if (uri.endsWith(".js.source")) {
+        String newUri = uri.replace(".js", ".coffee");
+        return findPath(newUri,getSourcePath(newUri));
+      }
+      if (uri.endsWith(".css.source")) {
+        String newUri = uri.replace(".css", ".less");
+        return findPath(newUri,getSourcePath(newUri));
+      }
       return NOT_FOUND;
     }
-    return path;
+    return sourcePath;
   }
 
   private String getSourcePath(String uri) {
