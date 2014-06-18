@@ -26,13 +26,13 @@ public class CoffeeCompiler implements Compiler {
     "coffee-script/toJs.js");
 
   public CoffeeCompiler() {
-    env = new Env();
+    env = new Env(); // TODO: inject me instead.
   }
 
   @Override
   public String compile(Path path, String source) {
     String javascript = nashornCompiler.compile(path, source);
-    if (env.prodMode()) { // TODO: inject me instead.
+    if (env.prodMode()) {
       return javascript;
     }
     String sourceMapping = "\n//# sourceMappingURL=" + path.getFileName() + ".map";
