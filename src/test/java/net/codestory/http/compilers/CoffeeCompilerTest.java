@@ -15,6 +15,7 @@
  */
 package net.codestory.http.compilers;
 
+import net.codestory.http.misc.Env;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -22,6 +23,8 @@ import org.junit.rules.ExpectedException;
 import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class CoffeeCompilerTest {
   private static CoffeeCompiler compiler = new CoffeeCompiler();
@@ -44,6 +47,20 @@ public class CoffeeCompilerTest {
   }
 
   @Test
+  public void to_javascript_in_prod_mode() {
+    Env oldEnv = compiler.env; // this sucks, but no more than the static up there.
+    compiler.env = mock(Env.class);
+    when(compiler.env.prodMode()).thenReturn(true);
+    String js = compiler.compile(Paths.get("file.coffee"), "life=42");
+
+    assertThat(js).isEqualTo("var life;\n\nlife = 42;\n");
+    compiler.env = oldEnv;
+  }
+
+
+
+
+  @Test
   public void invalid_script() {
     thrown.expect(CompilerException.class);
     thrown.expectMessage("Unable to compile invalid.coffee:1:1: error: unexpected ==");
@@ -57,4 +74,5 @@ public class CoffeeCompilerTest {
 
     compiler.compile(Paths.get("invalid.coffee"), "\n\n===");
   }
+
 }
