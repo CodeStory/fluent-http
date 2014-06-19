@@ -16,10 +16,9 @@
 package net.codestory.http.routes;
 
 import static net.codestory.http.constants.Methods.*;
-import static net.codestory.http.io.Resources.isPublic;
-import static net.codestory.http.io.Strings.replaceLast;
+import static net.codestory.http.io.Resources.*;
+import static net.codestory.http.io.Strings.*;
 
-import java.io.*;
 import java.nio.file.*;
 
 import net.codestory.http.*;
@@ -39,7 +38,7 @@ public class SourceRoute implements Route {
   }
 
   @Override
-  public Object body(Context context) throws IOException {
+  public Object body(Context context) {
     String sourceUri = getSourcePath(context.uri());
     return findPath(context.uri(), sourceUri);
   }
