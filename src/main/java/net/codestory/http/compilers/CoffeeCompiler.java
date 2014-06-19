@@ -20,22 +20,17 @@ import java.nio.file.*;
 import net.codestory.http.misc.*;
 
 public class CoffeeCompiler implements Compiler {
-  Env env;
   private final NashornCompiler nashornCompiler = new NashornCompiler(
     "META-INF/resources/webjars/coffee-script/1.7.1/coffee-script.min.js",
     "coffee-script/toJs.js");
 
-  public CoffeeCompiler() {
-    env = new Env(); // TODO: inject me instead.
-  }
-
   @Override
   public String compile(Path path, String source) {
     String javascript = nashornCompiler.compile(path, source);
-    if (env.prodMode()) {
+    if (new Env().prodMode()) { // TODO: inject env instead.
       return javascript;
     }
-    String sourceMapping = "\n//# sourceMappingURL=" + path.getFileName() + ".map";
-    return javascript + sourceMapping;
+
+    return javascript + "\n//# sourceMappingURL=" + path.getFileName() + ".map";
   }
 }
