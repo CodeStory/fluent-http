@@ -15,11 +15,13 @@
  */
 package net.codestory.http.routes;
 
+import net.codestory.http.misc.*;
+
 import org.junit.*;
 import org.junit.rules.*;
 
 public class RouteCollectionTest {
-  RouteCollection routeCollection = new RouteCollection();
+  RouteCollection routeCollection = new RouteCollection(new Env());
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();

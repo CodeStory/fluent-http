@@ -32,6 +32,7 @@ import org.slf4j.*;
 class ReloadingRoutesProvider implements RoutesProvider {
   private final static Logger LOG = LoggerFactory.getLogger(ReloadingRoutesProvider.class);
 
+  private final Env env;
   private final Configuration configuration;
   private final AtomicBoolean dirty;
   private final List<FolderWatcher> classesWatchers;
@@ -40,6 +41,7 @@ class ReloadingRoutesProvider implements RoutesProvider {
   private RouteCollection routes;
 
   ReloadingRoutesProvider(Env env, Configuration configuration) {
+    this.env = env;
     this.configuration = configuration;
     this.dirty = new AtomicBoolean(true);
     this.classesWatchers = of(classpathFolders()).map(path -> new FolderWatcher(path, ev -> dirty.set(true))).toList();
@@ -59,7 +61,7 @@ class ReloadingRoutesProvider implements RoutesProvider {
       classesWatchers.forEach(FolderWatcher::ensureStarted);
       appWatcher.ensureStarted();
 
-      routes = new RouteCollection();
+      routes = new RouteCollection(env);
       configuration.configure(routes);
       routes.addStaticRoutes(false);
 

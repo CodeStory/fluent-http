@@ -69,12 +69,7 @@ public class WebServer {
   }
 
   public WebServer configure(Configuration configuration) {
-    return configure(new Env(), configuration);
-  }
-
-  // For test purpose
-  WebServer configure(Env env, Configuration configuration) {
-    this.env = env;
+    this.env = createEnv();
     this.routesProvider = env.prodMode()
       ? RoutesProvider.fixed(env, configuration)
       : RoutesProvider.reloading(env, configuration);
@@ -175,7 +170,7 @@ public class WebServer {
       // Cannot be created by routes since it was not initialized properly
       // TODO: get rid of new Site() here
       //
-      PayloadWriter payloadWriter = new PayloadWriter(env, new Site(), request, response);
+      PayloadWriter payloadWriter = new PayloadWriter(env, new Site(env), request, response);
       handleServerError(payloadWriter, e);
     }
   }
@@ -213,5 +208,9 @@ public class WebServer {
   protected Payload errorPage(Payload payload, Exception e) {
     Exception shownError = env.prodMode() ? null : e;
     return new ErrorPage(payload, shownError).payload();
+  }
+
+  protected Env createEnv() {
+    return new Env();
   }
 }

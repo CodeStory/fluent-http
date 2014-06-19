@@ -13,23 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.reload;
+package net.codestory.http;
 
-import java.io.*;
+import static net.codestory.http.Configuration.*;
 
-import net.codestory.http.*;
-import net.codestory.http.misc.*;
-import net.codestory.http.routes.*;
+import net.codestory.http.testhelpers.*;
 
-@FunctionalInterface
-public interface RoutesProvider extends Serializable {
-  RouteCollection get();
+import org.junit.*;
 
-  static RoutesProvider fixed(Env env, Configuration configuration) {
-    return new FixedRoutesProvider(env, configuration);
-  }
+public class TemplatingInDevTest extends AbstractDevWebServerTest {
+  @Test
+  public void google_analytics_in_dev_mode() {
+    server.configure(NO_ROUTE);
 
-  static RoutesProvider reloading(Env env, Configuration configuration) {
-    return new ReloadingRoutesProvider(env, configuration);
+    get("/indexGoogleAnalytics.html").produces("<body>\n</body>\n\n</html>");
   }
 }

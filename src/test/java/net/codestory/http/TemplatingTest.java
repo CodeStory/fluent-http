@@ -15,8 +15,6 @@
  */
 package net.codestory.http;
 
-import static net.codestory.http.Configuration.NO_ROUTE;
-
 import net.codestory.http.templating.*;
 import net.codestory.http.testhelpers.*;
 
@@ -72,16 +70,6 @@ public class TemplatingTest extends AbstractProdWebServerTest {
         "  })();\n" +
         "</script>\n" +
         "</html>");
-  }
-
-  @Test
-  public void google_analytics_in_dev_mode() {
-    // Switch to dev mode
-    // TODO: Find something better
-    System.setProperty("PROD_MODE", "false");
-    server.configure(NO_ROUTE);
-
-    get("/indexGoogleAnalytics.html").produces("<body>\n</body>\n\n</html>");
   }
 
   @Test

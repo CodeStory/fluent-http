@@ -13,23 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.reload;
+package net.codestory.http.testhelpers;
 
-import java.io.*;
+import static net.codestory.http.misc.MemoizingSupplier.*;
+
+import java.util.function.*;
 
 import net.codestory.http.*;
 import net.codestory.http.misc.*;
-import net.codestory.http.routes.*;
 
-@FunctionalInterface
-public interface RoutesProvider extends Serializable {
-  RouteCollection get();
+import org.junit.rules.*;
 
-  static RoutesProvider fixed(Env env, Configuration configuration) {
-    return new FixedRoutesProvider(env, configuration);
+public class ProdWebServerRule extends ExternalResource {
+  private static Supplier<WebServer> server = memoize(() -> new WebServer() {
+    @Override
+    protected Env createEnv() {
+      return new Env(true, false, false, false);
+    }
+  }.startOnRandomPort());
+
+  @Override
+  protected void after() {
+    server.get().reset();
   }
 
-  static RoutesProvider reloading(Env env, Configuration configuration) {
-    return new ReloadingRoutesProvider(env, configuration);
+  public void configure(Configuration configuration) {
+    server.get().configure(configuration);
+  }
+
+  public int port() {
+    return server.get().port();
   }
 }

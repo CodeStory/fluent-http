@@ -22,8 +22,10 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import net.codestory.http.misc.*;
+
 public class SiteTest {
-  private static Site site = new Site();
+  private static Site site = new Site(new Env());
 
   @Test
   public void pages() {

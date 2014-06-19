@@ -15,13 +15,11 @@
  */
 package net.codestory.http.testhelpers;
 
-import net.codestory.http.*;
-
 import org.junit.*;
 
 public abstract class AbstractProdWebServerTest extends AbstractWebServerTest {
   @ClassRule
-  public static WebServerRule server = WebServerRule.prodMode();
+  public static ProdWebServerRule server = new ProdWebServerRule();
 
   @Override
   protected int getPort() {

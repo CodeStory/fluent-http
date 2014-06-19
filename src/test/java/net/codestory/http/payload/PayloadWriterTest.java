@@ -34,8 +34,10 @@ public class PayloadWriterTest {
   Request request = mock(Request.class);
   Response response = mock(Response.class);
   Cookies cookies = mock(Cookies.class);
+  Env env = new Env();
+  Site site = new Site(env);
 
-  PayloadWriter writer = new PayloadWriter(new Env(), new Site(), request, response);
+  PayloadWriter writer = new PayloadWriter(env, site, request, response);
 
   @Before
   public void setupContext() throws IOException {

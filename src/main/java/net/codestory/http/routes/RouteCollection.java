@@ -44,9 +44,9 @@ public class RouteCollection implements Routes {
   private ContextFactory contextFactory;
   private PayloadWriterFactory payloadWriterFactory;
 
-  public RouteCollection() {
-    this.site = new Site();
-    this.env = new Env();
+  public RouteCollection(Env env) {
+    this.env = env;
+    this.site = new Site(env);
     this.routes = new LinkedList<>();
     this.filters = new LinkedList<>();
     this.iocAdapter = new Singletons();

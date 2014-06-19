@@ -13,32 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http;
+package net.codestory.http.testhelpers;
 
 import static net.codestory.http.misc.MemoizingSupplier.*;
 
 import java.util.function.*;
 
+import net.codestory.http.*;
 import net.codestory.http.misc.*;
 
 import org.junit.rules.*;
 
-public class WebServerRule extends ExternalResource {
-  private static Supplier<WebServer> server = memoize(() -> new WebServer().startOnRandomPort());
-
-  private final Env env;
-
-  private WebServerRule(Env env) {
-    this.env = env;
-  }
-
-  public static WebServerRule devMode() {
-    return new WebServerRule(new Env(false, false, false, false));
-  }
-
-  public static WebServerRule prodMode() {
-    return new WebServerRule(new Env(true, false, false, false));
-  }
+public class DevWebServerRule extends ExternalResource {
+  private static Supplier<WebServer> server = memoize(() -> new WebServer() {
+    @Override
+    protected Env createEnv() {
+      return new Env(false, false, false, false);
+    }
+  }.startOnRandomPort());
 
   @Override
   protected void after() {
@@ -46,7 +38,7 @@ public class WebServerRule extends ExternalResource {
   }
 
   public void configure(Configuration configuration) {
-    server.get().configure(env, configuration);
+    server.get().configure(configuration);
   }
 
   public int port() {

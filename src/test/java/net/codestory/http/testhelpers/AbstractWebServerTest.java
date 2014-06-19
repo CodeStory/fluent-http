@@ -19,8 +19,6 @@ import static org.hamcrest.Matchers.*;
 
 import java.util.function.*;
 
-import org.junit.*;
-
 import com.jayway.restassured.*;
 import com.jayway.restassured.response.*;
 import com.jayway.restassured.specification.*;
