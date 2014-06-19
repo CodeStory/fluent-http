@@ -35,12 +35,16 @@ public class LessCompiler implements Compiler {
       if (new Env().prodMode()) { // TODO: inject env instead.
         return css;
       }
-      String sourceMapping = "/*# sourceMappingURL=" + path.getFileName() + ".map */";
-      return css + sourceMapping;
+
+      return addSourceMapping(css, path);
     } catch (Less4jException e) {
       String message = cleanMessage(path, e.getMessage());
       throw new CompilerException(message);
     }
+  }
+
+  private static String addSourceMapping(String css, Path path) {
+    return css + "/*# sourceMappingURL=" + path.getFileName() + ".map */";
   }
 
   private static String cleanMessage(Path path, String message) {
