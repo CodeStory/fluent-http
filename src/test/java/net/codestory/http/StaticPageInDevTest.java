@@ -15,13 +15,12 @@
  */
 package net.codestory.http;
 
-import net.codestory.http.testhelpers.AbstractDevWebServerTest;
-import org.junit.Ignore;
-import org.junit.Test;
+import net.codestory.http.testhelpers.*;
+
+import org.junit.*;
 
 @Ignore // works in the ide not in maven... wtf ?
 public class StaticPageInDevTest extends AbstractDevWebServerTest {
-
   @Test
   public void honorCoffeeSource() {
     get("/js/script.coffee.source").produces("application/javascript", "console.log 'Hello'");
@@ -46,7 +45,4 @@ public class StaticPageInDevTest extends AbstractDevWebServerTest {
   public void fetchMapFile() {
     get("/assets/style.less.map").produces("text/plain", "\"file\":\"/assets/style.less.source\"");
   }
-
-
-
 }

@@ -15,7 +15,7 @@
  */
 package net.codestory.http.testhelpers;
 
-import org.junit.ClassRule;
+import org.junit.*;
 
 public abstract class AbstractDevWebServerTest extends AbstractWebServerTest {
   @ClassRule
@@ -25,5 +25,4 @@ public abstract class AbstractDevWebServerTest extends AbstractWebServerTest {
   protected int getPort() {
     return server.port();
   }
-  
 }

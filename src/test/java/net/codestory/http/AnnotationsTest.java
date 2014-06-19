@@ -15,18 +15,15 @@
  */
 package net.codestory.http;
 
-import net.codestory.http.annotations.Get;
-import net.codestory.http.annotations.Prefix;
-import net.codestory.http.annotations.Produces;
-import net.codestory.http.errors.NotFoundException;
-import net.codestory.http.injection.Singletons;
-import net.codestory.http.templating.Model;
-import net.codestory.http.templating.ModelAndView;
-import net.codestory.http.testhelpers.AbstractProdWebServerTest;
-import org.junit.Test;
+import static org.mockito.Mockito.*;
 
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
+import net.codestory.http.annotations.*;
+import net.codestory.http.errors.*;
+import net.codestory.http.injection.*;
+import net.codestory.http.templating.*;
+import net.codestory.http.testhelpers.*;
+
+import org.junit.*;
 
 public class AnnotationsTest extends AbstractProdWebServerTest {
   @Test

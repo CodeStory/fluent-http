@@ -15,12 +15,11 @@
  */
 package net.codestory.http.testhelpers;
 
-import static net.codestory.http.misc.MemoizingSupplier.memoize;
+import static net.codestory.http.misc.MemoizingSupplier.*;
 
 import java.util.function.*;
 
 import net.codestory.http.*;
-import net.codestory.http.misc.*;
 
 import org.junit.rules.*;
 

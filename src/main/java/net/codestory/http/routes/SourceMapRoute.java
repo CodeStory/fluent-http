@@ -54,5 +54,3 @@ class SourceMapRoute implements Route {
     return Paths.get(Strings.substringBeforeLast(uri, ".map"));
   }
 }
-
-
