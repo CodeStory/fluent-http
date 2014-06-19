@@ -18,16 +18,45 @@ package net.codestory.http.compilers;
 import static org.assertj.core.api.Assertions.*;
 
 import java.io.*;
+import java.net.*;
 import java.nio.file.*;
 
+import net.codestory.http.io.*;
 import org.junit.*;
 
 public class CompilersTest {
+  @After
+  public void tearDown() throws Exception {
+    //Remove file created in test compile_less_file_with_import
+    URL rootURL = Resources.getResource("private.txt");
+    Path otherPath = Paths.get(new File(rootURL.getFile()).getParent(), "app/assets/other.less");
+    Files.deleteIfExists(otherPath);
+  }
+
   @Test
   public void compile_less_file() {
     String css = Compilers.INSTANCE.compile(Paths.get("style.less"), "body { h1 { color: red; } }").content();
 
     assertThat(css).isEqualTo("body h1 {\n  color: red;\n}\n/*# sourceMappingURL=style.less.map */");
+  }
+
+  @Test
+  @Ignore("To fix Compilers problem with cache.computeIfAbsent")
+  public void compile_less_file_with_import() throws IOException {
+    copy("app/assets/style.less", "app/assets/other.less");
+    String css = Compilers.INSTANCE.compile(Paths.get("styleWithImport.less"), "@import '/assets/other.less';").content();
+    assertThat(css).isEqualTo("body h1 {\n  color: red;\n}\n/*# sourceMappingURL=styleWithImport.css.map */\n");
+
+    copy("app/assets/style.css", "app/assets/other.less");
+    css = Compilers.INSTANCE.compile(Paths.get("styleWithImport.less"), "@import '/assets/other.less';").content();
+    assertThat(css).isEqualTo("* {}\n/*# sourceMappingURL=styleWithImport.css.map */\n");
+  }
+
+  private void copy(String source, String target) throws IOException {
+    URL rootURL = Resources.getResource("private.txt");
+    InputStream sourceStream = Resources.getResourceAsStream(source);
+    Path otherPath = Paths.get(new File(rootURL.getFile()).getParent(), target);
+    Files.copy(sourceStream, otherPath, StandardCopyOption.REPLACE_EXISTING);
   }
 
   @Test
