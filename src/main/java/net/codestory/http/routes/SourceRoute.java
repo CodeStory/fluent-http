@@ -17,6 +17,7 @@ package net.codestory.http.routes;
 
 import static net.codestory.http.constants.Methods.*;
 import static net.codestory.http.io.Resources.isPublic;
+import static net.codestory.http.io.Strings.replaceLast;
 
 import java.io.*;
 import java.nio.file.*;
@@ -50,11 +51,11 @@ public class SourceRoute implements Route {
     }
 
     if (uri.endsWith(".js.source")) {
-      String newUri = uri.replace(".js", ".coffee");
+      String newUri = replaceLast(uri, ".js", ".coffee");
       return findPath(newUri, getSourcePath(newUri));
     }
     if (uri.endsWith(".css.source")) {
-      String newUri = uri.replace(".css", ".less");
+      String newUri = replaceLast(uri, ".css", ".less");
       return findPath(newUri, getSourcePath(newUri));
     }
     return NOT_FOUND;
