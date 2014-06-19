@@ -13,52 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.testhelpers;
+package net.codestory.http;
 
 import static net.codestory.http.misc.MemoizingSupplier.*;
 
 import java.util.function.*;
 
-import net.codestory.http.*;
+import net.codestory.http.misc.*;
 
 import org.junit.rules.*;
 
 public class WebServerRule extends ExternalResource {
   private static Supplier<WebServer> server = memoize(() -> new WebServer().startOnRandomPort());
 
-  private final String previousProdMode = System.getProperty("PROD_MODE");
-  private final String prodMode;
+  private final Env env;
 
-  private WebServerRule(String prodMode) {
-    this.prodMode = prodMode;
+  private WebServerRule(Env env) {
+    this.env = env;
   }
 
   public static WebServerRule devMode() {
-    return new WebServerRule("false");
+    return new WebServerRule(new Env(false, false, false, false));
   }
 
   public static WebServerRule prodMode() {
-    return new WebServerRule("true");
-  }
-
-  @Override
-  protected void before() {
-    System.setProperty("PROD_MODE", prodMode);
+    return new WebServerRule(new Env(true, false, false, false));
   }
 
   @Override
   protected void after() {
     server.get().reset();
-
-    if (previousProdMode == null) {
-      System.clearProperty("PROD_MODE");
-    } else {
-      System.setProperty("PROD_MODE", previousProdMode);
-    }
   }
 
   public void configure(Configuration configuration) {
-    server.get().configure(configuration);
+    server.get().configure(env, configuration);
   }
 
   public int port() {

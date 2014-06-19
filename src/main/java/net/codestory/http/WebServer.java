@@ -16,7 +16,7 @@
 package net.codestory.http;
 
 import static java.util.Arrays.*;
-import static net.codestory.http.Configuration.NO_ROUTE;
+import static net.codestory.http.Configuration.*;
 
 import javax.net.ssl.*;
 import java.io.*;
@@ -69,8 +69,13 @@ public class WebServer {
   }
 
   public WebServer configure(Configuration configuration) {
-    env = new Env();
-    routesProvider = env.prodMode()
+    return configure(new Env(), configuration);
+  }
+
+  // For test purpose
+  WebServer configure(Env env, Configuration configuration) {
+    this.env = env;
+    this.routesProvider = env.prodMode()
       ? RoutesProvider.fixed(env, configuration)
       : RoutesProvider.reloading(env, configuration);
     return this;
