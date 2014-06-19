@@ -49,7 +49,7 @@ public class CompilersTest {
   @Test
   public void supports_file_cache_being_destroyed() {
     // Delete cache
-    File cacheFile = Paths.get(System.getProperty("user.home"), ".code-story", "cache", "V1", "less", "a4c0dac49e47ffe0dbcca7615f73b72ef6b71543").toFile();
+    File cacheFile = Paths.get(System.getProperty("user.home"), ".code-story", "cache", "V2", "less", "a4c0dac49e47ffe0dbcca7615f73b72ef6b71543").toFile();
     cacheFile.delete();
 
     // Fill cache
