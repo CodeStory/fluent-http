@@ -15,11 +15,11 @@
  */
 package net.codestory.http.compilers;
 
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.*;
 
-import java.nio.file.Paths;
+import java.nio.file.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.*;
 
 public class CoffeeSourceMapCompilerTest {
   CoffeeSourceMapCompiler compiler = new CoffeeSourceMapCompiler();
