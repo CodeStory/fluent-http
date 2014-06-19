@@ -15,9 +15,9 @@
  */
 package net.codestory.http.compilers;
 
-import net.codestory.http.misc.Env;
+import java.nio.file.*;
 
-import java.nio.file.Path;
+import net.codestory.http.misc.*;
 
 public class CoffeeCompiler implements Compiler {
   Env env;
