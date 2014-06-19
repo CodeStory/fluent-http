@@ -43,6 +43,7 @@ public class StaticPagesTest extends AbstractProdWebServerTest {
   @Test
   public void coffeescript() {
     get("/js/script.coffee").produces("application/javascript", "console.log('Hello');");
+    get("/js/script.js").produces("application/javascript", "console.log('Hello');");
     get("/js/anotherscript.js").produces("application/javascript", "console.log('foobar');");
     get("/js/non-existing.js").produces(404);
     get("/js/non-existing.coffee").produces(404);
