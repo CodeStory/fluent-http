@@ -23,12 +23,13 @@ import java.nio.file.*;
 import java.util.function.*;
 
 public class DiskCache {
-  private final File root;
   private final static Logger LOG = LoggerFactory.getLogger(DiskCache.class);
+
+  private final File root;
 
   public DiskCache(String version) {
     this.root = Paths.get(System.getProperty("user.home"), ".code-story", "cache", version).toFile();
-    LOG.debug("Caching on disk @ " + this.root.getAbsolutePath());
+    LOG.debug("Caching on disk @ {}", this.root.getAbsolutePath());
   }
 
   CacheEntry computeIfAbsent(String sha1, String extension, Supplier<String> toCompiled) {
