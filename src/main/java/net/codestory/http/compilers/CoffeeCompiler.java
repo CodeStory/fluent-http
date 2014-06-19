@@ -31,6 +31,10 @@ public class CoffeeCompiler implements Compiler {
       return javascript;
     }
 
+    return addSourceMapping(javascript, path);
+  }
+
+  private static String addSourceMapping(String javascript, Path path) {
     return javascript + "\n//# sourceMappingURL=" + path.getFileName() + ".map";
   }
 }
