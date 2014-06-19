@@ -15,18 +15,18 @@
  */
 package net.codestory.http.routes;
 
-import net.codestory.http.Context;
-import net.codestory.http.compilers.CompiledPath;
-import net.codestory.http.io.Resources;
-import net.codestory.http.misc.Cache;
-import net.codestory.http.types.ContentTypes;
+import static net.codestory.http.constants.Methods.*;
+import static net.codestory.http.io.Resources.findExistingPath;
+import static net.codestory.http.io.Strings.replaceLast;
+import static net.codestory.http.types.ContentTypes.is_binary;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.function.Function;
+import java.nio.file.*;
+import java.util.function.*;
 
-import static net.codestory.http.constants.Methods.GET;
-import static net.codestory.http.constants.Methods.HEAD;
+import net.codestory.http.*;
+import net.codestory.http.compilers.*;
+import net.codestory.http.io.*;
+import net.codestory.http.misc.*;
 
 class StaticRoute implements Route {
   private static final Path NOT_FOUND = Paths.get("");
@@ -59,23 +59,22 @@ class StaticRoute implements Route {
   }
 
   private static Object findPath(String uri) {
-
-    Path path = Resources.findExistingPath(uri);
+    Path path = findExistingPath(uri);
     if (pathDoesNotExist(path)) {
-      if (uri.endsWith(".js")) {
-        return findPath(uri.replace(".js", ".coffee"));
-      }
-      if (uri.endsWith(".css")) {
-        return findPath(uri.replace(".css", ".less"));
-      }
-      return NOT_FOUND;
+      return findFileCompilableToPath(uri);
     }
 
-    if (ContentTypes.is_binary(path)) {
-      return path;
-    }
+    return is_binary(path) ? path : new CompiledPath(path);
+  }
 
-    return new CompiledPath(path);
+  private static Object findFileCompilableToPath(String uri) {
+    if (uri.endsWith(".js")) {
+      return findPath(replaceLast(uri, ".js", ".coffee"));
+    }
+    if (uri.endsWith(".css")) {
+      return findPath(replaceLast(uri, ".css", ".less"));
+    }
+    return NOT_FOUND;
   }
 
   private static boolean pathDoesNotExist(Path path) {
