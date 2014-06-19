@@ -675,13 +675,11 @@ TODO
 
 ## Caching
 
-fluent-http use a disk cache to store css, js files produced from less or coffeescript.
+fluent-http uses a disk cache to store css and js files produced from less or coffeescript.
 This directory is by default stored in your "user home" in a .code-story directory.
 
 If you don't want it to be here you can `-Duser.home=/foo/bar` as you see fit.
-
-If you're paranoid and run fluent-http under `nobody` make sure `nobody` can read/write in this directory.
-
+If you're paranoid and run fluent-http under `nobody` user make sure `nobody` can read/write this directory.
 
 ## Generate missing licenses
 
