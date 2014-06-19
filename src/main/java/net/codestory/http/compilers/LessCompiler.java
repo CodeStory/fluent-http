@@ -15,21 +15,16 @@
  */
 package net.codestory.http.compilers;
 
-import com.github.sommeri.less4j.Less4jException;
-import com.github.sommeri.less4j.core.ThreadUnsafeLessCompiler;
-import net.codestory.http.misc.Env;
+import static com.github.sommeri.less4j.LessCompiler.*;
 
-import java.nio.file.Path;
+import java.nio.file.*;
 
-import static com.github.sommeri.less4j.LessCompiler.Configuration;
+import net.codestory.http.misc.*;
+
+import com.github.sommeri.less4j.*;
+import com.github.sommeri.less4j.core.*;
 
 public class LessCompiler implements Compiler {
-  Env env;
-
-  public LessCompiler() {
-    env = new Env();// TODO: inject me instead.
-  }
-
   @Override
   public String compile(Path path, String source) {
     try {
@@ -37,7 +32,7 @@ public class LessCompiler implements Compiler {
       configuration.setLinkSourceMap(false);
 
       String css = new ThreadUnsafeLessCompiler().compile(new PathSource(path, source), configuration).getCss();
-      if (env.prodMode()) {
+      if (new Env().prodMode()) { // TODO: inject env instead.
         return css;
       }
       String sourceMapping = "/*# sourceMappingURL=" + path.getFileName() + ".map */";
