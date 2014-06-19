@@ -45,18 +45,19 @@ public class SourceRoute implements Route {
 
   public Path findPath(String uri, String sourceUri) {
     Path sourcePath = Resources.findExistingPath(sourceUri);
-    if ((sourcePath == null) || !isPublic(sourcePath)) {
-      if (uri.endsWith(".js.source")) {
-        String newUri = uri.replace(".js", ".coffee");
-        return findPath(newUri, getSourcePath(newUri));
-      }
-      if (uri.endsWith(".css.source")) {
-        String newUri = uri.replace(".css", ".less");
-        return findPath(newUri, getSourcePath(newUri));
-      }
-      return NOT_FOUND;
+    if ((sourcePath != null) && isPublic(sourcePath)) {
+      return sourcePath;
     }
-    return sourcePath;
+
+    if (uri.endsWith(".js.source")) {
+      String newUri = uri.replace(".js", ".coffee");
+      return findPath(newUri, getSourcePath(newUri));
+    }
+    if (uri.endsWith(".css.source")) {
+      String newUri = uri.replace(".css", ".less");
+      return findPath(newUri, getSourcePath(newUri));
+    }
+    return NOT_FOUND;
   }
 
   private static String getSourcePath(String uri) {
