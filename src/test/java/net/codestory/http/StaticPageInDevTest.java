@@ -19,7 +19,6 @@ import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
 
-@Ignore // works in the ide not in maven... wtf ?
 public class StaticPageInDevTest extends AbstractDevWebServerTest {
   @Test
   public void honorCoffeeSource() {
