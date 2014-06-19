@@ -19,7 +19,7 @@ import org.junit.*;
 
 public abstract class AbstractProdWebServerTest extends AbstractWebServerTest {
   @ClassRule
-  public static WebServerRule server = new WebServerRule(true);
+  public static WebServerRule server = WebServerRule.prodMode();
 
   @Override
   protected int getPort() {
