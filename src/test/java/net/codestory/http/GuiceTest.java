@@ -15,38 +15,36 @@
  */
 package net.codestory.http;
 
-import static org.hamcrest.CoreMatchers.*;
 import static org.mockito.Mockito.*;
 
 import net.codestory.http.injection.*;
 import net.codestory.http.routes.*;
+import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
 
 import com.google.inject.*;
-import com.jayway.restassured.*;
 
-public class GuiceTest {
+public class GuiceTest extends AbstractWebServerTest {
   WebServer webServer = new WebServer().startOnRandomPort();
+
+  @Override
+  protected int getPort() {
+    return webServer.port();
+  }
 
   @Test
   public void configuration() {
     webServer.configure(new MyAppConfiguration());
 
-    RestAssured
-      .given().port(webServer.port())
-      .when().get("/")
-      .then().body(containsString("PRODUCTION"));
+    get("/").produces("PRODUCTION");
   }
 
   @Test
   public void override_bean() {
     webServer.configure(new MyAppConfiguration(new TestModule()));
 
-    RestAssured
-      .given().port(webServer.port())
-      .when().get("/")
-      .then().body(containsString("OVERRIDDEN"));
+    get("/").produces("OVERRIDDEN");
   }
 
   static class MyAppConfiguration extends AbstractGuiceConfiguration {

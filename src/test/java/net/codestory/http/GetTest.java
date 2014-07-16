@@ -53,7 +53,7 @@ public class GetTest extends AbstractProdWebServerTest {
       get("/:one/:two/:three", (context, one, two, three) -> one + " " + two + " " + three));
 
     get("/hello/Dave").produces("Hello Dave");
-    get("/hello/John Doe").produces("Hello John Doe");
+    get("/hello/John%20Doe").produces("Hello John Doe");
     get("/say/HI/how/LOUD").produces("HI LOUD");
     get("/ONE/TWO/THREE").produces("ONE TWO THREE");
   }

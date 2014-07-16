@@ -15,28 +15,27 @@
  */
 package net.codestory.http;
 
-import static org.hamcrest.CoreMatchers.*;
-
 import net.codestory.http.injection.*;
 import net.codestory.http.routes.*;
+import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
 import org.springframework.beans.factory.*;
 import org.springframework.context.annotation.*;
 
-import com.jayway.restassured.*;
-
-public class SpringTest {
+public class SpringTest extends AbstractWebServerTest {
   WebServer webServer = new WebServer().startOnRandomPort();
+
+  @Override
+  protected int getPort() {
+    return webServer.port();
+  }
 
   @Test
   public void configuration() {
     webServer.configure(new SpringConfiguration(App.class));
 
-    RestAssured
-      .given().port(webServer.port())
-      .when().get("/")
-      .then().body(containsString("PRODUCTION"));
+    get("/").produces("PRODUCTION");
   }
 
   static class SpringConfiguration extends AbstractSpringConfiguration {

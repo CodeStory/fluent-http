@@ -15,109 +15,154 @@
  */
 package net.codestory.http.testhelpers;
 
-import static org.hamcrest.Matchers.*;
+import static com.squareup.okhttp.Request.*;
+import static java.net.CookiePolicy.*;
+import static net.codestory.http.misc.Fluent.*;
+import static org.assertj.core.api.Assertions.*;
 
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
-import com.jayway.restassured.*;
-import com.jayway.restassured.response.*;
-import com.jayway.restassured.specification.*;
+import com.squareup.okhttp.Authenticator;
+import com.squareup.okhttp.*;
 
 public abstract class AbstractWebServerTest {
 
   // GET
   protected RestAssert get(String path) {
-    return new RestAssert(request -> request.get(path));
+    return new RestAssert(path, request -> request);
   }
 
   protected RestAssert getWithHeader(String path, String name, String value) {
-    return new RestAssert(given -> given.header(name, value), request -> request.get(path));
+    return new RestAssert(path, request -> request.addHeader(name, value));
   }
 
   protected RestAssert getWithAuth(String path, String login, String password) {
-    return new RestAssert(given -> given.auth().preemptive().basic(login, password), request -> request.get(path));
+    AtomicInteger tries = new AtomicInteger(0);
+
+    return new RestAssert(path, client -> client.setAuthenticator(new Authenticator() {
+      @Override
+      public Request authenticate(Proxy proxy, Response response) throws IOException {
+        if (tries.getAndIncrement() > 0) {
+          return null;
+        }
+        String credential = Credentials.basic(login, password);
+        return response.request().newBuilder().header("Authorization", credential).build();
+      }
+
+      @Override
+      public Request authenticateProxy(Proxy proxy, Response response) {
+        return null;
+      }
+    }), request -> request);
   }
 
   // PUT
   protected RestAssert put(String path) {
-    return new RestAssert(request -> request.put(path));
+    return new RestAssert(path, request -> request.put(null));
   }
 
   protected RestAssert put(String path, String body) {
-    return new RestAssert(given -> given.body(body), request -> request.put(path));
+    return new RestAssert(path, request -> request.put(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), body)));
   }
 
   // HEAD
   protected RestAssert head(String path) {
-    return new RestAssert(request -> request.head(path));
+    return new RestAssert(path, request -> request.head());
   }
 
   // OPTIONS
   protected RestAssert options(String path) {
-    return new RestAssert(request -> request.options(path));
+    return new RestAssert(path, request -> request.method("OPTIONS", null).header("Origin", "http://www.code-story.net"));
   }
 
   protected RestAssert optionsWithHeader(String path, String name, String value) {
-    return new RestAssert(given -> given.header(name, value), request -> request.options(path));
+    return new RestAssert(path, request -> request.method("OPTIONS", null).header("Origin", "http://www.code-story.net").header(name, value));
   }
 
   // POST
   protected RestAssert post(String path) {
-    return new RestAssert(request -> request.post(path));
+    return new RestAssert(path, request -> request.post(null));
   }
 
   protected RestAssert post(String path, String firstParameterName, Object firstParameterValue, Object... parameterNameValuePairs) {
-    return new RestAssert(given -> given.parameters(firstParameterName, firstParameterValue, parameterNameValuePairs), request -> request.post(path));
+    FormEncodingBuilder form = new FormEncodingBuilder();
+    form.add(firstParameterName, firstParameterValue.toString());
+    for (int i = 0; i < parameterNameValuePairs.length; i += 2) {
+      form.add(parameterNameValuePairs[i].toString(), parameterNameValuePairs[i + 1].toString());
+    }
+
+    return new RestAssert(path, request -> request.post(form.build()));
   }
 
   protected RestAssert post(String path, String body) {
-    return new RestAssert(given -> given.body(body), request -> request.post(path));
+    return new RestAssert(path, request -> request.post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), body)));
   }
 
   // DELETE
   protected RestAssert delete(String path) {
-    return new RestAssert(given -> given, request -> request.delete(path));
+    return new RestAssert(path, request -> request.delete());
   }
 
   public class RestAssert {
-    private final ValidatableResponse then;
+    private final Response response;
+    private final CookieManager cookieManager;
 
-    private RestAssert(Function<RequestSpecification, RequestSpecification> configuration, Function<RequestSender, Response> action) {
-      this.then = action.apply(configuration.apply(RestAssured.given().header(new Header("Origin", "http://www.code-story.net")).port(getPort()))).then();
+    private RestAssert(String path, Function<OkHttpClient, OkHttpClient> configClient, Function<Builder, Builder> configRequest) {
+      cookieManager = new CookieManager();
+      cookieManager.setCookiePolicy(ACCEPT_ALL);
+
+      try {
+        OkHttpClient client = configClient.apply(new OkHttpClient().setCookieHandler(cookieManager));
+        Request request = configRequest.apply(new Builder().url("http://localhost:" + getPort() + path)).build();
+        response = client.newCall(request).execute();
+      } catch (IOException e) {
+        throw new RuntimeException("Unable to query", e);
+      }
     }
 
-    private RestAssert(Function<RequestSender, Response> action) {
-      this(given -> given, action);
+    private RestAssert(String path, Function<Builder, Builder> configRequest) {
+      this(path, client -> client, configRequest);
     }
 
     // Assertions
     public RestAssert produces(String content) {
-      then.content(containsString(content));
-      return this;
+      try {
+        assertThat(response.body().string()).contains(content);
+        return this;
+      } catch (IOException e) {
+        throw new RuntimeException("Unable to read response as String", e);
+      }
     }
 
     public RestAssert produces(String contentType, String content) {
-      then.content(containsString(content)).contentType(contentType);
-      return this;
+      assertThat(response.header("Content-Type")).contains(contentType);
+      return produces(content);
     }
 
     public RestAssert produces(int code, String contentType, String content) {
-      then.content(containsString(content)).contentType(contentType).statusCode(code);
+      produces(contentType, content);
+      produces(code);
       return this;
     }
 
     public RestAssert produces(int code) {
-      then.statusCode(code);
+      assertThat(response.code()).isEqualTo(code);
       return this;
     }
 
     public RestAssert producesCookie(String name, String value) {
-      then.cookie(name, value);
+      List<HttpCookie> cookies = cookieManager.getCookieStore().getCookies();
+      String actualValue = of(cookies).firstMatch(cookie -> cookie.getName().equals(name)).map(cookie -> cookie.getValue()).orElse(null);
+      assertThat(actualValue).isEqualTo(value);
       return this;
     }
 
     public RestAssert producesHeader(String name, String value) {
-      then.header(name, value);
+      assertThat(response.header(name)).isEqualTo(value);
       return this;
     }
   }
