@@ -34,7 +34,6 @@ import net.codestory.http.reload.*;
 import net.codestory.http.routes.*;
 import net.codestory.http.ssl.*;
 import net.codestory.http.templating.*;
-
 import org.slf4j.*;
 
 public class WebServer {
@@ -122,6 +121,7 @@ public class WebServer {
 
     try {
       LOG.info(env.prodMode() ? "Production mode" : "Dev mode");
+      LOG.info("using " + Version.getLongVersion());
 
       server.start(this.port, context, authReq);
 
