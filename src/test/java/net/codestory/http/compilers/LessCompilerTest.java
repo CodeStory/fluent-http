@@ -32,21 +32,27 @@ public class LessCompilerTest {
   public void empty() {
     String css = compiler.compile(Paths.get("empty.less"), "");
 
-    assertThat(css).isEqualTo("/*# sourceMappingURL=empty.less.map */");
+    assertThat(css).isEqualTo("\n/*# sourceMappingURL=data:application/json;base64,ewoidmVyc2lvbiI6MywKImZpbGUiOiJlbXB0eS5jc3MiLAoibGluZUNvdW50IjoxLAoibWFwcGluZ3MiOiI7IiwKInNvdXJjZXMiOltdLAoic291cmNlc0NvbnRlbnQiOltdLAoibmFtZXMiOltdCn0K */\n");
   }
 
   @Test
   public void to_css() {
     String css = compiler.compile(Paths.get("file.less"), "body { h1 { color: red; } }");
 
-    assertThat(css).isEqualTo("body h1 {\n  color: red;\n}\n/*# sourceMappingURL=file.less.map */");
+    assertThat(css).isEqualTo(
+      "body h1 {\n  color: red;\n}\n" +
+        "/*# sourceMappingURL=data:application/json;base64,ewoidmVyc2lvbiI6MywKImZpbGUiOiJmaWxlLmNzcyIsCiJsaW5lQ291bnQiOjEsCiJtYXBwaW5ncyI6IkFBQUFBLEksQ0FBT0M7IiwKInNvdXJjZXMiOlsiZmlsZS5sZXNzIl0sCiJzb3VyY2VzQ29udGVudCI6W251bGxdLAoibmFtZXMiOlsiYm9keSIsImgxIl0KfQo= */\n"
+    );
   }
 
   @Test
   public void import_less() {
     String css = compiler.compile(Paths.get("style.less"), "@import 'assets/style.less';");
 
-    assertThat(css).isEqualTo("body h1 {\n  color: red;\n}\n/*# sourceMappingURL=style.less.map */");
+    assertThat(css).isEqualTo(
+      "body h1 {\n  color: red;\n}\n" +
+        "/*# sourceMappingURL=data:application/json;base64,ewoidmVyc2lvbiI6MywKImZpbGUiOiJzdHlsZS5jc3MiLAoibGluZUNvdW50IjoxLAoibWFwcGluZ3MiOiJBQUFBQSxJLENBQ0VDOyIsCiJzb3VyY2VzIjpbImFzc2V0cy9zdHlsZS5sZXNzIl0sCiJzb3VyY2VzQ29udGVudCI6W251bGxdLAoibmFtZXMiOlsiYm9keSIsImgxIl0KfQo= */\n"
+    );
   }
 
   @Test

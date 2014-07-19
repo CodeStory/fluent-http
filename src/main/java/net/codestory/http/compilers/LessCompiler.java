@@ -29,22 +29,20 @@ public class LessCompiler implements Compiler {
   public String compile(Path path, String source) {
     try {
       Configuration configuration = new Configuration();
-      configuration.setLinkSourceMap(false);
 
-      String css = new ThreadUnsafeLessCompiler().compile(new PathSource(path, source), configuration).getCss();
-      if (new Env().prodMode()) { // TODO: inject env instead.
-        return css;
-      }
+      configureSourceMap(configuration);
 
-      return addSourceMapping(css, path);
+      return new ThreadUnsafeLessCompiler().compile(new PathSource(path, source), configuration).getCss();
     } catch (Less4jException e) {
       String message = cleanMessage(path, e.getMessage());
       throw new CompilerException(message);
     }
   }
 
-  private static String addSourceMapping(String css, Path path) {
-    return css + "/*# sourceMappingURL=" + path.getFileName() + ".map */";
+  private void configureSourceMap(Configuration configuration) {
+    SourceMapConfiguration sourceMaps = configuration.getSourceMapConfiguration();
+    sourceMaps.setLinkSourceMap(false);
+    sourceMaps.setInline(!new Env().prodMode()); // TODO: inject env instead.
   }
 
   private static String cleanMessage(Path path, String message) {

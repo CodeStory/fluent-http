@@ -30,14 +30,13 @@ public enum Compilers {
 
   private final Map<String, Supplier<Compiler>> compilerByExtension = new HashMap<>();
   private final Map<String, CacheEntry> cache = new ConcurrentHashMap<>();
-  private final DiskCache diskCache = new DiskCache("V2");
+  private final DiskCache diskCache = new DiskCache("V3");
 
   private Compilers() {
     register(CoffeeCompiler::new, ".coffee", ".litcoffee");
     register(CoffeeSourceMapCompiler::new, ".coffee.map", ".litcoffee.map");
     register(MarkdownCompiler::new, ".md", ".markdown");
     register(LessCompiler::new, ".less");
-    register(LessSourceMapCompiler::new, ".less.map");
     register(AsciidocCompiler::new, ".asciidoc", ".adoc");
   }
 

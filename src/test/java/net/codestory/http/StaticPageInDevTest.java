@@ -39,9 +39,4 @@ public class StaticPageInDevTest extends AbstractDevWebServerTest {
   public void honorLessSourceEvenInCss() {
     get("/assets/anotherstyle.css.source").produces("text/css", "body { h1 { color: red; } }");
   }
-
-  @Test
-  public void fetchMapFile() {
-    get("/assets/style.less.map").produces("text/plain", "\"file\":\"/assets/style.less.source\"");
-  }
 }

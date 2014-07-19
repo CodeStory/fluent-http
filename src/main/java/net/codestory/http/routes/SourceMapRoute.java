@@ -28,7 +28,6 @@ import net.codestory.http.payload.*;
 import net.codestory.http.types.*;
 
 class SourceMapRoute implements Route {
-
   @Override
   public boolean matchUri(String uri) {
     return uri.endsWith(".map") && Resources.isPublic(pathSource(uri));

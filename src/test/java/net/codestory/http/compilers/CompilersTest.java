@@ -24,13 +24,6 @@ import org.junit.*;
 
 public class CompilersTest {
   @Test
-  public void compile_less_file() {
-    String css = Compilers.INSTANCE.compile(Paths.get("style.less"), "body { h1 { color: red; } }").content();
-
-    assertThat(css).isEqualTo("body h1 {\n  color: red;\n}\n/*# sourceMappingURL=style.less.map */");
-  }
-
-  @Test
   public void do_not_compile_plain_file() {
     String css = Compilers.INSTANCE.compile(Paths.get("plain.txt"), "Hello").content();
 
@@ -49,17 +42,19 @@ public class CompilersTest {
   @Test
   public void supports_file_cache_being_destroyed() {
     // Delete cache
-    File cacheFile = Paths.get(System.getProperty("user.home"), ".code-story", "cache", "V2", "less", "a4c0dac49e47ffe0dbcca7615f73b72ef6b71543").toFile();
+    File cacheFile = Paths.get(System.getProperty("user.home"), ".code-story", "cache", "V3", "coffee", "469d8cd9668f810e3a9984472792076cae0e1883").toFile();
     cacheFile.delete();
 
     // Fill cache
-    Compilers.INSTANCE.compile(Paths.get("body.less"), "body{}").content();
+    String javascript = Compilers.INSTANCE.compile(Paths.get("test.coffee"), "a=42").content();
+
     assertThat(cacheFile).exists();
+    assertThat(javascript).contains("var a;\n\na = 42");
 
     // Delete cache
     cacheFile.delete();
-    String css = Compilers.INSTANCE.compile(Paths.get("body.less"), "body{}").content();
+    String updated = Compilers.INSTANCE.compile(Paths.get("test.coffee"), "a=1337").content();
 
-    assertThat(css).isEqualTo("/*# sourceMappingURL=body.less.map */");
+    assertThat(updated).contains("var a;\n\na = 1337");
   }
 }
