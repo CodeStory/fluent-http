@@ -51,6 +51,13 @@ public class CookieAuthFilterTest {
   }
 
   @Test
+  public void filter_auth_urls() {
+    assertThat(filter.matches("/auth/signin", null)).isTrue();
+    assertThat(filter.matches("/auth/signout", null)).isTrue();
+    assertThat(filter.matches("/auth/login", null)).isTrue();
+  }
+
+  @Test
   public void filter_private_extensions() {
     assertThat(filter.matches("/secure/index.html", null)).isTrue();
     assertThat(filter.matches("/secure/app.js", null)).isTrue();

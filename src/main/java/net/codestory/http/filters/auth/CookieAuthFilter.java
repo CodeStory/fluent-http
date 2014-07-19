@@ -61,7 +61,7 @@ public class CookieAuthFilter implements Filter {
 
   @Override
   public boolean matches(String uri, Context context) {
-    return uri.startsWith(uriPrefix) && of(ignoreExtensions).noneMatch(uri::endsWith);
+    return uri.startsWith("/auth/") || (uri.startsWith(uriPrefix) && of(ignoreExtensions).noneMatch(uri::endsWith));
   }
 
   @Override
