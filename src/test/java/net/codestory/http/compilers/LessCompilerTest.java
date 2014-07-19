@@ -51,7 +51,7 @@ public class LessCompilerTest {
 
   @Test
   public void import_less_from_webjar() {
-    String css = compiler.compile(Paths.get("style.less"), "@import '/webjars/bootstrap/3.1.1/less/bootstrap.less';");
+    String css = compiler.compile(Paths.get("style.less"), "@import '/webjars/bootstrap/3.2.0/less/bootstrap.less';");
 
     assertThat(css).isNotEmpty().doesNotContain("@import");
   }

@@ -54,6 +54,6 @@ public class ClasspathScannerTest {
 
     assertThat(resources)
       .contains("META-INF/resources/webjars/fakewebjar/1.0/fake.js")
-      .contains("META-INF/resources/webjars/jquery/1.9.0/jquery.js");
+      .contains("META-INF/resources/webjars/jquery/1.11.1/jquery.js");
   }
 }
