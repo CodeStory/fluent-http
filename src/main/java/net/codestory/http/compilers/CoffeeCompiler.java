@@ -27,7 +27,10 @@ public class CoffeeCompiler implements Compiler {
   @Override
   public String compile(Path path, String source) {
     String javascript = nashornCompiler.compile(path, source);
-    if (new Env().prodMode()) { // TODO: inject env instead.
+
+    // TODO: inject env instead.
+    // TODO: use different cache for prod and !prod
+    if (new Env().prodMode()) {
       return javascript;
     }
 

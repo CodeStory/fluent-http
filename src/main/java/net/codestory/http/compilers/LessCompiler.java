@@ -42,7 +42,9 @@ public class LessCompiler implements Compiler {
   private void configureSourceMap(Configuration configuration) {
     SourceMapConfiguration sourceMaps = configuration.getSourceMapConfiguration();
     sourceMaps.setLinkSourceMap(false);
-    sourceMaps.setInline(!new Env().prodMode()); // TODO: inject env instead.
+    // TODO: inject env instead.
+    // TODO: use different cache for prod and !prod
+    sourceMaps.setInline(!new Env().prodMode());
   }
 
   private static String cleanMessage(Path path, String message) {
