@@ -691,10 +691,6 @@ mvn license:format
 Build the release:
 
 ```bash
-mvn release:clean
-mvn release:prepare
+mvn release:clean release:prepare
 mvn release:perform
 ```
-
-Go to [https://oss.sonatype.org/](https://oss.sonatype.org/), log in, go to **Staging Repositories**, close the *netcode-story-XXXX* repository then release it.
-Synchro to Maven Central is done hourly.
