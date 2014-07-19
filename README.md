@@ -28,7 +28,7 @@ Release versions are deployed on Maven Central:
 <dependency>
   <groupId>net.code-story</groupId>
   <artifactId>http</artifactId>
-  <version>2.8</version>
+  <version>2.9</version>
 </dependency>
 ```
 
