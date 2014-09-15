@@ -26,7 +26,7 @@ import org.junit.*;
 
 public class ClasspathScannerTest {
   ClasspathScanner classpathScanner = new ClasspathScanner();
-  Env env = new Env();
+  Env env = Env.get();
 
   @Test
   public void scan_main_resources() {

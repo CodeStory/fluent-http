@@ -25,16 +25,17 @@ import net.codestory.http.misc.*;
 import org.junit.rules.*;
 
 public class DevWebServerRule extends ExternalResource {
-  private static Supplier<WebServer> server = memoize(() -> new WebServer() {
-    @Override
-    protected Env createEnv() {
-      return new Env(false, false, false, false);
-    }
-  }.startOnRandomPort());
+  private static Supplier<WebServer> server = memoize(() -> new WebServer().startOnRandomPort());
+
+  @Override
+  protected void before() throws Throwable {
+    Env.setForTests(false, false, false, false);
+  }
 
   @Override
   protected void after() {
     server.get().reset();
+    Env.resetForTests();
   }
 
   public void configure(Configuration configuration) {

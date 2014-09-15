@@ -41,8 +41,8 @@ public class Site {
   private final Supplier<Map<String, List<Map<String, Object>>>> tags;
   private final Supplier<Map<String, List<Map<String, Object>>>> categories;
 
-  public Site(Env env) {
-    resourceList = memoize(() -> list(env));
+  public Site() {
+    resourceList = memoize(() -> list(Env.get()));
 
     yaml = memoize(() -> loadYamlConfig("_config.yml"));
 

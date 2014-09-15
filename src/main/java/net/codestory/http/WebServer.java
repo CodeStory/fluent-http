@@ -26,6 +26,7 @@ import java.util.*;
 
 import net.codestory.http.filters.log.*;
 import net.codestory.http.internal.*;
+import net.codestory.http.misc.*;
 import net.codestory.http.reload.*;
 import net.codestory.http.ssl.*;
 
@@ -98,10 +99,10 @@ public class WebServer extends AbstractWebServer {
   }
 
   protected WebServer startWithContext(int port, SSLContext context, boolean authReq) {
-    this.port = env.overriddenPort(port);
+    this.port = Env.get().overriddenPort(port);
 
     try {
-      LOG.info(env.prodMode() ? "Production mode" : "Dev mode");
+      LOG.info(Env.get().prodMode() ? "Production mode" : "Dev mode");
 
       server.start(this.port, context, authReq);
 

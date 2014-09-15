@@ -24,5 +24,5 @@ import net.codestory.http.templating.Site;
 public interface PayloadWriterFactory {
   PayloadWriterFactory DEFAULT = PayloadWriter::new;
 
-  PayloadWriter create(Env env, Site site, Request request, Response response);
+  PayloadWriter create(Site site, Request request, Response response);
 }

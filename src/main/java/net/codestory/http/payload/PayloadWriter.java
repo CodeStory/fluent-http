@@ -39,26 +39,24 @@ import net.codestory.http.templating.*;
 import net.codestory.http.types.*;
 
 public class PayloadWriter {
-  private final Env env;
   private final Site site;
   private final Request request;
   private final Response response;
   private final ExecutorService executor;
 
-  public PayloadWriter(Env env, Site site, Request request, Response response) {
-    this(env, site, request, response, Executors.newCachedThreadPool(new NamedDaemonThreadFactory()));
+  public PayloadWriter(Site site, Request request, Response response) {
+    this(site, request, response, Executors.newCachedThreadPool(new NamedDaemonThreadFactory()));
   }
 
-  public PayloadWriter(Env env, Site site, Request request, Response response, ExecutorService executor) {
+  public PayloadWriter(Site site, Request request, Response response, ExecutorService executor) {
     this.request = request;
     this.response = response;
-    this.env = env;
     this.site = site;
     this.executor = executor;
   }
 
-  public PayloadWriter(Env env, Site site, Request request, Response response, int executorThreads) {
-    this(env, site, request, response, Executors.newFixedThreadPool(executorThreads, new NamedDaemonThreadFactory()));
+  public PayloadWriter(Site site, Request request, Response response, int executorThreads) {
+    this(site, request, response, Executors.newFixedThreadPool(executorThreads, new NamedDaemonThreadFactory()));
   }
 
   public void writeAndClose(Payload payload) throws IOException {
@@ -194,7 +192,7 @@ public class PayloadWriter {
 
   protected boolean shouldGzip() {
     String acceptEncoding = request.header(ACCEPT_ENCODING);
-    return (acceptEncoding != null) && acceptEncoding.contains(GZIP) && env.prodMode() && !env.disableGzip();
+    return (acceptEncoding != null) && acceptEncoding.contains(GZIP) && Env.get().prodMode() && !Env.get().disableGzip();
   }
 
   protected boolean shouldIgnoreError(IOException e) {
@@ -339,7 +337,7 @@ public class PayloadWriter {
     keyValues.putAll(modelAndView.model().keyValues());
     keyValues.put("cookies", request.cookies().keyValues());
     keyValues.put("site", site);
-    keyValues.put("env", env);
+    keyValues.put("env", Env.get());
 
     CacheEntry html = new Template(view).render(keyValues);
 

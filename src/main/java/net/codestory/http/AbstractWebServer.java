@@ -31,14 +31,12 @@ import org.slf4j.*;
 public abstract class AbstractWebServer {
   protected final static Logger LOG = LoggerFactory.getLogger(AbstractWebServer.class);
 
-  protected Env env;
   protected RoutesProvider routesProvider;
 
   public AbstractWebServer configure(Configuration configuration) {
-    this.env = createEnv();
-    this.routesProvider = env.prodMode()
-      ? RoutesProvider.fixed(env, configuration)
-      : RoutesProvider.reloading(env, configuration);
+    this.routesProvider = Env.get().prodMode()
+      ? RoutesProvider.fixed(configuration)
+      : RoutesProvider.reloading(configuration);
     return this;
   }
 
@@ -59,7 +57,7 @@ public abstract class AbstractWebServer {
       // Cannot be created by routes since it was not initialized properly
       // TODO: get rid of new Site() here
       //
-      PayloadWriter payloadWriter = new PayloadWriter(env, new Site(env), request, response);
+      PayloadWriter payloadWriter = new PayloadWriter(new Site(), request, response);
       handleServerError(payloadWriter, e);
     }
   }
@@ -95,11 +93,7 @@ public abstract class AbstractWebServer {
   }
 
   protected Payload errorPage(Payload payload, Exception e) {
-    Exception shownError = env.prodMode() ? null : e;
+    Exception shownError = Env.get().prodMode() ? null : e;
     return new ErrorPage(payload, shownError).payload();
-  }
-
-  protected Env createEnv() {
-    return new Env();
   }
 }

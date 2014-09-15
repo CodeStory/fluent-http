@@ -35,7 +35,6 @@ import net.codestory.http.payload.*;
 import net.codestory.http.templating.*;
 
 public class RouteCollection implements Routes {
-  private final Env env;
   private final Site site;
   private final Deque<Route> routes;
   private final Deque<Supplier<Filter>> filters;
@@ -44,9 +43,8 @@ public class RouteCollection implements Routes {
   private ContextFactory contextFactory;
   private PayloadWriterFactory payloadWriterFactory;
 
-  public RouteCollection(Env env) {
-    this.env = env;
-    this.site = new Site(env);
+  public RouteCollection() {
+    this.site = new Site();
     this.routes = new LinkedList<>();
     this.filters = new LinkedList<>();
     this.iocAdapter = new Singletons();
@@ -465,7 +463,7 @@ public class RouteCollection implements Routes {
   }
 
   public PayloadWriter createPayloadWriter(Request request, Response response) {
-    return payloadWriterFactory.create(env, site, request, response);
+    return payloadWriterFactory.create(site, request, response);
   }
 
   private static String checkParametersCount(String uriPattern, int count) {
