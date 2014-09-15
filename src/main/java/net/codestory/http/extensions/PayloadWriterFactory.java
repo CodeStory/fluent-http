@@ -16,9 +16,8 @@
 package net.codestory.http.extensions;
 
 import net.codestory.http.*;
-import net.codestory.http.misc.Env;
 import net.codestory.http.payload.*;
-import net.codestory.http.templating.Site;
+import net.codestory.http.templating.*;
 
 @FunctionalInterface
 public interface PayloadWriterFactory {

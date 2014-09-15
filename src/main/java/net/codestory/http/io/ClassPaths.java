@@ -19,7 +19,7 @@ import static java.nio.charset.StandardCharsets.*;
 import static java.nio.file.Files.*;
 import static net.codestory.http.io.FileVisitor.*;
 import static net.codestory.http.io.Resources.*;
-import static net.codestory.http.misc.Fluent.of;
+import static net.codestory.http.misc.Fluent.*;
 
 import java.io.*;
 import java.net.*;

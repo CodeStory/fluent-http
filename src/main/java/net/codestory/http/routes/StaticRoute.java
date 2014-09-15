@@ -16,9 +16,9 @@
 package net.codestory.http.routes;
 
 import static net.codestory.http.constants.Methods.*;
-import static net.codestory.http.io.Resources.findExistingPath;
-import static net.codestory.http.io.Strings.replaceLast;
-import static net.codestory.http.types.ContentTypes.is_binary;
+import static net.codestory.http.io.Resources.*;
+import static net.codestory.http.io.Strings.*;
+import static net.codestory.http.types.ContentTypes.*;
 
 import java.nio.file.*;
 import java.util.function.*;

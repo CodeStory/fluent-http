@@ -69,7 +69,7 @@ public final class NashornCompiler {
   }
 
   private String getFileName(Path path) {
-    return path.getFileName().toString().replace(".map",".source");
+    return path.getFileName().toString().replace(".map", ".source");
   }
 
   private static String cleanMessage(Path path, String message) {

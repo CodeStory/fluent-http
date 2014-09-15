@@ -16,7 +16,7 @@
 package net.codestory.http.extensions;
 
 import net.codestory.http.*;
-import net.codestory.http.injection.IocAdapter;
+import net.codestory.http.injection.*;
 
 @FunctionalInterface
 public interface ContextFactory {

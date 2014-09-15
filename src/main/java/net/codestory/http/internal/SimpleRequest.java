@@ -15,17 +15,13 @@
  */
 package net.codestory.http.internal;
 
-import net.codestory.http.Cookies;
-import net.codestory.http.Part;
-import net.codestory.http.Query;
-import net.codestory.http.Request;
+import static net.codestory.http.misc.Fluent.*;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetSocketAddress;
-import java.util.List;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
-import static net.codestory.http.misc.Fluent.of;
+import net.codestory.http.*;
 
 class SimpleRequest implements Request {
   private final org.simpleframework.http.Request request;

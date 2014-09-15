@@ -15,7 +15,7 @@
  */
 package net.codestory.http.io;
 
-import static net.codestory.http.io.ClassPaths.getResource;
+import static net.codestory.http.io.ClassPaths.*;
 
 import java.io.*;
 import java.net.*;

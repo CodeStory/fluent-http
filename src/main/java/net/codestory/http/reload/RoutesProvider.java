@@ -18,7 +18,6 @@ package net.codestory.http.reload;
 import java.io.*;
 
 import net.codestory.http.*;
-import net.codestory.http.misc.*;
 import net.codestory.http.routes.*;
 
 @FunctionalInterface
