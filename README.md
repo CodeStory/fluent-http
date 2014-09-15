@@ -691,6 +691,5 @@ mvn license:format
 Build the release:
 
 ```bash
-mvn release:clean release:prepare
-mvn release:perform
+mvn release:clean release:prepare release:perform
 ```
