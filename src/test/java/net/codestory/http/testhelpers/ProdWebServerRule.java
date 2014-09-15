@@ -34,8 +34,8 @@ public class ProdWebServerRule extends ExternalResource {
 
   @Override
   protected void after() {
-    server.get().reset();
     Env.resetForTests();
+    server.get().reset();
 
   }
 

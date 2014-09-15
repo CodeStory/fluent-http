@@ -34,8 +34,8 @@ public class DevWebServerRule extends ExternalResource {
 
   @Override
   protected void after() {
-    server.get().reset();
     Env.resetForTests();
+    server.get().reset();
   }
 
   public void configure(Configuration configuration) {
