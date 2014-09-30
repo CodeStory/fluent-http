@@ -65,7 +65,16 @@ class SimpleCookies implements Cookies {
   @Override
   public <T> T value(String name, Class<T> type) {
     String value = value(name);
-    return (value == null) ? null : TypeConvert.fromJson(value, type);
+    if (value== null) {
+      return null;
+    }
+
+    // fix for https://github.com/ariya/phantomjs/issues/12160
+    if (value.indexOf('\\') != -1) {
+      value = value.replace("\\", "");
+    }
+
+    return TypeConvert.fromJson(value, type);
   }
 
   @Override
