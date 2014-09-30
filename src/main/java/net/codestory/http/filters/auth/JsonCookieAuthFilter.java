@@ -24,6 +24,7 @@ import java.io.*;
 import java.util.concurrent.*;
 
 import net.codestory.http.*;
+import net.codestory.http.convert.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.misc.*;
 import net.codestory.http.payload.*;
@@ -31,8 +32,7 @@ import net.codestory.http.security.*;
 
 import org.apache.commons.lang3.*;
 
-@Deprecated
-public class CookieAuthFilter implements Filter {
+public class JsonCookieAuthFilter implements Filter {
   private static final int ONE_DAY = (int) TimeUnit.DAYS.toSeconds(1L);
   private static final String[] DEFAULT_EXCLUDE = {".less", ".css", ".map", ".js", ".coffee", ".ico", ".jpeg", ".jpg", ".gif", ".png", ".svg", ".eot", ".ttf", ".woff", ".js", ".coffee", "robots.txt"};
 
@@ -41,19 +41,19 @@ public class CookieAuthFilter implements Filter {
   private final SessionIdStore sessionIdStore;
   private final String[] ignoreExtensions;
 
-  public CookieAuthFilter(String uriPrefix, Users users) {
+  public JsonCookieAuthFilter(String uriPrefix, Users users) {
     this(uriPrefix, users, SessionIdStore.inMemory(), DEFAULT_EXCLUDE);
   }
 
-  public CookieAuthFilter(String uriPrefix, Users users, SessionIdStore sessionIdStore) {
+  public JsonCookieAuthFilter(String uriPrefix, Users users, SessionIdStore sessionIdStore) {
     this(uriPrefix, users, sessionIdStore, DEFAULT_EXCLUDE);
   }
 
-  public CookieAuthFilter(String uriPrefix, Users users, SessionIdStore sessionIdStore, String ignoreExtension, String... moreIgnoreExtensions) {
+  public JsonCookieAuthFilter(String uriPrefix, Users users, SessionIdStore sessionIdStore, String ignoreExtension, String... moreIgnoreExtensions) {
     this(uriPrefix, users, sessionIdStore, Fluent.of(ignoreExtension).concat(moreIgnoreExtensions).toArray(String[]::new));
   }
 
-  private CookieAuthFilter(String uriPrefix, Users users, SessionIdStore sessionIdStore, String[] ignoreExtensions) {
+  private JsonCookieAuthFilter(String uriPrefix, Users users, SessionIdStore sessionIdStore, String[] ignoreExtensions) {
     this.uriPrefix = uriPrefix;
     this.users = users;
     this.sessionIdStore = sessionIdStore;
@@ -84,34 +84,8 @@ public class CookieAuthFilter implements Filter {
     return nextFilter.get(); // Don't protect other /auth/ pages. Login and lost password pages for eg.
   }
 
-  private Payload signin(Context context) {
-    String login = context.get("login");
-    String password = context.get("password");
-
-    if (users.find(login, password) == null) {
-      return seeOther("/auth/login"); // Unknown user. Go back to login
-    }
-
-    return seeOther(notFavIcon(context.cookies().value("redirectAfterLogin", "/")))
-      .withCookie(loginCookie(login))
-      .withCookie(sessionCookie(newSessionId(login)))
-      .withCookie(redirectUrlCookie("/"));
-  }
-
-  private Payload signout(Context context) {
-    String sessionId = context.cookies().value("sessionId");
-    if (sessionId != null) {
-      sessionIdStore.remove(sessionId);
-    }
-
-    return seeOther("/?signout")
-      .withCookie(loginCookie(null))
-      .withCookie(sessionCookie(null))
-      .withCookie(redirectUrlCookie(null));
-  }
-
   private Payload otherUri(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
-    String sessionId = context.cookies().value("sessionId");
+    String sessionId = readSessionIdInCookie(context);
     if (sessionId != null) {
       String login = sessionIdStore.getLogin(sessionId);
       if (login != null) {
@@ -122,9 +96,42 @@ public class CookieAuthFilter implements Filter {
     }
 
     return seeOther("/auth/login")
-      .withCookie(loginCookie(null))
-      .withCookie(sessionCookie(null))
-      .withCookie(redirectUrlCookie(uri));
+      .withCookie(authCookie(null));
+  }
+
+  private Payload signin(Context context) {
+    String login = context.get("login");
+    String password = context.get("password");
+
+    User user = users.find(login, password);
+    if (user == null) {
+      return seeOther("/auth/login"); // Unknown user. Go back to login
+    }
+
+    return seeOther(notFavIcon(readRedirectUrlInCookie(context)))
+      .withCookie(authCookie(buildCookie(user, "/")));
+  }
+
+  private Payload signout(Context context) {
+    String sessionId = context.cookies().value("sessionId");
+    if (sessionId != null) {
+      sessionIdStore.remove(sessionId);
+    }
+
+    return seeOther("/?signout")
+      .withCookie(authCookie(null));
+  }
+
+  private String readSessionIdInCookie(Context context) {
+    AuthData authData = context.cookies().value("auth", AuthData.class);
+    return (authData == null) ? null : authData.sessionId;
+  }
+
+  private String readRedirectUrlInCookie(Context context) {
+    AuthData authData = context.cookies().value("auth", AuthData.class);
+    String redirectUrl = (authData == null) ? null : authData.redirectAfterLogin;
+    redirectUrl = (redirectUrl == null) ? "/" : redirectUrl;
+    return redirectUrl;
   }
 
   private String newSessionId(String login) {
@@ -133,20 +140,18 @@ public class CookieAuthFilter implements Filter {
     return sessionId;
   }
 
-  private static Cookie loginCookie(String login) {
-    return cookie("login", login);
+  private String buildCookie(User user, String redirectUrl) {
+    AuthData cookie = new AuthData();
+    cookie.login = user.login();
+    cookie.roles = user.roles();
+    cookie.sessionId = newSessionId(user.login());
+    cookie.redirectAfterLogin = redirectUrl;
+
+    return TypeConvert.toJson(cookie);
   }
 
-  private static Cookie sessionCookie(String sessionId) {
-    return cookie("sessionId", sessionId);
-  }
-
-  private static Cookie redirectUrlCookie(String uri) {
-    return cookie("redirectAfterLogin", uri);
-  }
-
-  private static Cookie cookie(String name, String value) {
-    NewCookie cookie = new NewCookie(name, value, "/", true);
+  private static Cookie authCookie(String authData) {
+    NewCookie cookie = new NewCookie("auth", authData, "/", true);
     cookie.setExpiry(ONE_DAY);
     cookie.setDomain(null);
     cookie.setSecure(false);

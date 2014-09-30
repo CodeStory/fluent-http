@@ -26,6 +26,8 @@ import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
+import net.codestory.http.convert.*;
+
 import com.squareup.okhttp.Authenticator;
 import com.squareup.okhttp.*;
 
@@ -58,6 +60,10 @@ public abstract class AbstractWebServerTest {
         return null;
       }
     }), request -> request);
+  }
+
+  protected RestAssert getWithPreemptiveAuth(String path, String login, String password) {
+    return getWithHeader(path, "Authorization", Credentials.basic(login, password));
   }
 
   // PUT
@@ -158,6 +164,14 @@ public abstract class AbstractWebServerTest {
       List<HttpCookie> cookies = cookieManager.getCookieStore().getCookies();
       String actualValue = of(cookies).firstMatch(cookie -> cookie.getName().equals(name)).map(cookie -> cookie.getValue()).orElse(null);
       assertThat(actualValue).isEqualTo(value);
+      return this;
+    }
+
+    public <T> RestAssert producesCookie(String name, Class<T> type, Consumer<T> validation) {
+      List<HttpCookie> cookies = cookieManager.getCookieStore().getCookies();
+      String actualValue = of(cookies).firstMatch(cookie -> cookie.getName().equals(name)).map(cookie -> cookie.getValue()).orElse(null);
+      System.out.println(actualValue);
+      validation.accept(TypeConvert.fromJson(actualValue, type));
       return this;
     }
 

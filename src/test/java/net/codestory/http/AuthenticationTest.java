@@ -15,9 +15,14 @@
  */
 package net.codestory.http;
 
+import static org.assertj.core.api.Assertions.*;
+
 import java.util.*;
 
+import net.codestory.http.filters.auth.*;
 import net.codestory.http.filters.basic.*;
+import net.codestory.http.filters.mixed.*;
+import net.codestory.http.security.*;
 import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
@@ -66,6 +71,32 @@ public class AuthenticationTest extends AbstractProdWebServerTest {
       get("/secure", context -> "Hello " + context.currentUser().login()));
 
     getWithAuth("/secure", "Dave", "pwd").produces(200, "text/html", "Hello Dave");
+  }
+
+  @Test
+  public void support_basic_auth_with_mixed_filter() {
+    server.configure(routes -> routes.
+      filter(new MixedAuthFilter("/secure", "codestory", Users.forMap(of("Dave", "pwd")), SessionIdStore.inMemory())).
+      get("/secure", context -> "Hello " + context.currentUser().login()));
+
+    getWithPreemptiveAuth("/secure", "Dave", "pwd")
+      .produces(200, "text/html", "Hello Dave")
+      .producesCookie("auth", null);
+  }
+
+  @Test
+  public void support_form_auth_with_mixed_filter() {
+    server.configure(routes -> routes.
+      filter(new MixedAuthFilter("/secure", "codestory", Users.forMap(of("Dave", "pwd")), SessionIdStore.inMemory())).
+      get("/secure", context -> "Hello " + context.currentUser().login()));
+
+    post("/secure").produces("Sign in");
+    post("/auth/signin", "login", "Dave", "password", "pwd").producesCookie("auth", AuthData.class, authData -> {
+      assertThat(authData.login).isEqualTo("Dave");
+      assertThat(authData.roles).isEmpty();
+      assertThat(authData.sessionId).isNotEmpty();
+      assertThat(authData.redirectAfterLogin).isEqualTo("/");
+    });
   }
 
   private static Map<String, String> of(String user, String pwd) {

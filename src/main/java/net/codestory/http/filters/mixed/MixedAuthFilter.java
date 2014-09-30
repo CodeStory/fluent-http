@@ -31,7 +31,7 @@ public class MixedAuthFilter implements Filter {
   private final Filter basicAuthFilter;
 
   public MixedAuthFilter(String uriPrefix, String realm, Users users, SessionIdStore sessionIdStore) {
-    this.cookieAuthFilter = new CookieAuthFilter(uriPrefix, users, sessionIdStore);
+    this.cookieAuthFilter = new JsonCookieAuthFilter(uriPrefix, users, sessionIdStore);
     this.basicAuthFilter = new BasicAuthFilter(uriPrefix, realm, users);
   }
 
