@@ -39,10 +39,10 @@ import net.codestory.http.templating.*;
 import net.codestory.http.types.*;
 
 public class PayloadWriter {
-  private final Site site;
-  private final Request request;
-  private final Response response;
-  private final ExecutorService executor;
+  protected final Site site;
+  protected final Request request;
+  protected final Response response;
+  protected final ExecutorService executor;
 
   public PayloadWriter(Site site, Request request, Response response) {
     this(site, request, response, Executors.newCachedThreadPool(new NamedDaemonThreadFactory()));
