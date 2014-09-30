@@ -48,15 +48,11 @@ public class PayloadWriter {
     this(site, request, response, Executors.newCachedThreadPool(new NamedDaemonThreadFactory()));
   }
 
-  public PayloadWriter(Site site, Request request, Response response, ExecutorService executor) {
+  protected PayloadWriter(Site site, Request request, Response response, ExecutorService executor) {
     this.request = request;
     this.response = response;
     this.site = site;
     this.executor = executor;
-  }
-
-  public PayloadWriter(Site site, Request request, Response response, int executorThreads) {
-    this(site, request, response, Executors.newFixedThreadPool(executorThreads, new NamedDaemonThreadFactory()));
   }
 
   public void writeAndClose(Payload payload) throws IOException {
