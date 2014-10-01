@@ -48,7 +48,15 @@ class ReloadingRoutesProvider implements RoutesProvider {
 
   protected List<Path> classpathFolders() {
     URL[] urls = ClassPaths.getUrls(Thread.currentThread().getContextClassLoader());
-    return of(urls).map(url -> Paths.get(url.getPath())).toList();
+    return of(urls).map(url -> Paths.get(toUri(url))).toList();
+  }
+
+  private static URI toUri(URL url) {
+    try {
+      return url.toURI();
+    } catch (URISyntaxException e) {
+      throw new IllegalArgumentException("Unable to convert URL to URI: " + url, e);
+    }
   }
 
   @Override
