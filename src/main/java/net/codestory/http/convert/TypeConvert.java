@@ -17,6 +17,7 @@ package net.codestory.http.convert;
 
 import java.io.*;
 import java.lang.reflect.*;
+import java.util.function.*;
 
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.*;
@@ -26,18 +27,30 @@ import com.fasterxml.jackson.databind.type.*;
 import com.fasterxml.jackson.datatype.jsr310.*;
 
 public class TypeConvert {
-  private static ObjectMapper OBJECT_MAPPER = new ObjectMapper()
-    .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
-    .registerModule(new JSR310Module())
-    .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+  private static ObjectMapper OBJECT_MAPPER = createObjectMapper();
 
   private TypeConvert() {
     // static class
   }
 
+  private static ObjectMapper createObjectMapper() {
+    return new ObjectMapper()
+      .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
+      .registerModule(new JSR310Module())
+      .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+      .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+  }
+
   public static void overrideMapper(ObjectMapper mapper) {
     OBJECT_MAPPER = mapper;
+  }
+
+  public static void configureMapper(Consumer<ObjectMapper> action) {
+    ObjectMapper objectMapper = createObjectMapper();
+
+    action.accept(objectMapper);
+
+    overrideMapper(objectMapper);
   }
 
   public static <T> T fromJson(String json, Class<T> type) {

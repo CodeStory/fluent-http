@@ -16,6 +16,7 @@
 package net.codestory.http.routes;
 
 import java.io.*;
+import java.util.function.*;
 
 import net.codestory.http.*;
 import net.codestory.http.convert.*;
@@ -45,6 +46,11 @@ public interface Routes extends Serializable {
 
   default Routes overrideJacksonObjectMapper(ObjectMapper mapper) {
     TypeConvert.overrideMapper(mapper);
+    return this;
+  }
+
+  default Routes configureJacksonObjectMapper(Consumer<ObjectMapper> action) {
+    TypeConvert.configureMapper(action);
     return this;
   }
 
