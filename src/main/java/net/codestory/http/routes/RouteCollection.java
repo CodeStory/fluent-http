@@ -35,13 +35,13 @@ import net.codestory.http.payload.*;
 import net.codestory.http.templating.*;
 
 public class RouteCollection implements Routes {
-  private final Site site;
-  private final Deque<Route> routes;
-  private final Deque<Supplier<Filter>> filters;
+  protected final Site site;
+  protected final Deque<Route> routes;
+  protected final Deque<Supplier<Filter>> filters;
 
-  private IocAdapter iocAdapter;
-  private ContextFactory contextFactory;
-  private PayloadWriterFactory payloadWriterFactory;
+  protected IocAdapter iocAdapter;
+  protected ContextFactory contextFactory;
+  protected PayloadWriterFactory payloadWriterFactory;
 
   public RouteCollection() {
     this.site = new Site();
@@ -118,7 +118,7 @@ public class RouteCollection implements Routes {
     return this;
   }
 
-  private void addResource(String urlPrefix, Class<?> type, Supplier<Object> resource) {
+  protected void addResource(String urlPrefix, Class<?> type, Supplier<Object> resource) {
     // Hack to support Mockito Spies
     if (type.getName().contains("EnhancerByMockito")) {
       type = type.getSuperclass();
@@ -141,7 +141,7 @@ public class RouteCollection implements Routes {
     return new UrlConcat().url(resourcePrefix, classPrefix, uri);
   }
 
-  private void addResource(String httpMethod, Method method, Supplier<Object> resource, String uriPattern) {
+  protected void addResource(String httpMethod, Method method, Supplier<Object> resource, String uriPattern) {
     int methodParamsCount = method.getParameterCount();
     int uriParamsCount = paramsCount(uriPattern);
     if (methodParamsCount < uriParamsCount) {
@@ -408,7 +408,7 @@ public class RouteCollection implements Routes {
     return new RoutesWithPattern(this, uriPattern);
   }
 
-  private RouteCollection add(String method, String uriPattern, AnyRoute route) {
+  protected RouteCollection add(String method, String uriPattern, AnyRoute route) {
     routes.add(new RouteWrapper(method, uriPattern, route));
     return this;
   }
@@ -466,7 +466,7 @@ public class RouteCollection implements Routes {
     return payloadWriterFactory.create(site, request, response);
   }
 
-  private static String checkParametersCount(String uriPattern, int count) {
+  protected String checkParametersCount(String uriPattern, int count) {
     if (paramsCount(uriPattern) != count) {
       String error = (count == 1) ? "1 parameter" : count + " parameters";
       throw new IllegalArgumentException("Expected " + error + " in " + uriPattern);
