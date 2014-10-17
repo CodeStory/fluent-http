@@ -15,8 +15,8 @@
  */
 package net.codestory.http.routes;
 
+import static net.codestory.http.annotations.AnnotationHelper.*;
 import static net.codestory.http.constants.Methods.*;
-import static net.codestory.http.misc.ForEach.*;
 import static net.codestory.http.payload.Payload.*;
 import static net.codestory.http.routes.UriParser.*;
 
@@ -26,11 +26,9 @@ import java.util.*;
 import java.util.function.*;
 
 import net.codestory.http.*;
-import net.codestory.http.annotations.*;
 import net.codestory.http.extensions.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.injection.*;
-import net.codestory.http.misc.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.templating.*;
 
@@ -119,26 +117,7 @@ public class RouteCollection implements Routes {
   }
 
   protected void addResource(String urlPrefix, Class<?> type, Supplier<Object> resource) {
-    // Hack to support Mockito Spies
-    if (type.getName().contains("EnhancerByMockito")) {
-      type = type.getSuperclass();
-    }
-
-    Prefix prefixAnnotation = type.getAnnotation(Prefix.class);
-    String classPrefix = (prefixAnnotation != null) ? prefixAnnotation.value() : "";
-
-    for (Method method : type.getMethods()) {
-      forEach(method.getAnnotationsByType(Get.class)).then(get -> addResource(GET, method, resource, url(urlPrefix, classPrefix, get.value())));
-      forEach(method.getAnnotationsByType(Post.class)).then(post -> addResource(POST, method, resource, url(urlPrefix, classPrefix, post.value())));
-      forEach(method.getAnnotationsByType(Put.class)).then(put -> addResource(PUT, method, resource, url(urlPrefix, classPrefix, put.value())));
-      forEach(method.getAnnotationsByType(Delete.class)).then(delete -> addResource(DELETE, method, resource, url(urlPrefix, classPrefix, delete.value())));
-      forEach(method.getAnnotationsByType(Head.class)).then(head -> addResource(HEAD, method, resource, url(urlPrefix, classPrefix, head.value())));
-      forEach(method.getAnnotationsByType(Options.class)).then(opts -> addResource(OPTIONS, method, resource, url(urlPrefix, classPrefix, opts.value())));
-    }
-  }
-
-  static String url(String resourcePrefix, String classPrefix, String uri) {
-    return new UrlConcat().url(resourcePrefix, classPrefix, uri);
+    parseAnnotations(urlPrefix, type, (httpMethod, uri, method) -> addResource(httpMethod, method, resource, uri));
   }
 
   protected void addResource(String httpMethod, Method method, Supplier<Object> resource, String uriPattern) {
