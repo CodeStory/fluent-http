@@ -26,7 +26,6 @@ import java.util.*;
 import java.util.function.*;
 
 import net.codestory.http.*;
-import net.codestory.http.extensions.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.injection.*;
 import net.codestory.http.payload.*;
@@ -38,16 +37,16 @@ public class RouteCollection implements Routes {
   protected final Deque<Supplier<Filter>> filters;
 
   protected IocAdapter iocAdapter;
-  protected ContextFactory contextFactory;
-  protected PayloadWriterFactory payloadWriterFactory;
 
-  public RouteCollection() {
-    this.site = new Site();
+  public RouteCollection(Site site) {
+    this.site = site;
     this.routes = new LinkedList<>();
     this.filters = new LinkedList<>();
     this.iocAdapter = new Singletons();
-    this.contextFactory = ContextFactory.DEFAULT;
-    this.payloadWriterFactory = PayloadWriterFactory.DEFAULT;
+  }
+
+  public Site site() {
+    return site;
   }
 
   @Override
@@ -56,16 +55,8 @@ public class RouteCollection implements Routes {
     return this;
   }
 
-  @Override
-  public Routes setContextFactory(ContextFactory contextFactory) {
-    this.contextFactory = contextFactory;
-    return this;
-  }
-
-  @Override
-  public Routes setPayloadWriterFactory(PayloadWriterFactory payloadWriterFactory) {
-    this.payloadWriterFactory = payloadWriterFactory;
-    return this;
+  public IocAdapter iocAdapter() {
+    return iocAdapter;
   }
 
   @Override
@@ -435,14 +426,6 @@ public class RouteCollection implements Routes {
     }
 
     return payloadSupplier.get();
-  }
-
-  public Context createContext(Request request, Response response) {
-    return contextFactory.create(request, response, iocAdapter);
-  }
-
-  public PayloadWriter createPayloadWriter(Request request, Response response) {
-    return payloadWriterFactory.create(site, request, response);
   }
 
   protected String checkParametersCount(String uriPattern, int count) {

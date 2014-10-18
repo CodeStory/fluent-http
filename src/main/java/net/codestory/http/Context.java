@@ -29,17 +29,20 @@ import net.codestory.http.convert.*;
 import net.codestory.http.injection.*;
 import net.codestory.http.io.*;
 import net.codestory.http.security.*;
+import net.codestory.http.templating.*;
 
 public class Context {
   private final Request request;
   private final Response response;
   private final IocAdapter iocAdapter;
+  private final Site site;
   private User currentUser;
 
-  public Context(Request request, Response response, IocAdapter iocAdapter) {
+  public Context(Request request, Response response, IocAdapter iocAdapter, Site site) {
     this.request = request;
     this.response = response;
     this.iocAdapter = iocAdapter;
+    this.site = site;
   }
 
   public Request request() {
@@ -48,6 +51,10 @@ public class Context {
 
   public Response response() {
     return response;
+  }
+
+  public Site site() {
+    return site;
   }
 
   public static enum CORSRequestType {
@@ -220,6 +227,9 @@ public class Context {
       }
       if (clazz.isAssignableFrom(String.class)) {
         return contentAsString();
+      }
+      if (clazz.isAssignableFrom(Site.class)) {
+        return site();
       }
     }
 

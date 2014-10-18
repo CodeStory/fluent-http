@@ -19,12 +19,16 @@ import static com.github.sommeri.less4j.LessCompiler.*;
 
 import java.nio.file.*;
 
-import net.codestory.http.misc.*;
-
 import com.github.sommeri.less4j.*;
 import com.github.sommeri.less4j.core.*;
 
 public class LessCompiler implements Compiler {
+  private final boolean inline;
+
+  public LessCompiler(boolean prodMode) {
+    this.inline = !prodMode;
+  }
+
   @Override
   public String compile(Path path, String source) {
     try {
@@ -42,7 +46,7 @@ public class LessCompiler implements Compiler {
   private void configureSourceMap(Configuration configuration) {
     SourceMapConfiguration sourceMaps = configuration.getSourceMapConfiguration();
     sourceMaps.setLinkSourceMap(false);
-    sourceMaps.setInline(!Env.get().prodMode());
+    sourceMaps.setInline(inline);
   }
 
   private static String cleanMessage(Path path, String message) {

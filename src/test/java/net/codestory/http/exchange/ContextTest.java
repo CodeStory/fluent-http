@@ -23,6 +23,7 @@ import java.io.*;
 import net.codestory.http.*;
 import net.codestory.http.injection.*;
 import net.codestory.http.security.*;
+import net.codestory.http.templating.*;
 
 import org.junit.*;
 
@@ -30,8 +31,9 @@ public class ContextTest {
   Request request = mock(Request.class);
   Response response = mock(Response.class);
   IocAdapter iocAdapter = mock(IocAdapter.class);
+  Site site = mock(Site.class);
 
-  Context context = new Context(request, response, iocAdapter);
+  Context context = new Context(request, response, iocAdapter, site);
 
   @Test
   public void create_bean() {
@@ -63,6 +65,7 @@ public class ContextTest {
     assertThat(context.extract(String.class)).isSameAs("Content");
     assertThat(context.extract(Cookies.class)).isSameAs(cookies);
     assertThat(context.extract(Query.class)).isSameAs(query);
+    assertThat(context.extract(Site.class)).isSameAs(site);
   }
 
   static class Service {

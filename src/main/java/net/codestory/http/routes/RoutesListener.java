@@ -18,29 +18,12 @@ package net.codestory.http.routes;
 import java.util.function.*;
 
 import net.codestory.http.*;
-import net.codestory.http.extensions.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.injection.*;
 
 import com.fasterxml.jackson.databind.*;
-import com.github.jknack.handlebars.*;
 
 public class RoutesListener implements Routes {
-  @Override
-  public Routes addHandleBarsResolver(ValueResolver resolver) {
-    return this;
-  }
-
-  @Override
-  public Routes registerHandleBarsHelper(Class<?> helperSource) {
-    return this;
-  }
-
-  @Override
-  public Routes registerHandleBarsHelper(Object helperSource) {
-    return this;
-  }
-
   @Override
   public Routes overrideJacksonObjectMapper(ObjectMapper mapper) {
     return this;
@@ -53,16 +36,6 @@ public class RoutesListener implements Routes {
 
   @Override
   public Routes setIocAdapter(IocAdapter iocAdapter) {
-    return this;
-  }
-
-  @Override
-  public Routes setContextFactory(ContextFactory contextFactory) {
-    return this;
-  }
-
-  @Override
-  public Routes setPayloadWriterFactory(PayloadWriterFactory payloadWriterFactory) {
     return this;
   }
 

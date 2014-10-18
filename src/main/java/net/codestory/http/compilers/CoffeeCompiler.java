@@ -17,22 +17,26 @@ package net.codestory.http.compilers;
 
 import java.nio.file.*;
 
-import net.codestory.http.misc.*;
-
 public class CoffeeCompiler implements Compiler {
   private final NashornCompiler nashornCompiler = new NashornCompiler(
-    "META-INF/resources/webjars/coffee-script/1.7.1/coffee-script.min.js",
-    "coffee-script/toJs.js");
+      "META-INF/resources/webjars/coffee-script/1.7.1/coffee-script.min.js",
+      "coffee-script/toJs.js");
+
+  private final boolean sourceMaps;
+
+  public CoffeeCompiler(boolean prodMode) {
+    this.sourceMaps = !prodMode;
+  }
 
   @Override
   public String compile(Path path, String source) {
     String javascript = nashornCompiler.compile(path, source);
 
-    if (Env.get().prodMode()) {
-      return javascript;
+    if (sourceMaps) {
+      return addSourceMapping(javascript, path);
     }
 
-    return addSourceMapping(javascript, path);
+    return javascript;
   }
 
   private static String addSourceMapping(String javascript, Path path) {

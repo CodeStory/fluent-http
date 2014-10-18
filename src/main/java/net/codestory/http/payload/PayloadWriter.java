@@ -39,20 +39,18 @@ import net.codestory.http.templating.*;
 import net.codestory.http.types.*;
 
 public class PayloadWriter {
+  protected final Env env;
   protected final Site site;
+  protected final CompilerFacade compilerFacade;
   protected final Request request;
   protected final Response response;
-  protected final ExecutorService executor;
 
-  public PayloadWriter(Site site, Request request, Response response) {
-    this(site, request, response, Executors.newCachedThreadPool(new NamedDaemonThreadFactory()));
-  }
-
-  protected PayloadWriter(Site site, Request request, Response response, ExecutorService executor) {
+  public PayloadWriter(Env env, Site site, CompilerFacade compilerFacade, Request request, Response response) {
+    this.env = env;
+    this.site = site;
+    this.compilerFacade = compilerFacade;
     this.request = request;
     this.response = response;
-    this.site = site;
-    this.executor = executor;
   }
 
   public void writeAndClose(Payload payload) throws IOException {
@@ -134,6 +132,8 @@ public class PayloadWriter {
     response.setValue(CACHE_CONTROL, "no-cache");
     response.setValue(CONNECTION, "keep-alive");
 
+    ExecutorService executor = createExecutorService();
+
     if (payload.rawContent() instanceof Stream<?>) {
       Stream<?> stream = (Stream<?>) payload.rawContent();
 
@@ -144,10 +144,10 @@ public class PayloadWriter {
           String json = (item instanceof String) ? (String) item : TypeConvert.toJson(item);
 
           printStream
-            .append("data: ")
-            .append(json)
-            .append("\n\n")
-            .flush();
+              .append("data: ")
+              .append(json)
+              .append("\n\n")
+              .flush();
         });
         close();
       });
@@ -187,8 +187,10 @@ public class PayloadWriter {
   }
 
   protected boolean shouldGzip() {
-    String acceptEncoding = request.header(ACCEPT_ENCODING);
-    return (acceptEncoding != null) && acceptEncoding.contains(GZIP) && Env.get().prodMode() && !Env.get().disableGzip();
+    if (env.disableGzip() || !env.prodMode()) {
+      return false;
+    }
+    return request.header(ACCEPT_ENCODING, "").contains(GZIP);
   }
 
   protected boolean shouldIgnoreError(IOException e) {
@@ -236,7 +238,7 @@ public class PayloadWriter {
     }
     if (content instanceof CompiledPath) {
       CompiledPath compiledPath = (CompiledPath) content;
-      return ContentTypes.get(compiledPath.getPath());
+      return ContentTypes.get(compiledPath.getReponsePath());
     }
     if (content instanceof byte[]) {
       return "application/octet-stream";
@@ -332,10 +334,10 @@ public class PayloadWriter {
     Map<String, Object> keyValues = new HashMap<>();
     keyValues.putAll(modelAndView.model().keyValues());
     keyValues.put("cookies", request.cookies().keyValues());
+    keyValues.put("env", env);
     keyValues.put("site", site);
-    keyValues.put("env", Env.get());
 
-    CacheEntry html = new Template(view).render(keyValues);
+    CacheEntry html = new Template(view).render(keyValues, compilerFacade);
 
     return html.toBytes();
   }
@@ -349,15 +351,20 @@ public class PayloadWriter {
   }
 
   protected byte[] forCompiledPath(CompiledPath compiledPath) throws IOException {
-    Path path = compiledPath.getPath();
+    Path path = compiledPath.getSourcePath();
     if (ContentTypes.support_templating(path)) {
       return forTemplatePath(path);
     }
 
-    return compiledPath.compile().toBytes();
+    String content = Resources.read(path, UTF_8);
+    return compilerFacade.compile(path, content).toBytes();
   }
 
   protected byte[] forTemplatePath(Path path) {
     return forModelAndView(ModelAndView.of(Resources.toUnixString(path)));
+  }
+
+  protected ExecutorService createExecutorService() {
+    return Executors.newCachedThreadPool(new NamedDaemonThreadFactory());
   }
 }

@@ -20,30 +20,12 @@ import java.util.function.*;
 
 import net.codestory.http.*;
 import net.codestory.http.convert.*;
-import net.codestory.http.extensions.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.injection.*;
-import net.codestory.http.templating.*;
 
 import com.fasterxml.jackson.databind.*;
-import com.github.jknack.handlebars.*;
 
 public interface Routes extends Serializable {
-  default Routes addHandleBarsResolver(ValueResolver resolver) {
-    HandlebarsCompiler.INSTANCE.addResolver(resolver);
-    return this;
-  }
-
-  default Routes registerHandleBarsHelper(Class<?> helperSource) {
-    HandlebarsCompiler.INSTANCE.registerHelper(helperSource);
-    return this;
-  }
-
-  default Routes registerHandleBarsHelper(Object helperSource) {
-    HandlebarsCompiler.INSTANCE.registerHelper(helperSource);
-    return this;
-  }
-
   default Routes overrideJacksonObjectMapper(ObjectMapper mapper) {
     TypeConvert.overrideMapper(mapper);
     return this;
@@ -55,10 +37,6 @@ public interface Routes extends Serializable {
   }
 
   Routes setIocAdapter(IocAdapter iocAdapter);
-
-  Routes setContextFactory(ContextFactory contextFactory);
-
-  Routes setPayloadWriterFactory(PayloadWriterFactory payloadWriterFactory);
 
   Routes include(Class<? extends Configuration> configurationClass);
 

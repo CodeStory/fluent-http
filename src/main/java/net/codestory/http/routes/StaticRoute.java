@@ -64,7 +64,7 @@ class StaticRoute implements Route {
       return findFileCompilableToPath(uri);
     }
 
-    return is_binary(path) ? path : new CompiledPath(path);
+    return is_binary(path) ? path : new CompiledPath(path, path);
   }
 
   private static Object findFileCompilableToPath(String uri) {

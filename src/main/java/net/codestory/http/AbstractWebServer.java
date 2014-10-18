@@ -31,33 +31,38 @@ import org.slf4j.*;
 public abstract class AbstractWebServer {
   protected final static Logger LOG = LoggerFactory.getLogger(AbstractWebServer.class);
 
+  protected final Env env;
+  protected final CompilerFacade compilerFacade;
   protected RoutesProvider routesProvider;
 
+  protected AbstractWebServer() {
+    this.env = createEnv();
+    this.compilerFacade = createCompilerFacade(env);
+  }
+
   public AbstractWebServer configure(Configuration configuration) {
-    this.routesProvider = Env.get().prodMode()
-      ? RoutesProvider.fixed(configuration)
-      : RoutesProvider.reloading(configuration);
+    this.routesProvider = env.prodMode()
+        ? RoutesProvider.fixed(env, configuration)
+        : RoutesProvider.reloading(env, configuration);
     return this;
   }
 
   protected void handle(Request request, Response response) {
+
     try {
       RouteCollection routes = routesProvider.get();
 
-      Context context = routes.createContext(request, response);
-      PayloadWriter payloadWriter = routes.createPayloadWriter(request, response);
+      Context context = createContext(request, response, routes);
 
       Payload payload = routes.apply(context);
       if (payload.isError()) {
         payload = errorPage(payload);
       }
 
+      PayloadWriter payloadWriter = createPayloadWriter(request, response, env, routes.site(), compilerFacade);
       payloadWriter.writeAndClose(payload);
     } catch (Exception e) {
-      // Cannot be created by routes since it was not initialized properly
-      // TODO: get rid of new Site() here
-      //
-      PayloadWriter payloadWriter = new PayloadWriter(new Site(), request, response);
+      PayloadWriter payloadWriter = createPayloadWriter(request, response, env, new Site(env), compilerFacade);
       handleServerError(payloadWriter, e);
     }
   }
@@ -93,7 +98,34 @@ public abstract class AbstractWebServer {
   }
 
   protected Payload errorPage(Payload payload, Exception e) {
-    Exception shownError = Env.get().prodMode() ? null : e;
+    Exception shownError = env.prodMode() ? null : e;
     return new ErrorPage(payload, shownError).payload();
+  }
+
+  protected Env createEnv() {
+    return new Env();
+  }
+
+  protected HandlebarsCompiler createHandlebarsCompiler(Compilers compilers) {
+    return new HandlebarsCompiler(compilers);
+  }
+
+  protected Compilers createCompilers(Env env) {
+    return new Compilers(env);
+  }
+
+  protected CompilerFacade createCompilerFacade(Env env) {
+    Compilers compilers = createCompilers(env);
+    HandlebarsCompiler handlebar = createHandlebarsCompiler(compilers);
+
+    return new CompilerFacade(compilers, handlebar);
+  }
+
+  protected PayloadWriter createPayloadWriter(Request request, Response response, Env env, Site site, CompilerFacade compilerFacade) {
+    return new PayloadWriter(env, site, compilerFacade, request, response);
+  }
+
+  protected Context createContext(Request request, Response response, RouteCollection routes) {
+    return new Context(request, response, routes.iocAdapter(), routes.site());
   }
 }

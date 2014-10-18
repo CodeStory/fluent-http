@@ -15,11 +15,15 @@
  */
 package net.codestory.http.routes;
 
+import static org.mockito.Mockito.*;
+
+import net.codestory.http.templating.*;
+
 import org.junit.*;
 import org.junit.rules.*;
 
 public class RouteCollectionTest {
-  RouteCollection routeCollection = new RouteCollection();
+  RouteCollection routeCollection = new RouteCollection(mock(Site.class));
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();

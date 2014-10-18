@@ -22,6 +22,7 @@ import static org.mockito.Mockito.*;
 import java.io.*;
 import java.util.*;
 
+import net.codestory.http.compilers.*;
 import net.codestory.http.misc.*;
 import net.codestory.http.templating.helpers.*;
 
@@ -30,7 +31,7 @@ import org.junit.*;
 import com.github.jknack.handlebars.*;
 
 public class HandlebarsCompilerTest {
-  HandlebarsCompiler compiler = HandlebarsCompiler.INSTANCE;
+  HandlebarsCompiler compiler = new HandlebarsCompiler(new Compilers(prodMode()));
 
   @Test
   public void compile() throws IOException {
@@ -211,6 +212,12 @@ public class HandlebarsCompilerTest {
     String result = compiler.compile("[[google_analytics]]", new TreeMap<String, Object>());
 
     assertThat(result).contains("OVERRIDEN").doesNotContain("DEFAULT_ID");
+  }
+
+  private static Env prodMode() {
+    Env env = mock(Env.class);
+    when(env.prodMode()).thenReturn(true);
+    return env;
   }
 
   private static Map<String, Object> map(String key, Object value) {

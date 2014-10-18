@@ -25,19 +25,20 @@ import java.util.function.*;
 
 import net.codestory.http.misc.*;
 
-public enum Compilers {
-  INSTANCE;
-
+public class Compilers {
   private final Map<String, Supplier<Compiler>> compilerByExtension = new HashMap<>();
   private final Map<String, CacheEntry> cache = new ConcurrentHashMap<>();
-  private final DiskCache diskCache = new DiskCache("V3");
+  private final DiskCache diskCache;
 
-  private Compilers() {
-    register(CoffeeCompiler::new, ".coffee", ".litcoffee");
-    register(CoffeeSourceMapCompiler::new, ".coffee.map", ".litcoffee.map");
-    register(MarkdownCompiler::new, ".md", ".markdown");
-    register(LessCompiler::new, ".less");
-    register(AsciidocCompiler::new, ".asciidoc", ".adoc");
+  public Compilers(Env env) {
+    boolean prodMode = env.prodMode();
+
+    diskCache = new DiskCache("V3", prodMode);
+    register(() -> new CoffeeCompiler(prodMode), ".coffee", ".litcoffee");
+    register(() -> new CoffeeSourceMapCompiler(), ".coffee.map", ".litcoffee.map");
+    register(() -> new MarkdownCompiler(), ".md", ".markdown");
+    register(() -> new LessCompiler(prodMode), ".less");
+    register(() -> new AsciidocCompiler(), ".asciidoc", ".adoc");
   }
 
   public void register(Supplier<Compiler> compilerFactory, String firstExtension, String... moreExtensions) {

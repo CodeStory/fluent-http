@@ -17,14 +17,20 @@ package net.codestory.http.templating;
 
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import java.util.*;
+
+import net.codestory.http.compilers.*;
+import net.codestory.http.misc.*;
 
 import org.junit.*;
 
 public class TemplateTest {
+  private static CompilerFacade compilerFacade = new CompilerFacade(prodMode());
+
   String render(String name, Map<String, Object> model) {
-    return new Template(name).render(model).content();
+    return new Template(name).render(model, compilerFacade).content();
   }
 
   String render(String name) {
@@ -83,22 +89,22 @@ public class TemplateTest {
     String html = render("minimal.html");
 
     assertThat(ignoreLineEndings(html)).isEqualTo("" +
-      "<!DOCTYPE html>" +
-      "<html lang=\"en\">" +
-      "<head>" +
-      "  <meta charset=\"UTF-8\">" +
-      "  <title></title>" +
-      "  " +
-      "  " +
-      "  " +
-      "  " +
-      "  " +
-      "  " +
-      "</head>" +
-      "<body>" +
-      "Hello World" +
-      "</body>" +
-      "</html>");
+        "<!DOCTYPE html>" +
+        "<html lang=\"en\">" +
+        "<head>" +
+        "  <meta charset=\"UTF-8\">" +
+        "  <title></title>" +
+        "  " +
+        "  " +
+        "  " +
+        "  " +
+        "  " +
+        "  " +
+        "</head>" +
+        "<body>" +
+        "Hello World" +
+        "</body>" +
+        "</html>");
   }
 
   @Test
@@ -106,26 +112,32 @@ public class TemplateTest {
     String html = render("full_header");
 
     assertThat(ignoreLineEndings(html)).isEqualTo("<!DOCTYPE html>" +
-      "<html lang=\"FR\" ng-app=\"app\">" +
-      "<head>" +
-      "  <meta charset=\"UTF-8\">" +
-      "  <title>TITLE</title>" +
-      "  <meta name=\"viewport\" content=\"viewport\">" +
-      "  <meta name=\"keywords\" content=\"keyword1, keyword2\">" +
-      "  <meta name=\"description\" content=\"description\">" +
-      "  <meta name=\"author\" content=\"author\">" +
-      "  <link rel=\"stylesheet\" href=\"style.less\">" +
-      "  " +
-      "  <link rel=\"stylesheet\" href=\"style1.css\">" +
-      "  <link rel=\"stylesheet\" href=\"style2.css\">" +
-      "</head>" +
-      "<body>" +
-      "Hello World" +
-      "</body>" +
-      "</html>");
+        "<html lang=\"FR\" ng-app=\"app\">" +
+        "<head>" +
+        "  <meta charset=\"UTF-8\">" +
+        "  <title>TITLE</title>" +
+        "  <meta name=\"viewport\" content=\"viewport\">" +
+        "  <meta name=\"keywords\" content=\"keyword1, keyword2\">" +
+        "  <meta name=\"description\" content=\"description\">" +
+        "  <meta name=\"author\" content=\"author\">" +
+        "  <link rel=\"stylesheet\" href=\"style.less\">" +
+        "  " +
+        "  <link rel=\"stylesheet\" href=\"style1.css\">" +
+        "  <link rel=\"stylesheet\" href=\"style2.css\">" +
+        "</head>" +
+        "<body>" +
+        "Hello World" +
+        "</body>" +
+        "</html>");
   }
 
   private static String ignoreLineEndings(String text) {
     return text.replaceAll("[\\n\\r]", "");
+  }
+
+  private static Env prodMode() {
+    Env env = mock(Env.class);
+    when(env.prodMode()).thenReturn(true);
+    return env;
   }
 }

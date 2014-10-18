@@ -20,39 +20,23 @@ import java.nio.file.*;
 import net.codestory.http.io.*;
 
 public class Env {
-  private static Env instance = new Env();
-
   private final boolean prodMode;
   private final boolean disableClassPath;
   private final boolean disableFilesystem;
   private final boolean disableGzip;
 
-  private Env() {
+  public Env() {
     this.prodMode = getBoolean("PROD_MODE", false);
     this.disableClassPath = getBoolean("http.disable.classpath", false);
     this.disableFilesystem = getBoolean("http.disable.filesystem", false);
     this.disableGzip = getBoolean("http.disable.gzip", false);
   }
 
-  private Env(boolean prodMode, boolean disableClassPath, boolean disableFilesystem, boolean disableGzip) {
+  public Env(boolean prodMode, boolean disableClassPath, boolean disableFilesystem, boolean disableGzip) {
     this.prodMode = prodMode;
     this.disableClassPath = disableClassPath;
     this.disableFilesystem = disableFilesystem;
     this.disableGzip = disableGzip;
-  }
-
-  public static Env get() {
-    return instance;
-  }
-
-  // Useful for tests or to force a configuration without system properties
-  public static void setForTests(boolean prodMode, boolean disableClassPath, boolean disableFilesystem, boolean disableGzip) {
-    instance = new Env(prodMode, disableClassPath, disableFilesystem, disableGzip);
-  }
-
-  // Useful for tests or to force a configuration without system properties
-  public static void resetForTests() {
-    instance = new Env();
   }
 
   public Path appPath() {

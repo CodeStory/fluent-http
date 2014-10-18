@@ -15,7 +15,6 @@
  */
 package net.codestory.http.routes;
 
-import static java.nio.charset.StandardCharsets.*;
 import static net.codestory.http.constants.Methods.*;
 
 import java.io.*;
@@ -25,7 +24,6 @@ import net.codestory.http.*;
 import net.codestory.http.compilers.*;
 import net.codestory.http.io.*;
 import net.codestory.http.payload.*;
-import net.codestory.http.types.*;
 
 class SourceMapRoute implements Route {
   @Override
@@ -41,12 +39,11 @@ class SourceMapRoute implements Route {
   @Override
   public Payload body(Context context) throws IOException {
     String uri = context.uri();
+
     Path sourcePath = pathSource(uri);
     Path mapPath = Paths.get(uri);
-    String contentType = ContentTypes.get(mapPath);
-    String source = Resources.read(sourcePath, UTF_8);
-    CacheEntry map = Compilers.INSTANCE.compile(mapPath, source);
-    return new Payload(contentType, map);
+
+    return new Payload(new CompiledPath(sourcePath, mapPath));
   }
 
   private static Path pathSource(String uri) {

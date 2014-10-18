@@ -23,7 +23,7 @@ import org.junit.*;
 import org.junit.rules.*;
 
 public class CoffeeCompilerTest {
-  private static CoffeeCompiler compiler = new CoffeeCompiler();
+  private static CoffeeCompiler compiler = new CoffeeCompiler(false);
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();
@@ -42,16 +42,13 @@ public class CoffeeCompilerTest {
     assertThat(js).isEqualTo("var life;\n\nlife = 42;\n\n//# sourceMappingURL=file.coffee.map");
   }
 
-//  @Test
-//  public void to_javascript_in_prod_mode() {
-//    Env oldEnv = compiler.env; // this sucks, but no more than the static up there.
-//    compiler.env = mock(Env.class);
-//    when(compiler.env.prodMode()).thenReturn(true);
-//    String js = compiler.compile(Paths.get("file.coffee"), "life=42");
-//
-//    assertThat(js).isEqualTo("var life;\n\nlife = 42;\n");
-//    compiler.env = oldEnv;
-//  }
+  @Test
+  public void to_javascript_in_prod_mode() {
+    CoffeeCompiler compiler = new CoffeeCompiler(true);
+    String js = compiler.compile(Paths.get("file.coffee"), "life=42");
+
+    assertThat(js).isEqualTo("var life;\n\nlife = 42;\n");
+  }
 
   @Test
   public void invalid_script() {

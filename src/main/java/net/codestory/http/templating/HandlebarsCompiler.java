@@ -33,20 +33,18 @@ import com.github.jknack.handlebars.context.*;
 import com.github.jknack.handlebars.helper.*;
 import com.github.jknack.handlebars.io.*;
 
-public enum HandlebarsCompiler {
-  INSTANCE;
-
+public class HandlebarsCompiler {
   private final Handlebars handlebars;
   private final List<ValueResolver> resolvers;
 
-  HandlebarsCompiler() {
-    this.handlebars = handlebars();
+  public HandlebarsCompiler(Compilers compilers) {
+    this.handlebars = handlebars(compilers);
     this.resolvers = new ArrayList<>(asList(
-      MapValueResolver.INSTANCE,
-      JavaBeanValueResolver.INSTANCE,
-      FieldValueResolver.INSTANCE,
-      MethodValueResolver.INSTANCE,
-      Site.SiteValueResolver.INSTANCE
+        MapValueResolver.INSTANCE,
+        JavaBeanValueResolver.INSTANCE,
+        FieldValueResolver.INSTANCE,
+        MethodValueResolver.INSTANCE,
+        Site.SiteValueResolver.INSTANCE
     ));
   }
 
@@ -54,7 +52,7 @@ public enum HandlebarsCompiler {
     return handlebars.compileInline(template).apply(context(variables));
   }
 
-  private static Handlebars handlebars() {
+  private static Handlebars handlebars(Compilers compilers) {
     Handlebars hb = new Handlebars();
 
     hb.startDelimiter("[[");
@@ -73,7 +71,7 @@ public enum HandlebarsCompiler {
         }
 
         String template = Resources.read(include, UTF_8);
-        CacheEntry compiled = Compilers.INSTANCE.compile(include, template);
+        CacheEntry compiled = compilers.compile(include, template);
         return new StringTemplateSource(location, compiled.content());
       }
     });
@@ -83,9 +81,9 @@ public enum HandlebarsCompiler {
 
   private Context context(Map<String, ?> variables) {
     return Context.newBuilder(null)
-      .resolver(resolvers.toArray(new ValueResolver[resolvers.size()]))
-      .combine(variables)
-      .build();
+        .resolver(resolvers.toArray(new ValueResolver[resolvers.size()]))
+        .combine(variables)
+        .build();
   }
 
   public void addResolver(ValueResolver resolver) {

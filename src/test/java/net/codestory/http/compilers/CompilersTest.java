@@ -16,6 +16,7 @@
 package net.codestory.http.compilers;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import java.io.*;
 import java.nio.file.*;
@@ -25,18 +26,20 @@ import net.codestory.http.misc.*;
 import org.junit.*;
 
 public class CompilersTest {
+  private static Compilers compilers = new Compilers(prodMode());
+
   @Test
   public void do_not_compile_plain_file() {
-    String css = Compilers.INSTANCE.compile(Paths.get("plain.txt"), "Hello").content();
+    String css = compilers.compile(Paths.get("plain.txt"), "Hello").content();
 
     assertThat(css).isEqualTo("Hello");
   }
 
   @Test
   public void register_custom_compiler() {
-    Compilers.INSTANCE.register(() -> (path, source) -> source + source, ".copycat");
+    compilers.register(() -> (path, source) -> source + source, ".copycat");
 
-    String source = Compilers.INSTANCE.compile(Paths.get("file.copycat"), "Hello").content();
+    String source = compilers.compile(Paths.get("file.copycat"), "Hello").content();
 
     assertThat(source).isEqualTo("HelloHello");
   }
@@ -44,19 +47,25 @@ public class CompilersTest {
   @Test
   public void supports_file_cache_being_destroyed() {
     // Delete cache
-    File cacheFile = Paths.get(System.getProperty("user.home"), ".code-story", "cache", "V3", "dev", "coffee", "469d8cd9668f810e3a9984472792076cae0e1883").toFile();
+    File cacheFile = Paths.get(System.getProperty("user.home"), ".code-story", "cache", "V3", "prod", "coffee", "469d8cd9668f810e3a9984472792076cae0e1883").toFile();
     cacheFile.delete();
 
     // Fill cache
-    String javascript = Compilers.INSTANCE.compile(Paths.get("test.coffee"), "a=42").content();
+    String javascript = compilers.compile(Paths.get("test.coffee"), "a=42").content();
 
     assertThat(cacheFile).exists();
     assertThat(javascript).contains("var a;\n\na = 42");
 
     // Delete cache
     cacheFile.delete();
-    String updated = Compilers.INSTANCE.compile(Paths.get("test.coffee"), "a=1337").content();
+    String updated = compilers.compile(Paths.get("test.coffee"), "a=1337").content();
 
     assertThat(updated).contains("var a;\n\na = 1337");
+  }
+
+  private static Env prodMode() {
+    Env env = mock(Env.class);
+    when(env.prodMode()).thenReturn(true);
+    return env;
   }
 }

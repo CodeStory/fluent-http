@@ -19,8 +19,6 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.function.*;
 
-import net.codestory.http.misc.*;
-
 import org.slf4j.*;
 
 public class DiskCache {
@@ -28,14 +26,14 @@ public class DiskCache {
 
   private final File root;
 
-  public DiskCache(String version) {
-    this.root = Paths.get(System.getProperty("user.home"), ".code-story", "cache", version).toFile();
+  public DiskCache(String version, boolean prodMode) {
+    this.root = Paths.get(System.getProperty("user.home"), ".code-story", "cache", version, prodMode ? "prod" : "dev").toFile();
     LOG.debug("Caching on disk @ {}", this.root.getAbsolutePath());
     System.out.println("Caching on disk @ " + this.root.getAbsolutePath());
   }
 
   CacheEntry computeIfAbsent(String sha1, String extension, Supplier<String> toCompiled) {
-    File file = new File(new File(new File(root, Env.get().prodMode() ? "prod" : "dev"), extension.substring(1)), sha1);
+    File file = new File(new File(root, extension.substring(1)), sha1);
     if (file.exists()) {
       try {
         return CacheEntry.fromFile(file);

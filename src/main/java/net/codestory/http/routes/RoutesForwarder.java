@@ -18,12 +18,10 @@ package net.codestory.http.routes;
 import java.util.function.*;
 
 import net.codestory.http.*;
-import net.codestory.http.extensions.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.injection.*;
 
 import com.fasterxml.jackson.databind.*;
-import com.github.jknack.handlebars.*;
 
 public class RoutesForwarder implements Routes {
   private final Routes[] routes;
@@ -34,30 +32,6 @@ public class RoutesForwarder implements Routes {
 
   protected Routes[] delegates() {
     return routes;
-  }
-
-  @Override
-  public Routes addHandleBarsResolver(ValueResolver resolver) {
-    for (Routes routes : delegates()) {
-      routes.addHandleBarsResolver(resolver);
-    }
-    return this;
-  }
-
-  @Override
-  public Routes registerHandleBarsHelper(Class<?> helperSource) {
-    for (Routes routes : delegates()) {
-      routes.registerHandleBarsHelper(helperSource);
-    }
-    return this;
-  }
-
-  @Override
-  public Routes registerHandleBarsHelper(Object helperSource) {
-    for (Routes routes : delegates()) {
-      routes.registerHandleBarsHelper(helperSource);
-    }
-    return this;
   }
 
   @Override
@@ -80,22 +54,6 @@ public class RoutesForwarder implements Routes {
   public Routes setIocAdapter(IocAdapter iocAdapter) {
     for (Routes routes : delegates()) {
       routes.setIocAdapter(iocAdapter);
-    }
-    return this;
-  }
-
-  @Override
-  public Routes setContextFactory(ContextFactory contextFactory) {
-    for (Routes routes : delegates()) {
-      routes.setContextFactory(contextFactory);
-    }
-    return this;
-  }
-
-  @Override
-  public Routes setPayloadWriterFactory(PayloadWriterFactory payloadWriterFactory) {
-    for (Routes routes : delegates()) {
-      routes.setPayloadWriterFactory(payloadWriterFactory);
     }
     return this;
   }

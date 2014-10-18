@@ -40,7 +40,7 @@ public class Template {
     this.path = path;
   }
 
-  public CacheEntry render(Map<String, ?> keyValues) {
+  public CacheEntry render(Map<String, ?> keyValues, CompilerFacade compilerFacade) {
     try {
       YamlFrontMatter yamlFrontMatter = YamlFrontMatter.parse(path);
 
@@ -48,15 +48,15 @@ public class Template {
       Map<String, Object> variables = yamlFrontMatter.getVariables();
       Map<String, Object> allKeyValues = merge(variables, keyValues);
 
-      String body = HandlebarsCompiler.INSTANCE.compile(content, allKeyValues);
-      CacheEntry entry = Compilers.INSTANCE.compile(path, body);
+      String body = compilerFacade.handlebar(content, allKeyValues);
+      CacheEntry entry = compilerFacade.compile(path, body);
 
       String layout = (String) variables.get("layout");
       if (layout == null) {
         return entry;
       }
 
-      String layoutContent = new Template("_layouts", layout).render(allKeyValues).content();
+      String layoutContent = new Template("_layouts", layout).render(allKeyValues, compilerFacade).content();
       String bodyWithLayout = layoutContent.replace("[[body]]", entry.content());
 
       return CacheEntry.fromString(bodyWithLayout);

@@ -15,26 +15,22 @@
  */
 package net.codestory.http.compilers;
 
-import static java.nio.charset.StandardCharsets.*;
-
-import java.io.*;
 import java.nio.file.*;
 
-import net.codestory.http.io.*;
-
 public class CompiledPath {
-  private final Path path;
+  private final Path sourcePath;
+  private final Path reponsePath;
 
-  public CompiledPath(Path path) {
-    this.path = path;
+  public CompiledPath(Path sourcePath, Path reponsePath) {
+    this.sourcePath = sourcePath;
+    this.reponsePath = reponsePath;
   }
 
-  public CacheEntry compile() throws IOException {
-    String content = Resources.read(path, UTF_8);
-    return Compilers.INSTANCE.compile(path, content);
+  public Path getSourcePath() {
+    return sourcePath;
   }
 
-  public Path getPath() {
-    return path;
+  public Path getReponsePath() {
+    return reponsePath;
   }
 }

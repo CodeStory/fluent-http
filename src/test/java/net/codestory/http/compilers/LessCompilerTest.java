@@ -23,7 +23,7 @@ import org.junit.*;
 import org.junit.rules.*;
 
 public class LessCompilerTest {
-  private static LessCompiler compiler = new LessCompiler();
+  private static LessCompiler compiler = new LessCompiler(false);
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();

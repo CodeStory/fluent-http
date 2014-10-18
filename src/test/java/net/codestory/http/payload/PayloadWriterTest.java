@@ -25,17 +25,22 @@ import java.nio.file.*;
 import java.util.*;
 
 import net.codestory.http.*;
+import net.codestory.http.compilers.*;
+import net.codestory.http.misc.*;
 import net.codestory.http.templating.*;
 
 import org.junit.*;
 
 public class PayloadWriterTest {
+  static Env env = new Env();
+  static Site site = new Site(env);
+  static CompilerFacade compilerFacade = new CompilerFacade(env);
+
   Request request = mock(Request.class);
   Response response = mock(Response.class);
   Cookies cookies = mock(Cookies.class);
-  Site site = new Site();
 
-  PayloadWriter writer = new PayloadWriter(site, request, response);
+  PayloadWriter writer = new PayloadWriter(env, site, compilerFacade, request, response);
 
   @Before
   public void setupContext() throws IOException {
