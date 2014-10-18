@@ -22,7 +22,7 @@ import java.nio.file.*;
 import java.util.*;
 
 public class ContentTypes {
-  public static final String[] TEMPLATE_EXTENSIONS = {"", ".html", ".md", ".markdown", ".txt", ".asciidoc"};
+  public static final String[] TEMPLATE_EXTENSIONS = {"", ".html", ".md", ".markdown", ".txt"};
 
   private ContentTypes() {
     // Static class
@@ -39,8 +39,6 @@ public class ContentTypes {
       case ".html":
       case ".md":
       case ".markdown":
-      case ".asciidoc":
-      case ".adoc":
         return "text/html;charset=UTF-8";
       case ".xml":
         return "application/xml;charset=UTF-8";
@@ -84,8 +82,6 @@ public class ContentTypes {
       case ".txt":
       case ".md":
       case ".markdown":
-      case ".asciidoc":
-      case ".adoc":
       case ".html":
       case ".xml":
         return true;
@@ -99,8 +95,6 @@ public class ContentTypes {
       case ".txt":
       case ".md":
       case ".markdown":
-      case ".asciidoc":
-      case ".adoc":
       case ".html":
       case ".xml":
       case ".css":

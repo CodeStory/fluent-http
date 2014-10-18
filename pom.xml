@@ -288,11 +288,6 @@
       <artifactId>coffee-script</artifactId>
       <version>1.8.0</version>
     </dependency>
-    <dependency>
-      <groupId>org.webjars</groupId>
-      <artifactId>asciidoctor.js</artifactId>
-      <version>1.5.0</version>
-    </dependency>
 
     <!-- Optional dependencies -->
     <dependency>

@@ -38,7 +38,6 @@ public class Compilers {
     register(() -> new CoffeeSourceMapCompiler(), ".coffee.map", ".litcoffee.map");
     register(() -> new MarkdownCompiler(), ".md", ".markdown");
     register(() -> new LessCompiler(prodMode), ".less");
-    register(() -> new AsciidocCompiler(), ".asciidoc", ".adoc");
   }
 
   public void register(Supplier<Compiler> compilerFactory, String firstExtension, String... moreExtensions) {

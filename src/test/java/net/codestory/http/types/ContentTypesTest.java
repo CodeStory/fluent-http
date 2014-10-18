@@ -32,8 +32,6 @@ public class ContentTypesTest {
     assertThat(get(Paths.get("style.css.map"))).isEqualTo("text/plain;charset=UTF-8");
     assertThat(get(Paths.get("text.md"))).isEqualTo("text/html;charset=UTF-8");
     assertThat(get(Paths.get("text.markdown"))).isEqualTo("text/html;charset=UTF-8");
-    assertThat(get(Paths.get("text.asciidoc"))).isEqualTo("text/html;charset=UTF-8");
-    assertThat(get(Paths.get("text.adoc"))).isEqualTo("text/html;charset=UTF-8");
     assertThat(get(Paths.get("text.txt"))).isEqualTo("text/plain;charset=UTF-8");
     assertThat(get(Paths.get("text.zip"))).isEqualTo("application/zip");
     assertThat(get(Paths.get("text.gz"))).isEqualTo("application/gzip");
@@ -59,8 +57,6 @@ public class ContentTypesTest {
     assertThat(support_templating(Paths.get("data.xml"))).isTrue();
     assertThat(support_templating(Paths.get("test.md"))).isTrue();
     assertThat(support_templating(Paths.get("test.markdown"))).isTrue();
-    assertThat(support_templating(Paths.get("test.asciidoc"))).isTrue();
-    assertThat(support_templating(Paths.get("test.adoc"))).isTrue();
     assertThat(support_templating(Paths.get("text.txt"))).isTrue();
     assertThat(support_templating(Paths.get("style.css.map"))).isFalse();
     assertThat(support_templating(Paths.get("style.css"))).isFalse();
@@ -92,8 +88,6 @@ public class ContentTypesTest {
     assertThat(is_binary(Paths.get("style.css.map"))).isFalse();
     assertThat(is_binary(Paths.get("text.md"))).isFalse();
     assertThat(is_binary(Paths.get("text.markdown"))).isFalse();
-    assertThat(is_binary(Paths.get("text.asciidoc"))).isFalse();
-    assertThat(is_binary(Paths.get("text.adoc"))).isFalse();
     assertThat(is_binary(Paths.get("text.txt"))).isFalse();
     assertThat(is_binary(Paths.get("text.zip"))).isTrue();
     assertThat(is_binary(Paths.get("text.gz"))).isTrue();

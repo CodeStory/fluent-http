@@ -1,1 +1,0 @@
-Opal.Asciidoctor.$render(__source);
