@@ -31,11 +31,6 @@ public class Resources {
     // Static utility class
   }
 
-  @Deprecated
-  public static Path appPath() {
-    return Paths.get(APP_FOLDER);
-  }
-
   public static String relativePath(Path parent, Path path) {
     return toUnixString(parent.relativize(path));
   }

@@ -15,6 +15,8 @@
  */
 package net.codestory.http.misc;
 
+import static net.codestory.http.io.Resources.APP_FOLDER;
+
 import java.nio.file.*;
 
 import net.codestory.http.io.*;
@@ -40,7 +42,7 @@ public class Env {
   }
 
   public Path appPath() {
-    return Resources.appPath();
+    return Paths.get(APP_FOLDER);
   }
 
   public boolean prodMode() {
