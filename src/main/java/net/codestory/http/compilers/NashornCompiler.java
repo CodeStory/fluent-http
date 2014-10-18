@@ -18,11 +18,12 @@ package net.codestory.http.compilers;
 import static java.nio.charset.StandardCharsets.*;
 import static javax.script.ScriptContext.*;
 
-import javax.script.*;
 import java.io.*;
 import java.nio.file.*;
 
 import net.codestory.http.io.*;
+
+import javax.script.*;
 
 public final class NashornCompiler {
   private final CompiledScript compiledScript;

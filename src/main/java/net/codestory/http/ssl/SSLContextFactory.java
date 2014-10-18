@@ -15,7 +15,6 @@
  */
 package net.codestory.http.ssl;
 
-import javax.net.ssl.*;
 import java.io.*;
 import java.nio.file.*;
 import java.security.*;
@@ -25,6 +24,8 @@ import java.security.spec.*;
 import java.util.*;
 
 import net.codestory.http.misc.*;
+
+import javax.net.ssl.*;
 
 public class SSLContextFactory {
   public SSLContext create(List<Path> pathCertificates, Path pathPrivateKey, List<Path> pathTrustAnchors) throws Exception {
