@@ -31,7 +31,7 @@ import org.junit.*;
 import com.github.jknack.handlebars.*;
 
 public class HandlebarsCompilerTest {
-  HandlebarsCompiler compiler = new HandlebarsCompiler(new Compilers(prodMode()));
+  static HandlebarsCompiler compiler = new HandlebarsCompiler(new Compilers(prodMode()));
 
   @Test
   public void compile() throws IOException {

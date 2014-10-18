@@ -18,7 +18,6 @@ package net.codestory.http.ssl;
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
-import javax.net.ssl.*;
 import java.io.*;
 import java.net.*;
 import java.nio.file.*;
@@ -32,13 +31,17 @@ import net.codestory.http.io.*;
 
 import org.junit.*;
 
+import javax.net.ssl.*;
+
 public class SSLTest {
+  static WebServer webServer = new WebServer();
+
   @Test
   public void start_server() throws URISyntaxException {
     Path pathCertificate = resource("certificates/server.crt");
     Path pathPrivateKey = resource("certificates/server.der");
 
-    new WebServer().startSSL(randomPort(), pathCertificate, pathPrivateKey);
+    webServer.startSSL(randomPort(), pathCertificate, pathPrivateKey);
   }
 
   @Test
@@ -48,7 +51,7 @@ public class SSLTest {
     Path pathRootCACertificate = resource("certificates/root.crt");
     Path pathPrivateKey = resource("certificates/ee.der");
 
-    WebServer webServer = new WebServer().startSSL(randomPort(), asList(pathEECertificate, pathSubCACertificate), pathPrivateKey);
+    webServer.startSSL(randomPort(), asList(pathEECertificate, pathSubCACertificate), pathPrivateKey);
 
     HttpsURLConnection conn = httpGet(webServer, getSocketFactory(pathRootCACertificate));
 
@@ -65,7 +68,7 @@ public class SSLTest {
     Path pathTrustAnchors = resource("certificates/root.crt");
     Path pathClientCertificate = resource("certificates/client.pfx");
 
-    WebServer webServer = new WebServer().startSSL(randomPort(), asList(pathEECertificate, pathSubCACertificate), pathPrivateKey, asList(pathTrustAnchors));
+    webServer.startSSL(randomPort(), asList(pathEECertificate, pathSubCACertificate), pathPrivateKey, asList(pathTrustAnchors));
 
     httpGet(webServer, getSocketFactory(pathTrustAnchors, pathClientCertificate));
   }
@@ -77,7 +80,7 @@ public class SSLTest {
     Path pathPrivateKey = resource("certificates/ee.der");
     Path pathTrustAnchors = resource("certificates/root.crt");
 
-    WebServer webServer = new WebServer().startSSL(randomPort(), asList(pathEECertificate, pathSubCACertificate), pathPrivateKey, asList(pathTrustAnchors));
+    webServer.startSSL(randomPort(), asList(pathEECertificate, pathSubCACertificate), pathPrivateKey, asList(pathTrustAnchors));
 
     httpGet(webServer, getSocketFactory(pathTrustAnchors));
   }
@@ -129,6 +132,6 @@ public class SSLTest {
 
   private static Certificate getCertificateFromPath(Path certPath) throws CertificateException, IOException {
     return CertificateFactory.getInstance("X.509").generateCertificate(
-      new ByteArrayInputStream(Files.readAllBytes(certPath)));
+        new ByteArrayInputStream(Files.readAllBytes(certPath)));
   }
 }
