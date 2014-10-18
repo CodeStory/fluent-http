@@ -26,10 +26,10 @@ import org.simpleframework.transport.connect.*;
 import javax.net.ssl.*;
 
 public class SimpleServerWrapper implements HttpServerWrapper {
-  private final Server server;
+  private final SocketProcessor server;
 
   public SimpleServerWrapper(Handler handler) throws IOException {
-    this.server = new ContainerServer((req, resp) -> handler.handle(new SimpleRequest(req), new SimpleResponse(resp)));
+    this.server = new ContainerSocketProcessor((req, resp) -> handler.handle(new SimpleRequest(req), new SimpleResponse(resp)));
   }
 
   @Override
@@ -43,10 +43,10 @@ public class SimpleServerWrapper implements HttpServerWrapper {
     server.stop();
   }
 
-  private static class AuthRequiredServer implements Server {
-    private final Server delegate;
+  private static class AuthRequiredServer implements SocketProcessor {
+    private final SocketProcessor delegate;
 
-    AuthRequiredServer(Server delegate) {
+    AuthRequiredServer(SocketProcessor delegate) {
       this.delegate = delegate;
     }
 
