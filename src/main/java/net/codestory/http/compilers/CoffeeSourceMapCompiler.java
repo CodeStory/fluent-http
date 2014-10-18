@@ -19,7 +19,7 @@ import java.nio.file.*;
 
 public class CoffeeSourceMapCompiler implements Compiler {
   private final NashornCompiler nashornCompiler = new NashornCompiler(
-    "META-INF/resources/webjars/coffee-script/1.7.1/coffee-script.min.js",
+    "META-INF/resources/webjars/coffee-script/1.8.0/coffee-script.min.js",
     "coffee-script/toSourceMap.js");
 
   @Override
