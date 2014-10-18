@@ -22,6 +22,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.*;
+import java.util.function.*;
 
 import net.codestory.http.compilers.*;
 import net.codestory.http.io.*;
@@ -86,15 +87,11 @@ public class HandlebarsCompiler {
         .build();
   }
 
+  public void configure(Consumer<Handlebars> action) {
+    action.accept(handlebars);
+  }
+
   public void addResolver(ValueResolver resolver) {
     resolvers.add(resolver);
-  }
-
-  public void registerHelper(Class<?> helperSource) {
-    handlebars.registerHelpers(helperSource);
-  }
-
-  public void registerHelper(Object helperSource) {
-    handlebars.registerHelpers(helperSource);
   }
 }

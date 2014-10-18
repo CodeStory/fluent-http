@@ -15,25 +15,11 @@
  */
 package net.codestory.http.routes;
 
-import java.util.function.*;
-
 import net.codestory.http.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.injection.*;
 
-import com.fasterxml.jackson.databind.*;
-
 public class RoutesListener implements Routes {
-  @Override
-  public Routes overrideJacksonObjectMapper(ObjectMapper mapper) {
-    return this;
-  }
-
-  @Override
-  public Routes configureJacksonObjectMapper(Consumer<ObjectMapper> action) {
-    return this;
-  }
-
   @Override
   public Routes setIocAdapter(IocAdapter iocAdapter) {
     return this;

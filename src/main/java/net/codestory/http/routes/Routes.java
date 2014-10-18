@@ -16,26 +16,12 @@
 package net.codestory.http.routes;
 
 import java.io.*;
-import java.util.function.*;
 
 import net.codestory.http.*;
-import net.codestory.http.convert.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.injection.*;
 
-import com.fasterxml.jackson.databind.*;
-
 public interface Routes extends Serializable {
-  default Routes overrideJacksonObjectMapper(ObjectMapper mapper) {
-    TypeConvert.overrideMapper(mapper);
-    return this;
-  }
-
-  default Routes configureJacksonObjectMapper(Consumer<ObjectMapper> action) {
-    TypeConvert.configureMapper(action);
-    return this;
-  }
-
   Routes setIocAdapter(IocAdapter iocAdapter);
 
   Routes include(Class<? extends Configuration> configurationClass);

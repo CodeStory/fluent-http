@@ -176,7 +176,7 @@ public class HandlebarsCompilerTest {
 
   @Test
   public void google_analytics_with_fixed_id() throws IOException {
-    compiler.registerHelper(new GoogleAnalyticsHelper("ID"));
+    compiler.configure(hb -> hb.registerHelpers(new GoogleAnalyticsHelper("ID")));
 
     String result = compiler.compile("[[google_analytics]]", new TreeMap<>());
 
@@ -185,7 +185,7 @@ public class HandlebarsCompilerTest {
 
   @Test
   public void google_analytics_with_dynamic_id() throws IOException {
-    compiler.registerHelper(new GoogleAnalyticsHelper());
+    compiler.configure(hb -> hb.registerHelpers(new GoogleAnalyticsHelper()));
 
     String result = compiler.compile("[[google_analytics UA]]", map("UA", "12345"));
 
@@ -197,7 +197,7 @@ public class HandlebarsCompilerTest {
     Env env = mock(Env.class);
     when(env.prodMode()).thenReturn(false);
 
-    compiler.registerHelper(new GoogleAnalyticsHelper("ID"));
+    compiler.configure(hb -> hb.registerHelpers(new GoogleAnalyticsHelper("ID")));
 
     String result = compiler.compile("[[google_analytics UA]]", map("env", env));
 
@@ -206,8 +206,8 @@ public class HandlebarsCompilerTest {
 
   @Test
   public void can_override_helper() throws IOException {
-    compiler.registerHelper(new GoogleAnalyticsHelper("DEFAULT_ID"));
-    compiler.registerHelper(new GoogleAnalyticsHelper("OVERRIDEN"));
+    compiler.configure(hb -> hb.registerHelpers(new GoogleAnalyticsHelper("DEFAULT_ID")));
+    compiler.configure(hb -> hb.registerHelpers(new GoogleAnalyticsHelper("OVERRIDEN")));
 
     String result = compiler.compile("[[google_analytics]]", new TreeMap<String, Object>());
 

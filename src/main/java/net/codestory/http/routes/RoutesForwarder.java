@@ -15,13 +15,9 @@
  */
 package net.codestory.http.routes;
 
-import java.util.function.*;
-
 import net.codestory.http.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.injection.*;
-
-import com.fasterxml.jackson.databind.*;
 
 public class RoutesForwarder implements Routes {
   private final Routes[] routes;
@@ -32,22 +28,6 @@ public class RoutesForwarder implements Routes {
 
   protected Routes[] delegates() {
     return routes;
-  }
-
-  @Override
-  public Routes overrideJacksonObjectMapper(ObjectMapper mapper) {
-    for (Routes routes : delegates()) {
-      routes.overrideJacksonObjectMapper(mapper);
-    }
-    return this;
-  }
-
-  @Override
-  public Routes configureJacksonObjectMapper(Consumer<ObjectMapper> action) {
-    for (Routes routes : delegates()) {
-      routes.configureJacksonObjectMapper(action);
-    }
-    return this;
   }
 
   @Override

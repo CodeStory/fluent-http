@@ -19,6 +19,7 @@ import java.io.*;
 import java.util.*;
 
 import net.codestory.http.compilers.*;
+import net.codestory.http.convert.*;
 import net.codestory.http.errors.*;
 import net.codestory.http.misc.*;
 import net.codestory.http.payload.*;
@@ -27,6 +28,8 @@ import net.codestory.http.routes.*;
 import net.codestory.http.templating.*;
 
 import org.slf4j.*;
+
+import com.fasterxml.jackson.databind.*;
 
 public abstract class AbstractWebServer {
   protected final static Logger LOG = LoggerFactory.getLogger(AbstractWebServer.class);
@@ -38,6 +41,7 @@ public abstract class AbstractWebServer {
   protected AbstractWebServer() {
     this.env = createEnv();
     this.compilerFacade = createCompilerFacade(env);
+    TypeConvert.configureMapper(mapper -> configureObjectMapper(mapper));
   }
 
   public AbstractWebServer configure(Configuration configuration) {
@@ -48,7 +52,6 @@ public abstract class AbstractWebServer {
   }
 
   protected void handle(Request request, Response response) {
-
     try {
       RouteCollection routes = routesProvider.get();
 
@@ -100,6 +103,10 @@ public abstract class AbstractWebServer {
   protected Payload errorPage(Payload payload, Exception e) {
     Exception shownError = env.prodMode() ? null : e;
     return new ErrorPage(payload, shownError).payload();
+  }
+
+  protected void configureObjectMapper(ObjectMapper objectMapper) {
+    // Do nothing by default
   }
 
   protected Env createEnv() {

@@ -22,11 +22,9 @@ import java.util.*;
 import net.codestory.http.misc.*;
 import net.codestory.http.templating.*;
 
-import com.github.jknack.handlebars.*;
-
 public class CompilerFacade {
-  private final Compilers compilers;
-  private final HandlebarsCompiler handlebar;
+  protected final Compilers compilers;
+  protected final HandlebarsCompiler handlebar;
 
   public CompilerFacade(Env env) {
     this.compilers = new Compilers(env);
@@ -37,25 +35,6 @@ public class CompilerFacade {
     this.compilers = compilers;
     this.handlebar = handlebar;
   }
-
-  // Configuration
-
-  public CompilerFacade addHandleBarsResolver(ValueResolver resolver) {
-    handlebar.addResolver(resolver);
-    return this;
-  }
-
-  public CompilerFacade registerHandleBarsHelper(Class<?> helperSource) {
-    handlebar.registerHelper(helperSource);
-    return this;
-  }
-
-  public CompilerFacade registerHandleBarsHelper(Object helperSource) {
-    handlebar.registerHelper(helperSource);
-    return this;
-  }
-
-  // Compilation
 
   public CacheEntry compile(Path path, String content) {
     return compilers.compile(path, content);
