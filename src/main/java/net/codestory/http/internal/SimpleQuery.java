@@ -37,24 +37,6 @@ class SimpleQuery implements Query {
   }
 
   @Override
-  public int getInteger(String name) {
-    String value = get(name);
-    return (value != null) ? Integer.parseInt(value) : 0;
-  }
-
-  @Override
-  public float getFloat(String name) {
-    String value = get(name);
-    return (value != null) ? Float.parseFloat(value) : 0.0f;
-  }
-
-  @Override
-  public boolean getBoolean(String name) {
-    String value = get(name);
-    return (value != null) ? Boolean.valueOf(value) : false;
-  }
-
-  @Override
   public Map<String, String> keyValues() {
     return query;
   }

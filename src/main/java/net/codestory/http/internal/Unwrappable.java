@@ -13,26 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http;
+package net.codestory.http.internal;
 
-import java.io.*;
-
-import net.codestory.http.internal.*;
-
-public interface Part extends Unwrappable {
-  boolean isFile();
-
-  String name();
-
-  String fileName();
-
-  String header(String name);
-
-  String content() throws IOException;
-
-  InputStream inputStream() throws IOException;
-
-  String contentType();
+@FunctionalInterface
+public interface Unwrappable {
+  <T> T unwrap(Class<T> type);
 }
-
-

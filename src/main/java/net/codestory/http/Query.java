@@ -17,18 +17,37 @@ package net.codestory.http;
 
 import java.util.*;
 
-public interface Query {
+import net.codestory.http.internal.*;
+
+public interface Query extends Unwrappable {
   String get(String name);
 
   Iterable<String> all(String name);
 
-  int getInteger(String name);
-
-  float getFloat(String name);
-
-  boolean getBoolean(String name);
-
   Map<String, String> keyValues();
 
-  <T> T unwrap(Class<T> type);
+  default int getInteger(String name) {
+    String value = get(name);
+    return (value != null) ? Integer.parseInt(value) : 0;
+  }
+
+  default long getLong(String name) {
+    String value = get(name);
+    return (value != null) ? Long.parseLong(value) : 0L;
+  }
+
+  default float getFloat(String name) {
+    String value = get(name);
+    return (value != null) ? Float.parseFloat(value) : 0.0f;
+  }
+
+  default double getDouble(String name) {
+    String value = get(name);
+    return (value != null) ? Double.parseDouble(value) : 0.0d;
+  }
+
+  default boolean getBoolean(String name) {
+    String value = get(name);
+    return (value != null) ? Boolean.valueOf(value) : false;
+  }
 }

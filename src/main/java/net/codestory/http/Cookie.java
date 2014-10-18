@@ -15,7 +15,9 @@
  */
 package net.codestory.http;
 
-public interface Cookie {
+import net.codestory.http.internal.*;
+
+public interface Cookie extends Unwrappable {
   String name();
 
   String value();
@@ -33,8 +35,6 @@ public interface Cookie {
   String path();
 
   String domain();
-
-  <T> T unwrap(Class<T> type);
 }
 
 

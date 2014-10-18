@@ -17,14 +17,16 @@ package net.codestory.http;
 
 import java.io.*;
 
-public interface Response {
-  void close() throws IOException;
+import net.codestory.http.internal.*;
 
-  void commit() throws IOException;
+public interface Response extends Unwrappable {
+  void close() throws IOException;
 
   OutputStream outputStream() throws IOException;
 
-  PrintStream printStream() throws IOException;
+  public default PrintStream printStream() throws IOException {
+    return new PrintStream(outputStream());
+  }
 
   void setContentLength(long length);
 
@@ -33,6 +35,4 @@ public interface Response {
   void setStatus(int statusCode);
 
   void setCookie(Cookie cookie);
-
-  <T> T unwrap(Class<T> type);
 }

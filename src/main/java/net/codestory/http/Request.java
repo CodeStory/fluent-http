@@ -19,22 +19,29 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-public interface Request {
+import net.codestory.http.internal.*;
+
+public interface Request extends Unwrappable {
   String uri();
 
   String method();
-
-  String header(String name);
 
   String content() throws IOException;
 
   String contentType();
 
-  InputStream inputStream() throws IOException;
+  List<String> headerNames();
 
   List<String> headers(String name);
 
-  List<String> headerNames();
+  String header(String name);
+
+  public default String header(String name, String defaultValue) {
+    String value = header(name);
+    return (value == null) ? defaultValue : value;
+  }
+
+  InputStream inputStream() throws IOException;
 
   InetSocketAddress clientAddress();
 
@@ -45,6 +52,4 @@ public interface Request {
   Query query();
 
   List<Part> parts();
-
-  <T> T unwrap(Class<T> type);
 }

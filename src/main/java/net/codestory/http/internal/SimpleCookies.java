@@ -19,7 +19,6 @@ import java.util.*;
 
 import net.codestory.http.Cookie;
 import net.codestory.http.*;
-import net.codestory.http.convert.*;
 
 import org.simpleframework.http.Request;
 
@@ -41,63 +40,22 @@ class SimpleCookies implements Cookies {
     return (cookie == null) ? null : new SimpleCookie(cookie);
   }
 
+  // Implementation more performant than the default one
+  // because here we don't wrap the cookie.
+  //
   @Override
   public String value(String name) {
-    Cookie cookie = get(name);
-    return (cookie == null) ? null : cookie.value();
+    org.simpleframework.http.Cookie cookie = request.getCookie(name);
+    return (cookie == null) ? null : cookie.getValue();
   }
 
+  // Implementation more performant than the default one
+  // because here we don't wrap every native cookie.
+  //
   @Override
   public Map<String, String> keyValues() {
     Map<String, String> keyValues = new HashMap<>();
     request.getCookies().forEach(cookie -> keyValues.put(cookie.getName(), cookie.getValue()));
     return keyValues;
-  }
-
-  @SuppressWarnings("unchecked")
-  @Override
-  public <T> T value(String name, T defaultValue) {
-    T value = value(name, (Class<T>) defaultValue.getClass());
-    return (value == null) ? defaultValue : value;
-  }
-
-  @SuppressWarnings("unchecked")
-  @Override
-  public <T> T value(String name, Class<T> type) {
-    String value = value(name);
-    if (value== null) {
-      return null;
-    }
-
-    // fix for https://github.com/ariya/phantomjs/issues/12160
-    if (value.indexOf('\\') != -1) {
-      value = value.replace("\\", "");
-    }
-
-    return TypeConvert.fromJson(value, type);
-  }
-
-  @Override
-  public String value(String name, String defaultValue) {
-    String value = value(name);
-    return (value == null) ? defaultValue : value;
-  }
-
-  @Override
-  public int value(String name, int defaultValue) {
-    String value = value(name);
-    return (value == null) ? defaultValue : Integer.parseInt(value);
-  }
-
-  @Override
-  public long value(String name, long defaultValue) {
-    String value = value(name);
-    return (value == null) ? defaultValue : Long.parseLong(value);
-  }
-
-  @Override
-  public boolean value(String name, boolean defaultValue) {
-    String value = value(name);
-    return (value == null) ? defaultValue : Boolean.parseBoolean(value);
   }
 }
