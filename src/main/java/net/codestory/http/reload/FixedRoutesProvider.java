@@ -19,13 +19,12 @@ import net.codestory.http.Configuration;
 import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.misc.Env;
 import net.codestory.http.routes.RouteCollection;
-import net.codestory.http.templating.Site;
 
 class FixedRoutesProvider implements RoutesProvider {
   private final RouteCollection routes;
 
   FixedRoutesProvider(Env env, CompilerFacade compiler, Configuration configuration) {
-    routes = new RouteCollection(env, new Site(env), compiler);
+    routes = new RouteCollection(env, compiler);
     configuration.configure(routes);
     routes.installExtensions();
     routes.addStaticRoutes(true);

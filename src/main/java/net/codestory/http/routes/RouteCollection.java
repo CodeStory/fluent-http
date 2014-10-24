@@ -45,18 +45,18 @@ import static net.codestory.http.routes.UriParser.paramsCount;
 
 public class RouteCollection implements Routes {
   protected final Env env;
+  protected final CompilerFacade compilers;
   protected final Site site;
   protected final Deque<Route> routes;
   protected final Deque<Supplier<Filter>> filters;
-  protected final CompilerFacade compilers;
 
   protected IocAdapter iocAdapter;
   protected Extensions extensions;
 
-  public RouteCollection(Env env, Site site, CompilerFacade compilers) {
+  public RouteCollection(Env env, CompilerFacade compilers) {
     this.env = env;
-    this.site = site;
     this.compilers = compilers;
+    this.site = new Site(env);
     this.routes = new LinkedList<>();
     this.filters = new LinkedList<>();
     this.iocAdapter = new Singletons();

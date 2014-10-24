@@ -27,7 +27,6 @@ import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.io.*;
 import net.codestory.http.misc.*;
 import net.codestory.http.routes.*;
-import net.codestory.http.templating.*;
 
 import org.slf4j.*;
 
@@ -73,7 +72,7 @@ class ReloadingRoutesProvider implements RoutesProvider {
       classesWatchers.forEach(FolderWatcher::ensureStarted);
       appWatcher.ensureStarted();
 
-      routes = new RouteCollection(env, new Site(env), compiler);
+      routes = new RouteCollection(env, compiler);
       configuration.configure(routes);
       routes.installExtensions();
       routes.addStaticRoutes(false);
