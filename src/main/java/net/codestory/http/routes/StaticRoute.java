@@ -19,6 +19,7 @@ import net.codestory.http.Context;
 import net.codestory.http.compilers.CompiledPath;
 import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.io.Resources;
+import net.codestory.http.io.Strings;
 import net.codestory.http.misc.Cache;
 
 import java.nio.file.Path;
@@ -29,8 +30,9 @@ import static net.codestory.http.constants.Methods.GET;
 import static net.codestory.http.constants.Methods.HEAD;
 import static net.codestory.http.io.Resources.exists;
 import static net.codestory.http.io.Resources.findExistingPath;
+import static net.codestory.http.io.Resources.isPublic;
+import static net.codestory.http.io.Strings.extension;
 import static net.codestory.http.io.Strings.replaceLast;
-import static net.codestory.http.types.ContentTypes.is_binary;
 
 class StaticRoute implements Route {
   private static final Path NOT_FOUND = Paths.get("");
@@ -66,32 +68,27 @@ class StaticRoute implements Route {
 
   private Object findPath(String uri) {
     Path path = findExistingPath(uri);
-    if ((path != null) && Resources.isPublic(path)) {
-      return is_binary(path) ? path : new CompiledPath(path, path);
+    if ((path != null) && isPublic(path)) {
+      if (compilers.canCompile(extension(uri))) {
+        return new CompiledPath(path, path);
+      }
+      return path;
     }
 
-    return findFileCompilableToPath(uri);
+    return findUriCompilableTo(uri);
   }
 
-  private Object findFileCompilableToPath(String uri) {
+  private Object findUriCompilableTo(String uri) {
     String extension = extension(uri);
 
     for (String sourceExtension : compilers.extensionsThatCompileTo(extension)) {
       Path sourcePath = Paths.get(replaceLast(uri, extension, sourceExtension));
 
-      if (exists(sourcePath)) {
+      if (isPublic(sourcePath)) {
         return new CompiledPath(sourcePath, sourcePath);
       }
     }
 
     return NOT_FOUND;
-  }
-
-  private static String extension(String uri) {
-    int dotIndex = uri.lastIndexOf('.');
-    if (dotIndex <= 0) {
-      return "";
-    }
-    return uri.substring(dotIndex);
   }
 }

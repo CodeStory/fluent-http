@@ -70,4 +70,12 @@ public class Strings {
     }
     return in.substring(0, index) + replaceWith;
   }
+
+  public static String extension(String uri) {
+    int dotIndex = uri.lastIndexOf('.');
+    if (dotIndex <= 0) {
+      return "";
+    }
+    return uri.substring(dotIndex);
+  }
 }

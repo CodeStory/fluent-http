@@ -60,6 +60,10 @@ public class Compilers {
     }
   }
 
+  public boolean canCompile(String extension) {
+    return compilerByExtension.containsKey(extension);
+  }
+
   public Set<String> extensionsThatCompileTo(String extension) {
     return extensionsThatCompileTo.getOrDefault(extension, emptySet());
   }

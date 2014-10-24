@@ -56,6 +56,10 @@ public class CompilerFacade {
 
   // Compilation
 
+  public boolean canCompile(String extension) {
+    return compilers.canCompile(extension);
+  }
+
   public Set<String> extensionsThatCompileTo(String extension) {
     return compilers.extensionsThatCompileTo(extension);
   }
