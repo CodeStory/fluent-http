@@ -57,6 +57,11 @@ public class WebServer extends AbstractWebServer {
       .start(8080);
   }
 
+  public WebServer configure(Configuration configuration) {
+    super.configure(configuration);
+    return this;
+  }
+
   public WebServer startOnRandomPort() {
     Random random = new Random();
     for (int i = 0; i < 30; i++) {

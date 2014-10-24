@@ -50,7 +50,7 @@ public abstract class AbstractWebServer {
     this.executorService = createExecutorService();
   }
 
-  public AbstractWebServer configure(Configuration configuration) {
+  protected AbstractWebServer configure(Configuration configuration) {
     this.routesProvider = env.prodMode()
       ? RoutesProvider.fixed(env, compilers, configuration)
       : RoutesProvider.reloading(env, compilers, configuration);
