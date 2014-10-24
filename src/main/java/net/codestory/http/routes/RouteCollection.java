@@ -15,21 +15,33 @@
  */
 package net.codestory.http.routes;
 
-import static net.codestory.http.annotations.AnnotationHelper.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import net.codestory.http.Configuration;
+import net.codestory.http.Context;
+import net.codestory.http.Request;
+import net.codestory.http.Response;
+import net.codestory.http.compilers.CompilerFacade;
+import net.codestory.http.convert.TypeConvert;
+import net.codestory.http.extensions.Extensions;
+import net.codestory.http.filters.Filter;
+import net.codestory.http.filters.PayloadSupplier;
+import net.codestory.http.injection.IocAdapter;
+import net.codestory.http.injection.Singletons;
+import net.codestory.http.misc.Env;
+import net.codestory.http.payload.Payload;
+import net.codestory.http.payload.PayloadWriter;
+import net.codestory.http.templating.Site;
+
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.function.Supplier;
+
+import static net.codestory.http.annotations.AnnotationHelper.parseAnnotations;
 import static net.codestory.http.constants.Methods.*;
 import static net.codestory.http.payload.Payload.*;
-import static net.codestory.http.routes.UriParser.*;
-
-import java.io.*;
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.function.*;
-
-import net.codestory.http.*;
-import net.codestory.http.filters.*;
-import net.codestory.http.injection.*;
-import net.codestory.http.payload.*;
-import net.codestory.http.templating.*;
+import static net.codestory.http.routes.UriParser.paramsCount;
 
 public class RouteCollection implements Routes {
   protected final Site site;
@@ -37,6 +49,7 @@ public class RouteCollection implements Routes {
   protected final Deque<Supplier<Filter>> filters;
 
   protected IocAdapter iocAdapter;
+  protected Extensions extensions;
 
   public RouteCollection(Site site) {
     this.site = site;
@@ -45,18 +58,30 @@ public class RouteCollection implements Routes {
     this.iocAdapter = new Singletons();
   }
 
-  public Site site() {
-    return site;
+  public void installExtensions(Env env) {
+    if (extensions != null) {
+      TypeConvert.configureMapper(extensions::configureObjectMapper);
+    }
+  }
+
+  public PayloadWriter createPayloadWriter(Request request, Response response, Env env, CompilerFacade compilerFacade) {
+    return extensions.createPayloadWriter(request, response, env, site, compilerFacade);
+  }
+
+  public Context createContext(Request request, Response response) {
+    return extensions.createContext(request, response, iocAdapter, site);
+  }
+
+  @Override
+  public RouteCollection setExtensions(Extensions extensions) {
+    this.extensions = extensions;
+    return this;
   }
 
   @Override
   public RouteCollection setIocAdapter(IocAdapter iocAdapter) {
     this.iocAdapter = iocAdapter;
     return this;
-  }
-
-  public IocAdapter iocAdapter() {
-    return iocAdapter;
   }
 
   @Override

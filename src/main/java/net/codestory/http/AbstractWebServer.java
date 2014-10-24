@@ -15,21 +15,23 @@
  */
 package net.codestory.http;
 
-import java.io.*;
-import java.util.*;
+import net.codestory.http.compilers.CompilerException;
+import net.codestory.http.compilers.CompilerFacade;
+import net.codestory.http.compilers.Compilers;
+import net.codestory.http.errors.ErrorPage;
+import net.codestory.http.errors.HttpException;
+import net.codestory.http.misc.Env;
+import net.codestory.http.payload.Payload;
+import net.codestory.http.payload.PayloadWriter;
+import net.codestory.http.reload.RoutesProvider;
+import net.codestory.http.routes.RouteCollection;
+import net.codestory.http.templating.HandlebarsCompiler;
+import net.codestory.http.templating.Site;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import net.codestory.http.compilers.*;
-import net.codestory.http.convert.*;
-import net.codestory.http.errors.*;
-import net.codestory.http.misc.*;
-import net.codestory.http.payload.*;
-import net.codestory.http.reload.*;
-import net.codestory.http.routes.*;
-import net.codestory.http.templating.*;
-
-import org.slf4j.*;
-
-import com.fasterxml.jackson.databind.*;
+import java.io.IOException;
+import java.util.NoSuchElementException;
 
 public abstract class AbstractWebServer {
   protected final static Logger LOG = LoggerFactory.getLogger(AbstractWebServer.class);
@@ -41,13 +43,12 @@ public abstract class AbstractWebServer {
   protected AbstractWebServer() {
     this.env = createEnv();
     this.compilerFacade = createCompilerFacade(env);
-    TypeConvert.configureMapper(mapper -> configureObjectMapper(mapper));
   }
 
   public AbstractWebServer configure(Configuration configuration) {
     this.routesProvider = env.prodMode()
-        ? RoutesProvider.fixed(env, configuration)
-        : RoutesProvider.reloading(env, configuration);
+      ? RoutesProvider.fixed(env, configuration)
+      : RoutesProvider.reloading(env, configuration);
     return this;
   }
 
@@ -55,17 +56,17 @@ public abstract class AbstractWebServer {
     try {
       RouteCollection routes = routesProvider.get();
 
-      Context context = createContext(request, response, routes);
+      Context context = routes.createContext(request, response);
 
       Payload payload = routes.apply(context);
       if (payload.isError()) {
         payload = errorPage(payload);
       }
 
-      PayloadWriter payloadWriter = createPayloadWriter(request, response, env, routes.site(), compilerFacade);
+      PayloadWriter payloadWriter = routes.createPayloadWriter(request, response, env, compilerFacade);
       payloadWriter.writeAndClose(payload);
     } catch (Exception e) {
-      PayloadWriter payloadWriter = createPayloadWriter(request, response, env, new Site(env), compilerFacade);
+      PayloadWriter payloadWriter = new PayloadWriter(env, new Site(env), compilerFacade, request, response);
       handleServerError(payloadWriter, e);
     }
   }
@@ -105,34 +106,14 @@ public abstract class AbstractWebServer {
     return new ErrorPage(payload, shownError).payload();
   }
 
-  protected void configureObjectMapper(ObjectMapper objectMapper) {
-    // Do nothing by default
-  }
-
   protected Env createEnv() {
     return new Env();
   }
 
-  protected HandlebarsCompiler createHandlebarsCompiler(Compilers compilers) {
-    return new HandlebarsCompiler(compilers);
-  }
-
-  protected Compilers createCompilers(Env env) {
-    return new Compilers(env);
-  }
-
   protected CompilerFacade createCompilerFacade(Env env) {
-    Compilers compilers = createCompilers(env);
-    HandlebarsCompiler handlebar = createHandlebarsCompiler(compilers);
+    Compilers compilers = new Compilers(env);
+    HandlebarsCompiler handlebar = new HandlebarsCompiler(compilers);
 
     return new CompilerFacade(compilers, handlebar);
-  }
-
-  protected PayloadWriter createPayloadWriter(Request request, Response response, Env env, Site site, CompilerFacade compilerFacade) {
-    return new PayloadWriter(env, site, compilerFacade, request, response);
-  }
-
-  protected Context createContext(Request request, Response response, RouteCollection routes) {
-    return new Context(request, response, routes.iocAdapter(), routes.site());
   }
 }

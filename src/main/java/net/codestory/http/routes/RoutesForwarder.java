@@ -16,6 +16,7 @@
 package net.codestory.http.routes;
 
 import net.codestory.http.*;
+import net.codestory.http.extensions.Extensions;
 import net.codestory.http.filters.*;
 import net.codestory.http.injection.*;
 
@@ -28,6 +29,14 @@ public class RoutesForwarder implements Routes {
 
   protected Routes[] delegates() {
     return routes;
+  }
+
+  @Override
+  public Routes setExtensions(Extensions extensions) {
+    for (Routes routes : delegates()) {
+      routes.setExtensions(extensions);
+    }
+    return this;
   }
 
   @Override

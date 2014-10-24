@@ -16,10 +16,16 @@
 package net.codestory.http.routes;
 
 import net.codestory.http.*;
+import net.codestory.http.extensions.Extensions;
 import net.codestory.http.filters.*;
 import net.codestory.http.injection.*;
 
 public class RoutesListener implements Routes {
+  @Override
+  public Routes setExtensions(Extensions extensions) {
+    return this;
+  }
+
   @Override
   public Routes setIocAdapter(IocAdapter iocAdapter) {
     return this;
