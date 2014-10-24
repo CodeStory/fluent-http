@@ -15,7 +15,6 @@
  */
 package net.codestory.http.routes;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import net.codestory.http.Configuration;
 import net.codestory.http.Context;
 import net.codestory.http.Request;
@@ -56,12 +55,12 @@ public class RouteCollection implements Routes {
     this.routes = new LinkedList<>();
     this.filters = new LinkedList<>();
     this.iocAdapter = new Singletons();
+    this.extensions = Extensions.DEFAULT;
   }
 
-  public void installExtensions(Env env) {
-    if (extensions != null) {
-      TypeConvert.configureMapper(extensions::configureObjectMapper);
-    }
+  public void installExtensions(Env env, CompilerFacade compilers) {
+    TypeConvert.configureOrReplaceMapper(mapper -> extensions.configureOrReplaceObjectMapper(mapper, env));
+    extensions.configureCompilers(compilers, env);
   }
 
   public PayloadWriter createPayloadWriter(Request request, Response response, Env env, CompilerFacade compilerFacade) {

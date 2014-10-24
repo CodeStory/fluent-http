@@ -27,13 +27,13 @@ import com.fasterxml.jackson.databind.type.*;
 import com.fasterxml.jackson.datatype.jsr310.*;
 
 public class TypeConvert {
-  private static ObjectMapper OBJECT_MAPPER = createObjectMapper();
+  private static ObjectMapper CURRENT_OBJECT_MAPPER = createDefaultObjectMapper();
 
   private TypeConvert() {
     // static class
   }
 
-  private static ObjectMapper createObjectMapper() {
+  private static ObjectMapper createDefaultObjectMapper() {
     return new ObjectMapper()
       .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
       .registerModule(new JSR310Module())
@@ -41,21 +41,15 @@ public class TypeConvert {
       .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
   }
 
-  public static void overrideMapper(ObjectMapper mapper) {
-    OBJECT_MAPPER = mapper;
-  }
-
-  public static void configureMapper(Consumer<ObjectMapper> action) {
-    ObjectMapper objectMapper = createObjectMapper();
-
-    action.accept(objectMapper);
-
-    overrideMapper(objectMapper);
+  public static void configureOrReplaceMapper(Function<ObjectMapper, ObjectMapper> configureOrReplace) {
+    ObjectMapper defaultObjectMapper = createDefaultObjectMapper();
+    ObjectMapper replacementObjectMapper = configureOrReplace.apply(defaultObjectMapper);
+    CURRENT_OBJECT_MAPPER = replacementObjectMapper;
   }
 
   public static <T> T fromJson(String json, Class<T> type) {
     try {
-      return OBJECT_MAPPER.readValue(json, type);
+      return CURRENT_OBJECT_MAPPER.readValue(json, type);
     } catch (IOException e) {
       throw new IllegalArgumentException("Unable to parse json", e);
     }
@@ -63,7 +57,7 @@ public class TypeConvert {
 
   public static <T> T fromJson(String json, Type type) {
     try {
-      return OBJECT_MAPPER.readValue(json, TypeFactory.defaultInstance().constructType(type));
+      return CURRENT_OBJECT_MAPPER.readValue(json, TypeFactory.defaultInstance().constructType(type));
     } catch (IOException e) {
       throw new IllegalArgumentException("Unable to parse json", e);
     }
@@ -71,27 +65,27 @@ public class TypeConvert {
 
   public static <T> T fromJson(String json, TypeReference<T> type) {
     try {
-      return OBJECT_MAPPER.readValue(json, type);
+      return CURRENT_OBJECT_MAPPER.readValue(json, type);
     } catch (IOException e) {
       throw new IllegalArgumentException("Unable to parse json", e);
     }
   }
 
   public static <T> T convertValue(Object value, Class<T> type) {
-    return OBJECT_MAPPER.convertValue(value, type);
+    return CURRENT_OBJECT_MAPPER.convertValue(value, type);
   }
 
   public static Object convertValue(Object value, Type type) {
-    return OBJECT_MAPPER.convertValue(value, TypeFactory.defaultInstance().constructType(type));
+    return CURRENT_OBJECT_MAPPER.convertValue(value, TypeFactory.defaultInstance().constructType(type));
   }
 
   public static <T> T convertValue(Object value, TypeReference<T> type) {
-    return OBJECT_MAPPER.convertValue(value, type);
+    return CURRENT_OBJECT_MAPPER.convertValue(value, type);
   }
 
   public static byte[] toByteArray(Object value) {
     try {
-      return OBJECT_MAPPER.writer().writeValueAsBytes(value);
+      return CURRENT_OBJECT_MAPPER.writer().writeValueAsBytes(value);
     } catch (JsonProcessingException e) {
       throw new IllegalArgumentException("Unable to serialize to json", e);
     }
@@ -99,7 +93,7 @@ public class TypeConvert {
 
   public static String toJson(Object value) {
     try {
-      return OBJECT_MAPPER.writer().writeValueAsString(value);
+      return CURRENT_OBJECT_MAPPER.writer().writeValueAsString(value);
     } catch (JsonProcessingException e) {
       throw new IllegalArgumentException("Unable to serialize to json", e);
     }

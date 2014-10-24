@@ -47,8 +47,8 @@ public abstract class AbstractWebServer {
 
   public AbstractWebServer configure(Configuration configuration) {
     this.routesProvider = env.prodMode()
-      ? RoutesProvider.fixed(env, configuration)
-      : RoutesProvider.reloading(env, configuration);
+      ? RoutesProvider.fixed(env, compilerFacade, configuration)
+      : RoutesProvider.reloading(env, compilerFacade, configuration);
     return this;
   }
 

@@ -15,17 +15,18 @@
  */
 package net.codestory.http.reload;
 
-import net.codestory.http.*;
-import net.codestory.http.misc.*;
-import net.codestory.http.routes.*;
-import net.codestory.http.templating.*;
+import net.codestory.http.Configuration;
+import net.codestory.http.compilers.CompilerFacade;
+import net.codestory.http.misc.Env;
+import net.codestory.http.routes.RouteCollection;
+import net.codestory.http.templating.Site;
 
 class FixedRoutesProvider implements RoutesProvider {
   private final RouteCollection routes;
 
-  FixedRoutesProvider(Env env, Configuration configuration) {
+  FixedRoutesProvider(Env env, CompilerFacade compiler, Configuration configuration) {
     routes = new RouteCollection(new Site(env));
-    routes.installExtensions(env);
+    routes.installExtensions(env, compiler);
     configuration.configure(routes);
     routes.addStaticRoutes(true);
   }

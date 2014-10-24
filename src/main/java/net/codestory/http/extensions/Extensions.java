@@ -28,15 +28,32 @@ import net.codestory.http.templating.Site;
 import java.io.Serializable;
 
 public interface Extensions extends Serializable {
-  public default void configureObjectMapper(ObjectMapper objectMapper) {
-    // Add code to change the ObjectMapper configuration
+  Extensions DEFAULT = new Extensions(){};
+
+  /**
+   * Called each time routes are loaded.
+   */
+  public default ObjectMapper configureOrReplaceObjectMapper(ObjectMapper defaultObjectMapper, Env env) {
+    return defaultObjectMapper;
   }
 
-  public default PayloadWriter createPayloadWriter(Request request, Response response, Env env, Site site, CompilerFacade compilerFacade) {
-    return new PayloadWriter(env, site, compilerFacade, request, response);
+  /**
+   * Called each time routes are loaded.
+   */
+  public default void configureCompilers(CompilerFacade compilers, Env env) {
   }
 
+  /**
+   * Called each request.
+   */
   public default Context createContext(Request request, Response response, IocAdapter iocAdapter, Site site) {
     return new Context(request, response, iocAdapter, site);
+  }
+
+  /**
+   * Called each request.
+   */
+  public default PayloadWriter createPayloadWriter(Request request, Response response, Env env, Site site, CompilerFacade compiler) {
+    return new PayloadWriter(env, site, compiler, request, response);
   }
 }
