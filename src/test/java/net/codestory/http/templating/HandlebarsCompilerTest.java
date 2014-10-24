@@ -157,15 +157,15 @@ public class HandlebarsCompilerTest {
 
   @Test
   public void custom_resolver() throws IOException {
-    compiler.addResolver(new ValueResolver() {
+    compiler.addResolver(new BasicResolver() {
       @Override
-      public Object resolve(Object context, String name) {
-        return name.equals("additional") ? "SUCCESS" : UNRESOLVED;
+      public String tag() {
+        return "additional";
       }
 
       @Override
-      public Set<Map.Entry<String, Object>> propertySet(Object context) {
-        return Collections.emptySet();
+      public Object resolve(Object context) {
+        return "SUCCESS";
       }
     });
 

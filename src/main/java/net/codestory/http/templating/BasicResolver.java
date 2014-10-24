@@ -17,6 +17,7 @@ package net.codestory.http.templating;
 
 import com.github.jknack.handlebars.ValueResolver;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -28,11 +29,15 @@ public interface BasicResolver extends ValueResolver {
 
   @Override
   public default Object resolve(Object context, String name) {
-    return Objects.equals(tag(), name) ? resolve(context) : null;
+    if (Objects.equals(tag(), name)) {
+      return resolve(context);
+    }
+
+    return UNRESOLVED;
   }
 
   @Override
   public default Set<Map.Entry<String, Object>> propertySet(Object context) {
-    return null;
+    return Collections.emptySet();
   }
 }
