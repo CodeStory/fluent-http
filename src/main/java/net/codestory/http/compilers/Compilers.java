@@ -15,18 +15,24 @@
  */
 package net.codestory.http.compilers;
 
-import static java.util.Map.*;
-import static net.codestory.http.misc.MemoizingSupplier.*;
+import net.codestory.http.misc.Env;
+import net.codestory.http.misc.Sha1;
 
-import java.nio.file.*;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.function.*;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
-import net.codestory.http.misc.*;
+import static java.util.Collections.emptySet;
+import static java.util.Map.Entry;
+import static net.codestory.http.misc.MemoizingSupplier.memoize;
 
 public class Compilers {
   private final Map<String, Supplier<Compiler>> compilerByExtension = new HashMap<>();
+  private final Map<String, Set<String>> extensionsThatCompileTo = new HashMap<>();
   private final Map<String, CacheEntry> cache = new ConcurrentHashMap<>();
   private final DiskCache diskCache;
 
@@ -34,19 +40,28 @@ public class Compilers {
     boolean prodMode = env.prodMode();
 
     diskCache = new DiskCache("V3", prodMode);
-    register(() -> new CoffeeCompiler(prodMode), ".coffee", ".litcoffee");
-    register(() -> new CoffeeSourceMapCompiler(), ".coffee.map", ".litcoffee.map");
-    register(() -> new MarkdownCompiler(), ".md", ".markdown");
-    register(() -> new LessCompiler(prodMode), ".less");
+    register(() -> new CoffeeCompiler(prodMode), ".js", ".coffee", ".litcoffee");
+    register(() -> new CoffeeSourceMapCompiler(), ".map", ".coffee.map", ".litcoffee.map"); // ?
+    register(() -> new MarkdownCompiler(), ".html", ".md", ".markdown");
+    register(() -> new LessCompiler(prodMode), ".css", ".less");
   }
 
-  public void register(Supplier<Compiler> compilerFactory, String firstExtension, String... moreExtensions) {
+  public void register(Supplier<Compiler> compilerFactory, String targetExtension, String firstExtension, String... moreExtensions) {
     Supplier<Compiler> compilerLazyFactory = memoize(compilerFactory);
 
+    Set<String> uncompiledExtensions = extensionsThatCompileTo.computeIfAbsent(targetExtension, k -> new HashSet<>());
+
     compilerByExtension.put(firstExtension, compilerLazyFactory);
+    uncompiledExtensions.add(firstExtension);
+
     for (String extension : moreExtensions) {
       compilerByExtension.put(extension, compilerLazyFactory);
+      uncompiledExtensions.add(extension);
     }
+  }
+
+  public Set<String> extensionsThatCompileTo(String extension) {
+    return extensionsThatCompileTo.getOrDefault(extension, emptySet());
   }
 
   public CacheEntry compile(Path path, String content) {

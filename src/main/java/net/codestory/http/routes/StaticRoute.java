@@ -15,18 +15,22 @@
  */
 package net.codestory.http.routes;
 
-import static net.codestory.http.constants.Methods.*;
-import static net.codestory.http.io.Resources.*;
-import static net.codestory.http.io.Strings.*;
-import static net.codestory.http.types.ContentTypes.*;
+import net.codestory.http.Context;
+import net.codestory.http.compilers.CompiledPath;
+import net.codestory.http.compilers.CompilerFacade;
+import net.codestory.http.io.Resources;
+import net.codestory.http.misc.Cache;
 
-import java.nio.file.*;
-import java.util.function.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.function.Function;
 
-import net.codestory.http.*;
-import net.codestory.http.compilers.*;
-import net.codestory.http.io.*;
-import net.codestory.http.misc.*;
+import static net.codestory.http.constants.Methods.GET;
+import static net.codestory.http.constants.Methods.HEAD;
+import static net.codestory.http.io.Resources.exists;
+import static net.codestory.http.io.Resources.findExistingPath;
+import static net.codestory.http.io.Strings.replaceLast;
+import static net.codestory.http.types.ContentTypes.is_binary;
 
 class StaticRoute implements Route {
   private static final Path NOT_FOUND = Paths.get("");
@@ -37,9 +41,9 @@ class StaticRoute implements Route {
   StaticRoute(boolean cached, CompilerFacade compilers) {
     this.compilers = compilers;
     if (cached) {
-      this.findPath = new Cache<>(StaticRoute::findPath);
+      this.findPath = new Cache<>(this::findPath);
     } else {
-      this.findPath = StaticRoute::findPath;
+      this.findPath = this::findPath;
     }
   }
 
@@ -60,26 +64,34 @@ class StaticRoute implements Route {
     return findPath.apply(uri);
   }
 
-  private static Object findPath(String uri) {
+  private Object findPath(String uri) {
     Path path = findExistingPath(uri);
-    if (pathDoesNotExist(path)) {
-      return findFileCompilableToPath(uri);
+    if ((path != null) && Resources.isPublic(path)) {
+      return is_binary(path) ? path : new CompiledPath(path, path);
     }
 
-    return is_binary(path) ? path : new CompiledPath(path, path);
+    return findFileCompilableToPath(uri);
   }
 
-  private static Object findFileCompilableToPath(String uri) {
-    if (uri.endsWith(".js")) {
-      return findPath(replaceLast(uri, ".js", ".coffee"));
+  private Object findFileCompilableToPath(String uri) {
+    String extension = extension(uri);
+
+    for (String sourceExtension : compilers.extensionsThatCompileTo(extension)) {
+      Path sourcePath = Paths.get(replaceLast(uri, extension, sourceExtension));
+
+      if (exists(sourcePath)) {
+        return new CompiledPath(sourcePath, sourcePath);
+      }
     }
-    if (uri.endsWith(".css")) {
-      return findPath(replaceLast(uri, ".css", ".less"));
-    }
+
     return NOT_FOUND;
   }
 
-  private static boolean pathDoesNotExist(Path path) {
-    return (path == null) || !Resources.isPublic(path);
+  private static String extension(String uri) {
+    int dotIndex = uri.lastIndexOf('.');
+    if (dotIndex <= 0) {
+      return "";
+    }
+    return uri.substring(dotIndex);
   }
 }

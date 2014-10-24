@@ -37,7 +37,7 @@ public class CompilersTest {
 
   @Test
   public void register_custom_compiler() {
-    compilers.register(() -> (path, source) -> source + source, ".copycat");
+    compilers.register(() -> (path, source) -> source + source, ".html", ".copycat");
 
     String source = compilers.compile(Paths.get("file.copycat"), "Hello").content();
 

@@ -15,7 +15,6 @@
  */
 package net.codestory.http;
 
-import net.codestory.http.compilers.CompiledPath;
 import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.extensions.Extensions;
 import net.codestory.http.misc.Env;
@@ -26,7 +25,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static java.util.stream.Collectors.joining;
 import static net.codestory.http.misc.Fluent.ofChars;
@@ -62,16 +60,15 @@ public class ExtensionsTest extends AbstractProdWebServerTest {
   @Test
   public void custom_compiler() {
     server.configure(routes -> routes
-      // TODO: fix this
-      .get("/extensions/custom_compiler", () -> new CompiledPath(Paths.get("/extensions/custom_compiler.script"), Paths.get("/extensions/custom_compiler.script")))
       .setExtensions(new Extensions() {
         @Override
         public void configureCompilers(CompilerFacade compilers, Env env) {
-          compilers.registerCompiler(SortContentCompiler::new, ".script");
+          compilers.registerCompiler(SortContentCompiler::new, ".html", ".script");
         }
       }));
 
-    get("/extensions/custom_compiler").produces("HWdellloor");
+    get("/extensions/custom_compiler.html").produces("HWdellloor");
+    get("/extensions/custom_compiler.script").produces("HelloWorld"); // TODO
   }
 
   static class HelloWorldResolver implements BasicResolver {

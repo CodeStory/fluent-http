@@ -50,11 +50,15 @@ public class CompilerFacade {
     handlebars.addResolver(resolver);
   }
 
-  public void registerCompiler(Supplier<Compiler> compilerFactory, String firstExtension, String... moreExtensions) {
-    compilers.register(compilerFactory, firstExtension, moreExtensions);
+  public void registerCompiler(Supplier<Compiler> compilerFactory, String targetExtension, String firstExtension, String... moreExtensions) {
+    compilers.register(compilerFactory, targetExtension, firstExtension, moreExtensions);
   }
 
   // Compilation
+
+  public Set<String> extensionsThatCompileTo(String extension) {
+    return compilers.extensionsThatCompileTo(extension);
+  }
 
   public CacheEntry compile(Path path, String content) {
     return compilers.compile(path, content);
