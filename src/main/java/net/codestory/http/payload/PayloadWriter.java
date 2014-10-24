@@ -41,14 +41,14 @@ import net.codestory.http.types.*;
 public class PayloadWriter {
   protected final Env env;
   protected final Site site;
-  protected final CompilerFacade compilerFacade;
+  protected final CompilerFacade compilers;
   protected final Request request;
   protected final Response response;
 
-  public PayloadWriter(Env env, Site site, CompilerFacade compilerFacade, Request request, Response response) {
+  public PayloadWriter(Env env, Site site, CompilerFacade compilers, Request request, Response response) {
     this.env = env;
     this.site = site;
-    this.compilerFacade = compilerFacade;
+    this.compilers = compilers;
     this.request = request;
     this.response = response;
   }
@@ -337,7 +337,7 @@ public class PayloadWriter {
     keyValues.put("env", env);
     keyValues.put("site", site);
 
-    CacheEntry html = new Template(view).render(keyValues, compilerFacade);
+    CacheEntry html = new Template(view).render(keyValues, compilers);
 
     return html.toBytes();
   }
@@ -357,7 +357,7 @@ public class PayloadWriter {
     }
 
     String content = Resources.read(path, UTF_8);
-    return compilerFacade.compile(path, content).toBytes();
+    return compilers.compile(path, content).toBytes();
   }
 
   protected byte[] forTemplatePath(Path path) {
