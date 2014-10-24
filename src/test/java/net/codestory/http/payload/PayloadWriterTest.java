@@ -15,22 +15,29 @@
  */
 package net.codestory.http.payload;
 
-import static java.nio.charset.StandardCharsets.*;
+import net.codestory.http.Cookie;
+import net.codestory.http.Cookies;
+import net.codestory.http.Request;
+import net.codestory.http.Response;
+import net.codestory.http.compilers.CompilerFacade;
+import net.codestory.http.misc.Env;
+import net.codestory.http.templating.Site;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Paths;
+import java.util.Optional;
+import java.util.concurrent.Executors;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static net.codestory.http.constants.Headers.*;
 import static net.codestory.http.constants.HttpStatus.*;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
-
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
-import java.util.concurrent.ExecutorService;
-
-import net.codestory.http.*;
-import net.codestory.http.compilers.*;
-import net.codestory.http.misc.*;
-import net.codestory.http.templating.*;
-
-import org.junit.*;
 
 public class PayloadWriterTest {
   static Env env = new Env();
@@ -39,65 +46,82 @@ public class PayloadWriterTest {
 
   Request request = mock(Request.class);
   Response response = mock(Response.class);
+  OutputStream outputStream = mock(OutputStream.class);
   Cookies cookies = mock(Cookies.class);
 
-  PayloadWriter writer = new PayloadWriter(request, response, env, site, compilerFacade, mock(ExecutorService.class));
+  PayloadWriter writer = new PayloadWriter(request, response, env, site, compilerFacade, Executors.newSingleThreadExecutor());
 
   @Before
   public void setupContext() throws IOException {
     when(request.cookies()).thenReturn(cookies);
-    when(response.outputStream()).thenReturn(new ByteArrayOutputStream());
+    when(response.outputStream()).thenReturn(outputStream);
   }
 
   @Test
   public void support_string() throws IOException {
-    Payload payload = new Payload("Hello");
+    writer.write(new Payload(new Payload("Hello")));
 
-    assertThat(payload.code()).isEqualTo(200);
-    assertThat(writer.getData(payload, "/")).isEqualTo("Hello".getBytes(UTF_8));
-    assertThat(writer.getContentType(payload, "/")).isEqualTo("text/html;charset=UTF-8");
+    verify(response).setStatus(200);
+    verify(response).setValue(CONTENT_TYPE, "text/html;charset=UTF-8");
+    verify(outputStream).write("Hello".getBytes(UTF_8));
   }
 
   @Test
   public void support_byte_array() throws IOException {
     byte[] bytes = "Hello".getBytes(UTF_8);
 
-    Payload payload = new Payload(bytes);
+    writer.write(new Payload(bytes));
 
-    assertThat(writer.getData(payload, "/")).isSameAs(bytes);
-    assertThat(writer.getContentType(payload, "/")).isEqualTo("application/octet-stream");
+    verify(response).setValue(CONTENT_TYPE, "application/octet-stream");
+    verify(outputStream).write(bytes);
   }
 
   @Test
   public void support_bean_to_json() throws IOException {
-    Payload payload = new Payload(new Person("NAME", 42));
+    writer.write(new Payload(new Person("NAME", 42)));
 
-    assertThat(writer.getData(payload, "/")).isEqualTo("{\"name\":\"NAME\",\"age\":42}".getBytes(UTF_8));
-    assertThat(writer.getContentType(payload, "/")).isEqualTo("application/json;charset=UTF-8");
+    verify(response).setValue(CONTENT_TYPE, "application/json;charset=UTF-8");
+    verify(outputStream).write("{\"name\":\"NAME\",\"age\":42}".getBytes(UTF_8));
   }
 
   @Test
   public void support_custom_content_type() throws IOException {
-    Payload payload = new Payload("text/plain", "Hello");
+    writer.write(new Payload("text/plain", "Hello"));
 
-    assertThat(writer.getData(payload, "/")).isEqualTo("Hello".getBytes(UTF_8));
-    assertThat(writer.getContentType(payload, "/")).isEqualTo("text/plain");
+    verify(response).setValue(CONTENT_TYPE, "text/plain");
+    verify(outputStream).write("Hello".getBytes(UTF_8));
   }
 
   @Test
   public void support_stream() throws IOException {
-    Payload payload = new Payload("text/plain", new ByteArrayInputStream("Hello".getBytes()));
+    writer.write(new Payload("text/plain", new ByteArrayInputStream("Hello".getBytes(UTF_8))));
 
-    assertThat(writer.getData(payload, "/")).isEqualTo("Hello".getBytes(UTF_8));
-    assertThat(writer.getContentType(payload, "/")).isEqualTo("text/plain");
+    verify(response).setValue(CONTENT_TYPE, "text/plain");
+    verify(response).setValue(CACHE_CONTROL, "no-cache");
+    verify(response).setValue(CONNECTION, "keep-alive");
+    verify(response, timeout(100)).close();
+
+    ArgumentCaptor<byte[]> bytesCaptor = ArgumentCaptor.forClass(byte[].class);
+    verify(outputStream).write(bytesCaptor.capture(), eq(0), eq(5));
+    assertThat(bytesCaptor.getValue()).startsWith((byte) 'H', (byte) 'e', (byte) 'l', (byte) 'l', (byte) 'o');
   }
 
   @Test
   public void support_present_optional() throws IOException {
-    Payload payload = new Payload("text/plain", Optional.of("TEXT"));
+    writer.write(new Payload("text/plain", Optional.of("TEXT")));
 
-    assertThat(writer.getData(payload, "/")).isEqualTo("TEXT".getBytes(UTF_8));
-    assertThat(writer.getContentType(payload, "/")).isEqualTo("text/plain");
+    verify(response).setValue(CONTENT_TYPE, "text/plain");
+    verify(outputStream).write("TEXT".getBytes(UTF_8));
+  }
+
+  @Test
+  public void support_absent_optional() throws IOException {
+    Payload payload = new Payload("text/plain", Optional.empty());
+    writer.write(payload);
+
+    verify(response).setStatus(NOT_FOUND);
+    verify(response).setContentLength(0);
+    verifyNoMoreInteractions(response);
   }
 
   @Test
@@ -109,16 +133,6 @@ public class PayloadWriterTest {
     Cookie cookie = payload.cookies().get(0);
     assertThat(cookie.name()).isEqualTo("person");
     assertThat(cookie.value()).isEqualTo("{\"name\":\"Bob\",\"age\":42}");
-  }
-
-  @Test
-  public void support_absent_optional() throws IOException {
-    Payload payload = new Payload("text/plain", Optional.empty());
-    writer.write(payload);
-
-    verify(response).setStatus(NOT_FOUND);
-    verify(response).setContentLength(0);
-    verifyNoMoreInteractions(response);
   }
 
   @Test

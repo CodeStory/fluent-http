@@ -59,7 +59,7 @@ public class PayloadWriter {
     try {
       write(payload);
     } finally {
-      if (!isStream(payload)) {
+      if (!isStream(payload.rawContent())) {
         close();
       }
     }
@@ -88,6 +88,7 @@ public class PayloadWriter {
     }
 
     int code = payload.code();
+    String contentType = payload.rawContentType();
     Object content = payload.rawContent();
     if (content == null) {
       response.setStatus(code);
@@ -96,15 +97,16 @@ public class PayloadWriter {
     }
 
     String uri = request.uri();
-    String type = getContentType(payload, uri);
-    response.setValue(CONTENT_TYPE, type);
+
+    String contentTypeHeader = (contentType != null) ? contentType : getContentType(content, uri);
+    response.setValue(CONTENT_TYPE, contentTypeHeader);
     response.setStatus(code);
 
     if (HEAD.equals(request.method()) || (code == 204) || (code == 304) || ((code >= 100) && (code < 200))) {
       return;
     }
 
-    if (isStream(payload)) {
+    if (isStream(content)) {
       streamPayload(uri, payload);
     } else {
       writeBytes(uri, payload);
@@ -112,7 +114,7 @@ public class PayloadWriter {
   }
 
   protected void writeBytes(String uri, Payload payload) throws IOException {
-    DataSupplier lazyData = DataSupplier.cache(() -> getData(payload, uri));
+    DataSupplier lazyData = DataSupplier.cache(() -> getData(payload.rawContent(), uri));
 
     String etag = payload.headers().get(ETAG);
     if (etag == null) {
@@ -144,10 +146,10 @@ public class PayloadWriter {
           String json = (item instanceof String) ? (String) item : TypeConvert.toJson(item);
 
           printStream
-              .append("data: ")
-              .append(json)
-              .append("\n\n")
-              .flush();
+            .append("data: ")
+            .append(json)
+            .append("\n\n")
+            .flush();
         });
         close();
       });
@@ -159,7 +161,9 @@ public class PayloadWriter {
       executorService.submit(() -> {
         try {
           InputStreams.copy(stream, outputStream);
+          System.out.println("YO");
           close();
+          System.out.println("close");
         } catch (IOException e) {
           throw new IllegalStateException("Unable to stream", e);
         }
@@ -210,8 +214,7 @@ public class PayloadWriter {
     return Md5.of(data);
   }
 
-  protected boolean isStream(Payload payload) {
-    Object content = payload.rawContent();
+  protected boolean isStream(Object content) {
     if (content instanceof Stream<?>) {
       return true;
     }
@@ -221,13 +224,7 @@ public class PayloadWriter {
     return false;
   }
 
-  protected String getContentType(Payload payload, String uri) {
-    String contentType = payload.rawContentType();
-    if (contentType != null) {
-      return contentType;
-    }
-
-    Object content = payload.rawContent();
+  protected String getContentType(Object content, String uri) {
     if (content instanceof File) {
       File file = (File) content;
       return ContentTypes.get(file.toPath());
@@ -268,8 +265,7 @@ public class PayloadWriter {
     return "application/json;charset=UTF-8";
   }
 
-  protected byte[] getData(Payload payload, String uri) throws IOException {
-    Object content = payload.rawContent();
+  protected byte[] getData(Object content, String uri) throws IOException {
     if (content == null) {
       return null;
     }
