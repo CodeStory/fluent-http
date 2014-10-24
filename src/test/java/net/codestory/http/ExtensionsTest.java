@@ -19,6 +19,7 @@ import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.extensions.Extensions;
 import net.codestory.http.misc.Env;
 import net.codestory.http.templating.BasicResolver;
+import net.codestory.http.templating.Model;
 import net.codestory.http.testhelpers.AbstractProdWebServerTest;
 import org.junit.Test;
 
@@ -33,6 +34,20 @@ public class ExtensionsTest extends AbstractProdWebServerTest {
     }));
 
     get("/extensions/custom_resolver").produces("Hello World");
+  }
+
+  @Test
+  public void configure_handlebars() {
+    server.configure(routes -> routes
+      .get("/extensions/custom_delimiters", () -> Model.of("name", "Bob"))
+      .setExtensions(new Extensions() {
+        @Override
+        public void configureCompilers(CompilerFacade compilers, Env env) {
+          compilers.configureHandlebars(hb -> hb.startDelimiter("((").endDelimiter("))"));
+        }
+      }));
+
+    get("/extensions/custom_delimiters").produces("Hello Bob");
   }
 
   static class HelloWorldResolver implements BasicResolver {
