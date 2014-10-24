@@ -15,6 +15,7 @@
  */
 package net.codestory.http;
 
+import net.codestory.http.compilers.CompiledPath;
 import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.extensions.Extensions;
 import net.codestory.http.misc.Env;
@@ -22,6 +23,12 @@ import net.codestory.http.templating.BasicResolver;
 import net.codestory.http.templating.Model;
 import net.codestory.http.testhelpers.AbstractProdWebServerTest;
 import org.junit.Test;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static java.util.stream.Collectors.joining;
+import static net.codestory.http.misc.Fluent.ofChars;
 
 public class ExtensionsTest extends AbstractProdWebServerTest {
   @Test
@@ -39,7 +46,7 @@ public class ExtensionsTest extends AbstractProdWebServerTest {
   @Test
   public void configure_handlebars() {
     server.configure(routes -> routes
-      .get("/extensions/custom_delimiters", () -> Model.of("name", "Bob"))
+      .get("/extensions/custom_delimiters", Model.of("name", "Bob"))
       .setExtensions(new Extensions() {
         @Override
         public void configureCompilers(CompilerFacade compilers, Env env) {
@@ -48,6 +55,21 @@ public class ExtensionsTest extends AbstractProdWebServerTest {
       }));
 
     get("/extensions/custom_delimiters").produces("Hello Bob");
+  }
+
+  @Test
+  public void custom_compiler() {
+    server.configure(routes -> routes
+      // TODO: fix this
+      .get("/extensions/custom_compiler", () -> new CompiledPath(Paths.get("/extensions/custom_compiler.script"), Paths.get("/extensions/custom_compiler.script")))
+      .setExtensions(new Extensions() {
+        @Override
+        public void configureCompilers(CompilerFacade compilers, Env env) {
+          compilers.registerCompiler(SortContentCompiler::new, ".script");
+        }
+      }));
+
+    get("/extensions/custom_compiler").produces("HWdellloor");
   }
 
   static class HelloWorldResolver implements BasicResolver {
@@ -59,6 +81,13 @@ public class ExtensionsTest extends AbstractProdWebServerTest {
     @Override
     public Object resolve(Object context) {
       return "Hello World";
+    }
+  }
+
+  static class SortContentCompiler implements net.codestory.http.compilers.Compiler {
+    @Override
+    public String compile(Path path, String source) {
+      return ofChars(source).sorted().collect(joining());
     }
   }
 }
