@@ -68,7 +68,7 @@ public abstract class AbstractWebServer {
         payload = errorPage(payload);
       }
 
-      PayloadWriter payloadWriter = routes.createPayloadWriter(request, response, env, compilers, executorService);
+      PayloadWriter payloadWriter = routes.createPayloadWriter(request, response, executorService);
       payloadWriter.writeAndClose(payload);
     } catch (Exception e) {
       PayloadWriter payloadWriter = new PayloadWriter(request, response, env, new Site(env), compilers, executorService);

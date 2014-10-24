@@ -31,9 +31,11 @@ import net.codestory.http.misc.*;
 class StaticRoute implements Route {
   private static final Path NOT_FOUND = Paths.get("");
 
+  private final CompilerFacade compilers;
   private final Function<String, Object> findPath;
 
-  StaticRoute(boolean cached) {
+  StaticRoute(boolean cached, CompilerFacade compilers) {
+    this.compilers = compilers;
     if (cached) {
       this.findPath = new Cache<>(StaticRoute::findPath);
     } else {

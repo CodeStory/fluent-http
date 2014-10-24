@@ -73,9 +73,9 @@ class ReloadingRoutesProvider implements RoutesProvider {
       classesWatchers.forEach(FolderWatcher::ensureStarted);
       appWatcher.ensureStarted();
 
-      routes = new RouteCollection(new Site(env));
+      routes = new RouteCollection(env, new Site(env), compiler);
       configuration.configure(routes);
-      routes.installExtensions(env, compiler);
+      routes.installExtensions();
       routes.addStaticRoutes(false);
 
       dirty.set(false);

@@ -44,28 +44,32 @@ import static net.codestory.http.payload.Payload.*;
 import static net.codestory.http.routes.UriParser.paramsCount;
 
 public class RouteCollection implements Routes {
+  protected final Env env;
   protected final Site site;
   protected final Deque<Route> routes;
   protected final Deque<Supplier<Filter>> filters;
+  protected final CompilerFacade compilers;
 
   protected IocAdapter iocAdapter;
   protected Extensions extensions;
 
-  public RouteCollection(Site site) {
+  public RouteCollection(Env env, Site site, CompilerFacade compilers) {
+    this.env = env;
     this.site = site;
+    this.compilers = compilers;
     this.routes = new LinkedList<>();
     this.filters = new LinkedList<>();
     this.iocAdapter = new Singletons();
     this.extensions = Extensions.DEFAULT;
   }
 
-  public void installExtensions(Env env, CompilerFacade compilers) {
+  public void installExtensions() {
     TypeConvert.configureOrReplaceMapper(mapper -> extensions.configureOrReplaceObjectMapper(mapper, env));
     extensions.configureCompilers(compilers, env);
   }
 
-  public PayloadWriter createPayloadWriter(Request request, Response response, Env env, CompilerFacade compilerFacade, ExecutorService executorService) {
-    return extensions.createPayloadWriter(request, response, env, site, compilerFacade, executorService);
+  public PayloadWriter createPayloadWriter(Request request, Response response, ExecutorService executorService) {
+    return extensions.createPayloadWriter(request, response, env, site, compilers, executorService);
   }
 
   public Context createContext(Request request, Response response) {
@@ -410,10 +414,10 @@ public class RouteCollection implements Routes {
 
   public void addStaticRoutes(boolean prodMode) {
     routes.add(new WebJarsRoute(prodMode));
-    routes.add(new StaticRoute(prodMode));
+    routes.add(new StaticRoute(prodMode, compilers));
     if (!prodMode) {
-      routes.add(new SourceMapRoute());
-      routes.add(new SourceRoute());
+      routes.add(new SourceMapRoute(compilers));
+      routes.add(new SourceRoute(compilers));
     }
   }
 

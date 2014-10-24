@@ -22,10 +22,17 @@ import static net.codestory.http.io.Strings.*;
 import java.nio.file.*;
 
 import net.codestory.http.*;
+import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.io.*;
 
 public class SourceRoute implements Route {
   private static final Path NOT_FOUND = Paths.get("");
+
+  private final CompilerFacade compilers;
+
+  SourceRoute(CompilerFacade compilers) {
+    this.compilers = compilers;
+  }
 
   @Override
   public boolean matchUri(String uri) {

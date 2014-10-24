@@ -26,6 +26,12 @@ import net.codestory.http.io.*;
 import net.codestory.http.payload.*;
 
 class SourceMapRoute implements Route {
+  private final CompilerFacade compilers;
+
+  SourceMapRoute(CompilerFacade compilers) {
+    this.compilers = compilers;
+  }
+
   @Override
   public boolean matchUri(String uri) {
     return uri.endsWith(".map") && Resources.isPublic(pathSource(uri));

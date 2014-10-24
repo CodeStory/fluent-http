@@ -17,13 +17,15 @@ package net.codestory.http.routes;
 
 import static org.mockito.Mockito.*;
 
+import net.codestory.http.compilers.CompilerFacade;
+import net.codestory.http.misc.Env;
 import net.codestory.http.templating.*;
 
 import org.junit.*;
 import org.junit.rules.*;
 
 public class RouteCollectionTest {
-  RouteCollection routeCollection = new RouteCollection(mock(Site.class));
+  RouteCollection routeCollection = new RouteCollection(mock(Env.class), mock(Site.class), mock(CompilerFacade.class));
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();
