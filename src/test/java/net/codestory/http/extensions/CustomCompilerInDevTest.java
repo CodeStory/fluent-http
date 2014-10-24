@@ -13,15 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http;
+package net.codestory.http.extensions;
 
 import net.codestory.http.compilers.CompilerFacade;
-import net.codestory.http.extensions.Extensions;
 import net.codestory.http.misc.Env;
-import net.codestory.http.templating.BasicResolver;
-import net.codestory.http.templating.Model;
-import net.codestory.http.testhelpers.AbstractProdWebServerTest;
-import org.junit.Ignore;
+import net.codestory.http.testhelpers.AbstractDevWebServerTest;
 import org.junit.Test;
 
 import java.nio.file.Path;
@@ -29,34 +25,7 @@ import java.nio.file.Path;
 import static java.util.stream.Collectors.joining;
 import static net.codestory.http.misc.Fluent.ofChars;
 
-public class ExtensionsTest extends AbstractProdWebServerTest {
-  @Test
-  public void add_handlebars_resolver() {
-    server.configure(routes -> routes.setExtensions(new Extensions() {
-      @Override
-      public void configureCompilers(CompilerFacade compilers, Env env) {
-        compilers.addHandlebarResolver(new HelloWorldResolver());
-      }
-    }));
-
-    get("/extensions/custom_resolver").produces("Hello World");
-  }
-
-  @Test
-  @Ignore
-  public void configure_handlebars() {
-    server.configure(routes -> routes
-      .get("/extensions/custom_delimiters", Model.of("name", "Bob"))
-      .setExtensions(new Extensions() {
-        @Override
-        public void configureCompilers(CompilerFacade compilers, Env env) {
-          compilers.configureHandlebars(hb -> hb.startDelimiter("((").endDelimiter("))"));
-        }
-      }));
-
-    get("/extensions/custom_delimiters").produces("Hello Bob");
-  }
-
+public class CustomCompilerInDevTest extends AbstractDevWebServerTest {
   @Test
   public void custom_compiler() {
     server.configure(routes -> routes
@@ -69,20 +38,8 @@ public class ExtensionsTest extends AbstractProdWebServerTest {
 
     get("/extensions/custom_compiler.html").produces("HWdellloor");
     get("/extensions/custom_compiler.script").produces("HWdellloor");
-    get("/extensions/custom_compiler.html.source").produces(404);
-    get("/extensions/custom_compiler.script.source").produces(404);
-  }
-
-  static class HelloWorldResolver implements BasicResolver {
-    @Override
-    public String tag() {
-      return "greeting";
-    }
-
-    @Override
-    public Object resolve(Object context) {
-      return "Hello World";
-    }
+    get("/extensions/custom_compiler.html.source").produces("HelloWorld");
+    get("/extensions/custom_compiler.script.source").produces("HelloWorld");
   }
 
   static class SortContentCompiler implements net.codestory.http.compilers.Compiler {

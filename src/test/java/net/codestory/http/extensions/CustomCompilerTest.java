@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http;
+package net.codestory.http.extensions;
 
 import net.codestory.http.compilers.CompilerFacade;
-import net.codestory.http.extensions.Extensions;
 import net.codestory.http.misc.Env;
-import net.codestory.http.testhelpers.AbstractDevWebServerTest;
+import net.codestory.http.testhelpers.AbstractProdWebServerTest;
 import org.junit.Test;
 
 import java.nio.file.Path;
@@ -26,7 +25,7 @@ import java.nio.file.Path;
 import static java.util.stream.Collectors.joining;
 import static net.codestory.http.misc.Fluent.ofChars;
 
-public class ExtensionsInDevTest extends AbstractDevWebServerTest {
+public class CustomCompilerTest extends AbstractProdWebServerTest {
   @Test
   public void custom_compiler() {
     server.configure(routes -> routes
@@ -39,8 +38,8 @@ public class ExtensionsInDevTest extends AbstractDevWebServerTest {
 
     get("/extensions/custom_compiler.html").produces("HWdellloor");
     get("/extensions/custom_compiler.script").produces("HWdellloor");
-    get("/extensions/custom_compiler.html.source").produces("HelloWorld");
-    get("/extensions/custom_compiler.script.source").produces("HelloWorld");
+    get("/extensions/custom_compiler.html.source").produces(404);
+    get("/extensions/custom_compiler.script.source").produces(404);
   }
 
   static class SortContentCompiler implements net.codestory.http.compilers.Compiler {
