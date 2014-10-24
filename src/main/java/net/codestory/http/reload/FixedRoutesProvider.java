@@ -26,8 +26,8 @@ class FixedRoutesProvider implements RoutesProvider {
 
   FixedRoutesProvider(Env env, CompilerFacade compiler, Configuration configuration) {
     routes = new RouteCollection(new Site(env));
-    routes.installExtensions(env, compiler);
     configuration.configure(routes);
+    routes.installExtensions(env, compiler);
     routes.addStaticRoutes(true);
   }
 

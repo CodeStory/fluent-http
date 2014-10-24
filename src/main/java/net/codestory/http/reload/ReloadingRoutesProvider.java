@@ -74,8 +74,8 @@ class ReloadingRoutesProvider implements RoutesProvider {
       appWatcher.ensureStarted();
 
       routes = new RouteCollection(new Site(env));
-      routes.installExtensions(env, compiler);
       configuration.configure(routes);
+      routes.installExtensions(env, compiler);
       routes.addStaticRoutes(false);
 
       dirty.set(false);
