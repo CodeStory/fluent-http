@@ -22,6 +22,7 @@ import net.codestory.http.misc.Env;
 import net.codestory.http.templating.BasicResolver;
 import net.codestory.http.templating.Model;
 import net.codestory.http.testhelpers.AbstractProdWebServerTest;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.nio.file.Path;
@@ -44,6 +45,7 @@ public class ExtensionsTest extends AbstractProdWebServerTest {
   }
 
   @Test
+  @Ignore
   public void configure_handlebars() {
     server.configure(routes -> routes
       .get("/extensions/custom_delimiters", Model.of("name", "Bob"))
