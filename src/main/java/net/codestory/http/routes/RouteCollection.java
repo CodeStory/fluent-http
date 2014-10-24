@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 
 import static net.codestory.http.annotations.AnnotationHelper.parseAnnotations;
@@ -63,8 +64,8 @@ public class RouteCollection implements Routes {
     extensions.configureCompilers(compilers, env);
   }
 
-  public PayloadWriter createPayloadWriter(Request request, Response response, Env env, CompilerFacade compilerFacade) {
-    return extensions.createPayloadWriter(request, response, env, site, compilerFacade);
+  public PayloadWriter createPayloadWriter(Request request, Response response, Env env, CompilerFacade compilerFacade, ExecutorService executorService) {
+    return extensions.createPayloadWriter(request, response, env, site, compilerFacade, executorService);
   }
 
   public Context createContext(Request request, Response response) {

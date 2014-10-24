@@ -23,6 +23,7 @@ import static org.mockito.Mockito.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
 
 import net.codestory.http.*;
 import net.codestory.http.compilers.*;
@@ -40,7 +41,7 @@ public class PayloadWriterTest {
   Response response = mock(Response.class);
   Cookies cookies = mock(Cookies.class);
 
-  PayloadWriter writer = new PayloadWriter(env, site, compilerFacade, request, response);
+  PayloadWriter writer = new PayloadWriter(request, response, env, site, compilerFacade, mock(ExecutorService.class));
 
   @Before
   public void setupContext() throws IOException {

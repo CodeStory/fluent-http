@@ -21,6 +21,7 @@ import net.codestory.http.compilers.Compilers;
 import net.codestory.http.errors.ErrorPage;
 import net.codestory.http.errors.HttpException;
 import net.codestory.http.misc.Env;
+import net.codestory.http.misc.NamedDaemonThreadFactory;
 import net.codestory.http.payload.Payload;
 import net.codestory.http.payload.PayloadWriter;
 import net.codestory.http.reload.RoutesProvider;
@@ -32,23 +33,27 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public abstract class AbstractWebServer {
   protected final static Logger LOG = LoggerFactory.getLogger(AbstractWebServer.class);
 
   protected final Env env;
-  protected final CompilerFacade compilerFacade;
+  protected final CompilerFacade compilers;
+  protected final ExecutorService executorService;
   protected RoutesProvider routesProvider;
 
   protected AbstractWebServer() {
     this.env = createEnv();
-    this.compilerFacade = createCompilerFacade(env);
+    this.compilers = createCompilerFacade();
+    this.executorService = createExecutorService();
   }
 
   public AbstractWebServer configure(Configuration configuration) {
     this.routesProvider = env.prodMode()
-      ? RoutesProvider.fixed(env, compilerFacade, configuration)
-      : RoutesProvider.reloading(env, compilerFacade, configuration);
+      ? RoutesProvider.fixed(env, compilers, configuration)
+      : RoutesProvider.reloading(env, compilers, configuration);
     return this;
   }
 
@@ -63,10 +68,10 @@ public abstract class AbstractWebServer {
         payload = errorPage(payload);
       }
 
-      PayloadWriter payloadWriter = routes.createPayloadWriter(request, response, env, compilerFacade);
+      PayloadWriter payloadWriter = routes.createPayloadWriter(request, response, env, compilers, executorService);
       payloadWriter.writeAndClose(payload);
     } catch (Exception e) {
-      PayloadWriter payloadWriter = new PayloadWriter(env, new Site(env), compilerFacade, request, response);
+      PayloadWriter payloadWriter = new PayloadWriter(request, response, env, new Site(env), compilers, executorService);
       handleServerError(payloadWriter, e);
     }
   }
@@ -110,10 +115,14 @@ public abstract class AbstractWebServer {
     return new Env();
   }
 
-  protected CompilerFacade createCompilerFacade(Env env) {
+  protected CompilerFacade createCompilerFacade() {
     Compilers compilers = new Compilers(env);
     HandlebarsCompiler handlebar = new HandlebarsCompiler(compilers);
 
     return new CompilerFacade(compilers, handlebar);
+  }
+
+  protected ExecutorService createExecutorService() {
+    return Executors.newCachedThreadPool(new NamedDaemonThreadFactory());
   }
 }

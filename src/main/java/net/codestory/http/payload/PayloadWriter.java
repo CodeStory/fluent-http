@@ -39,18 +39,20 @@ import net.codestory.http.templating.*;
 import net.codestory.http.types.*;
 
 public class PayloadWriter {
+  protected final Request request;
+  protected final Response response;
   protected final Env env;
   protected final Site site;
   protected final CompilerFacade compilers;
-  protected final Request request;
-  protected final Response response;
+  protected final ExecutorService executorService;
 
-  public PayloadWriter(Env env, Site site, CompilerFacade compilers, Request request, Response response) {
+  public PayloadWriter(Request request, Response response, Env env, Site site, CompilerFacade compilers, ExecutorService executorService) {
+    this.request = request;
+    this.response = response;
     this.env = env;
     this.site = site;
     this.compilers = compilers;
-    this.request = request;
-    this.response = response;
+    this.executorService = executorService;
   }
 
   public void writeAndClose(Payload payload) throws IOException {
@@ -132,14 +134,12 @@ public class PayloadWriter {
     response.setValue(CACHE_CONTROL, "no-cache");
     response.setValue(CONNECTION, "keep-alive");
 
-    ExecutorService executor = createExecutorService();
-
     if (payload.rawContent() instanceof Stream<?>) {
       Stream<?> stream = (Stream<?>) payload.rawContent();
 
       PrintStream printStream = response.printStream();
 
-      executor.submit(() -> {
+      executorService.submit(() -> {
         stream.forEach(item -> {
           String json = (item instanceof String) ? (String) item : TypeConvert.toJson(item);
 
@@ -156,7 +156,7 @@ public class PayloadWriter {
 
       OutputStream outputStream = response.outputStream();
 
-      executor.submit(() -> {
+      executorService.submit(() -> {
         try {
           InputStreams.copy(stream, outputStream);
           close();
@@ -362,9 +362,5 @@ public class PayloadWriter {
 
   protected byte[] forTemplatePath(Path path) {
     return forModelAndView(ModelAndView.of(Resources.toUnixString(path)));
-  }
-
-  protected ExecutorService createExecutorService() {
-    return Executors.newCachedThreadPool(new NamedDaemonThreadFactory());
   }
 }
