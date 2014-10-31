@@ -17,7 +17,6 @@ package net.codestory.http.testhelpers;
 
 import static com.squareup.okhttp.Request.*;
 import static java.net.CookiePolicy.*;
-import static net.codestory.http.misc.Fluent.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.io.*;
@@ -162,14 +161,14 @@ public abstract class AbstractWebServerTest {
 
     public RestAssert producesCookie(String name, String value) {
       List<HttpCookie> cookies = cookieManager.getCookieStore().getCookies();
-      String actualValue = of(cookies).firstMatch(cookie -> cookie.getName().equals(name)).map(cookie -> cookie.getValue()).orElse(null);
+      String actualValue = cookies.stream().filter(cookie -> cookie.getName().equals(name)).findFirst().map(cookie -> cookie.getValue()).orElse(null);
       assertThat(actualValue).isEqualTo(value);
       return this;
     }
 
     public <T> RestAssert producesCookie(String name, Class<T> type, Consumer<T> validation) {
       List<HttpCookie> cookies = cookieManager.getCookieStore().getCookies();
-      String actualValue = of(cookies).firstMatch(cookie -> cookie.getName().equals(name)).map(cookie -> cookie.getValue()).orElse(null);
+      String actualValue = cookies.stream().filter(cookie -> cookie.getName().equals(name)).findFirst().map(cookie -> cookie.getValue()).orElse(null);
       System.out.println(actualValue);
       validation.accept(TypeConvert.fromJson(actualValue, type));
       return this;

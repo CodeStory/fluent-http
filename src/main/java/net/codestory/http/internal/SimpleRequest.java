@@ -15,7 +15,7 @@
  */
 package net.codestory.http.internal;
 
-import static net.codestory.http.misc.Fluent.*;
+import static java.util.stream.Collectors.toList;
 
 import java.io.*;
 import java.net.*;
@@ -92,7 +92,7 @@ class SimpleRequest implements Request {
 
   @Override
   public List<Part> parts() {
-    return of(request.getParts()).map(part -> (Part) new SimplePart(part)).toList();
+    return request.getParts().stream().map(part -> new SimplePart(part)).collect(toList());
   }
 
   @Override

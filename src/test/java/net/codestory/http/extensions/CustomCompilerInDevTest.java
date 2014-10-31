@@ -22,9 +22,6 @@ import org.junit.Test;
 
 import java.nio.file.Path;
 
-import static java.util.stream.Collectors.joining;
-import static net.codestory.http.misc.Fluent.ofChars;
-
 public class CustomCompilerInDevTest extends AbstractDevWebServerTest {
   @Test
   public void custom_compiler() {
@@ -32,20 +29,20 @@ public class CustomCompilerInDevTest extends AbstractDevWebServerTest {
       .setExtensions(new Extensions() {
         @Override
         public void configureCompilers(CompilerFacade compilers, Env env) {
-          compilers.registerCompiler(SortContentCompiler::new, ".html", ".script");
+          compilers.registerCompiler(ToLowerCaseCompiler::new, ".html", ".script");
         }
       }));
 
-    get("/extensions/custom_compiler.html").produces("HWdellloor");
-    get("/extensions/custom_compiler.script").produces("HWdellloor");
+    get("/extensions/custom_compiler.html").produces("helloworld");
+    get("/extensions/custom_compiler.script").produces("helloworld");
     get("/extensions/custom_compiler.html.source").produces("HelloWorld");
     get("/extensions/custom_compiler.script.source").produces("HelloWorld");
   }
 
-  static class SortContentCompiler implements net.codestory.http.compilers.Compiler {
+  static class ToLowerCaseCompiler implements net.codestory.http.compilers.Compiler {
     @Override
     public String compile(Path path, String source) {
-      return ofChars(source).sorted().collect(joining());
+      return source.toLowerCase();
     }
   }
 }

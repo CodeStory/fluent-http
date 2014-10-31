@@ -17,9 +17,9 @@ package net.codestory.http.io;
 
 import static java.nio.charset.StandardCharsets.*;
 import static java.nio.file.Files.*;
+import static java.util.stream.Stream.of;
 import static net.codestory.http.io.FileVisitor.*;
 import static net.codestory.http.io.Resources.*;
-import static net.codestory.http.misc.Fluent.*;
 
 import java.io.*;
 import java.net.*;
@@ -33,7 +33,7 @@ public class ClassPaths {
     if (!(parent instanceof URLClassLoader)) {
       return new URL[0];
     }
-    return of(((URLClassLoader) parent).getURLs()).exclude(url -> url.toString().endsWith(".jar")).toArray(URL[]::new);
+    return of(((URLClassLoader) parent).getURLs()).filter(url -> !url.toString().endsWith(".jar")).toArray(URL[]::new);
   }
 
   public static URL getResource(String path) {

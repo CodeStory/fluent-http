@@ -15,7 +15,8 @@
  */
 package net.codestory.http.routes;
 
-import static net.codestory.http.misc.Fluent.*;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Stream.of;
 import static org.assertj.core.api.Assertions.*;
 
 import java.lang.reflect.*;
@@ -29,12 +30,12 @@ public class RoutesWithPatternTest {
     List<Method> methodsWithExplicitUri = of(Routes.class.getDeclaredMethods())
       .filter(method -> method.getParameterCount() > 1)
       .filter(method -> method.getParameterTypes()[0].isAssignableFrom(String.class))
-      .exclude(method -> method.getName().equals("add"))
-      .toList();
+      .filter(method -> !method.getName().equals("add"))
+      .collect(toList());
 
     List<Method> methodsWithImplicitUri = of(RoutesWithPattern.class.getDeclaredMethods())
-      .exclude(method -> method.getName().equals("with"))
-      .toList();
+      .filter(method -> !method.getName().equals("with"))
+      .collect(toList());
 
     assertThat(methodsWithExplicitUri).hasSameSizeAs(methodsWithImplicitUri);
   }

@@ -15,7 +15,8 @@
  */
 package net.codestory.http.reload;
 
-import static net.codestory.http.misc.Fluent.*;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Stream.of;
 
 import java.net.*;
 import java.nio.file.*;
@@ -47,13 +48,13 @@ class ReloadingRoutesProvider implements RoutesProvider {
     this.compiler = compiler;
     this.configuration = configuration;
     this.dirty = new AtomicBoolean(true);
-    this.classesWatchers = of(classpathFolders()).map(path -> new FolderWatcher(path, ev -> dirty.set(true))).toList();
+    this.classesWatchers = classpathFolders().stream().map(path -> new FolderWatcher(path, ev -> dirty.set(true))).collect(toList());
     this.appWatcher = new FolderWatcher(env.appPath(), ev -> dirty.set(true));
   }
 
   protected List<Path> classpathFolders() {
     URL[] urls = ClassPaths.getUrls(Thread.currentThread().getContextClassLoader());
-    return of(urls).map(url -> Paths.get(toUri(url))).toList();
+    return of(urls).map(url -> Paths.get(toUri(url))).collect(toList());
   }
 
   private static URI toUri(URL url) {

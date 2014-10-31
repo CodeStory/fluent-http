@@ -25,7 +25,6 @@ import java.util.concurrent.*;
 
 import net.codestory.http.*;
 import net.codestory.http.filters.*;
-import net.codestory.http.misc.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.security.*;
 
@@ -50,7 +49,7 @@ public class CookieAuthFilter implements Filter {
   }
 
   public CookieAuthFilter(String uriPrefix, Users users, SessionIdStore sessionIdStore, String ignoreExtension, String... moreIgnoreExtensions) {
-    this(uriPrefix, users, sessionIdStore, Fluent.of(ignoreExtension).concat(moreIgnoreExtensions).toArray(String[]::new));
+    this(uriPrefix, users, sessionIdStore, concat(of(ignoreExtension), of(moreIgnoreExtensions)).toArray(String[]::new));
   }
 
   private CookieAuthFilter(String uriPrefix, Users users, SessionIdStore sessionIdStore, String[] ignoreExtensions) {

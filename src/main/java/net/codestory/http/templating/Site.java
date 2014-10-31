@@ -17,15 +17,17 @@ package net.codestory.http.templating;
 
 import static java.nio.charset.StandardCharsets.*;
 import static java.nio.file.Files.*;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static net.codestory.http.io.FileVisitor.*;
 import static net.codestory.http.io.Resources.*;
-import static net.codestory.http.misc.Fluent.*;
 import static net.codestory.http.misc.MemoizingSupplier.*;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.Collectors;
 
 import net.codestory.http.convert.*;
 import net.codestory.http.io.*;
@@ -46,28 +48,30 @@ public class Site {
 
     yaml = memoize(() -> loadYamlConfig("_config.yml"));
 
-    data = memoize(() -> of(resourceList.get())
+    data = memoize(() -> resourceList.get()
+        .stream()
         .filter(path -> path.startsWith("_data/"))
-        .toMap(path -> nameWithoutExtension(path), path -> readYaml(path))
+        .collect(toMap(path -> nameWithoutExtension(path), path -> readYaml(path)))
     );
 
-    pages = memoize(() -> of(resourceList.get())
+    pages = memoize(() -> resourceList.get()
+        .stream()
         .filter(path -> !path.startsWith("_"))
         .map(path -> Site.pathToMap(path))
-        .toList()
+        .collect(toList())
     );
 
     tags = memoize(() -> {
       Map<String, List<Map<String, Object>>> tags = new TreeMap<>();
       for (Map<String, Object> page : getPages()) {
         for (String tag : tags(page)) {
-          tags.computeIfAbsent(tag, key -> new ArrayList<Map<String, Object>>()).add(page);
+          tags.computeIfAbsent(tag, key -> new ArrayList<>()).add(page);
         }
       }
       return tags;
     });
 
-    categories = memoize(() -> of(getPages()).groupBy(page -> Site.category(page), TreeMap::new));
+    categories = memoize(() -> getPages().stream().collect(Collectors.groupingBy(page -> Site.category(page), TreeMap::new, toList())));
   }
 
   private static Set<String> list(Env env) {
