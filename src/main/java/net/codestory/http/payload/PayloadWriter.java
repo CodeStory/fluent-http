@@ -161,7 +161,8 @@ public class PayloadWriter {
         printStream
           .append("data: ")
           .append(jsonOrPlainString.replaceAll("[\n]", "\ndata: "))
-          .append("\n\n");
+          .append("\n\n")
+          .flush();
       });
       close();
     });
