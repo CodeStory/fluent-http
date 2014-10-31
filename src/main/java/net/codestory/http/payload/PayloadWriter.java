@@ -132,40 +132,69 @@ public class PayloadWriter {
     write(data);
   }
 
-  protected void streamPayload(String uri, Payload payload) throws IOException {
+  protected void writeStreamingHeaders() throws IOException {
     response.setValue(CACHE_CONTROL, "no-cache");
     response.setValue(CONNECTION, "keep-alive");
+  }
+
+  protected void streamPayload(String uri, Payload payload) throws IOException {
+    writeStreamingHeaders();
 
     if (payload.rawContent() instanceof Stream<?>) {
-      Stream<?> stream = (Stream<?>) payload.rawContent();
-
-      PrintStream printStream = response.printStream();
-
-      executorService.submit(() -> {
-        stream.forEach(item -> {
-          String jsonOrPlainString = (item instanceof String) ? (String) item : TypeConvert.toJson(item);
-
-          printStream
-            .append("data: ")
-            .append(jsonOrPlainString.replaceAll("[\n]", "\ndata: "))
-            .append("\n\n");
-        });
-        close();
-      });
+      writeEventStream(payload);
+    } else if (payload.rawContent() instanceof BufferedReader) {
+      writeBufferedReader(payload);
     } else if (payload.rawContent() instanceof InputStream) {
-      InputStream stream = (InputStream) payload.rawContent();
-
-      OutputStream outputStream = response.outputStream();
-
-      executorService.submit(() -> {
-        try {
-          InputStreams.copy(stream, outputStream);
-          close();
-        } catch (IOException e) {
-          throw new IllegalStateException("Unable to stream", e);
-        }
-      });
+      writeInputStream(payload);
     }
+  }
+
+  protected void writeEventStream(Payload payload) throws IOException {
+    Stream<?> stream = (Stream<?>) payload.rawContent();
+
+    PrintStream printStream = response.printStream();
+
+    executorService.submit(() -> {
+      stream.forEach(item -> {
+        String jsonOrPlainString = (item instanceof String) ? (String) item : TypeConvert.toJson(item);
+
+        printStream
+          .append("data: ")
+          .append(jsonOrPlainString.replaceAll("[\n]", "\ndata: "))
+          .append("\n\n");
+      });
+      close();
+    });
+  }
+
+  protected void writeBufferedReader(Payload payload) throws IOException {
+    BufferedReader lines = (BufferedReader) payload.rawContent();
+
+    executorService.submit(() -> {
+      try (PrintStream outputStream = new PrintStream(response.outputStream(), true)) {
+        String line;
+        while (null != (line = lines.readLine())) {
+          outputStream.println(line);
+        }
+      } catch (IOException e) {
+        throw new IllegalStateException("Unable to stream", e);
+      }
+    });
+  }
+
+  protected void writeInputStream(Payload payload) throws IOException {
+    InputStream stream = (InputStream) payload.rawContent();
+
+    OutputStream outputStream = response.outputStream();
+
+    executorService.submit(() -> {
+      try {
+        InputStreams.copy(stream, outputStream);
+        close();
+      } catch (IOException e) {
+        throw new IllegalStateException("Unable to stream", e);
+      }
+    });
   }
 
   protected void write(byte[] data) throws IOException {
@@ -212,13 +241,7 @@ public class PayloadWriter {
   }
 
   protected boolean isStream(Object content) {
-    if (content instanceof Stream<?>) {
-      return true;
-    }
-    if (content instanceof InputStream) {
-      return true;
-    }
-    return false;
+    return (content instanceof Stream<?>) || (content instanceof BufferedReader) || (content instanceof InputStream);
   }
 
   protected String getContentType(Object content, String uri) {
@@ -245,6 +268,9 @@ public class PayloadWriter {
     }
     if (content instanceof InputStream) {
       return "application/octet-stream";
+    }
+    if (content instanceof BufferedReader) {
+      return "text/plain";
     }
     if (content instanceof Stream<?>) {
       return "text/event-stream";
@@ -284,9 +310,6 @@ public class PayloadWriter {
     if (content instanceof CacheEntry) {
       return ((CacheEntry) content).toBytes();
     }
-    if (content instanceof InputStream) {
-      return forInputStream((InputStream) content);
-    }
     if (content instanceof ModelAndView) {
       return forModelAndView((ModelAndView) content);
     }
@@ -315,10 +338,6 @@ public class PayloadWriter {
 
   protected byte[] forString(String value) {
     return value.getBytes(UTF_8);
-  }
-
-  protected byte[] forInputStream(InputStream stream) throws IOException {
-    return InputStreams.readBytes(stream);
   }
 
   protected byte[] forModelAndView(ModelAndView modelAndView) {
