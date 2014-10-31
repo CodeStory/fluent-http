@@ -143,20 +143,12 @@ public class PayloadWriter {
 
       executorService.submit(() -> {
         stream.forEach(item -> {
-          String json = (item instanceof String) ? (String) item : TypeConvert.toJson(item);
+          String jsonOrPlainString = (item instanceof String) ? (String) item : TypeConvert.toJson(item);
 
-          BufferedReader reader = new BufferedReader(new StringReader(json));
-          try {
-            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-              printStream
-                .append("data: ")
-                .append(line)
-                .append("\n");
-            }
-            printStream.append("\n").flush();
-          } catch (IOException e) {
-              throw new IllegalStateException("Unable to stream", e);
-          }
+          printStream
+            .append("data: ")
+            .append(jsonOrPlainString.replaceAll("[\n]", "\ndata: "))
+            .append("\n\n");
         });
         close();
       });
