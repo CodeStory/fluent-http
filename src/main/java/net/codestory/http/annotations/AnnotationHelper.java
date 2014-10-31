@@ -15,8 +15,8 @@
  */
 package net.codestory.http.annotations;
 
+import static java.util.stream.Stream.of;
 import static net.codestory.http.constants.Methods.*;
-import static net.codestory.http.misc.ForEach.*;
 
 import java.lang.reflect.*;
 
@@ -37,12 +37,12 @@ public class AnnotationHelper {
     String classPrefix = (prefixAnnotation != null) ? prefixAnnotation.value() : "";
 
     for (Method method : type.getMethods()) {
-      forEach(method.getAnnotationsByType(Get.class)).then(get -> callbask.onMethod(GET, url(urlPrefix, classPrefix, get.value()), method));
-      forEach(method.getAnnotationsByType(Post.class)).then(post -> callbask.onMethod(POST, url(urlPrefix, classPrefix, post.value()), method));
-      forEach(method.getAnnotationsByType(Put.class)).then(put -> callbask.onMethod(PUT, url(urlPrefix, classPrefix, put.value()), method));
-      forEach(method.getAnnotationsByType(Delete.class)).then(delete -> callbask.onMethod(DELETE, url(urlPrefix, classPrefix, delete.value()), method));
-      forEach(method.getAnnotationsByType(Head.class)).then(head -> callbask.onMethod(HEAD, url(urlPrefix, classPrefix, head.value()), method));
-      forEach(method.getAnnotationsByType(Options.class)).then(options -> callbask.onMethod(OPTIONS, url(urlPrefix, classPrefix, options.value()), method));
+      of(method.getAnnotationsByType(Get.class)).forEach(get -> callbask.onMethod(GET, url(urlPrefix, classPrefix, get.value()), method));
+      of(method.getAnnotationsByType(Post.class)).forEach(post -> callbask.onMethod(POST, url(urlPrefix, classPrefix, post.value()), method));
+      of(method.getAnnotationsByType(Put.class)).forEach(put -> callbask.onMethod(PUT, url(urlPrefix, classPrefix, put.value()), method));
+      of(method.getAnnotationsByType(Delete.class)).forEach(delete -> callbask.onMethod(DELETE, url(urlPrefix, classPrefix, delete.value()), method));
+      of(method.getAnnotationsByType(Head.class)).forEach(head -> callbask.onMethod(HEAD, url(urlPrefix, classPrefix, head.value()), method));
+      of(method.getAnnotationsByType(Options.class)).forEach(options -> callbask.onMethod(OPTIONS, url(urlPrefix, classPrefix, options.value()), method));
     }
   }
 
