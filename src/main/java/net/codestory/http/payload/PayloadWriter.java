@@ -161,9 +161,7 @@ public class PayloadWriter {
       executorService.submit(() -> {
         try {
           InputStreams.copy(stream, outputStream);
-          System.out.println("YO");
           close();
-          System.out.println("close");
         } catch (IOException e) {
           throw new IllegalStateException("Unable to stream", e);
         }
