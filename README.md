@@ -141,7 +141,6 @@ The web server recognizes html files but not only. It is also able to transform 
 
  + Html (`.html`)
  + Markdown (`.md` or `.markdown`) -> Html
- + Asciidoc (`.asciidoc`) -> Html
  + Xml (`.xml`)
  + Css (`.css`)
  + Less (`.less`) -> Css
@@ -236,7 +235,7 @@ A request to `/` will give this result:
 </html>
 ```
 
-A layout file can be a `.html`, `.md`, `.markdown`, `.txt` or `.asciidoc` file. It should be put in `app/_layouts` folder.
+A layout file can be a `.html`, `.md`, `.markdown` or `.txt` file. It should be put in `app/_layouts` folder.
 The layout name used in the Yaml Front Matter section can omit the layout file extension.
 Layouts are recursive, ie a layout file can have a layout.
 
@@ -336,7 +335,7 @@ routes.get("/hello", Model.of("name", "Bob"));
 Now, when the pages is rendered, `[[name]]` will be replaced server-side with `Bob`.
 
 If not specified, the name of the page (ie. the view) to render for a given uri is guessed after the uri. Files are
-looked up in this order: `uri`, `uri.html`, `uri.md`, `uri.markdown`, `uri.txt` then `uri.asciidoc`. Most of the time
+looked up in this order: `uri`, `uri.html`, `uri.md`, `uri.markdown` then `uri.txt`. Most of the time
 it will *just work*, but the view can of course be overridden:
 
 ```java
