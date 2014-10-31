@@ -38,6 +38,16 @@ public class StreamTest extends AbstractProdWebServerTest {
   }
 
   @Test
+  public void server_sent_events_multiline() {
+    AtomicLong index = new AtomicLong(0);
+    Supplier<String> messageSupplier = () -> "MESSAGE\n" + index.incrementAndGet();
+
+    server.configure(routes -> routes.get("/events", () -> Stream.generate(messageSupplier).limit(1000)));
+
+    get("/events").produces("data: MESSAGE\ndata: 1\n\n" + "data: MESSAGE\ndata: 2\n\n" + "data: MESSAGE\ndata: 3\n\n");
+    }
+
+  @Test
   public void stream() {
     byte[] buffer = "Hello World".getBytes(UTF_8);
 
