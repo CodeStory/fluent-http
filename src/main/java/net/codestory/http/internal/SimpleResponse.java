@@ -37,11 +37,6 @@ class SimpleResponse implements Response {
   }
 
   @Override
-  public PrintStream printStream() throws IOException {
-    return response.getPrintStream();
-  }
-
-  @Override
   public OutputStream outputStream() throws IOException {
     return response.getOutputStream();
   }

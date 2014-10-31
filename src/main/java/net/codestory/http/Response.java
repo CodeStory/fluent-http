@@ -15,18 +15,15 @@
  */
 package net.codestory.http;
 
-import java.io.*;
+import net.codestory.http.internal.Unwrappable;
 
-import net.codestory.http.internal.*;
+import java.io.IOException;
+import java.io.OutputStream;
 
 public interface Response extends Unwrappable {
   void close() throws IOException;
 
   OutputStream outputStream() throws IOException;
-
-  public default PrintStream printStream() throws IOException {
-    return new PrintStream(outputStream());
-  }
 
   void setContentLength(long length);
 

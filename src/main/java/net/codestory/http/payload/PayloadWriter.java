@@ -152,7 +152,7 @@ public class PayloadWriter {
   protected void writeEventStream(Payload payload) throws IOException {
     Stream<?> stream = (Stream<?>) payload.rawContent();
 
-    PrintStream printStream = response.printStream();
+    PrintStream printStream = new PrintStream(response.outputStream());
 
     executorService.submit(() -> {
       stream.forEach(item -> {
