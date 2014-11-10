@@ -26,8 +26,9 @@ public class Singletons implements IocAdapter {
     register(Singletons.class, this);
   }
 
-  public <T> void register(Class<? extends T> type, T singleton) {
+  public <T> Singletons register(Class<? extends T> type, T singleton) {
     singletons.put(type, singleton);
+    return this;
   }
 
   @SuppressWarnings("unchecked")
