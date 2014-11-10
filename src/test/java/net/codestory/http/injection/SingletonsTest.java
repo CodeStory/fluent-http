@@ -16,6 +16,7 @@
 package net.codestory.http.injection;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 import java.util.*;
 
@@ -83,6 +84,27 @@ public class SingletonsTest {
     thrown.expect(IllegalStateException.class);
 
     singletons.get(Cycle.class);
+  }
+
+  @Test
+  public void register_bean_instances() {
+    singletons.register(Number.class, 42);
+    singletons.register(String.class, "The Answer");
+
+    Number number = singletons.get(Number.class);
+    String string = singletons.get(String.class);
+
+    assertThat(number).isEqualTo(42);
+    assertThat(string).isSameAs("The Answer");
+  }
+
+  @Test
+  public void register_bean_in_constructor() {
+    Cycle cycle = mock(Cycle.class);
+    Singletons singletons = new Singletons("The Answer", cycle);
+
+    assertThat(singletons.get(String.class)).isSameAs("The Answer");
+    assertThat(singletons.get(Cycle.class)).isSameAs(cycle);
   }
 
   static class Singleton {

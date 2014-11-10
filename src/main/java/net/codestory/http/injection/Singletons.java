@@ -21,9 +21,19 @@ import java.util.*;
 public class Singletons implements IocAdapter {
   private final Map<Class<?>, Object> singletons;
 
-  public Singletons() {
+  public Singletons(Object... beansToRegister) {
     this.singletons = new HashMap<>();
     register(Singletons.class, this);
+    for (Object beanToRegister : beansToRegister) {
+      Class<?> type = beanToRegister.getClass();
+
+      // Hack to support Mockito Spies
+      if (type.getName().contains("EnhancerByMockito")) {
+        type = type.getSuperclass();
+      }
+
+      register(type, beanToRegister);
+    }
   }
 
   public <T> Singletons register(Class<? extends T> type, T singleton) {
