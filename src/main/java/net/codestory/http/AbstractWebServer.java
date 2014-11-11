@@ -15,6 +15,8 @@
  */
 package net.codestory.http;
 
+import static java.util.Arrays.asList;
+
 import net.codestory.http.compilers.CompilerException;
 import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.compilers.Compilers;
@@ -26,23 +28,29 @@ import net.codestory.http.payload.Payload;
 import net.codestory.http.payload.PayloadWriter;
 import net.codestory.http.reload.*;
 import net.codestory.http.routes.RouteCollection;
+import net.codestory.http.ssl.*;
 import net.codestory.http.templating.HandlebarsCompiler;
 import net.codestory.http.templating.Site;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.NoSuchElementException;
+import java.net.*;
+import java.nio.file.*;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public abstract class AbstractWebServer {
+import javax.net.ssl.*;
+
+public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
   protected final static Logger LOG = LoggerFactory.getLogger(AbstractWebServer.class);
 
   protected final Env env;
   protected final CompilerFacade compilers;
   protected final ExecutorService executorService;
   protected RoutesProvider routesProvider;
+  protected int port;
 
   protected AbstractWebServer() {
     this.env = createEnv();
@@ -50,15 +58,91 @@ public abstract class AbstractWebServer {
     this.executorService = createExecutorService();
   }
 
-  protected AbstractWebServer configure(Configuration configuration) {
+  protected abstract void doStart(int port, SSLContext context, boolean authReq) throws Exception;
+
+  protected abstract void doStop() throws Exception;
+
+  public T configure(Configuration configuration) {
     this.routesProvider = env.prodMode()
       ? RoutesProvider.fixed(env, compilers, configuration)
       : RoutesProvider.reloading(env, compilers, configuration);
-    return this;
+    return (T) this;
   }
 
-  protected AbstractWebServer configure(Class<? extends Configuration> configuration) {
+  public T configure(Class<? extends Configuration> configuration) {
     return configure(new ConfigurationReloadingProxy(configuration));
+  }
+
+  public T startOnRandomPort() {
+    Random random = new Random();
+    for (int i = 0; i < 30; i++) {
+      try {
+        int port = 8183 + random.nextInt(10000);
+        return start(port);
+      } catch (Exception e) {
+        LOG.error("Unable to bind server", e);
+      }
+    }
+    throw new IllegalStateException("Unable to start server");
+  }
+
+  public T start() {
+    return start(8080);
+  }
+
+  public T start(int port) {
+    return startWithContext(port, null, false);
+  }
+
+  public T startSSL(int port, Path pathCertificate, Path pathPrivateKey) {
+    return startSSL(port, asList(pathCertificate), pathPrivateKey, null);
+  }
+
+  public T startSSL(int port, List<Path> pathChain, Path pathPrivateKey) {
+    return startSSL(port, pathChain, pathPrivateKey, null);
+  }
+
+  public T startSSL(int port, List<Path> pathChain, Path pathPrivateKey, List<Path> pathTrustAnchors) {
+    SSLContext context;
+    try {
+      context = new SSLContextFactory().create(pathChain, pathPrivateKey, pathTrustAnchors);
+    } catch (Exception e) {
+      throw new IllegalStateException("Unable to read certificate or key", e);
+    }
+    boolean authReq = pathTrustAnchors != null;
+    return startWithContext(port, context, authReq);
+  }
+
+  protected T startWithContext(int port, SSLContext context, boolean authReq) {
+    this.port = env.overriddenPort(port);
+
+    try {
+      LOG.info(env.prodMode() ? "Production mode" : "Dev mode");
+
+      doStart(this.port, context, authReq);
+
+      LOG.info("Server started on port {}", this.port);
+    } catch (RuntimeException e) {
+      throw e;
+    } catch (BindException e) {
+      throw new IllegalStateException("Port already in use " + this.port);
+    } catch (Exception e) {
+      throw new IllegalStateException("Unable to bind the web server on port " + this.port, e);
+    }
+
+    return (T) this;
+  }
+
+  public int port() {
+    return port;
+  }
+
+  public void stop() {
+    try {
+      doStop();
+    } catch (Exception e) {
+      throw new IllegalStateException("Unable to stop the web server", e);
+    }
   }
 
   protected void handle(Request request, Response response) {
