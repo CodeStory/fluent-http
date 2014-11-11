@@ -123,10 +123,6 @@ public class WebServer extends AbstractWebServer {
     return port;
   }
 
-  public void reset() {
-    configure(NO_ROUTE);
-  }
-
   public void stop() {
     try {
       server.stop();

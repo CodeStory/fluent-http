@@ -15,6 +15,7 @@
  */
 package net.codestory.http.testhelpers;
 
+import static net.codestory.http.Configuration.NO_ROUTE;
 import static net.codestory.http.misc.MemoizingSupplier.*;
 
 import java.util.function.*;
@@ -34,7 +35,7 @@ public class ProdWebServerRule extends ExternalResource {
 
   @Override
   protected void after() {
-    server.get().reset();
+    server.get().configure(NO_ROUTE);
   }
 
   public void configure(Configuration configuration) {
