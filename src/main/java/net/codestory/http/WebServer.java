@@ -15,27 +15,12 @@
  */
 package net.codestory.http;
 
-import static net.codestory.http.Configuration.*;
-
-import java.io.*;
-
 import net.codestory.http.filters.log.*;
 import net.codestory.http.internal.*;
 
 import javax.net.ssl.*;
 
 public class WebServer extends AbstractWebServer<WebServer> {
-  private final HttpServerWrapper server;
-
-  public WebServer() {
-    try {
-      server = new SimpleServerWrapper(this::handle);
-    } catch (IOException e) {
-      throw new IllegalStateException("Unable to create http server", e);
-    }
-    configure(NO_ROUTE); // TODO: remove
-  }
-
   public static void main(String[] args) {
     new WebServer()
       .configure(routes -> routes.filter(new LogRequestFilter()))
@@ -43,12 +28,17 @@ public class WebServer extends AbstractWebServer<WebServer> {
   }
 
   @Override
-  protected void doStart(int port, SSLContext context, boolean authReq) throws Exception {
-    server.start(this.port, context, authReq);
+  protected HttpServerWrapper createHttpServer(Handler handler) throws Exception {
+    return new SimpleServerWrapper(handler);
   }
 
   @Override
-  protected void doStop() throws Exception {
-    server.stop();
+  protected void doStart(HttpServerWrapper httpServer, int port, SSLContext context, boolean authReq) throws Exception {
+    httpServer.start(port, context, authReq);
+  }
+
+  @Override
+  protected void doStop(HttpServerWrapper httpServer) throws Exception {
+    httpServer.stop();
   }
 }

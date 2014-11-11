@@ -16,12 +16,14 @@
 package net.codestory.http;
 
 import static java.util.Arrays.asList;
+import static net.codestory.http.Configuration.NO_ROUTE;
 
 import net.codestory.http.compilers.CompilerException;
 import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.compilers.Compilers;
 import net.codestory.http.errors.ErrorPage;
 import net.codestory.http.errors.HttpException;
+import net.codestory.http.internal.*;
 import net.codestory.http.misc.Env;
 import net.codestory.http.misc.NamedDaemonThreadFactory;
 import net.codestory.http.payload.Payload;
@@ -49,6 +51,8 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
   protected final Env env;
   protected final CompilerFacade compilers;
   protected final ExecutorService executorService;
+
+  protected HttpServerWrapper server;
   protected RoutesProvider routesProvider;
   protected int port;
 
@@ -58,9 +62,11 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     this.executorService = createExecutorService();
   }
 
-  protected abstract void doStart(int port, SSLContext context, boolean authReq) throws Exception;
+  protected abstract HttpServerWrapper createHttpServer(Handler handler) throws Exception;
 
-  protected abstract void doStop() throws Exception;
+  protected abstract void doStart(HttpServerWrapper httpServer, int port, SSLContext context, boolean authReq) throws Exception;
+
+  protected abstract void doStop(HttpServerWrapper httpServer) throws Exception;
 
   public T configure(Configuration configuration) {
     this.routesProvider = env.prodMode()
@@ -114,12 +120,22 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
   }
 
   protected T startWithContext(int port, SSLContext context, boolean authReq) {
+    try {
+      server = createHttpServer(this::handle);
+    } catch (Exception e) {
+      throw new IllegalStateException("Unable to create http server", e);
+    }
+
+    if (routesProvider == null) {
+      configure(NO_ROUTE);
+    }
+
     this.port = env.overriddenPort(port);
 
     try {
       LOG.info(env.prodMode() ? "Production mode" : "Dev mode");
 
-      doStart(this.port, context, authReq);
+      doStart(server, this.port, context, authReq);
 
       LOG.info("Server started on port {}", this.port);
     } catch (RuntimeException e) {
@@ -139,7 +155,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
 
   public void stop() {
     try {
-      doStop();
+      doStop(server);
     } catch (Exception e) {
       throw new IllegalStateException("Unable to stop the web server", e);
     }
