@@ -24,7 +24,7 @@ import net.codestory.http.misc.Env;
 import net.codestory.http.misc.NamedDaemonThreadFactory;
 import net.codestory.http.payload.Payload;
 import net.codestory.http.payload.PayloadWriter;
-import net.codestory.http.reload.RoutesProvider;
+import net.codestory.http.reload.*;
 import net.codestory.http.routes.RouteCollection;
 import net.codestory.http.templating.HandlebarsCompiler;
 import net.codestory.http.templating.Site;
@@ -55,6 +55,10 @@ public abstract class AbstractWebServer {
       ? RoutesProvider.fixed(env, compilers, configuration)
       : RoutesProvider.reloading(env, compilers, configuration);
     return this;
+  }
+
+  protected AbstractWebServer configure(Class<? extends Configuration> configuration) {
+    return configure(new ConfigurationReloadingProxy(configuration));
   }
 
   protected void handle(Request request, Response response) {

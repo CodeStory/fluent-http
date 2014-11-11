@@ -25,7 +25,6 @@ import java.util.*;
 
 import net.codestory.http.filters.log.*;
 import net.codestory.http.internal.*;
-import net.codestory.http.reload.*;
 import net.codestory.http.ssl.*;
 
 import javax.net.ssl.*;
@@ -35,29 +34,26 @@ public class WebServer extends AbstractWebServer {
   private int port;
 
   public WebServer() {
-    this(NO_ROUTE);
-  }
-
-  public WebServer(Class<? extends Configuration> configuration) {
-    this(new ConfigurationReloadingProxy(configuration));
-  }
-
-  public WebServer(Configuration configuration) {
     try {
       server = new SimpleServerWrapper(this::handle);
     } catch (IOException e) {
       throw new IllegalStateException("Unable to create http server", e);
     }
-    configure(configuration);
+    configure(NO_ROUTE);
   }
 
   public static void main(String[] args) throws Exception {
-    new WebServer(routes -> routes
-      .filter(new LogRequestFilter()))
-      .start(8080);
+    new WebServer()
+      .configure(routes -> routes.filter(new LogRequestFilter()))
+      .start();
   }
 
   public WebServer configure(Configuration configuration) {
+    super.configure(configuration);
+    return this;
+  }
+
+  public WebServer configure(Class<? extends Configuration> configuration) {
     super.configure(configuration);
     return this;
   }
