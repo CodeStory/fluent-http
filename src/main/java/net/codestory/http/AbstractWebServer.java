@@ -64,10 +64,6 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
 
   protected abstract HttpServerWrapper createHttpServer(Handler handler) throws Exception;
 
-  protected abstract void doStart(HttpServerWrapper httpServer, int port, SSLContext context, boolean authReq) throws Exception;
-
-  protected abstract void doStop(HttpServerWrapper httpServer) throws Exception;
-
   public T configure(Configuration configuration) {
     this.routesProvider = env.prodMode()
       ? RoutesProvider.fixed(env, compilers, configuration)
@@ -135,7 +131,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     try {
       LOG.info(env.prodMode() ? "Production mode" : "Dev mode");
 
-      doStart(server, this.port, context, authReq);
+      server.start(this.port, context, authReq);
 
       LOG.info("Server started on port {}", this.port);
     } catch (RuntimeException e) {
@@ -155,7 +151,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
 
   public void stop() {
     try {
-      doStop(server);
+      server.stop();
     } catch (Exception e) {
       throw new IllegalStateException("Unable to stop the web server", e);
     }

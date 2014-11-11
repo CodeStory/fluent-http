@@ -18,8 +18,6 @@ package net.codestory.http;
 import net.codestory.http.filters.log.*;
 import net.codestory.http.internal.*;
 
-import javax.net.ssl.*;
-
 public class WebServer extends AbstractWebServer<WebServer> {
   public static void main(String[] args) {
     new WebServer()
@@ -30,15 +28,5 @@ public class WebServer extends AbstractWebServer<WebServer> {
   @Override
   protected HttpServerWrapper createHttpServer(Handler handler) throws Exception {
     return new SimpleServerWrapper(handler);
-  }
-
-  @Override
-  protected void doStart(HttpServerWrapper httpServer, int port, SSLContext context, boolean authReq) throws Exception {
-    httpServer.start(port, context, authReq);
-  }
-
-  @Override
-  protected void doStop(HttpServerWrapper httpServer) throws Exception {
-    httpServer.stop();
   }
 }
