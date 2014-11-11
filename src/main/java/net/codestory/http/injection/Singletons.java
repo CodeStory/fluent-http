@@ -23,6 +23,7 @@ public class Singletons implements IocAdapter {
 
   public Singletons(Object... beansToRegister) {
     this.singletons = new HashMap<>();
+
     register(Singletons.class, this);
     for (Object beanToRegister : beansToRegister) {
       Class<?> type = beanToRegister.getClass();
@@ -51,38 +52,41 @@ public class Singletons implements IocAdapter {
     }
 
     // Slow path
-    return _get(type, new HashSet<>());
+    return _get(type, 0);
   }
 
   @SuppressWarnings("unchecked")
-  private <T> T _get(Class<T> type, Set<Class<?>> seenTypes) {
+  private <T> T _get(Class<T> type, int depth) {
     Object singleton = singletons.get(type);
     if (singleton != null) {
       return (T) singleton;
     }
 
-    if (!seenTypes.add(type)) {
+    if (depth > 100) {
       throw new IllegalStateException("Cycle in dependencies for " + type);
     }
 
     try {
-      Constructor<T> constructor = getConstructor(type);
-      Class<?>[] parameterTypes = constructor.getParameterTypes();
-      Object[] parameters = new Object[parameterTypes.length];
-      for (int i = 0; i < parameterTypes.length; i++) {
-        parameters[i] = _get(parameterTypes[i], seenTypes);
-      }
-
-      T instance = postProcess(constructor.newInstance(parameters));
+      T instance = create(type, depth);
       singletons.put(type, instance);
       return instance;
-    } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-      throw new IllegalStateException("Unable to create instance of " + type);
+    } catch (InvocationTargetException e) {
+      throw new IllegalStateException("Unable to create instance of " + type + ". The constructor raised an exception", e.getCause());
+    } catch (InstantiationException | IllegalAccessException | RuntimeException e) {
+      throw new IllegalStateException("Unable to create instance of " + type, e);
     }
   }
 
-  protected <T> T postProcess(T instance) {
-    return instance;
+  @SuppressWarnings("unchecked")
+  private <T> T create(Class<T> type, int depth) throws InstantiationException, IllegalAccessException, InvocationTargetException {
+    Constructor<T> constructor = getConstructor(type);
+    Class<?>[] parameterTypes = constructor.getParameterTypes();
+    Object[] parameters = new Object[parameterTypes.length];
+    for (int i = 0; i < parameterTypes.length; i++) {
+      parameters[i] = _get(parameterTypes[i], depth + 1);
+    }
+
+    return constructor.newInstance(parameters);
   }
 
   @SuppressWarnings("unchecked")

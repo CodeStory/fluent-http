@@ -15,11 +15,8 @@
  */
 package net.codestory.http;
 
-import static org.mockito.Mockito.*;
-
 import net.codestory.http.annotations.*;
 import net.codestory.http.errors.*;
-import net.codestory.http.injection.*;
 import net.codestory.http.templating.*;
 import net.codestory.http.testhelpers.*;
 
@@ -120,25 +117,6 @@ public class AnnotationsTest extends AbstractProdWebServerTest {
 
     get("/test/prefix/route1").produces("Route 1");
     get("/test/prefix/route2").produces("Route 2");
-  }
-
-  @Test
-  public void spied_resources() {
-    Singletons singletons = new Singletons() {
-      @Override
-      protected <T> T postProcess(T instance) {
-        return spy(instance);
-      }
-    };
-
-    TestResource resource = singletons.get(TestResource.class);
-    when(resource.hello()).thenReturn("Hello from Spy");
-
-    server.configure(routes -> routes.
-      add(TestResource.class).
-      setIocAdapter(singletons));
-
-    get("/hello").produces("Hello from Spy");
   }
 
   @Test
