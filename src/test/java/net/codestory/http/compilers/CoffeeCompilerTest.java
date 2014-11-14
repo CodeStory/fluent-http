@@ -64,4 +64,16 @@ public class CoffeeCompilerTest {
 
     compiler.compile(Paths.get("invalid.coffee"), "\n\n===");
   }
+
+  @Test
+  public void literate_coffee() {
+    String js = compiler.compile(Paths.get("file.litcoffee"),
+      "Comment text\n" +
+        "\n" +
+        "    life=42\n" +
+        "\n"
+    );
+
+    assertThat(js).isEqualTo("var life;\n\nlife = 42;\n\n//# sourceMappingURL=file.litcoffee.map");
+  }
 }

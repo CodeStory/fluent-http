@@ -50,6 +50,11 @@ public class StaticPagesTest extends AbstractProdWebServerTest {
   }
 
   @Test
+  public void literate_coffees() {
+    get("/js/literate.js").produces("application/javascript", "console.log('Hello');");
+  }
+
+  @Test
   public void css() {
     get("/assets/style.css").produces("text/css", "* {}");
   }

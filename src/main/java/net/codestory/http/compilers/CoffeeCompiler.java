@@ -16,6 +16,7 @@
 package net.codestory.http.compilers;
 
 import java.nio.file.*;
+import java.util.*;
 
 public class CoffeeCompiler implements Compiler {
   private final NashornCompiler nashornCompiler = new NashornCompiler(
@@ -30,7 +31,9 @@ public class CoffeeCompiler implements Compiler {
 
   @Override
   public String compile(Path path, String source) {
-    String javascript = nashornCompiler.compile(path, source);
+    String javascript = nashornCompiler.compile(path, source, new HashMap<String, Object>() {{
+      put("__literate", path.toString().endsWith(".litcoffee"));
+    }});
 
     if (sourceMaps) {
       return addSourceMapping(javascript, path);

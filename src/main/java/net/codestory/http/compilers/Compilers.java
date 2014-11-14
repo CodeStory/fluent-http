@@ -39,7 +39,7 @@ public class Compilers {
   public Compilers(Env env) {
     boolean prodMode = env.prodMode();
 
-    diskCache = new DiskCache("V4", prodMode);
+    diskCache = new DiskCache("V5", prodMode);
     register(() -> new CoffeeCompiler(prodMode), ".js", ".coffee", ".litcoffee");
     register(() -> new CoffeeSourceMapCompiler(), ".map", ".coffee.map", ".litcoffee.map"); // ?
     register(() -> new MarkdownCompiler(), ".html", ".md", ".markdown");

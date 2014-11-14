@@ -20,6 +20,7 @@ import static javax.script.ScriptContext.*;
 
 import java.io.*;
 import java.nio.file.*;
+import java.util.*;
 
 import net.codestory.http.io.*;
 
@@ -57,9 +58,10 @@ public final class NashornCompiler {
     return concatenatedScript.toString();
   }
 
-  public synchronized String compile(Path path, String source) {
+  public synchronized String compile(Path path, String source, Map<String, Object> options) {
     bindings.put("__filename", getFileName(path));
     bindings.put("__source", source);
+    options.forEach((name, value) -> bindings.put(name, value));
 
     try {
       return compiledScript.eval(bindings).toString();
