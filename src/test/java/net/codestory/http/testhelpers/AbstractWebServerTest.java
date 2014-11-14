@@ -169,7 +169,6 @@ public abstract class AbstractWebServerTest {
     public <T> RestAssert producesCookie(String name, Class<T> type, Consumer<T> validation) {
       List<HttpCookie> cookies = cookieManager.getCookieStore().getCookies();
       String actualValue = cookies.stream().filter(cookie -> cookie.getName().equals(name)).findFirst().map(cookie -> cookie.getValue()).orElse(null);
-      System.out.println(actualValue);
       validation.accept(TypeConvert.fromJson(actualValue, type));
       return this;
     }
