@@ -22,6 +22,7 @@ import java.net.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
+import java.util.stream.*;
 
 import net.codestory.http.*;
 import net.codestory.http.compilers.CompilerFacade;
@@ -48,13 +49,13 @@ class ReloadingRoutesProvider implements RoutesProvider {
     this.compiler = compiler;
     this.configuration = configuration;
     this.dirty = new AtomicBoolean(true);
-    this.classesWatchers = classpathFolders().stream().map(path -> new FolderWatcher(path, ev -> dirty.set(true))).collect(toList());
+    this.classesWatchers = classpathFolders().map(path -> new FolderWatcher(path, ev -> dirty.set(true))).collect(toList());
     this.appWatcher = new FolderWatcher(env.appPath(), ev -> dirty.set(true));
   }
 
-  protected List<Path> classpathFolders() {
+  protected Stream<Path> classpathFolders() {
     URL[] urls = ClassPaths.getUrls(Thread.currentThread().getContextClassLoader());
-    return of(urls).map(url -> Paths.get(toUri(url))).collect(toList());
+    return of(urls).map(url -> Paths.get(toUri(url)));
   }
 
   private static URI toUri(URL url) {
