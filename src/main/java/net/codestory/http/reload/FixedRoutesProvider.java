@@ -26,10 +26,8 @@ class FixedRoutesProvider implements RoutesProvider {
   private final RouteCollection routes;
 
   FixedRoutesProvider(Env env, Supplier<CompilerFacade> compiler, Configuration configuration) {
-    routes = new RouteCollection(env, compiler.get());
-    configuration.configure(routes);
-    routes.installExtensions();
-    routes.addStaticRoutes(true);
+    routes = new RouteCollection(env, compiler);
+    routes.configure(configuration);
   }
 
   @Override

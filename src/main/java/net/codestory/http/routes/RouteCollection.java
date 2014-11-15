@@ -44,7 +44,7 @@ import static net.codestory.http.routes.UriParser.paramsCount;
 
 public class RouteCollection implements Routes {
   protected final Env env;
-  protected final CompilerFacade compilers;
+  protected final Supplier<CompilerFacade> compilers;
   protected final Site site;
   protected final Deque<Route> routes;
   protected final Deque<Supplier<Filter>> filters;
@@ -52,7 +52,7 @@ public class RouteCollection implements Routes {
   protected IocAdapter iocAdapter;
   protected Extensions extensions;
 
-  public RouteCollection(Env env, CompilerFacade compilers) {
+  public RouteCollection(Env env, Supplier<CompilerFacade> compilers) {
     this.env = env;
     this.compilers = compilers;
     this.site = new Site(env);
@@ -62,13 +62,28 @@ public class RouteCollection implements Routes {
     this.extensions = Extensions.DEFAULT;
   }
 
-  public void installExtensions() {
+  public void configure(Configuration configuration) {
+    configuration.configure(this);
+    installExtensions();
+    addStaticRoutes(env.prodMode());
+  }
+
+  private void installExtensions() {
     TypeConvert.configureOrReplaceMapper(mapper -> extensions.configureOrReplaceObjectMapper(mapper, env));
-    extensions.configureCompilers(compilers, env);
+    extensions.configureCompilers(compilers.get(), env);
+  }
+
+  private void addStaticRoutes(boolean prodMode) {
+    routes.add(new WebJarsRoute(prodMode));
+    routes.add(new StaticRoute(prodMode, compilers.get()));
+    if (!prodMode) {
+      routes.add(new SourceMapRoute(compilers.get()));
+      routes.add(new SourceRoute(compilers.get()));
+    }
   }
 
   public PayloadWriter createPayloadWriter(Request request, Response response) {
-    return extensions.createPayloadWriter(request, response, env, site, compilers);
+    return extensions.createPayloadWriter(request, response, env, site, compilers.get());
   }
 
   public Context createContext(Request request, Response response) {
@@ -409,15 +424,6 @@ public class RouteCollection implements Routes {
   protected RouteCollection add(String method, String uriPattern, AnyRoute route) {
     routes.add(new RouteWrapper(method, uriPattern, route));
     return this;
-  }
-
-  public void addStaticRoutes(boolean prodMode) {
-    routes.add(new WebJarsRoute(prodMode));
-    routes.add(new StaticRoute(prodMode, compilers));
-    if (!prodMode) {
-      routes.add(new SourceMapRoute(compilers));
-      routes.add(new SourceRoute(compilers));
-    }
   }
 
   public Payload apply(Context context) throws IOException {
