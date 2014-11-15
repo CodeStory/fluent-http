@@ -35,7 +35,6 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Deque;
 import java.util.LinkedList;
-import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 
 import static net.codestory.http.annotations.AnnotationHelper.parseAnnotations;

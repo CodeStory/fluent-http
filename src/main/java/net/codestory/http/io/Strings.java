@@ -15,8 +15,6 @@
  */
 package net.codestory.http.io;
 
-import java.nio.file.Path;
-
 public class Strings {
   private Strings() {
     // Static utility class

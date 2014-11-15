@@ -18,8 +18,6 @@ package net.codestory.http.routes;
 import net.codestory.http.Context;
 import net.codestory.http.compilers.CompiledPath;
 import net.codestory.http.compilers.CompilerFacade;
-import net.codestory.http.io.Resources;
-import net.codestory.http.io.Strings;
 import net.codestory.http.misc.Cache;
 
 import java.nio.file.Path;
@@ -28,7 +26,6 @@ import java.util.function.Function;
 
 import static net.codestory.http.constants.Methods.GET;
 import static net.codestory.http.constants.Methods.HEAD;
-import static net.codestory.http.io.Resources.exists;
 import static net.codestory.http.io.Resources.findExistingPath;
 import static net.codestory.http.io.Resources.isPublic;
 import static net.codestory.http.io.Strings.extension;

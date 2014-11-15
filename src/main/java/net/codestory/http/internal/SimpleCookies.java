@@ -17,7 +17,6 @@ package net.codestory.http.internal;
 
 import java.util.*;
 
-import net.codestory.http.Cookie;
 import net.codestory.http.*;
 
 import org.simpleframework.http.Request;
