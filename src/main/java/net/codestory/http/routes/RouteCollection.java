@@ -68,8 +68,8 @@ public class RouteCollection implements Routes {
     extensions.configureCompilers(compilers, env);
   }
 
-  public PayloadWriter createPayloadWriter(Request request, Response response, ExecutorService executorService) {
-    return extensions.createPayloadWriter(request, response, env, site, compilers, executorService);
+  public PayloadWriter createPayloadWriter(Request request, Response response) {
+    return extensions.createPayloadWriter(request, response, env, site, compilers);
   }
 
   public Context createContext(Request request, Response response) {

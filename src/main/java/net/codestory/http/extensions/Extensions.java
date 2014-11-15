@@ -26,7 +26,6 @@ import net.codestory.http.payload.PayloadWriter;
 import net.codestory.http.templating.Site;
 
 import java.io.Serializable;
-import java.util.concurrent.ExecutorService;
 
 public interface Extensions extends Serializable {
   Extensions DEFAULT = new Extensions() {
@@ -55,7 +54,7 @@ public interface Extensions extends Serializable {
   /**
    * Called each request.
    */
-  public default PayloadWriter createPayloadWriter(Request request, Response response, Env env, Site site, CompilerFacade compilers, ExecutorService executorService) {
-    return new PayloadWriter(request, response, env, site, compilers, executorService);
+  public default PayloadWriter createPayloadWriter(Request request, Response response, Env env, Site site, CompilerFacade compilers) {
+    return new PayloadWriter(request, response, env, site, compilers);
   }
 }

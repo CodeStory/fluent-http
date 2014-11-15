@@ -26,7 +26,6 @@ import static net.codestory.http.io.Strings.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
-import java.util.concurrent.*;
 import java.util.stream.*;
 import java.util.zip.*;
 
@@ -44,15 +43,13 @@ public class PayloadWriter {
   protected final Env env;
   protected final Site site;
   protected final CompilerFacade compilers;
-  protected final ExecutorService executorService;
 
-  public PayloadWriter(Request request, Response response, Env env, Site site, CompilerFacade compilers, ExecutorService executorService) {
+  public PayloadWriter(Request request, Response response, Env env, Site site, CompilerFacade compilers) {
     this.request = request;
     this.response = response;
     this.env = env;
     this.site = site;
     this.compilers = compilers;
-    this.executorService = executorService;
   }
 
   public void writeAndClose(Payload payload) throws IOException {
@@ -154,33 +151,29 @@ public class PayloadWriter {
 
     PrintStream printStream = new PrintStream(response.outputStream());
 
-    executorService.submit(() -> {
-      stream.forEach(item -> {
-        String jsonOrPlainString = (item instanceof String) ? (String) item : TypeConvert.toJson(item);
+    stream.forEach(item -> {
+      String jsonOrPlainString = (item instanceof String) ? (String) item : TypeConvert.toJson(item);
 
-        printStream
-          .append("data: ")
-          .append(jsonOrPlainString.replaceAll("[\n]", "\ndata: "))
-          .append("\n\n")
-          .flush();
-      });
-      close();
+      printStream
+        .append("data: ")
+        .append(jsonOrPlainString.replaceAll("[\n]", "\ndata: "))
+        .append("\n\n")
+        .flush();
     });
+    close();
   }
 
   protected void writeBufferedReader(Payload payload) throws IOException {
     BufferedReader lines = (BufferedReader) payload.rawContent();
 
-    executorService.submit(() -> {
-      try (PrintStream outputStream = new PrintStream(response.outputStream(), true)) {
-        String line;
-        while (null != (line = lines.readLine())) {
-          outputStream.println(line);
-        }
-      } catch (IOException e) {
-        throw new IllegalStateException("Unable to stream", e);
+    try (PrintStream outputStream = new PrintStream(response.outputStream(), true)) {
+      String line;
+      while (null != (line = lines.readLine())) {
+        outputStream.println(line);
       }
-    });
+    } catch (IOException e) {
+      throw new IllegalStateException("Unable to stream", e);
+    }
   }
 
   protected void writeInputStream(Payload payload) throws IOException {
@@ -188,14 +181,12 @@ public class PayloadWriter {
 
     OutputStream outputStream = response.outputStream();
 
-    executorService.submit(() -> {
-      try {
-        InputStreams.copy(stream, outputStream);
-        close();
-      } catch (IOException e) {
-        throw new IllegalStateException("Unable to stream", e);
-      }
-    });
+    try {
+      InputStreams.copy(stream, outputStream);
+      close();
+    } catch (IOException e) {
+      throw new IllegalStateException("Unable to stream", e);
+    }
   }
 
   protected void write(byte[] data) throws IOException {

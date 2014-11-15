@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Paths;
 import java.util.Optional;
-import java.util.concurrent.Executors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static net.codestory.http.constants.Headers.*;
@@ -49,7 +48,7 @@ public class PayloadWriterTest {
   OutputStream outputStream = mock(OutputStream.class);
   Cookies cookies = mock(Cookies.class);
 
-  PayloadWriter writer = new PayloadWriter(request, response, env, site, compilerFacade, Executors.newSingleThreadExecutor());
+  PayloadWriter writer = new PayloadWriter(request, response, env, site, compilerFacade);
 
   @Before
   public void setupContext() throws IOException {

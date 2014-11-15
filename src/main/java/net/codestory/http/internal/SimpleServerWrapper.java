@@ -29,7 +29,7 @@ public class SimpleServerWrapper implements HttpServerWrapper {
   private final SocketProcessor server;
 
   public SimpleServerWrapper(Handler handler) throws IOException {
-    this.server = new ContainerSocketProcessor((req, resp) -> handler.handle(new SimpleRequest(req), new SimpleResponse(resp)));
+    this.server = new ContainerSocketProcessor((req, resp) -> handler.handle(new SimpleRequest(req), new SimpleResponse(resp)), 8, 1);
   }
 
   @Override

@@ -22,7 +22,6 @@ import java.io.*;
 import java.net.*;
 import java.nio.file.*;
 import java.util.*;
-import java.util.concurrent.*;
 import java.util.function.*;
 
 import net.codestory.http.compilers.*;
@@ -41,7 +40,6 @@ import javax.net.ssl.*;
 public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
   protected final Env env;
   protected final Supplier<CompilerFacade> compilers;
-  protected final Supplier<ExecutorService> executorService;
 
   protected HttpServerWrapper server;
   protected RoutesProvider routesProvider;
@@ -50,7 +48,6 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
   protected AbstractWebServer() {
     this.env = createEnv();
     this.compilers = MemoizingSupplier.memoize(() -> createCompilerFacade());
-    this.executorService = MemoizingSupplier.memoize(() -> createExecutorService());
   }
 
   protected abstract HttpServerWrapper createHttpServer(Handler handler) throws Exception;
@@ -159,10 +156,10 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
         payload = errorPage(payload);
       }
 
-      PayloadWriter payloadWriter = routes.createPayloadWriter(request, response, executorService.get());
+      PayloadWriter payloadWriter = routes.createPayloadWriter(request, response);
       payloadWriter.writeAndClose(payload);
     } catch (Exception e) {
-      PayloadWriter payloadWriter = new PayloadWriter(request, response, env, new Site(env), compilers.get(), executorService.get());
+      PayloadWriter payloadWriter = new PayloadWriter(request, response, env, new Site(env), compilers.get());
       handleServerError(payloadWriter, e);
     }
   }
@@ -211,9 +208,5 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     HandlebarsCompiler handlebar = new HandlebarsCompiler(compilers);
 
     return new CompilerFacade(compilers, handlebar);
-  }
-
-  protected ExecutorService createExecutorService() {
-    return Executors.newCachedThreadPool(new NamedDaemonThreadFactory());
   }
 }

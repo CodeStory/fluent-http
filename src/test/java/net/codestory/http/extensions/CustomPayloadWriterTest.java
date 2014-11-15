@@ -25,7 +25,6 @@ import net.codestory.http.testhelpers.AbstractProdWebServerTest;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutorService;
 
 public class CustomPayloadWriterTest extends AbstractProdWebServerTest {
   @Test
@@ -34,8 +33,8 @@ public class CustomPayloadWriterTest extends AbstractProdWebServerTest {
       .get("/", new CustomPayload())
       .setExtensions(new Extensions() {
         @Override
-        public PayloadWriter createPayloadWriter(Request request, Response response, Env env, Site site, CompilerFacade compilers, ExecutorService executorService) {
-          return new CustomPayloadWriter(request, response, env, site, compilers, executorService);
+        public PayloadWriter createPayloadWriter(Request request, Response response, Env env, Site site, CompilerFacade compilers) {
+          return new CustomPayloadWriter(request, response, env, site, compilers);
         }
       }));
 
@@ -43,8 +42,8 @@ public class CustomPayloadWriterTest extends AbstractProdWebServerTest {
   }
 
   static class CustomPayloadWriter extends PayloadWriter {
-    public CustomPayloadWriter(Request request, Response response, Env env, Site site, CompilerFacade compilers, ExecutorService executorService) {
-      super(request, response, env, site, compilers, executorService);
+    public CustomPayloadWriter(Request request, Response response, Env env, Site site, CompilerFacade compilers) {
+      super(request, response, env, site, compilers);
     }
 
     @Override
