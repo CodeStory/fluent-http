@@ -16,6 +16,8 @@
 package net.codestory.http;
 
 import static java.nio.charset.StandardCharsets.*;
+import static java.util.concurrent.TimeUnit.*;
+import static java.util.stream.IntStream.*;
 
 import java.io.*;
 import java.util.concurrent.atomic.*;
@@ -45,7 +47,7 @@ public class StreamTest extends AbstractProdWebServerTest {
     server.configure(routes -> routes.get("/events", () -> Stream.generate(messageSupplier).limit(1000)));
 
     get("/events").produces("data: MESSAGE\ndata: 1\n\n" + "data: MESSAGE\ndata: 2\n\n" + "data: MESSAGE\ndata: 3\n\n");
-    }
+  }
 
   @Test
   public void stream() {
@@ -54,5 +56,26 @@ public class StreamTest extends AbstractProdWebServerTest {
     server.configure(routes -> routes.get("/stream", () -> new ByteArrayInputStream(buffer)));
 
     get("/stream").produces("Hello World");
+  }
+
+  @Test(timeout = 5000)
+  public void support_multiple_clients_in_parallel() {
+    byte[] buffer = "Hello World".getBytes(UTF_8);
+
+    server.configure(routes -> routes
+        .get("/blocking", () -> Stream.generate(() -> {
+          try {
+            HOURS.sleep(1);
+          } catch (InterruptedException e) {
+            // Ignore
+          }
+          return "OK";
+        }).limit(1))
+        .get("/stream", () -> new ByteArrayInputStream(buffer))
+    );
+
+    new Thread(() -> get("/blocking").produces("OK")).start();
+
+    range(1, 1000).forEach(i -> get("/stream").produces("Hello World"));
   }
 }
