@@ -19,17 +19,14 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.function.*;
 
-import org.slf4j.*;
+import net.codestory.http.logs.*;
 
 public class DiskCache {
-  private final static Logger LOG = LoggerFactory.getLogger(DiskCache.class);
-
   private final File root;
 
   public DiskCache(String version, boolean prodMode) {
     this.root = Paths.get(System.getProperty("user.home"), ".code-story", "cache", version, prodMode ? "prod" : "dev").toFile();
-    LOG.debug("Caching on disk @ {}", this.root.getAbsolutePath());
-    System.out.println("Caching on disk @ " + this.root.getAbsolutePath());
+    Logs.cachingOnDisk(this.root);
   }
 
   CacheEntry computeIfAbsent(String sha1, String extension, Supplier<String> toCompiled) {

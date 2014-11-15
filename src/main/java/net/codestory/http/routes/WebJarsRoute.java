@@ -19,23 +19,20 @@ import static java.time.ZonedDateTime.*;
 import static java.time.format.DateTimeFormatter.*;
 import static net.codestory.http.constants.Headers.*;
 import static net.codestory.http.constants.Methods.*;
-import static net.codestory.http.io.Strings.*;
 
 import java.io.*;
 import java.net.*;
 import java.nio.file.*;
+import java.util.*;
 
 import net.codestory.http.*;
 import net.codestory.http.io.*;
+import net.codestory.http.logs.*;
 import net.codestory.http.misc.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.types.*;
 
-import org.slf4j.*;
-
 class WebJarsRoute implements Route {
-  private final static Logger LOG = LoggerFactory.getLogger(WebJarsRoute.class);
-
   private final boolean prodMode;
   private final WebJarUrlFinder webJarUrlFinder;
 
@@ -58,10 +55,8 @@ class WebJarsRoute implements Route {
   }
 
   private void printKnownWebjars() {
-    LOG.info("Found these webjars files:");
-    for (String uri : new ClasspathScanner().getResources(Paths.get("META-INF/resources/webjars/"))) {
-      LOG.info(" + " + substringAfter(uri, "META-INF/resources"));
-    }
+    Set<String> uris = new ClasspathScanner().getResources(Paths.get("META-INF/resources/webjars/"));
+    Logs.printKnownWebjars(uris);
   }
 
   @Override

@@ -15,39 +15,30 @@
  */
 package net.codestory.http;
 
-import static java.util.Arrays.asList;
-import static net.codestory.http.Configuration.NO_ROUTE;
+import static java.util.Arrays.*;
+import static net.codestory.http.Configuration.*;
 
-import net.codestory.http.compilers.CompilerException;
-import net.codestory.http.compilers.CompilerFacade;
-import net.codestory.http.compilers.Compilers;
-import net.codestory.http.errors.ErrorPage;
-import net.codestory.http.errors.HttpException;
-import net.codestory.http.internal.*;
-import net.codestory.http.misc.*;
-import net.codestory.http.payload.Payload;
-import net.codestory.http.payload.PayloadWriter;
-import net.codestory.http.reload.*;
-import net.codestory.http.routes.RouteCollection;
-import net.codestory.http.ssl.*;
-import net.codestory.http.templating.HandlebarsCompiler;
-import net.codestory.http.templating.Site;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
+import java.io.*;
 import java.net.*;
 import java.nio.file.*;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.function.*;
+
+import net.codestory.http.compilers.*;
+import net.codestory.http.errors.*;
+import net.codestory.http.internal.*;
+import net.codestory.http.logs.*;
+import net.codestory.http.misc.*;
+import net.codestory.http.payload.*;
+import net.codestory.http.reload.*;
+import net.codestory.http.routes.*;
+import net.codestory.http.ssl.*;
+import net.codestory.http.templating.*;
 
 import javax.net.ssl.*;
 
 public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
-  protected final static Logger LOG = LoggerFactory.getLogger(AbstractWebServer.class);
-
   protected final Env env;
   protected final Supplier<CompilerFacade> compilers;
   protected final Supplier<ExecutorService> executorService;
@@ -82,7 +73,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
         int port = 8183 + random.nextInt(10000);
         return start(port);
       } catch (Exception e) {
-        LOG.error("Unable to bind server", e);
+        Logs.unableToBindServer(e);
       }
     }
     throw new IllegalStateException("Unable to start server");
@@ -129,11 +120,11 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     this.port = env.overriddenPort(port);
 
     try {
-      LOG.info(env.prodMode() ? "Production mode" : "Dev mode");
+      Logs.mode(env.prodMode());
 
       server.start(this.port, context, authReq);
 
-      LOG.info("Server started on port {}", this.port);
+      Logs.started(this.port);
     } catch (RuntimeException e) {
       throw e;
     } catch (BindException e) {
@@ -179,7 +170,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
   protected void handleServerError(PayloadWriter payloadWriter, Exception e) {
     try {
       if (e instanceof CompilerException) {
-        LOG.error(e.getMessage());
+        Logs.compilerError(e);
       } else if (!(e instanceof HttpException) && !(e instanceof NoSuchElementException)) {
         e.printStackTrace();
       }
@@ -187,7 +178,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
       Payload errorPage = errorPage(e).withHeader("reason", e.getMessage());
       payloadWriter.writeAndClose(errorPage);
     } catch (IOException error) {
-      LOG.warn("Unable to serve an error page", error);
+      Logs.unableToServerErrorPage(error);
     }
   }
 

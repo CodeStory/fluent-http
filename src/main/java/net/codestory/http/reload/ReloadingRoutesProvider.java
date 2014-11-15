@@ -28,14 +28,11 @@ import java.util.stream.*;
 import net.codestory.http.*;
 import net.codestory.http.compilers.*;
 import net.codestory.http.io.*;
+import net.codestory.http.logs.*;
 import net.codestory.http.misc.*;
 import net.codestory.http.routes.*;
 
-import org.slf4j.*;
-
 class ReloadingRoutesProvider implements RoutesProvider {
-  private final static Logger LOG = LoggerFactory.getLogger(ReloadingRoutesProvider.class);
-
   private final Env env;
   private final Supplier<CompilerFacade> compiler;
   private final Configuration configuration;
@@ -69,7 +66,7 @@ class ReloadingRoutesProvider implements RoutesProvider {
   @Override
   public synchronized RouteCollection get() {
     if (dirty.get()) {
-      LOG.info("Reloading configuration...");
+      Logs.reloadingConfiguration();
 
       if (classesWatchers == null) {
         this.classesWatchers = classpathFolders().map(path -> new FolderWatcher(path, ev -> dirty.set(true))).collect(toList());
