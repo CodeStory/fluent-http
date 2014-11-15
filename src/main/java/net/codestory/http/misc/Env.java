@@ -19,8 +19,6 @@ import static net.codestory.http.io.Resources.APP_FOLDER;
 
 import java.nio.file.*;
 
-import net.codestory.http.io.*;
-
 public class Env {
   private final boolean prodMode;
   private final boolean disableClassPath;
