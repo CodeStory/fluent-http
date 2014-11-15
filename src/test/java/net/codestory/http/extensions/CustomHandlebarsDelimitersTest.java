@@ -15,8 +15,6 @@
  */
 package net.codestory.http.extensions;
 
-import java.util.function.*;
-
 import net.codestory.http.WebServer;
 import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.misc.Env;
@@ -40,8 +38,8 @@ public class CustomHandlebarsDelimitersTest extends AbstractWebServerTest {
       .get("/extensions/custom_delimiters", Model.of("name", "Bob"))
       .setExtensions(new Extensions() {
         @Override
-        public void configureCompilers(Supplier<CompilerFacade> compilers, Env env) {
-          compilers.get().configureHandlebars(hb -> hb.startDelimiter("((").endDelimiter("))"));
+        public void configureCompilers(CompilerFacade compilers, Env env) {
+          compilers.configureHandlebars(hb -> hb.startDelimiter("((").endDelimiter("))"));
         }
       }));
 

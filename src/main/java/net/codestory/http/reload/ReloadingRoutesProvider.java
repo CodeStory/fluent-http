@@ -34,7 +34,7 @@ import net.codestory.http.routes.*;
 
 class ReloadingRoutesProvider implements RoutesProvider {
   private final Env env;
-  private final Supplier<CompilerFacade> compiler;
+  private final CompilerFacade compiler;
   private final Configuration configuration;
   private final AtomicBoolean dirty;
 
@@ -43,7 +43,7 @@ class ReloadingRoutesProvider implements RoutesProvider {
 
   private RouteCollection routes;
 
-  ReloadingRoutesProvider(Env env, Supplier<CompilerFacade> compiler, Configuration configuration) {
+  ReloadingRoutesProvider(Env env, CompilerFacade compiler, Configuration configuration) {
     this.env = env;
     this.compiler = compiler;
     this.configuration = configuration;

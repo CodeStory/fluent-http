@@ -24,7 +24,7 @@ import org.junit.*;
 import org.junit.rules.*;
 
 public class RouteCollectionTest {
-  RouteCollection routeCollection = new RouteCollection(mock(Env.class), () -> mock(CompilerFacade.class));
+  RouteCollection routeCollection = new RouteCollection(mock(Env.class), mock(CompilerFacade.class));
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();

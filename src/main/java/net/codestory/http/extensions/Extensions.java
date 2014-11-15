@@ -26,7 +26,6 @@ import net.codestory.http.payload.PayloadWriter;
 import net.codestory.http.templating.Site;
 
 import java.io.Serializable;
-import java.util.function.*;
 
 public interface Extensions extends Serializable {
   Extensions DEFAULT = new Extensions() {
@@ -42,7 +41,7 @@ public interface Extensions extends Serializable {
   /**
    * Called each time routes are loaded.
    */
-  public default void configureCompilers(Supplier<CompilerFacade> compilers, Env env) {
+  public default void configureCompilers(CompilerFacade compilers, Env env) {
   }
 
   /**

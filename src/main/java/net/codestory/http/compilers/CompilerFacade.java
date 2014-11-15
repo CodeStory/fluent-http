@@ -15,6 +15,8 @@
  */
 package net.codestory.http.compilers;
 
+import static net.codestory.http.misc.MemoizingSupplier.memoize;
+
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
@@ -27,48 +29,43 @@ import net.codestory.http.misc.*;
 import net.codestory.http.templating.*;
 
 public class CompilerFacade {
-  protected final Compilers compilers;
-  protected final HandlebarsCompiler handlebars;
+  protected final Supplier<Compilers> compilers;
+  protected final Supplier<HandlebarsCompiler> handlebars;
 
   public CompilerFacade(Env env) {
-    this.compilers = new Compilers(env);
-    this.handlebars = new HandlebarsCompiler(compilers);
-  }
-
-  public CompilerFacade(Compilers compilers, HandlebarsCompiler handlebar) {
-    this.compilers = compilers;
-    this.handlebars = handlebar;
+    this.compilers = memoize(() -> new Compilers(env));
+    this.handlebars = memoize(() -> new HandlebarsCompiler(compilers.get()));
   }
 
   // Configuration
 
   public void configureHandlebars(Consumer<Handlebars> action) {
-    handlebars.configure(action);
+    handlebars.get().configure(action);
   }
 
   public void addHandlebarResolver(ValueResolver resolver) {
-    handlebars.addResolver(resolver);
+    handlebars.get().addResolver(resolver);
   }
 
   public void registerCompiler(Supplier<Compiler> compilerFactory, String targetExtension, String firstExtension, String... moreExtensions) {
-    compilers.register(compilerFactory, targetExtension, firstExtension, moreExtensions);
+    compilers.get().register(compilerFactory, targetExtension, firstExtension, moreExtensions);
   }
 
   // Compilation
 
   public boolean canCompile(String extension) {
-    return compilers.canCompile(extension);
+    return compilers.get().canCompile(extension);
   }
 
   public Set<String> extensionsThatCompileTo(String extension) {
-    return compilers.extensionsThatCompileTo(extension);
+    return compilers.get().extensionsThatCompileTo(extension);
   }
 
   public CacheEntry compile(Path path, String content) {
-    return compilers.compile(path, content);
+    return compilers.get().compile(path, content);
   }
 
   public String handlebar(String template, Map<String, ?> variables) throws IOException {
-    return handlebars.compile(template, variables);
+    return handlebars.get().compile(template, variables);
   }
 }

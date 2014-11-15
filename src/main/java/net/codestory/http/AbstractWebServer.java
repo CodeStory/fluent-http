@@ -22,7 +22,6 @@ import java.io.*;
 import java.net.*;
 import java.nio.file.*;
 import java.util.*;
-import java.util.function.*;
 
 import net.codestory.http.compilers.*;
 import net.codestory.http.errors.*;
@@ -39,7 +38,7 @@ import javax.net.ssl.*;
 
 public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
   protected final Env env;
-  protected final Supplier<CompilerFacade> compilers;
+  protected final CompilerFacade compilers;
 
   protected HttpServerWrapper server;
   protected RoutesProvider routesProvider;
@@ -47,7 +46,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
 
   protected AbstractWebServer() {
     this.env = createEnv();
-    this.compilers = MemoizingSupplier.memoize(() -> createCompilerFacade());
+    this.compilers = createCompilerFacade();
   }
 
   protected abstract HttpServerWrapper createHttpServer(Handler handler) throws Exception;
@@ -159,7 +158,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
       PayloadWriter payloadWriter = routes.createPayloadWriter(request, response);
       payloadWriter.writeAndClose(payload);
     } catch (Exception e) {
-      PayloadWriter payloadWriter = new PayloadWriter(request, response, env, new Site(env), compilers.get());
+      PayloadWriter payloadWriter = new PayloadWriter(request, response, env, new Site(env), compilers);
       handleServerError(payloadWriter, e);
     }
   }
@@ -204,9 +203,6 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
   }
 
   protected CompilerFacade createCompilerFacade() {
-    Compilers compilers = new Compilers(env);
-    HandlebarsCompiler handlebar = new HandlebarsCompiler(compilers);
-
-    return new CompilerFacade(compilers, handlebar);
+    return new CompilerFacade(env);
   }
 }

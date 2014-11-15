@@ -21,17 +21,16 @@ import net.codestory.http.misc.Env;
 import net.codestory.http.routes.RouteCollection;
 
 import java.io.Serializable;
-import java.util.function.*;
 
 @FunctionalInterface
 public interface RoutesProvider extends Serializable {
   RouteCollection get();
 
-  static RoutesProvider fixed(Env env, Supplier<CompilerFacade> compiler, Configuration configuration) {
+  static RoutesProvider fixed(Env env, CompilerFacade compiler, Configuration configuration) {
     return new FixedRoutesProvider(env, compiler, configuration);
   }
 
-  static RoutesProvider reloading(Env env, Supplier<CompilerFacade> compiler, Configuration configuration) {
+  static RoutesProvider reloading(Env env, CompilerFacade compiler, Configuration configuration) {
     return new ReloadingRoutesProvider(env, compiler, configuration);
   }
 }

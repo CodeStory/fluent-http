@@ -44,7 +44,7 @@ import static net.codestory.http.routes.UriParser.paramsCount;
 
 public class RouteCollection implements Routes {
   protected final Env env;
-  protected final Supplier<CompilerFacade> compilers;
+  protected final CompilerFacade compilers;
   protected final Site site;
   protected final Deque<Route> routes;
   protected final Deque<Supplier<Filter>> filters;
@@ -52,7 +52,7 @@ public class RouteCollection implements Routes {
   protected IocAdapter iocAdapter;
   protected Extensions extensions;
 
-  public RouteCollection(Env env, Supplier<CompilerFacade> compilers) {
+  public RouteCollection(Env env, CompilerFacade compilers) {
     this.env = env;
     this.compilers = compilers;
     this.site = new Site(env);
@@ -83,7 +83,7 @@ public class RouteCollection implements Routes {
   }
 
   public PayloadWriter createPayloadWriter(Request request, Response response) {
-    return extensions.createPayloadWriter(request, response, env, site, compilers.get());
+    return extensions.createPayloadWriter(request, response, env, site, compilers);
   }
 
   public Context createContext(Request request, Response response) {
