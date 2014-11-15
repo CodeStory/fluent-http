@@ -24,8 +24,7 @@ import net.codestory.http.compilers.Compilers;
 import net.codestory.http.errors.ErrorPage;
 import net.codestory.http.errors.HttpException;
 import net.codestory.http.internal.*;
-import net.codestory.http.misc.Env;
-import net.codestory.http.misc.NamedDaemonThreadFactory;
+import net.codestory.http.misc.*;
 import net.codestory.http.payload.Payload;
 import net.codestory.http.payload.PayloadWriter;
 import net.codestory.http.reload.*;
@@ -42,6 +41,7 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.*;
 
 import javax.net.ssl.*;
 
@@ -49,8 +49,8 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
   protected final static Logger LOG = LoggerFactory.getLogger(AbstractWebServer.class);
 
   protected final Env env;
-  protected final CompilerFacade compilers;
-  protected final ExecutorService executorService;
+  protected final Supplier<CompilerFacade> compilers;
+  protected final Supplier<ExecutorService> executorService;
 
   protected HttpServerWrapper server;
   protected RoutesProvider routesProvider;
@@ -58,8 +58,8 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
 
   protected AbstractWebServer() {
     this.env = createEnv();
-    this.compilers = createCompilerFacade();
-    this.executorService = createExecutorService();
+    this.compilers = MemoizingSupplier.memoize(() -> createCompilerFacade());
+    this.executorService = MemoizingSupplier.memoize(() -> createExecutorService());
   }
 
   protected abstract HttpServerWrapper createHttpServer(Handler handler) throws Exception;
@@ -168,10 +168,10 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
         payload = errorPage(payload);
       }
 
-      PayloadWriter payloadWriter = routes.createPayloadWriter(request, response, executorService);
+      PayloadWriter payloadWriter = routes.createPayloadWriter(request, response, executorService.get());
       payloadWriter.writeAndClose(payload);
     } catch (Exception e) {
-      PayloadWriter payloadWriter = new PayloadWriter(request, response, env, new Site(env), compilers, executorService);
+      PayloadWriter payloadWriter = new PayloadWriter(request, response, env, new Site(env), compilers.get(), executorService.get());
       handleServerError(payloadWriter, e);
     }
   }

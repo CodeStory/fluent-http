@@ -15,6 +15,8 @@
  */
 package net.codestory.http.reload;
 
+import java.util.function.*;
+
 import net.codestory.http.Configuration;
 import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.misc.Env;
@@ -23,8 +25,8 @@ import net.codestory.http.routes.RouteCollection;
 class FixedRoutesProvider implements RoutesProvider {
   private final RouteCollection routes;
 
-  FixedRoutesProvider(Env env, CompilerFacade compiler, Configuration configuration) {
-    routes = new RouteCollection(env, compiler);
+  FixedRoutesProvider(Env env, Supplier<CompilerFacade> compiler, Configuration configuration) {
+    routes = new RouteCollection(env, compiler.get());
     configuration.configure(routes);
     routes.installExtensions();
     routes.addStaticRoutes(true);

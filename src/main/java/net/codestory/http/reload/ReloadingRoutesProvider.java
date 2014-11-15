@@ -22,6 +22,7 @@ import java.net.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import net.codestory.http.*;
@@ -36,7 +37,7 @@ class ReloadingRoutesProvider implements RoutesProvider {
   private final static Logger LOG = LoggerFactory.getLogger(ReloadingRoutesProvider.class);
 
   private final Env env;
-  private final CompilerFacade compiler;
+  private final Supplier<CompilerFacade> compiler;
   private final Configuration configuration;
   private final AtomicBoolean dirty;
 
@@ -45,7 +46,7 @@ class ReloadingRoutesProvider implements RoutesProvider {
 
   private RouteCollection routes;
 
-  ReloadingRoutesProvider(Env env, CompilerFacade compiler, Configuration configuration) {
+  ReloadingRoutesProvider(Env env, Supplier<CompilerFacade> compiler, Configuration configuration) {
     this.env = env;
     this.compiler = compiler;
     this.configuration = configuration;
@@ -80,7 +81,7 @@ class ReloadingRoutesProvider implements RoutesProvider {
       }
       appWatcher.ensureStarted();
 
-      routes = new RouteCollection(env, compiler);
+      routes = new RouteCollection(env, compiler.get());
       configuration.configure(routes);
       routes.installExtensions();
       routes.addStaticRoutes(false);
