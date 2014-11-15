@@ -20,6 +20,7 @@ import static net.codestory.http.io.Resources.isPublic;
 import static net.codestory.http.io.Strings.*;
 
 import java.nio.file.*;
+import java.util.function.*;
 
 import net.codestory.http.*;
 import net.codestory.http.compilers.CompilerFacade;
@@ -28,9 +29,9 @@ import net.codestory.http.io.*;
 public class SourceRoute implements Route {
   private static final Path NOT_FOUND = Paths.get("");
 
-  private final CompilerFacade compilers;
+  private final Supplier<CompilerFacade> compilers;
 
-  SourceRoute(CompilerFacade compilers) {
+  SourceRoute(Supplier<CompilerFacade> compilers) {
     this.compilers = compilers;
   }
 
@@ -57,7 +58,7 @@ public class SourceRoute implements Route {
     }
 
     String extension = extension(sourceUri);
-    for (String sourceExtension : compilers.extensionsThatCompileTo(extension)) {
+    for (String sourceExtension : compilers.get().extensionsThatCompileTo(extension)) {
       sourcePath = Paths.get(getSourcePath(replaceLast(uri, extension, sourceExtension)));
 
       if (isPublic(sourcePath)) {

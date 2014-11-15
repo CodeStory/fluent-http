@@ -22,7 +22,7 @@ import net.codestory.http.misc.Cache;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.function.Function;
+import java.util.function.*;
 
 import static net.codestory.http.constants.Methods.GET;
 import static net.codestory.http.constants.Methods.HEAD;
@@ -34,10 +34,10 @@ import static net.codestory.http.io.Strings.replaceLast;
 class StaticRoute implements Route {
   private static final Path NOT_FOUND = Paths.get("");
 
-  private final CompilerFacade compilers;
+  private final Supplier<CompilerFacade> compilers;
   private final Function<String, Object> findPath;
 
-  StaticRoute(boolean cached, CompilerFacade compilers) {
+  StaticRoute(boolean cached, Supplier<CompilerFacade> compilers) {
     this.compilers = compilers;
     if (cached) {
       this.findPath = new Cache<>(this::findPath);
@@ -66,7 +66,7 @@ class StaticRoute implements Route {
   private Object findPath(String uri) {
     Path path = findExistingPath(uri);
     if ((path != null) && isPublic(path)) {
-      if (compilers.canCompile(extension(uri))) {
+      if (compilers.get().canCompile(extension(uri))) {
         return new CompiledPath(path, path);
       }
       return path;
@@ -78,7 +78,7 @@ class StaticRoute implements Route {
   private Object findUriCompilableTo(String uri) {
     String extension = extension(uri);
 
-    for (String sourceExtension : compilers.extensionsThatCompileTo(extension)) {
+    for (String sourceExtension : compilers.get().extensionsThatCompileTo(extension)) {
       Path sourcePath = Paths.get(replaceLast(uri, extension, sourceExtension));
 
       if (isPublic(sourcePath)) {

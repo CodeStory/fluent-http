@@ -70,15 +70,15 @@ public class RouteCollection implements Routes {
 
   private void installExtensions() {
     TypeConvert.configureOrReplaceMapper(mapper -> extensions.configureOrReplaceObjectMapper(mapper, env));
-    extensions.configureCompilers(compilers.get(), env);
+    extensions.configureCompilers(compilers, env);
   }
 
   private void addStaticRoutes(boolean prodMode) {
     routes.add(new WebJarsRoute(prodMode));
-    routes.add(new StaticRoute(prodMode, compilers.get()));
+    routes.add(new StaticRoute(prodMode, compilers));
     if (!prodMode) {
-      routes.add(new SourceMapRoute(compilers.get()));
-      routes.add(new SourceRoute(compilers.get()));
+      routes.add(new SourceMapRoute());
+      routes.add(new SourceRoute(compilers));
     }
   }
 

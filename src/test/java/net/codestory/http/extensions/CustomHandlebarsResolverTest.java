@@ -15,6 +15,8 @@
  */
 package net.codestory.http.extensions;
 
+import java.util.function.*;
+
 import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.misc.Env;
 import net.codestory.http.templating.BasicResolver;
@@ -26,8 +28,8 @@ public class CustomHandlebarsResolverTest extends AbstractProdWebServerTest {
   public void add_resolver() {
     server.configure(routes -> routes.setExtensions(new Extensions() {
       @Override
-      public void configureCompilers(CompilerFacade compilers, Env env) {
-        compilers.addHandlebarResolver(new HelloWorldResolver());
+      public void configureCompilers(Supplier<CompilerFacade> compilers, Env env) {
+        compilers.get().addHandlebarResolver(new HelloWorldResolver());
       }
     }));
 

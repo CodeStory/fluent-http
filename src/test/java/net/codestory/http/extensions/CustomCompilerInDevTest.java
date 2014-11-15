@@ -21,6 +21,7 @@ import net.codestory.http.testhelpers.AbstractDevWebServerTest;
 import org.junit.Test;
 
 import java.nio.file.Path;
+import java.util.function.*;
 
 public class CustomCompilerInDevTest extends AbstractDevWebServerTest {
   @Test
@@ -28,8 +29,8 @@ public class CustomCompilerInDevTest extends AbstractDevWebServerTest {
     server.configure(routes -> routes
       .setExtensions(new Extensions() {
         @Override
-        public void configureCompilers(CompilerFacade compilers, Env env) {
-          compilers.registerCompiler(ToLowerCaseCompiler::new, ".html", ".script");
+        public void configureCompilers(Supplier<CompilerFacade> compilers, Env env) {
+          compilers.get().registerCompiler(ToLowerCaseCompiler::new, ".html", ".script");
         }
       }));
 
