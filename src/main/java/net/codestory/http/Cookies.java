@@ -18,8 +18,9 @@ package net.codestory.http;
 import java.util.*;
 
 import net.codestory.http.convert.*;
+import net.codestory.http.internal.Unwrappable;
 
-public interface Cookies extends Iterable<Cookie> {
+public interface Cookies extends Iterable<Cookie>, Unwrappable {
   Cookie get(String name);
 
   public default Map<String, String> keyValues() {

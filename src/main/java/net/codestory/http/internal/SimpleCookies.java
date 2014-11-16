@@ -57,4 +57,10 @@ class SimpleCookies implements Cookies {
     request.getCookies().forEach(cookie -> keyValues.put(cookie.getName(), cookie.getValue()));
     return keyValues;
   }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public <T> T unwrap(Class<T> type) {
+    return type.isInstance(request) ? (T) request : null;
+  }
 }
