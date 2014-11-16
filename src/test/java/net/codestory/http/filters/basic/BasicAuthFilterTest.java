@@ -15,6 +15,7 @@
  */
 package net.codestory.http.filters.basic;
 
+import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentCaptor.*;
 import static org.mockito.Mockito.*;
@@ -40,8 +41,8 @@ public class BasicAuthFilterTest {
 
   @Before
   public void create_filter() {
-    Map<String, String> users = new HashMap<>();
-    users.put("jl", "polka");
+    Map<String, String> users = singletonMap("jl", "polka");
+
     filter = new BasicAuthFilter("/secure", "codestory", users);
   }
 

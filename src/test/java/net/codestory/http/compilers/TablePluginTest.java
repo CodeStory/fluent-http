@@ -16,9 +16,9 @@
 package net.codestory.http.compilers;
 
 import static java.util.Arrays.*;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.*;
-
-import java.util.*;
 
 import org.junit.*;
 
@@ -29,7 +29,7 @@ public class TablePluginTest {
   public void empty() {
     StringBuilder out = new StringBuilder();
 
-    plugin.emit(out, asList(""), new HashMap<>());
+    plugin.emit(out, asList(""), emptyMap());
 
     assertThat(out.toString()).isEqualTo("<table>\n</table>\n");
   }
@@ -38,7 +38,7 @@ public class TablePluginTest {
   public void header() {
     StringBuilder out = new StringBuilder();
 
-    plugin.emit(out, asList("H1|H2|H3"), new HashMap<>());
+    plugin.emit(out, asList("H1|H2|H3"), emptyMap());
 
     assertThat(out.toString()).isEqualTo("<table>\n" +
       "<tr><th>H1</th><th>H2</th><th>H3</th></tr>\n" +
@@ -49,7 +49,7 @@ public class TablePluginTest {
   public void rows() {
     StringBuilder out = new StringBuilder();
 
-    plugin.emit(out, asList("H1|H2|H3", "A1|A2|A3", "B1|B2|B3"), new HashMap<>());
+    plugin.emit(out, asList("H1|H2|H3", "A1|A2|A3", "B1|B2|B3"), emptyMap());
 
     assertThat(out.toString()).isEqualTo("<table>\n" +
       "<tr><th>H1</th><th>H2</th><th>H3</th></tr>\n" +
@@ -62,9 +62,7 @@ public class TablePluginTest {
   public void id() {
     StringBuilder out = new StringBuilder();
 
-    plugin.emit(out, asList(""), new HashMap<String, String>() {{
-      put("id", "AN_ID");
-    }});
+    plugin.emit(out, asList(""), singletonMap("id", "AN_ID"));
 
     assertThat(out.toString()).isEqualTo("<table id=\"AN_ID\">\n</table>\n");
   }

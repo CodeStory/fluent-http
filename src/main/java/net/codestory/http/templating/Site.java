@@ -17,6 +17,7 @@ package net.codestory.http.templating;
 
 import static java.nio.charset.StandardCharsets.*;
 import static java.nio.file.Files.*;
+import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static net.codestory.http.io.FileVisitor.*;
@@ -156,7 +157,7 @@ public class Site {
   private Map<String, Object> loadYamlConfig(String configFile) {
     Path configPath = Paths.get(configFile);
     if (!Resources.exists(configPath)) {
-      return new HashMap<>();
+      return emptyMap();
     }
 
     try {

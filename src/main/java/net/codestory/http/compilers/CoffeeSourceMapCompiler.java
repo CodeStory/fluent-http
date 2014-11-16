@@ -18,6 +18,8 @@ package net.codestory.http.compilers;
 import java.nio.file.*;
 import java.util.*;
 
+import static java.util.Collections.singletonMap;
+
 public class CoffeeSourceMapCompiler implements Compiler {
   private final NashornCompiler nashornCompiler = new NashornCompiler(
     "META-INF/resources/webjars/coffee-script/1.8.0/coffee-script.min.js",
@@ -25,8 +27,8 @@ public class CoffeeSourceMapCompiler implements Compiler {
 
   @Override
   public String compile(Path path, String source) {
-    return nashornCompiler.compile(path, source, new HashMap<String, Object>() {{
-      put("__literate", path.toString().endsWith(".litcoffee"));
-    }});
+    Map<String, Object> options = singletonMap("__literate", path.toString().endsWith(".litcoffee"));
+
+    return nashornCompiler.compile(path, source, options);
   }
 }

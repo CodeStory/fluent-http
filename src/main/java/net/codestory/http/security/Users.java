@@ -18,6 +18,8 @@ package net.codestory.http.security;
 import java.io.*;
 import java.util.*;
 
+import static java.util.Collections.singletonMap;
+
 public interface Users extends Serializable {
   User find(String login, String password);
 
@@ -39,8 +41,6 @@ public interface Users extends Serializable {
   }
 
   static Users singleUser(String login, String password) {
-    Map<String, String> users = new HashMap<>();
-    users.put(login, password);
-    return forMap(users);
+    return forMap(singletonMap(login, password));
   }
 }

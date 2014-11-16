@@ -16,9 +16,9 @@
 package net.codestory.http.compilers;
 
 import static java.util.Arrays.*;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.*;
-
-import java.util.*;
 
 import org.junit.*;
 
@@ -28,30 +28,28 @@ public class FormulaPluginTest {
 
   @Test
   public void to_formula_url() {
-    plugin.emit(output, asList("1+2"), new HashMap<>());
+    plugin.emit(output, asList("1+2"), emptyMap());
 
     assertThat(output.toString()).isEqualTo("<img src=\"http://latex.codecogs.com/png.download?1%2B2\" />");
   }
 
   @Test
   public void to_gif() {
-    plugin.emit(output, asList("2+3"), new HashMap<String, String>() {{
-      put("type", "gif");
-    }});
+    plugin.emit(output, asList("2+3"), singletonMap("type", "gif"));
 
     assertThat(output.toString()).isEqualTo("<img src=\"http://latex.codecogs.com/gif.download?2%2B3\" />");
   }
 
   @Test
   public void skip_blank_lines() {
-    plugin.emit(output, asList(" ", "2+3", ""), new HashMap<>());
+    plugin.emit(output, asList(" ", "2+3", ""), emptyMap());
 
     assertThat(output.toString()).isEqualTo("<img src=\"http://latex.codecogs.com/png.download?2%2B3\" />");
   }
 
   @Test
   public void dont_replace_spaces_with_plus_sign() {
-    plugin.emit(output, asList(" ", "a b", ""), new HashMap<>());
+    plugin.emit(output, asList(" ", "a b", ""), emptyMap());
 
     assertThat(output.toString()).isEqualTo("<img src=\"http://latex.codecogs.com/png.download?a%20b\" />");
   }

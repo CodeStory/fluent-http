@@ -19,6 +19,8 @@ import java.util.*;
 
 import org.yaml.snakeyaml.*;
 
+import static java.util.Collections.emptyMap;
+
 public enum YamlParser {
   INSTANCE;
 
@@ -26,7 +28,7 @@ public enum YamlParser {
   public Map<String, Object> parseMap(String content) {
     Map<String, Object> variables = (Map<String, Object>) parse(content);
 
-    return variables != null ? variables : new HashMap<>();
+    return variables != null ? variables : emptyMap();
   }
 
   @SuppressWarnings("unchecked")

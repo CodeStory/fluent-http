@@ -46,10 +46,7 @@ public class TemplateTest {
 
   @Test
   public void one_variable() {
-    Map<String, Object> model = new HashMap<>();
-    model.put("name", "Bob");
-
-    String content = render("1variable.txt", model);
+    String content = render("1variable.txt", singletonMap("name", "Bob"));
 
     assertThat(content).isEqualTo("Hello Bob");
   }

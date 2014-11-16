@@ -21,6 +21,8 @@ import net.codestory.http.*;
 
 import org.simpleframework.http.Request;
 
+import static java.util.stream.Collectors.toMap;
+
 class SimpleCookies implements Cookies {
   private final Request request;
 
@@ -53,9 +55,7 @@ class SimpleCookies implements Cookies {
   //
   @Override
   public Map<String, String> keyValues() {
-    Map<String, String> keyValues = new HashMap<>();
-    request.getCookies().forEach(cookie -> keyValues.put(cookie.getName(), cookie.getValue()));
-    return keyValues;
+    return request.getCookies().stream().collect(toMap(cookie -> cookie.getName(), cookie -> cookie.getValue()));
   }
 
   @Override

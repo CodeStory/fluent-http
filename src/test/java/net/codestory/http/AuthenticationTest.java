@@ -100,8 +100,6 @@ public class AuthenticationTest extends AbstractProdWebServerTest {
   }
 
   private static Map<String, String> of(String user, String pwd) {
-    Map<String, String> users = new HashMap<>();
-    users.put(user, pwd);
-    return users;
+    return Collections.singletonMap(user, pwd);
   }
 }
