@@ -39,7 +39,7 @@ class SimpleCookies implements Cookies {
     return (cookie == null) ? null : new SimpleCookie(cookie);
   }
 
-  // Implementation more performant than the default one
+  // Implementation more efficient than the default one
   // because here we don't wrap the cookie.
   //
   @Override
@@ -48,7 +48,7 @@ class SimpleCookies implements Cookies {
     return (cookie == null) ? null : cookie.getValue();
   }
 
-  // Implementation more performant than the default one
+  // Implementation more efficient than the default one
   // because here we don't wrap every native cookie.
   //
   @Override
