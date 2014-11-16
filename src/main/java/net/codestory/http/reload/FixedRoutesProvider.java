@@ -16,15 +16,14 @@
 package net.codestory.http.reload;
 
 import net.codestory.http.Configuration;
-import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.misc.Env;
 import net.codestory.http.routes.RouteCollection;
 
 class FixedRoutesProvider implements RoutesProvider {
   private final RouteCollection routes;
 
-  FixedRoutesProvider(Env env, CompilerFacade compiler, Configuration configuration) {
-    routes = new RouteCollection(env, compiler);
+  FixedRoutesProvider(Env env, Configuration configuration) {
+    routes = new RouteCollection(env);
     routes.configure(configuration);
   }
 

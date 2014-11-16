@@ -68,6 +68,10 @@ public class Logs {
     }
   }
 
+  public static void unableToConfigureRoutes(Throwable e) {
+    logs.error("Unable to configure routes properly", e);
+  }
+
   private static interface LogsImplementation {
     void info(String message);
 

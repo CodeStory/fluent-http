@@ -16,7 +16,6 @@
 package net.codestory.http.reload;
 
 import net.codestory.http.Configuration;
-import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.misc.Env;
 import net.codestory.http.routes.RouteCollection;
 
@@ -26,11 +25,11 @@ import java.io.Serializable;
 public interface RoutesProvider extends Serializable {
   RouteCollection get();
 
-  static RoutesProvider fixed(Env env, CompilerFacade compiler, Configuration configuration) {
-    return new FixedRoutesProvider(env, compiler, configuration);
+  static RoutesProvider fixed(Env env, Configuration configuration) {
+    return new FixedRoutesProvider(env, configuration);
   }
 
-  static RoutesProvider reloading(Env env, CompilerFacade compiler, Configuration configuration) {
-    return new ReloadingRoutesProvider(env, compiler, configuration);
+  static RoutesProvider reloading(Env env, Configuration configuration) {
+    return new ReloadingRoutesProvider(env, configuration);
   }
 }

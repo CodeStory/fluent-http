@@ -52,9 +52,9 @@ public class RouteCollection implements Routes {
   protected IocAdapter iocAdapter;
   protected Extensions extensions;
 
-  public RouteCollection(Env env, CompilerFacade compilers) {
+  public RouteCollection(Env env) {
     this.env = env;
-    this.compilers = compilers;
+    this.compilers = new CompilerFacade(env);
     this.site = new Site(env);
     this.routes = new LinkedList<>();
     this.filters = new LinkedList<>();

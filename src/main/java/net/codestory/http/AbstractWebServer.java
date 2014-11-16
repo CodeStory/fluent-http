@@ -32,13 +32,11 @@ import net.codestory.http.payload.*;
 import net.codestory.http.reload.*;
 import net.codestory.http.routes.*;
 import net.codestory.http.ssl.*;
-import net.codestory.http.templating.*;
 
 import javax.net.ssl.*;
 
 public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
   protected final Env env;
-  protected final CompilerFacade compilers;
 
   protected HttpServerWrapper server;
   protected RoutesProvider routesProvider;
@@ -46,15 +44,14 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
 
   protected AbstractWebServer() {
     this.env = createEnv();
-    this.compilers = createCompilerFacade();
   }
 
   protected abstract HttpServerWrapper createHttpServer(Handler handler) throws Exception;
 
   public T configure(Configuration configuration) {
     this.routesProvider = env.prodMode()
-      ? RoutesProvider.fixed(env, compilers, configuration)
-      : RoutesProvider.reloading(env, compilers, configuration);
+      ? RoutesProvider.fixed(env, configuration)
+      : RoutesProvider.reloading(env, configuration);
     return (T) this;
   }
 
@@ -145,9 +142,13 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
   }
 
   protected void handle(Request request, Response response) {
-    try {
-      RouteCollection routes = routesProvider.get();
+    // We need to make sure that these two lines cannot fail
+    // Otherwise no response is made to the client
+    //
+    RouteCollection routes = routesProvider.get();
+    PayloadWriter payloadWriter = routes.createPayloadWriter(request, response);
 
+    try {
       Context context = routes.createContext(request, response);
 
       Payload payload = routes.apply(context);
@@ -155,10 +156,8 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
         payload = errorPage(payload);
       }
 
-      PayloadWriter payloadWriter = routes.createPayloadWriter(request, response);
       payloadWriter.writeAndClose(payload);
     } catch (Exception e) {
-      PayloadWriter payloadWriter = new PayloadWriter(request, response, env, new Site(env), compilers);
       handleServerError(payloadWriter, e);
     }
   }
@@ -200,9 +199,5 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
 
   protected Env createEnv() {
     return new Env();
-  }
-
-  protected CompilerFacade createCompilerFacade() {
-    return new CompilerFacade(env);
   }
 }

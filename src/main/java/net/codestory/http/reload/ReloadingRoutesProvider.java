@@ -22,11 +22,9 @@ import java.net.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
-import java.util.function.*;
 import java.util.stream.*;
 
 import net.codestory.http.*;
-import net.codestory.http.compilers.*;
 import net.codestory.http.io.*;
 import net.codestory.http.logs.*;
 import net.codestory.http.misc.*;
@@ -34,18 +32,15 @@ import net.codestory.http.routes.*;
 
 class ReloadingRoutesProvider implements RoutesProvider {
   private final Env env;
-  private final CompilerFacade compiler;
   private final Configuration configuration;
   private final AtomicBoolean dirty;
 
   private List<FolderWatcher> classesWatchers;
   private FolderWatcher appWatcher;
-
   private RouteCollection routes;
 
-  ReloadingRoutesProvider(Env env, CompilerFacade compiler, Configuration configuration) {
+  ReloadingRoutesProvider(Env env, Configuration configuration) {
     this.env = env;
-    this.compiler = compiler;
     this.configuration = configuration;
     this.dirty = new AtomicBoolean(true);
   }
@@ -68,18 +63,22 @@ class ReloadingRoutesProvider implements RoutesProvider {
     if (dirty.get()) {
       Logs.reloadingConfiguration();
 
-      if (classesWatchers == null) {
-        this.classesWatchers = classpathFolders().map(path -> new FolderWatcher(path, ev -> dirty.set(true))).collect(toList());
-      }
-      classesWatchers.forEach(FolderWatcher::ensureStarted);
+      routes = new RouteCollection(env);
+      try {
+        routes.configure(configuration);
 
-      if (appWatcher == null) {
-        this.appWatcher = new FolderWatcher(env.appPath(), ev -> dirty.set(true));
-      }
-      appWatcher.ensureStarted();
+        if (classesWatchers == null) {
+          this.classesWatchers = classpathFolders().map(path -> new FolderWatcher(path, ev -> dirty.set(true))).collect(toList());
+        }
+        classesWatchers.forEach(FolderWatcher::ensureStarted);
 
-      routes = new RouteCollection(env, compiler);
-      routes.configure(configuration);
+        if (appWatcher == null) {
+          this.appWatcher = new FolderWatcher(env.appPath(), ev -> dirty.set(true));
+        }
+        appWatcher.ensureStarted();
+      } catch (Throwable e) {
+        Logs.unableToConfigureRoutes(e);
+      }
 
       dirty.set(false);
     }
