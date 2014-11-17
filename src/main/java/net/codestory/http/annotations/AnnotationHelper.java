@@ -27,7 +27,7 @@ public class AnnotationHelper {
     // static class
   }
 
-  public static void parseAnnotations(String urlPrefix, Class<?> type, MethodAnnotationCallback callbask) {
+  public static void parseAnnotations(String urlPrefix, Class<?> type, MethodAnnotationCallback callback) {
     // Hack to support Mockito Spies
     if (type.getName().contains("EnhancerByMockito")) {
       type = type.getSuperclass();
@@ -37,12 +37,12 @@ public class AnnotationHelper {
     String classPrefix = (prefixAnnotation != null) ? prefixAnnotation.value() : "";
 
     for (Method method : type.getMethods()) {
-      of(method.getAnnotationsByType(Get.class)).forEach(get -> callbask.onMethod(GET, url(urlPrefix, classPrefix, get.value()), method));
-      of(method.getAnnotationsByType(Post.class)).forEach(post -> callbask.onMethod(POST, url(urlPrefix, classPrefix, post.value()), method));
-      of(method.getAnnotationsByType(Put.class)).forEach(put -> callbask.onMethod(PUT, url(urlPrefix, classPrefix, put.value()), method));
-      of(method.getAnnotationsByType(Delete.class)).forEach(delete -> callbask.onMethod(DELETE, url(urlPrefix, classPrefix, delete.value()), method));
-      of(method.getAnnotationsByType(Head.class)).forEach(head -> callbask.onMethod(HEAD, url(urlPrefix, classPrefix, head.value()), method));
-      of(method.getAnnotationsByType(Options.class)).forEach(options -> callbask.onMethod(OPTIONS, url(urlPrefix, classPrefix, options.value()), method));
+      of(method.getAnnotationsByType(Get.class)).forEach(get -> callback.onMethod(GET, url(urlPrefix, classPrefix, get.value()), method));
+      of(method.getAnnotationsByType(Post.class)).forEach(post -> callback.onMethod(POST, url(urlPrefix, classPrefix, post.value()), method));
+      of(method.getAnnotationsByType(Put.class)).forEach(put -> callback.onMethod(PUT, url(urlPrefix, classPrefix, put.value()), method));
+      of(method.getAnnotationsByType(Delete.class)).forEach(delete -> callback.onMethod(DELETE, url(urlPrefix, classPrefix, delete.value()), method));
+      of(method.getAnnotationsByType(Head.class)).forEach(head -> callback.onMethod(HEAD, url(urlPrefix, classPrefix, head.value()), method));
+      of(method.getAnnotationsByType(Options.class)).forEach(options -> callback.onMethod(OPTIONS, url(urlPrefix, classPrefix, options.value()), method));
     }
   }
 
