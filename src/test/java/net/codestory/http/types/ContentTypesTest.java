@@ -78,32 +78,4 @@ public class ContentTypesTest {
     assertThat(support_templating(Paths.get("favicon.ico"))).isFalse();
     assertThat(support_templating(Paths.get("unknown"))).isFalse();
   }
-
-  @Test
-  public void binary() {
-    assertThat(is_binary(Paths.get("index.html"))).isFalse();
-    assertThat(is_binary(Paths.get("data.xml"))).isFalse();
-    assertThat(is_binary(Paths.get("style.css"))).isFalse();
-    assertThat(is_binary(Paths.get("style.less"))).isFalse();
-    assertThat(is_binary(Paths.get("style.css.map"))).isFalse();
-    assertThat(is_binary(Paths.get("text.md"))).isFalse();
-    assertThat(is_binary(Paths.get("text.markdown"))).isFalse();
-    assertThat(is_binary(Paths.get("text.txt"))).isFalse();
-    assertThat(is_binary(Paths.get("text.zip"))).isTrue();
-    assertThat(is_binary(Paths.get("text.gz"))).isTrue();
-    assertThat(is_binary(Paths.get("text.pdf"))).isTrue();
-    assertThat(is_binary(Paths.get("image.gif"))).isTrue();
-    assertThat(is_binary(Paths.get("image.jpeg"))).isTrue();
-    assertThat(is_binary(Paths.get("image.jpg"))).isTrue();
-    assertThat(is_binary(Paths.get("image.png"))).isTrue();
-    assertThat(is_binary(Paths.get("font.svg"))).isFalse();
-    assertThat(is_binary(Paths.get("font.eot"))).isTrue();
-    assertThat(is_binary(Paths.get("font.ttf"))).isTrue();
-    assertThat(is_binary(Paths.get("font.woof"))).isTrue();
-    assertThat(is_binary(Paths.get("script.js"))).isFalse();
-    assertThat(is_binary(Paths.get("script.coffee"))).isFalse();
-    assertThat(is_binary(Paths.get("script.litcoffee"))).isFalse();
-    assertThat(is_binary(Paths.get("favicon.ico"))).isTrue();
-    assertThat(is_binary(Paths.get("unknown"))).isTrue();
-  }
 }

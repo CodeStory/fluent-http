@@ -89,24 +89,4 @@ public class ContentTypes {
         return false;
     }
   }
-
-  public static boolean is_binary(Path path) {
-    switch (extension(path)) {
-      case ".txt":
-      case ".md":
-      case ".markdown":
-      case ".html":
-      case ".xml":
-      case ".css":
-      case ".less":
-      case ".map":
-      case ".js":
-      case ".coffee":
-      case ".litcoffee":
-      case ".svg":
-        return false;
-      default:
-        return true;
-    }
-  }
 }
