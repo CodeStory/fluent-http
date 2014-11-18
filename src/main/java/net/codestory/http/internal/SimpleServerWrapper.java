@@ -18,6 +18,8 @@ package net.codestory.http.internal;
 import java.io.*;
 import java.net.*;
 
+import org.simpleframework.http.Request;
+import org.simpleframework.http.Response;
 import org.simpleframework.http.core.*;
 import org.simpleframework.transport.*;
 import org.simpleframework.transport.Socket;
@@ -25,26 +27,38 @@ import org.simpleframework.transport.connect.*;
 
 import javax.net.ssl.*;
 
-public class SimpleServerWrapper implements HttpServerWrapper {
-  private final SocketProcessor server;
+public class SimpleServerWrapper implements HttpServerWrapper, Container {
+  private final Handler handler;
+  private final int count;
+  private final int select;
 
-  public SimpleServerWrapper(Handler handler) throws IOException {
+  private SocketConnection socketConnection;
+
+  public SimpleServerWrapper(Handler handler) {
     this(handler, 8, 1);
   }
 
-  public SimpleServerWrapper(Handler handler, int count, int select) throws IOException {
-    this.server = new ContainerSocketProcessor((req, resp) -> handler.handle(new SimpleRequest(req), new SimpleResponse(resp)), count, select);
+  public SimpleServerWrapper(Handler handler, int count, int select) {
+    this.handler = handler;
+    this.count = count;
+    this.select = select;
   }
 
   @Override
   public void start(int port, SSLContext context, boolean authReq) throws IOException {
-    SocketConnection socketConnection = new SocketConnection(authReq ? new AuthRequiredServer(server) : server);
+    ContainerSocketProcessor server = new ContainerSocketProcessor(this, count, select);
+    socketConnection = new SocketConnection(authReq ? new AuthRequiredServer(server) : server);
     socketConnection.connect(new InetSocketAddress(port), context);
   }
 
   @Override
+  public void handle(Request request, Response response) {
+    handler.handle(new SimpleRequest(request), new SimpleResponse(response));
+  }
+
+  @Override
   public void stop() throws IOException {
-    server.stop();
+    socketConnection.close();
   }
 
   private static class AuthRequiredServer implements SocketProcessor {

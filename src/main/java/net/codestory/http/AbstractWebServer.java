@@ -63,12 +63,17 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     Random random = new Random();
     for (int i = 0; i < 30; i++) {
       try {
-        int port = 8183 + random.nextInt(10000);
+        int port = 8183 + random.nextInt(30000);
         return start(port);
+      } catch (IllegalStateException e) {
+        if (!e.getMessage().contains("Port already in use")) {
+          Logs.unableToBindServer(e);
+        }
       } catch (Exception e) {
         Logs.unableToBindServer(e);
       }
     }
+
     throw new IllegalStateException("Unable to start server");
   }
 
@@ -120,9 +125,10 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
       Logs.started(this.port);
     } catch (RuntimeException e) {
       throw e;
-    } catch (BindException e) {
-      throw new IllegalStateException("Port already in use " + this.port);
     } catch (Exception e) {
+      if ((e instanceof BindException) || (e.getCause() instanceof BindException)) {
+        throw new IllegalStateException("Port already in use " + this.port);
+      }
       throw new IllegalStateException("Unable to bind the web server on port " + this.port, e);
     }
 
