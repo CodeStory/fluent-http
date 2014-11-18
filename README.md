@@ -685,6 +685,13 @@ If you're paranoid and run fluent-http under `nobody` user make sure `nobody` ca
 mvn license:format
 ```
 
+## TODO
+
++ Change `app` folder name
++ include file not in _includes
++ Merge static resources
+
+
 # Deploy on Maven Central
 
 Build the release:
