@@ -25,8 +25,6 @@ import java.util.Set;
 public interface BasicResolver extends ValueResolver {
   String tag();
 
-  Object resolve(Object context);
-
   @Override
   public default Object resolve(Object context, String name) {
     if (Objects.equals(tag(), name)) {
