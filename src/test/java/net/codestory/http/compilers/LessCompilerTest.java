@@ -46,6 +46,15 @@ public class LessCompilerTest {
   }
 
   @Test
+  public void dont_set_sourcemap_in_prod_mode() {
+    LessCompiler compiler = new LessCompiler(true);
+
+    String css = compiler.compile(Paths.get("file.less"), "body { h1 { color: red; } }");
+
+    assertThat(css).isEqualTo("body h1 {\n  color: red;\n}\n");
+  }
+
+  @Test
   public void import_less() {
     String css = compiler.compile(Paths.get("style.less"), "@import 'assets/style.less';");
 

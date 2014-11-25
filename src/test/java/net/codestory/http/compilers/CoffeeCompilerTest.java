@@ -43,8 +43,9 @@ public class CoffeeCompilerTest {
   }
 
   @Test
-  public void to_javascript_in_prod_mode() {
+  public void dont_set_sourcemap_in_prod_mode() {
     CoffeeCompiler compiler = new CoffeeCompiler(true);
+
     String js = compiler.compile(Paths.get("file.coffee"), "life=42");
 
     assertThat(js).isEqualTo("var life;\n\nlife = 42;\n");
