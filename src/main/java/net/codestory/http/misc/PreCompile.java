@@ -33,40 +33,47 @@ public class PreCompile {
   private final Site site;
   private final CompilerFacade compilers;
 
-  public PreCompile() {
-    this(new Env(true, false, false, false));
-  }
-
   public PreCompile(Env env) {
     this.site = new Site(env);
     this.compilers = new CompilerFacade(env);
   }
 
   public static void main(String[] args) {
-    new PreCompile().run();
+    new PreCompile(new Env(true, false, false, false)).run();
   }
 
   public void run() {
-    site.getResourceList().parallelStream().forEach(path -> {
-      String extension = Strings.extension(path);
+    site.getResourceList().parallelStream().forEach(path -> preCompile(path));
+  }
 
-      if (compilers.canCompile(extension)) {
-        String compiledExtension = compilers.compiledExtension(extension);
+  protected void preCompile(String path) {
+    String extension = Strings.extension(path);
+    if (!compilers.canCompile(extension)) {
+      return;
+    }
 
-        Path fromPath = Paths.get(path);
-        Path toPath = Paths.get(APP_FOLDER, replaceLast(path, extension, compiledExtension));
+    Path fromPath = Paths.get(path);
+    Path toPath = toPath(path, extension);
 
-        System.out.println("Pre-compile: " + fromPath + " to " + toPath);
-        try {
+    System.out.println("Pre-compile: " + fromPath + " to " + toPath);
+    try {
+      byte[] bytes = compile(fromPath);
+      write(bytes, toPath);
+    } catch (IOException e) {
+      throw new RuntimeException("Unable to pre-compile " + path);
+    }
+  }
 
-          byte[] bytes = compilers.compile(fromPath, read(fromPath, UTF_8)).toBytes();
+  protected Path toPath(String path, String extension) {
+    String compiledExtension = compilers.compiledExtension(extension);
 
-          write(bytes, toPath);
-        } catch (IOException e) {
-          throw new RuntimeException("Unable to pre-compile " + path);
-        }
-      }
-    });
+    String newName = replaceLast(path, extension, compiledExtension);
+
+    return Paths.get(APP_FOLDER, newName);
+  }
+
+  protected byte[] compile(Path fromPath) throws IOException {
+    return compilers.compile(fromPath, read(fromPath, UTF_8)).toBytes();
   }
 
   protected void write(byte[] bytes, Path toPath) throws IOException {
