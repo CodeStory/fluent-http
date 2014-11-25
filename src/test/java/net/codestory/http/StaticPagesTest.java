@@ -22,8 +22,8 @@ import org.junit.*;
 public class StaticPagesTest extends AbstractProdWebServerTest {
   @Test
   public void webJars() {
-    get("/webjars/bootstrap/3.2.0/css/bootstrap.min.css").produces(200, "text/css", "Bootstrap v3.2.0");
-    get("/webjars/bootstrap/3.2.0/js/bootstrap.min.js").produces(200, "application/javascript", "Bootstrap v3.2.0");
+    get("/webjars/bootstrap/3.3.1/css/bootstrap.min.css").produces(200, "text/css", "Bootstrap v3.3.1");
+    get("/webjars/bootstrap/3.3.1/js/bootstrap.min.js").produces(200, "application/javascript", "Bootstrap v3.3.1");
     get("/webjars/").produces(404);
   }
 
