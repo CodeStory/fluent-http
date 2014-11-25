@@ -33,6 +33,7 @@ import static net.codestory.http.misc.MemoizingSupplier.memoize;
 public class Compilers {
   private final Map<String, Supplier<Compiler>> compilerByExtension = new HashMap<>();
   private final Map<String, Set<String>> extensionsThatCompileTo = new HashMap<>();
+  private final Map<String, String> compiledExtension = new HashMap<>();
   private final Map<String, CacheEntry> cache = new ConcurrentHashMap<>();
   private final DiskCache diskCache;
 
@@ -52,10 +53,12 @@ public class Compilers {
     Set<String> uncompiledExtensions = extensionsThatCompileTo.computeIfAbsent(targetExtension, k -> new HashSet<>());
 
     compilerByExtension.put(firstExtension, compilerLazyFactory);
+    compiledExtension.put(firstExtension, targetExtension);
     uncompiledExtensions.add(firstExtension);
 
     for (String extension : moreExtensions) {
       compilerByExtension.put(extension, compilerLazyFactory);
+      compiledExtension.put(extension, targetExtension);
       uncompiledExtensions.add(extension);
     }
   }
@@ -66,6 +69,10 @@ public class Compilers {
 
   public Set<String> extensionsThatCompileTo(String extension) {
     return extensionsThatCompileTo.getOrDefault(extension, emptySet());
+  }
+
+  public String compiledExtension(String extension) {
+    return compiledExtension.get(extension);
   }
 
   public CacheEntry compile(Path path, String content) {

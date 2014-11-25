@@ -61,6 +61,10 @@ public class CompilerFacade {
     return compilers.get().extensionsThatCompileTo(extension);
   }
 
+  public String compiledExtension(String extension) {
+    return compilers.get().compiledExtension(extension);
+  }
+
   public CacheEntry compile(Path path, String content) {
     return compilers.get().compile(path, content);
   }

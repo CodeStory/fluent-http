@@ -16,6 +16,7 @@
 package net.codestory.http.misc;
 
 import net.codestory.http.compilers.CompilerFacade;
+import net.codestory.http.io.Strings;
 import net.codestory.http.templating.Site;
 
 import java.io.IOException;
@@ -47,26 +48,29 @@ public class PreCompile {
 
   public void run() {
     site.getResourceList().parallelStream().forEach(path -> {
-      if (path.endsWith(".coffee")) {
-        saveCompiled(compilers, path, replaceLast(path, ".coffee", ".js"));
-      } else if (path.endsWith(".less")) {
-        saveCompiled(compilers, path, replaceLast(path, ".less", ".css"));
+      String extension = Strings.extension(path);
+
+      if (compilers.canCompile(extension)) {
+        String compiledExtension = compilers.compiledExtension(extension);
+
+        Path fromPath = Paths.get(path);
+        Path toPath = Paths.get(APP_FOLDER, replaceLast(path, extension, compiledExtension));
+
+        System.out.println("Pre-compile: " + fromPath + " to " + toPath);
+        try {
+
+          byte[] bytes = compilers.compile(fromPath, read(fromPath, UTF_8)).toBytes();
+
+          write(bytes, toPath);
+        } catch (IOException e) {
+          throw new RuntimeException("Unable to pre-compile " + path);
+        }
       }
     });
   }
 
-  protected void saveCompiled(CompilerFacade compilers, String path, String newName) {
-    System.out.println("Pre-compile: " + path);
-    try {
-      Path fromPath = Paths.get(path);
-      Path toPath = Paths.get(APP_FOLDER, newName);
-
-      byte[] bytes = compilers.compile(fromPath, read(fromPath, UTF_8)).toBytes();
-
-      Files.createDirectories(toPath.getParent());
-      Files.write(toPath, bytes);
-    } catch (IOException e) {
-      throw new RuntimeException("Unable to pre-compile " + path);
-    }
+  protected void write(byte[] bytes, Path toPath) throws IOException {
+    Files.createDirectories(toPath.getParent());
+    Files.write(toPath, bytes);
   }
 }
