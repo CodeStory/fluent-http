@@ -101,6 +101,10 @@ public class Site {
     return yaml.get();
   }
 
+  public Set<String> getResourceList() {
+    return resourceList.get();
+  }
+
   public Object get(String key) {
     return yaml.get().get(key);
   }
