@@ -55,7 +55,7 @@ public class PreCompile {
     Path fromPath = Paths.get(path);
     Path toPath = toPath(path, extension);
 
-    System.out.println("Pre-compile: " + fromPath + " to " + toPath);
+    System.out.println("Pre-compile [" + fromPath + "] to [" + toPath + "]");
     try {
       byte[] bytes = compile(fromPath);
       write(bytes, toPath);
