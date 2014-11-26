@@ -103,18 +103,6 @@ public class RouteCollection implements Routes {
   }
 
   @Override
-  public RouteCollection include(Class<? extends Configuration> configurationClass) {
-    iocAdapter.get(configurationClass).configure(this);
-    return this;
-  }
-
-  @Override
-  public RouteCollection include(Configuration configuration) {
-    configuration.configure(this);
-    return this;
-  }
-
-  @Override
   public RouteCollection filter(Class<? extends Filter> filterClass) {
     filters.addFirst(() -> iocAdapter.get(filterClass));
     return this;

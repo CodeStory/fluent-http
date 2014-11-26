@@ -15,7 +15,6 @@
  */
 package net.codestory.http;
 
-import net.codestory.http.routes.*;
 import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
@@ -60,26 +59,5 @@ public class ConfigurationTest extends AbstractProdWebServerTest {
 
     get("/any").produces("HELLO");
     get("/random").produces("HELLO");
-  }
-
-  @Test
-  public void includes() {
-    server.configure(routes -> routes.
-      get("/", "MAIN").
-      include(moreRoutes -> moreRoutes.get("/more", "MORE")).
-      include(EvenMoreRoutes.class));
-
-    get("/").produces("MAIN");
-    get("/more").produces("MORE");
-    get("/evenMore").produces("EVEN_MORE");
-  }
-
-  public static class EvenMoreRoutes implements Configuration {
-    private String response = "EVEN_MORE";
-
-    @Override
-    public void configure(Routes routes) {
-      routes.get("/evenMore", () -> response);
-    }
   }
 }

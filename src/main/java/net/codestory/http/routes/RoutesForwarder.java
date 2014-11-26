@@ -15,7 +15,6 @@
  */
 package net.codestory.http.routes;
 
-import net.codestory.http.*;
 import net.codestory.http.extensions.Extensions;
 import net.codestory.http.filters.*;
 import net.codestory.http.injection.*;
@@ -43,22 +42,6 @@ public class RoutesForwarder implements Routes {
   public Routes setIocAdapter(IocAdapter iocAdapter) {
     for (Routes routes : delegates()) {
       routes.setIocAdapter(iocAdapter);
-    }
-    return this;
-  }
-
-  @Override
-  public Routes include(Class<? extends Configuration> configurationClass) {
-    for (Routes routes : delegates()) {
-      routes.include(configurationClass);
-    }
-    return this;
-  }
-
-  @Override
-  public Routes include(Configuration configuration) {
-    for (Routes routes : delegates()) {
-      routes.include(configuration);
     }
     return this;
   }
