@@ -21,6 +21,8 @@ import java.util.*;
 
 import net.codestory.http.internal.*;
 
+import static java.util.stream.Collectors.toMap;
+
 public interface Request extends Unwrappable {
   String uri();
 
@@ -39,6 +41,10 @@ public interface Request extends Unwrappable {
   public default String header(String name, String defaultValue) {
     String value = header(name);
     return (value == null) ? defaultValue : value;
+  }
+
+  public default Map<String, List<String>> headers() {
+    return headerNames().stream().collect(toMap(name -> name, name -> headers(name)));
   }
 
   InputStream inputStream() throws IOException;
