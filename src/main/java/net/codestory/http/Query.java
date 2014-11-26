@@ -16,15 +16,23 @@
 package net.codestory.http;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import net.codestory.http.internal.*;
 
 public interface Query extends Unwrappable {
-  String get(String name);
+  Collection<String> keys();
 
   Iterable<String> all(String name);
 
-  Map<String, String> keyValues();
+  default String get(String name) {
+    Iterator<String> values = all(name).iterator();
+    return values.hasNext() ? values.next() : null;
+  }
+
+  default Map<String, String> keyValues() {
+    return keys().stream().collect(Collectors.toMap(key -> key, key -> get(key)));
+  }
 
   default int getInteger(String name) {
     String value = get(name);

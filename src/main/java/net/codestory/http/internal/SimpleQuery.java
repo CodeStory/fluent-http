@@ -27,6 +27,11 @@ class SimpleQuery implements Query {
   }
 
   @Override
+  public Collection<String> keys() {
+    return query.keySet();
+  }
+
+  @Override
   public String get(String name) {
     return query.get(name);
   }
