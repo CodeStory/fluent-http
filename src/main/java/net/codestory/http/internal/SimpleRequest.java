@@ -41,11 +41,6 @@ class SimpleRequest implements Request {
   }
 
   @Override
-  public String header(String name) {
-    return request.getValue(name);
-  }
-
-  @Override
   public String content() throws IOException {
     return request.getContent();
   }
