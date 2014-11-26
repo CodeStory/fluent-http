@@ -15,6 +15,7 @@
  */
 package net.codestory.http;
 
+import net.codestory.http.payload.Payload;
 import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
@@ -31,5 +32,13 @@ public class CacheTest extends AbstractProdWebServerTest {
     get("/").produces(200, "text/html", "Hello").producesHeader("Etag", "8b1a9953c4611296a827abf8c47804d7");
     getWithHeader("/", "If-None-Match", "8b1a9953c4611296a827abf8c47804d7").produces(304);
     getWithHeader("/", "If-None-Match", "\"8b1a9953c4611296a827abf8c47804d7\"").produces(304);
+  }
+
+  @Test
+  public void date() {
+    server.configure(routes -> routes.get("/", new Payload("Hello").withHeader("Last-Modified", "Wed, 12 Nov 2014 17:53:14 GMT")));
+
+    getWithHeader("/", "If-Modified-Since", "Wed, 12 Nov 2014 17:53:14 GMT").produces(200);
+    getWithHeader("/", "If-Modified-Since", "Thu, 13 Nov 2014 17:53:14 GMT").produces(304);
   }
 }

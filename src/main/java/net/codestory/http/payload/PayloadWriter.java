@@ -53,12 +53,9 @@ public class PayloadWriter {
   }
 
   public void writeAndClose(Payload payload) throws IOException {
-    try {
-      write(payload);
-    } finally {
-      if (!isStream(payload.rawContent())) {
-        close();
-      }
+    write(payload);
+    if (!isStream(payload.rawContent())) {
+      close();
     }
   }
 
@@ -317,6 +314,11 @@ public class PayloadWriter {
   }
 
   protected long getLastModified(Payload payload) throws IOException {
+    String lastModified = payload.headers().get(LAST_MODIFIED);
+    if (lastModified != null) {
+      return Dates.parse_rfc_1123(lastModified);
+    }
+
     Object content = payload.rawContent();
     if (content instanceof File) {
       return ((File) content).lastModified();
