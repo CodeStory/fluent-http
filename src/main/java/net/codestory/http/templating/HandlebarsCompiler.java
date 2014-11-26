@@ -54,30 +54,27 @@ public class HandlebarsCompiler {
   }
 
   private static Handlebars handlebars(Compilers compilers) {
-    Handlebars hb = new Handlebars();
+    return new Handlebars()
+      .startDelimiter("[[")
+      .endDelimiter("]]")
+      .registerHelpers(new EachReverseHelperSource())
+      .registerHelpers(new EachValueHelperSource())
+      .registerHelpers(new GoogleAnalyticsHelper())
+      .registerHelpers(StringHelpers.class)
+      .with(new ConcurrentMapTemplateCache())
+      .with(new AbstractTemplateLoader() {
+        @Override
+        public TemplateSource sourceAt(String location) throws IOException {
+          Path include = Resources.findExistingPath("_includes", location);
+          if (include == null) {
+            throw new IOException("Template not found " + location);
+          }
 
-    hb.startDelimiter("[[");
-    hb.endDelimiter("]]");
-    hb.registerHelpers(new EachReverseHelperSource());
-    hb.registerHelpers(new EachValueHelperSource());
-    hb.registerHelpers(new GoogleAnalyticsHelper());
-    hb.registerHelpers(StringHelpers.class);
-    hb.with(new ConcurrentMapTemplateCache());
-    hb.with(new AbstractTemplateLoader() {
-      @Override
-      public TemplateSource sourceAt(String location) throws IOException {
-        Path include = Resources.findExistingPath("_includes", location);
-        if (include == null) {
-          throw new IOException("Template not found " + location);
+          String template = Resources.read(include, UTF_8);
+          CacheEntry compiled = compilers.compile(include, template);
+          return new StringTemplateSource(location, compiled.content());
         }
-
-        String template = Resources.read(include, UTF_8);
-        CacheEntry compiled = compilers.compile(include, template);
-        return new StringTemplateSource(location, compiled.content());
-      }
-    });
-
-    return hb;
+      });
   }
 
   private Context context(Map<String, ?> variables) {
