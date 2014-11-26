@@ -15,8 +15,6 @@
  */
 package net.codestory.http;
 
-import java.io.*;
-
 import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
@@ -33,17 +31,5 @@ public class CacheTest extends AbstractProdWebServerTest {
     get("/").produces(200, "text/html", "Hello").producesHeader("Etag", "8b1a9953c4611296a827abf8c47804d7");
     getWithHeader("/", "If-None-Match", "8b1a9953c4611296a827abf8c47804d7").produces(304);
     getWithHeader("/", "If-None-Match", "\"8b1a9953c4611296a827abf8c47804d7\"").produces(304);
-  }
-
-  private File createFile(String hello) {
-    try {
-      File file = temp.newFile();
-      try (Writer writer = new FileWriter(file)) {
-        writer.write(hello);
-      }
-      return file;
-    } catch (IOException e) {
-      throw new IllegalStateException("Unable to create temp file", e);
-    }
   }
 }
