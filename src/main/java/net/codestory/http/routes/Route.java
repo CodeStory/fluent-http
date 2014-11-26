@@ -21,7 +21,7 @@ import net.codestory.http.*;
 import net.codestory.http.payload.*;
 
 public interface Route extends Serializable {
-  public default Payload apply(String uri, Context context) throws IOException {
+  default Payload apply(String uri, Context context) throws IOException {
     Object body = body(context);
     return new Payload(body);
   }

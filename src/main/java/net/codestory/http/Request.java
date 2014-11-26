@@ -36,15 +36,15 @@ public interface Request extends Unwrappable {
 
   List<String> headers(String name);
 
-  public default String header(String name) {
+  default String header(String name) {
     return header(name, null);
   }
 
-  public default String header(String name, String defaultValue) {
+  default String header(String name, String defaultValue) {
     return headers(name).stream().findFirst().orElse(defaultValue);
   }
 
-  public default Map<String, List<String>> headers() {
+  default Map<String, List<String>> headers() {
     return headerNames().stream().collect(toMap(name -> name, name -> headers(name)));
   }
 

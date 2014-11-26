@@ -26,7 +26,7 @@ public interface BasicResolver extends ValueResolver {
   String tag();
 
   @Override
-  public default Object resolve(Object context, String name) {
+  default Object resolve(Object context, String name) {
     if (Objects.equals(tag(), name)) {
       return resolve(context);
     }
@@ -35,7 +35,7 @@ public interface BasicResolver extends ValueResolver {
   }
 
   @Override
-  public default Set<Map.Entry<String, Object>> propertySet(Object context) {
+  default Set<Map.Entry<String, Object>> propertySet(Object context) {
     return Collections.emptySet();
   }
 }

@@ -34,27 +34,27 @@ public interface Extensions extends Serializable {
   /**
    * Called each time routes are loaded.
    */
-  public default ObjectMapper configureOrReplaceObjectMapper(ObjectMapper defaultObjectMapper, Env env) {
+  default ObjectMapper configureOrReplaceObjectMapper(ObjectMapper defaultObjectMapper, Env env) {
     return defaultObjectMapper;
   }
 
   /**
    * Called each time routes are loaded.
    */
-  public default void configureCompilers(CompilerFacade compilers, Env env) {
+  default void configureCompilers(CompilerFacade compilers, Env env) {
   }
 
   /**
    * Called each request.
    */
-  public default Context createContext(Request request, Response response, IocAdapter iocAdapter, Site site) {
+  default Context createContext(Request request, Response response, IocAdapter iocAdapter, Site site) {
     return new Context(request, response, iocAdapter, site);
   }
 
   /**
    * Called each request.
    */
-  public default PayloadWriter createPayloadWriter(Request request, Response response, Env env, Site site, CompilerFacade compilers) {
+  default PayloadWriter createPayloadWriter(Request request, Response response, Env env, Site site, CompilerFacade compilers) {
     return new PayloadWriter(request, response, env, site, compilers);
   }
 }
