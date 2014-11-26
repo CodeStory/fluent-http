@@ -9,7 +9,7 @@
 
   <name>CodeStory - Http Server</name>
   <description>This is the simplest fastest full fledged http server we could come up with</description>
-  <url>https://github.com/CodeStory/code-story-http</url>
+  <url>https://github.com/CodeStory/fluent-http</url>
 
   <parent>
     <groupId>org.sonatype.oss</groupId>
