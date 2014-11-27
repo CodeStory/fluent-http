@@ -15,16 +15,15 @@
  */
 package net.codestory.http.misc;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.*;
-
-import java.nio.charset.*;
 
 import org.junit.*;
 
 public class Md5Test {
   @Test
   public void md5() {
-    assertThat(Md5.of("".getBytes(StandardCharsets.UTF_8))).isEqualTo("d41d8cd98f00b204e9800998ecf8427e");
-    assertThat(Md5.of("Hello".getBytes(StandardCharsets.UTF_8))).isEqualTo("8b1a9953c4611296a827abf8c47804d7");
+    assertThat(Md5.of("".getBytes(UTF_8))).isEqualTo("d41d8cd98f00b204e9800998ecf8427e");
+    assertThat(Md5.of("Hello".getBytes(UTF_8))).isEqualTo("8b1a9953c4611296a827abf8c47804d7");
   }
 }
