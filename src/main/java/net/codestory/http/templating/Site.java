@@ -151,7 +151,7 @@ public class Site {
 
   private static String[] tags(Map<String, Object> page) {
     Object tags = page.getOrDefault("tags", "");
-    if (tags instanceof List) {
+    if (tags instanceof List<?>) {
       return ((List<String>) tags).toArray(new String[0]);
     }
     return tags.toString().trim().split("\\s*,\\s*");
