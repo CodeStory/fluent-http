@@ -241,6 +241,16 @@
       <groupId>com.github.jknack</groupId>
       <artifactId>handlebars</artifactId>
       <version>2.0.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.mozilla</groupId>
+          <artifactId>rhino</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.antlr</groupId>
+          <artifactId>antlr4-annotations</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.commonjava.googlecode.markdown4j</groupId>
