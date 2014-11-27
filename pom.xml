@@ -7,8 +7,8 @@
   <version>2.31-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>CodeStory - Http Server</name>
-  <description>This is the simplest fastest full fledged http server we could come up with</description>
+  <name>CodeStory - Fluent-http</name>
+  <description>Fluent-http is the simplest fastest full fledged web server we could come up with</description>
   <url>https://github.com/CodeStory/fluent-http</url>
 
   <parent>
