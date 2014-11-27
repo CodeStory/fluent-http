@@ -15,9 +15,9 @@
  */
 package net.codestory.http.errors;
 
-import static org.assertj.core.api.Assertions.*;
+import org.junit.Test;
 
-import org.junit.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class HttpExceptionTest {
   @Test
@@ -32,5 +32,12 @@ public class HttpExceptionTest {
     HttpException error = new ForbiddenException();
 
     assertThat(error.code()).isEqualTo(403);
+  }
+
+  @Test
+  public void bad_request() {
+    HttpException error = new BadRequestException();
+
+    assertThat(error.code()).isEqualTo(400);
   }
 }
