@@ -17,7 +17,6 @@ package net.codestory.http.templating;
 
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 import java.util.*;
 
@@ -133,8 +132,6 @@ public class TemplateTest {
   }
 
   private static Env prodMode() {
-    Env env = mock(Env.class);
-    when(env.prodMode()).thenReturn(true);
-    return env;
+    return new Env(true, false, false, false);
   }
 }
