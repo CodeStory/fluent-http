@@ -133,7 +133,7 @@
               </licenseMerge>
               <licenseMerge>The BSD License|BSD|BSD License</licenseMerge>
               <licenseMerge>Eclipse Public License, Version 1.0|Eclipse Public License (EPL)</licenseMerge>
-              <licenseMerge>The MIT License|MIT License</licenseMerge>
+              <licenseMerge>The MIT License|MIT License|MIT</licenseMerge>
             </licenseMerges>
           </configuration>
         </plugin>
