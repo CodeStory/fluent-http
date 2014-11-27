@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.*;
 import org.junit.*;
 
 public class TablePluginTest {
-  TablePlugin plugin = new TablePlugin();
+  private static TablePlugin plugin = new TablePlugin();
 
   @Test
   public void empty() {
