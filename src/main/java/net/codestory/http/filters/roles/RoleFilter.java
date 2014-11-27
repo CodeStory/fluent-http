@@ -22,9 +22,6 @@ import net.codestory.http.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.payload.*;
 
-import javax.inject.*;
-
-@Singleton
 public class RoleFilter implements Filter {
   private final List<Permission> permissions = new ArrayList<>();
 
