@@ -44,16 +44,16 @@ public class PostTest extends AbstractProdWebServerTest {
         }
       }));
 
-    post("/post").produces("Done");
-    post("/post/Bob").produces("Done Bob");
-    post("/action").produces("Done POST");
-    get("/action").produces("Done GET");
-    post("/person").produces("CREATED");
-    post("/order/12", "name", "Book", "quantity", "42").produces("order 12 : 42xBook");
-    post("/order/12", "{\"name\":\"foo\",\"quantity\":42}").produces("order 12 : 42xfoo");
-    post("/get").produces(405);
-    post("/index.html").produces(405);
-    post("/unknown").produces(404);
+    post("/post").should().contain("Done");
+    post("/post/Bob").should().contain("Done Bob");
+    post("/action").should().contain("Done POST");
+    get("/action").should().contain("Done GET");
+    post("/person").should().contain("CREATED");
+    post("/order/12", "name", "Book", "quantity", "42").should().contain("order 12 : 42xBook");
+    post("/order/12", "{\"name\":\"foo\",\"quantity\":42}").should().contain("order 12 : 42xfoo");
+    post("/get").should().respond(405);
+    post("/index.html").should().respond(405);
+    post("/unknown").should().respond(404);
   }
 
   @Test
@@ -74,9 +74,9 @@ public class PostTest extends AbstractProdWebServerTest {
         }
       }));
 
-    post("/postForm", "firstName", "John", "lastName", "Doe").produces("CREATED John Doe");
-    post("/postFormResource", "firstName", "Jane", "lastName", "Doe").produces("CREATED Jane Doe");
-    post("/postBean", "firstName", "John", "lastName", "Doe").produces("CREATED John Doe");
+    post("/postForm", "firstName", "John", "lastName", "Doe").should().contain("CREATED John Doe");
+    post("/postFormResource", "firstName", "Jane", "lastName", "Doe").should().contain("CREATED Jane Doe");
+    post("/postBean", "firstName", "John", "lastName", "Doe").should().contain("CREATED John Doe");
   }
 
   static class Human {

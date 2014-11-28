@@ -37,23 +37,23 @@ public class FilterTest extends AbstractProdWebServerTest {
         return nextFilter.get();
       }));
 
-    get("/").produces("FILTERED");
-    get("/other").produces("OTHER");
+    get("/").should().contain("FILTERED");
+    get("/other").should().contain("OTHER");
   }
 
   @Test
   public void filter_class() {
     server.configure(routes -> routes.filter(CatchAll.class));
 
-    get("/").produces("FILTERED");
+    get("/").should().contain("FILTERED");
   }
 
   @Test
   public void etag() {
     server.configure(routes -> routes.get("/", "Hello World"));
 
-    get("/").produces(200, "text/html", "Hello World");
-    getWithHeader("/", "If-None-Match", Md5.of("Hello World".getBytes(UTF_8))).produces(304);
+    get("/").should().respond(200).haveType("text/html").contain("Hello World");
+    get("/").withHeader("If-None-Match", Md5.of("Hello World".getBytes(UTF_8))).should().respond(304);
   }
 
   @Test
@@ -63,7 +63,7 @@ public class FilterTest extends AbstractProdWebServerTest {
       .filter((uri, context, next) -> new Payload("FILTER1>" + next.get().rawContent()))
       .filter((uri, context, next) -> new Payload("FILTER2>" + next.get().rawContent())));
 
-    get("/").produces("FILTER1>FILTER2>NOT FILTERED");
+    get("/").should().contain("FILTER1>FILTER2>NOT FILTERED");
   }
 
   public static class CatchAll implements Filter {

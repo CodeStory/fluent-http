@@ -19,16 +19,16 @@ import net.codestory.http.WebServer;
 import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.misc.Env;
 import net.codestory.http.templating.Model;
-import net.codestory.http.testhelpers.AbstractWebServerTest;
+import net.codestory.rest.FluentRestTest;
 import org.junit.Test;
 
 // This test has side effects. Start it in its own server
 //
-public class CustomHandlebarsDelimitersTest extends AbstractWebServerTest {
+public class CustomHandlebarsDelimitersTest implements FluentRestTest {
   private final WebServer webServer = new WebServer().startOnRandomPort();
 
   @Override
-  protected int getPort() {
+  public int port() {
     return webServer.port();
   }
 
@@ -43,6 +43,6 @@ public class CustomHandlebarsDelimitersTest extends AbstractWebServerTest {
         }
       }));
 
-    get("/extensions/custom_delimiters").produces("Hello Bob");
+    get("/extensions/custom_delimiters").should().contain("Hello Bob");
   }
 }

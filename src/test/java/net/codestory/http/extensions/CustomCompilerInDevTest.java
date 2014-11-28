@@ -33,10 +33,10 @@ public class CustomCompilerInDevTest extends AbstractDevWebServerTest {
         }
       }));
 
-    get("/extensions/custom_compiler.html").produces("helloworld");
-    get("/extensions/custom_compiler.script").produces("helloworld");
-    get("/extensions/custom_compiler.html.source").produces("HelloWorld");
-    get("/extensions/custom_compiler.script.source").produces("HelloWorld");
+    get("/extensions/custom_compiler.html").should().contain("helloworld");
+    get("/extensions/custom_compiler.script").should().contain("helloworld");
+    get("/extensions/custom_compiler.html.source").should().contain("HelloWorld");
+    get("/extensions/custom_compiler.script.source").should().contain("HelloWorld");
   }
 
   static class ToLowerCaseCompiler implements net.codestory.http.compilers.Compiler {

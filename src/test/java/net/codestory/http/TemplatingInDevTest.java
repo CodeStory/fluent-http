@@ -26,6 +26,6 @@ public class TemplatingInDevTest extends AbstractDevWebServerTest {
   public void google_analytics_in_dev_mode() {
     server.configure(NO_ROUTE);
 
-    get("/indexGoogleAnalytics.html").produces("<body>\n</body>\n\n</html>");
+    get("/indexGoogleAnalytics.html").should().contain("<body>\n</body>\n\n</html>");
   }
 }

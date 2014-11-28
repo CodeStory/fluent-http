@@ -333,9 +333,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.squareup.okhttp</groupId>
-      <artifactId>okhttp</artifactId>
-      <version>2.1.0</version>
+      <groupId>net.code-story</groupId>
+      <artifactId>fluent-rest-test</artifactId>
+      <version>1.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>

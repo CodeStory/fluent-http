@@ -31,7 +31,7 @@ public class CustomHandlebarsResolverTest extends AbstractProdWebServerTest {
       }
     }));
 
-    get("/extensions/custom_resolver").produces("Hello World");
+    get("/extensions/custom_resolver").should().contain("Hello World");
   }
 
   static class HelloWorldResolver implements BasicResolver {

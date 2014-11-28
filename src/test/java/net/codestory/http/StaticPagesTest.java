@@ -22,63 +22,63 @@ import org.junit.*;
 public class StaticPagesTest extends AbstractProdWebServerTest {
   @Test
   public void webJars() {
-    get("/webjars/bootstrap/3.3.1/css/bootstrap.min.css").produces(200, "text/css", "Bootstrap v3.3.1");
-    get("/webjars/bootstrap/3.3.1/js/bootstrap.min.js").produces(200, "application/javascript", "Bootstrap v3.3.1");
-    get("/webjars/").produces(404);
+    get("/webjars/bootstrap/3.3.1/css/bootstrap.min.css").should().respond(200).haveType("text/css").contain("Bootstrap v3.3.1");
+    get("/webjars/bootstrap/3.3.1/js/bootstrap.min.js").should().respond(200).haveType("application/javascript").contain("Bootstrap v3.3.1");
+    get("/webjars/").should().respond(404);
   }
 
   @Test
   public void html() {
-    get("/").produces("text/html", "Hello From a File");
-    get("/index.html").produces("text/html", "Hello From a File");
-    get("/test").produces("text/html", "TEST");
-    get("/test.html").produces("text/html", "TEST");
+    get("/").should().haveType("text/html").contain("Hello From a File");
+    get("/index.html").should().haveType("text/html").contain("Hello From a File");
+    get("/test").should().haveType("text/html").contain("TEST");
+    get("/test.html").should().haveType("text/html").contain("TEST");
   }
 
   @Test
   public void javascript() {
-    get("/js/script.js").produces("application/javascript", "console.log('Hello');");
+    get("/js/script.js").should().haveType("application/javascript").contain("console.log('Hello');");
   }
 
   @Test
   public void coffeescript() {
-    get("/js/script.coffee").produces("application/javascript", "console.log('Hello');");
-    get("/js/script.js").produces("application/javascript", "console.log('Hello');");
-    get("/js/anotherscript.js").produces("application/javascript", "console.log('foobar');");
-    get("/js/non-existing.js").produces(404);
-    get("/js/non-existing.coffee").produces(404);
+    get("/js/script.coffee").should().haveType("application/javascript").contain("console.log('Hello');");
+    get("/js/script.js").should().haveType("application/javascript").contain("console.log('Hello');");
+    get("/js/anotherscript.js").should().haveType("application/javascript").contain("console.log('foobar');");
+    get("/js/non-existing.js").should().respond(404);
+    get("/js/non-existing.coffee").should().respond(404);
   }
 
   @Test
   public void literate_coffees() {
-    get("/js/literate.js").produces("application/javascript", "console.log('Hello');");
+    get("/js/literate.js").should().haveType("application/javascript").contain("console.log('Hello');");
   }
 
   @Test
   public void css() {
-    get("/assets/style.css").produces("text/css", "* {}");
+    get("/assets/style.css").should().haveType("text/css").contain("* {}");
   }
 
   @Test
   public void less() {
-    get("/assets/style.less").produces("text/css", "body h1 {\n  color: red;\n}");
-    get("/assets/anotherstyle.css").produces("text/css", "body h1 {\n  color: red;\n}");
-    get("/assets/non-existing.css").produces(404);
-    get("/assets/non-existing.less").produces(404);
+    get("/assets/style.less").should().haveType("text/css").contain("body h1 {\n  color: red;\n}");
+    get("/assets/anotherstyle.css").should().haveType("text/css").contain("body h1 {\n  color: red;\n}");
+    get("/assets/non-existing.css").should().respond(404);
+    get("/assets/non-existing.less").should().respond(404);
   }
 
   @Test
   public void markdown() {
-    get("/hello.md").produces("text/html", "<strong>Hello</strong>");
-    get("/goodbye.markdown").produces("text/html", "<strong>Good Bye</strong>");
+    get("/hello.md").should().haveType("text/html").contain("<strong>Hello</strong>");
+    get("/goodbye.markdown").should().haveType("text/html").contain("<strong>Good Bye</strong>");
   }
 
   @Test
   public void private_files() {
-    get("/../private.txt").produces(404);
-    get("/_config.yaml").produces(404);
-    get("/_layouts/layout.html").produces(404);
-    get("/unknown").produces(404);
-    get("/js").produces(404);
+    get("/../private.txt").should().respond(404);
+    get("/_config.yaml").should().respond(404);
+    get("/_layouts/layout.html").should().respond(404);
+    get("/unknown").should().respond(404);
+    get("/js").should().respond(404);
   }
 }

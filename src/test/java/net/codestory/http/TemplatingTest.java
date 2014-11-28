@@ -23,62 +23,61 @@ import org.junit.*;
 public class TemplatingTest extends AbstractProdWebServerTest {
   @Test
   public void static_page() {
-    get("/pageYaml").produces("text/html", "<div>_PREFIX_TEXT_SUFFIX_</div>");
+    get("/pageYaml").should().haveType("text/html").contain("<div>_PREFIX_TEXT_SUFFIX_</div>");
   }
 
   @Test
   public void model_and_view() {
     server.configure(routes -> routes.get("/hello/:name", (context, name) -> ModelAndView.of("1variable.txt", "name", name)));
 
-    get("/hello/Joe").produces("text/plain", "Hello Joe");
+    get("/hello/Joe").should().haveType("text/plain").contain("Hello Joe");
   }
 
   @Test
   public void view() {
     server.configure(routes -> routes.get("/bye", () -> ModelAndView.of("goodbye")));
 
-    get("/bye").produces("text/html", "<p><strong>Good Bye</strong></p>");
+    get("/bye").should().haveType("text/html").contain("<p><strong>Good Bye</strong></p>");
   }
 
   @Test
   public void infer_template_from_route() {
     server.configure(routes -> routes.get("/1variable", Model.of("name", "Toto")));
 
-    get("/1variable").produces("text/plain", "Hello Toto");
+    get("/1variable").should().haveType("text/plain").contain("Hello Toto");
   }
 
   @Test
   public void infer_template_for_index() {
     server.configure(routes -> routes.get("/section/", Model.of("name", "Bob")));
 
-    get("/section/").produces("text/plain", "Hello Bob");
+    get("/section/").should().haveType("text/plain").contain("Hello Bob");
   }
 
   @Test
   public void google_analytics() {
-    get("/indexGoogleAnalytics.html").produces(
-      "<body>\n" +
-        "</body>\n" +
-        "<script type=\"text/javascript\">\n" +
-        "  var _gaq = _gaq || [];\n" +
-        "  _gaq.push(['_setAccount', 'UA-12345']);\n" +
-        "  _gaq.push(['_trackPageview']);\n" +
-        "  (function() {\n" +
-        "    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;\n" +
-        "    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';\n" +
-        "    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);\n" +
-        "  })();\n" +
-        "</script>\n" +
-        "</html>");
+    get("/indexGoogleAnalytics.html").should().contain("<body>\n" +
+      "</body>\n" +
+      "<script type=\"text/javascript\">\n" +
+      "  var _gaq = _gaq || [];\n" +
+      "  _gaq.push(['_setAccount', 'UA-12345']);\n" +
+      "  _gaq.push(['_trackPageview']);\n" +
+      "  (function() {\n" +
+      "    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;\n" +
+      "    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';\n" +
+      "    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);\n" +
+      "  })();\n" +
+      "</script>\n" +
+      "</html>");
   }
 
   @Test
   public void site_variables() {
-    get("/useSiteVariables.html").produces("Hello, customer Bob wants to buy p1 for parkr");
+    get("/useSiteVariables.html").should().contain("Hello, customer Bob wants to buy p1 for parkr");
   }
 
   @Test
   public void site_tags() {
-    get("/testTags").produces("<p>[scala]</p>\n<p>java, scala</p>\n<p>[scala]</p>");
+    get("/testTags").should().contain("<p>[scala]</p>\n<p>java, scala</p>\n<p>[scala]</p>");
   }
 }

@@ -36,7 +36,7 @@ public class StreamTest extends AbstractProdWebServerTest {
 
     server.configure(routes -> routes.get("/events", () -> Stream.generate(messageSupplier).limit(1000)));
 
-    get("/events").produces("data: MESSAGE1\n\n" + "data: MESSAGE2\n\n" + "data: MESSAGE3\n\n");
+    get("/events").should().contain("data: MESSAGE1\n\n" + "data: MESSAGE2\n\n" + "data: MESSAGE3\n\n");
   }
 
   @Test
@@ -46,7 +46,7 @@ public class StreamTest extends AbstractProdWebServerTest {
 
     server.configure(routes -> routes.get("/events", () -> Stream.generate(messageSupplier).limit(1000)));
 
-    get("/events").produces("data: MESSAGE\ndata: 1\n\n" + "data: MESSAGE\ndata: 2\n\n" + "data: MESSAGE\ndata: 3\n\n");
+    get("/events").should().contain("data: MESSAGE\ndata: 1\n\n" + "data: MESSAGE\ndata: 2\n\n" + "data: MESSAGE\ndata: 3\n\n");
   }
 
   @Test
@@ -55,7 +55,7 @@ public class StreamTest extends AbstractProdWebServerTest {
 
     server.configure(routes -> routes.get("/stream", () -> new ByteArrayInputStream(buffer)));
 
-    get("/stream").produces("Hello World");
+    get("/stream").should().contain("Hello World");
   }
 
   @Test(timeout = 5000)
@@ -74,8 +74,8 @@ public class StreamTest extends AbstractProdWebServerTest {
         .get("/stream", () -> new ByteArrayInputStream(buffer))
     );
 
-    new Thread(() -> get("/blocking").produces("OK")).start();
+    new Thread(() -> get("/blocking").should().contain("OK")).start();
 
-    range(1, 1000).forEach(i -> get("/stream").produces("Hello World"));
+    range(1, 1000).forEach(i -> get("/stream").should().contain("Hello World"));
   }
 }

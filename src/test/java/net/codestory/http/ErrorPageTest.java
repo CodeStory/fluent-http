@@ -32,26 +32,26 @@ public class ErrorPageTest extends AbstractProdWebServerTest {
       throw new NotFoundException();
     }));
 
-    get("/error").produces(404, "text/html", "Page not found");
+    get("/error").should().respond(404).haveType("text/html").contain("Page not found");
   }
 
   @Test
   public void not_found_payload() {
     server.configure(routes -> routes.get("/notfound", Payload.notFound()));
 
-    get("/notfound").produces(404, "text/html", "Page not found");
+    get("/notfound").should().respond(404).haveType("text/html").contain("Page not found");
   }
 
   @Test
   public void not_found_optional() {
     server.configure(routes -> routes.get("/notfound", Optional.<String>empty()));
 
-    get("/notfound").produces(404, "text/html", "Page not found");
+    get("/notfound").should().respond(404).haveType("text/html").contain("Page not found");
   }
 
   @Test
   public void undefined_route() {
-    get("/undefined").produces(404, "text/html", "Page not found");
+    get("/undefined").should().respond(404).haveType("text/html").contain("Page not found");
   }
 
   @Test
@@ -60,7 +60,7 @@ public class ErrorPageTest extends AbstractProdWebServerTest {
       throw new RuntimeException("BUG");
     }));
 
-    get("/").produces(500, "text/html", "An error occurred on the server");
+    get("/").should().respond(500).haveType("text/html").contain("An error occurred on the server");
   }
 
   @Test
@@ -70,8 +70,8 @@ public class ErrorPageTest extends AbstractProdWebServerTest {
       return notFoundIfNull(result);
     }));
 
-    get("/hello/Bob").produces("text/html", "Hello Bob");
-    get("/hello/Dave").produces(404, "text/html", "Page not found");
+    get("/hello/Bob").should().haveType("text/html").contain("Hello Bob");
+    get("/hello/Dave").should().respond(404).haveType("text/html").contain("Page not found");
   }
 
   @Test
@@ -80,6 +80,6 @@ public class ErrorPageTest extends AbstractProdWebServerTest {
       throw new RuntimeException("NASTY BUG");
     }));
 
-    get("/error").produces(500, "text/html", "An error occurred on the server").producesHeader("reason", "NASTY BUG");
+    get("/error").should().respond(500).haveType("text/html").contain("An error occurred on the server").haveHeader("reason", "NASTY BUG");
   }
 }

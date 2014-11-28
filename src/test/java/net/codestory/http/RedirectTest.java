@@ -28,10 +28,10 @@ public class RedirectTest extends AbstractProdWebServerTest {
       get("/login", "LOGIN").
       get("/dynamic/", "Dynamic"));
 
-    get("/").produces("LOGIN");
-    get("/section/").produces("text/plain", "Hello index");
-    get("/section").produces("text/plain", "Hello index");
-    get("/dynamic/").produces("text/html", "Dynamic");
-    get("/dynamic").produces("text/html", "Dynamic");
+    get("/").should().contain("LOGIN");
+    get("/section/").should().haveType("text/plain").contain("Hello index");
+    get("/section").should().haveType("text/plain").contain("Hello index");
+    get("/dynamic/").should().haveType("text/html").contain("Dynamic");
+    get("/dynamic").should().haveType("text/html").contain("Dynamic");
   }
 }

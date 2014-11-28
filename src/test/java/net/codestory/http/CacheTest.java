@@ -29,16 +29,16 @@ public class CacheTest extends AbstractProdWebServerTest {
   public void etag() {
     server.configure(routes -> routes.get("/", "Hello"));
 
-    get("/").produces(200, "text/html", "Hello").producesHeader("Etag", "8b1a9953c4611296a827abf8c47804d7");
-    getWithHeader("/", "If-None-Match", "8b1a9953c4611296a827abf8c47804d7").produces(304);
-    getWithHeader("/", "If-None-Match", "\"8b1a9953c4611296a827abf8c47804d7\"").produces(304);
+    get("/").should().respond(200).haveType("text/html").contain("Hello").haveHeader("Etag", "8b1a9953c4611296a827abf8c47804d7");
+    get("/").withHeader("If-None-Match", "8b1a9953c4611296a827abf8c47804d7").should().respond(304);
+    get("/").withHeader("If-None-Match", "\"8b1a9953c4611296a827abf8c47804d7\"").should().respond(304);
   }
 
   @Test
   public void date() {
     server.configure(routes -> routes.get("/", new Payload("Hello").withHeader("Last-Modified", "Wed, 12 Nov 2014 17:53:14 GMT")));
 
-    getWithHeader("/", "If-Modified-Since", "Wed, 12 Nov 2014 17:53:14 GMT").produces(200);
-    getWithHeader("/", "If-Modified-Since", "Thu, 13 Nov 2014 17:53:14 GMT").produces(304);
+    get("/").withHeader("If-Modified-Since", "Wed, 12 Nov 2014 17:53:14 GMT").should().respond(200);
+    get("/").withHeader("If-Modified-Since", "Thu, 13 Nov 2014 17:53:14 GMT").should().respond(304);
   }
 }

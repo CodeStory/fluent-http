@@ -27,22 +27,22 @@ public class AnnotationsTest extends AbstractProdWebServerTest {
   public void annotated_resources() {
     server.configure(routes -> routes.add(new MyResource()));
 
-    get("/hello").produces("Hello");
-    get("/").produces("Hello");
-    get("/bye/Bob").produces("Good Bye Bob");
-    get("/add/22/20").produces("application/json", "42");
-    get("/void").produces(200, "text/html", "");
-    get("/voidJson").produces(200, "application/json", "");
-    get("/1variable").produces(200, "text/html", "Hello Bob");
-    get("/helloJoe").produces(200, "text/html", "Hello Joe");
-    get("/notFound").produces(404);
+    get("/hello").should().contain("Hello");
+    get("/").should().contain("Hello");
+    get("/bye/Bob").should().contain("Good Bye Bob");
+    get("/add/22/20").should().haveType("application/json").contain("42");
+    get("/void").should().respond(200).haveType("text/html").contain("");
+    get("/voidJson").should().respond(200).haveType("application/json").contain("");
+    get("/1variable").should().respond(200).haveType("text/html").contain("Hello Bob");
+    get("/helloJoe").should().respond(200).haveType("text/html").contain("Hello Joe");
+    get("/notFound").should().respond(404);
   }
 
   @Test
   public void resources_class() {
     server.configure(routes -> routes.add(MyResource.class));
 
-    get("/hello").produces("Hello");
+    get("/hello").should().contain("Hello");
   }
 
   public static class MyResource {
@@ -93,37 +93,37 @@ public class AnnotationsTest extends AbstractProdWebServerTest {
   public void prefix() {
     server.configure(routes -> routes.add("/say", new TestResource()));
 
-    get("/say/hello").produces("Hello");
+    get("/say/hello").should().contain("Hello");
   }
 
   @Test
   public void add_with_prefix() {
     server.configure(routes -> routes.add("/say", TestResource.class));
 
-    get("/say/hello").produces("Hello");
+    get("/say/hello").should().contain("Hello");
   }
 
   @Test
   public void resource_with_prefix() {
     server.configure(routes -> routes.add(ResourceWithPrefix.class));
 
-    get("/prefix/route1").produces("Route 1");
-    get("/prefix/route2").produces("Route 2");
+    get("/prefix/route1").should().contain("Route 1");
+    get("/prefix/route2").should().contain("Route 2");
   }
 
   @Test
   public void add_prefixed_resource_with_prefix() {
     server.configure(routes -> routes.add("/test", ResourceWithPrefix.class));
 
-    get("/test/prefix/route1").produces("Route 1");
-    get("/test/prefix/route2").produces("Route 2");
+    get("/test/prefix/route1").should().contain("Route 1");
+    get("/test/prefix/route2").should().contain("Route 2");
   }
 
   @Test
   public void inject_parameters() {
     server.configure(routes -> routes.add(ResourceWithInjection.class));
 
-    get("/injection/first/second").produces("first/second/Context/SimpleRequest/SimpleResponse/SimpleCookies");
+    get("/injection/first/second").should().contain("first/second/Context/SimpleRequest/SimpleResponse/SimpleCookies");
   }
 
   public static class TestResource {

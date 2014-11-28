@@ -25,6 +25,6 @@ public class CookiesTest extends AbstractProdWebServerTest {
   public void cookies() {
     server.configure(routes -> routes.get("/set", () -> new Payload("").withCookie("id", "Bob")));
 
-    get("/set").producesCookie("id", "Bob");
+    get("/set").should().haveCookie("id", "Bob");
   }
 }

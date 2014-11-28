@@ -38,7 +38,7 @@ public class CustomPayloadWriterTest extends AbstractProdWebServerTest {
         }
       }));
 
-    get("/").produces("text/html;charset=UTF-8", "Hello World");
+    get("/").should().haveType("text/html;charset=UTF-8").contain("Hello World");
   }
 
   static class CustomPayloadWriter extends PayloadWriter {

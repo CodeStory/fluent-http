@@ -41,9 +41,9 @@ public class CustomObjectMapperTest extends AbstractProdWebServerTest {
         }
       }));
 
-    get("/person/Bob/town").produces("Paris");
-    get("/person/John/town").produces("NYC");
-    get("/person/Jane/town").produces(404);
+    get("/person/Bob/town").should().contain("Paris");
+    get("/person/John/town").should().contain("NYC");
+    get("/person/Jane/town").should().respond(404);
   }
 
   public static class PersonResource {

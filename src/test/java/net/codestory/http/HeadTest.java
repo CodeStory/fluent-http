@@ -25,22 +25,22 @@ public class HeadTest extends AbstractProdWebServerTest {
   public void implicit_head() {
     server.configure(routes -> routes.get("/", "Hello"));
 
-    head("/").produces(200, "", "");
+    head("/").should().respond(200).haveType("").contain("");
   }
 
   @Test
   public void explicit_head() {
     server.configure(routes -> routes.head("/", "Hello"));
 
-    head("/").produces(200, "", "");
+    head("/").should().respond(200).haveType("").contain("");
   }
 
   @Test
   public void implicit_head_resource() {
     server.configure(routes -> routes.add(Resource.class));
 
-    head("/implicit").produces(200, "", "");
-    head("/explicit").produces(200, "", "");
+    head("/implicit").should().respond(200).haveType("").contain("");
+    head("/explicit").should().respond(200).haveType("").contain("");
   }
 
   public static class Resource {

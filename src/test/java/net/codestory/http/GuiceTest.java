@@ -19,17 +19,17 @@ import static org.mockito.Mockito.*;
 
 import net.codestory.http.injection.*;
 import net.codestory.http.routes.*;
-import net.codestory.http.testhelpers.*;
 
+import net.codestory.rest.FluentRestTest;
 import org.junit.*;
 
 import com.google.inject.*;
 
-public class GuiceTest extends AbstractWebServerTest {
+public class GuiceTest implements FluentRestTest {
   WebServer webServer = new WebServer().startOnRandomPort();
 
   @Override
-  protected int getPort() {
+  public int port() {
     return webServer.port();
   }
 
@@ -37,14 +37,14 @@ public class GuiceTest extends AbstractWebServerTest {
   public void configuration() {
     webServer.configure(new MyAppConfiguration());
 
-    get("/").produces("PRODUCTION");
+    get("/").should().contain("PRODUCTION");
   }
 
   @Test
   public void override_bean() {
     webServer.configure(new MyAppConfiguration(new TestModule()));
 
-    get("/").produces("OVERRIDDEN");
+    get("/").should().contain("OVERRIDDEN");
   }
 
   static class MyAppConfiguration extends AbstractGuiceConfiguration {

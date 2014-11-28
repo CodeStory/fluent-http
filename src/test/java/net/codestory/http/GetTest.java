@@ -37,12 +37,12 @@ public class GetTest extends AbstractProdWebServerTest {
       get("/json", new Person("NAME", 42)).
       get("/optionalIndex", Optional.of("Index")));
 
-    get("/index").produces("text/html", "Index");
-    get("/text").produces("text/plain", "TEXT");
-    get("/html").produces("text/html", "HTML");
-    get("/raw").produces("application/octet-stream", "RAW");
-    get("/json").produces("application/json", "{\"name\":\"NAME\",\"age\":42}");
-    get("/optionalIndex").produces("text/html", "Index");
+    get("/index").should().haveType("text/html").contain("Index");
+    get("/text").should().haveType("text/plain").contain("TEXT");
+    get("/html").should().haveType("text/html").contain("HTML");
+    get("/raw").should().haveType("application/octet-stream").contain("RAW");
+    get("/json").should().haveType("application/json").contain("{\"name\":\"NAME\",\"age\":42}");
+    get("/optionalIndex").should().haveType("text/html").contain("Index");
   }
 
   @Test
@@ -52,10 +52,10 @@ public class GetTest extends AbstractProdWebServerTest {
       get("/say/:what/how/:loud", (context, what, loud) -> what + " " + loud).
       get("/:one/:two/:three", (context, one, two, three) -> one + " " + two + " " + three));
 
-    get("/hello/Dave").produces("Hello Dave");
-    get("/hello/John%20Doe").produces("Hello John Doe");
-    get("/say/HI/how/LOUD").produces("HI LOUD");
-    get("/ONE/TWO/THREE").produces("ONE TWO THREE");
+    get("/hello/Dave").should().contain("Hello Dave");
+    get("/hello/John%20Doe").should().contain("Hello John Doe");
+    get("/say/HI/how/LOUD").should().contain("HI LOUD");
+    get("/ONE/TWO/THREE").should().contain("ONE TWO THREE");
   }
 
   @Test
@@ -70,16 +70,16 @@ public class GetTest extends AbstractProdWebServerTest {
         }
       }));
 
-    get("/index?query=useless").produces("Hello");
-    get("/hello?name=Dave").produces("Hello Dave");
-    get("/keyValues?key1=value1&key2=value2").produces("key2=value2");
+    get("/index?query=useless").should().contain("Hello");
+    get("/hello?name=Dave").should().contain("Hello Dave");
+    get("/keyValues?key1=value1&key2=value2").should().contain("key2=value2");
   }
 
   @Test
   public void io_streams() {
     server.configure(routes -> routes.get("/", () -> new Payload("text/html", new ByteArrayInputStream("Hello".getBytes()))));
 
-    get("/").produces("text/html", "Hello");
+    get("/").should().haveType("text/html").contain("Hello");
   }
 
   static class Person {

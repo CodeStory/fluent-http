@@ -15,14 +15,15 @@
  */
 package net.codestory.http.testhelpers;
 
+import net.codestory.rest.FluentRestTest;
 import org.junit.*;
 
-public abstract class AbstractProdWebServerTest extends AbstractWebServerTest {
+public abstract class AbstractProdWebServerTest implements FluentRestTest {
   @ClassRule
   public static ProdWebServerRule server = new ProdWebServerRule();
 
   @Override
-  protected int getPort() {
+  public int port() {
     return server.port();
   }
 }

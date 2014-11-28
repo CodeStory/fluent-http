@@ -17,17 +17,17 @@ package net.codestory.http;
 
 import net.codestory.http.injection.*;
 import net.codestory.http.routes.*;
-import net.codestory.http.testhelpers.*;
 
+import net.codestory.rest.FluentRestTest;
 import org.junit.*;
 import org.springframework.beans.factory.*;
 import org.springframework.context.annotation.*;
 
-public class SpringTest extends AbstractWebServerTest {
+public class SpringTest implements FluentRestTest {
   WebServer webServer = new WebServer().startOnRandomPort();
 
   @Override
-  protected int getPort() {
+  public int port() {
     return webServer.port();
   }
 
@@ -35,7 +35,7 @@ public class SpringTest extends AbstractWebServerTest {
   public void configuration() {
     webServer.configure(new SpringConfiguration(App.class));
 
-    get("/").produces("PRODUCTION");
+    get("/").should().contain("PRODUCTION");
   }
 
   static class SpringConfiguration extends AbstractSpringConfiguration {

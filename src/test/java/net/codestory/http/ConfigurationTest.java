@@ -24,7 +24,7 @@ public class ConfigurationTest extends AbstractProdWebServerTest {
   public void priority_to_route_over_file() {
     server.configure(routes -> routes.get("/", "PRIORITY"));
 
-    get("/").produces("PRIORITY");
+    get("/").should().contain("PRIORITY");
   }
 
   @Test
@@ -33,7 +33,7 @@ public class ConfigurationTest extends AbstractProdWebServerTest {
       get("/", "FIRST").
       get("/", "SECOND"));
 
-    get("/").produces("FIRST");
+    get("/").should().contain("FIRST");
   }
 
   @Test
@@ -47,17 +47,17 @@ public class ConfigurationTest extends AbstractProdWebServerTest {
         post(() -> "Action POST")
     );
 
-    get("/").produces("Index GET");
-    post("/").produces("Index POST");
-    get("/action").produces("Action GET");
-    post("/action").produces("Action POST");
+    get("/").should().contain("Index GET");
+    post("/").should().contain("Index POST");
+    get("/action").should().contain("Action GET");
+    post("/action").should().contain("Action POST");
   }
 
   @Test
   public void catch_all() {
     server.configure(routes -> routes.catchAll("HELLO"));
 
-    get("/any").produces("HELLO");
-    get("/random").produces("HELLO");
+    get("/any").should().contain("HELLO");
+    get("/random").should().contain("HELLO");
   }
 }
