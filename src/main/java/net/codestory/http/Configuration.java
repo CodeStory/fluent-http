@@ -15,9 +15,10 @@
  */
 package net.codestory.http;
 
-import java.io.*;
+import net.codestory.http.routes.ConfigurationOverride;
+import net.codestory.http.routes.Routes;
 
-import net.codestory.http.routes.*;
+import java.io.Serializable;
 
 @FunctionalInterface
 public interface Configuration extends Serializable {
@@ -25,4 +26,8 @@ public interface Configuration extends Serializable {
   };
 
   void configure(Routes routes);
+
+  static ConfigurationOverride override(Configuration configuration) {
+    return new ConfigurationOverride(configuration);
+  }
 }
