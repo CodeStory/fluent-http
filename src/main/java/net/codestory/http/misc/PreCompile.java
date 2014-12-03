@@ -43,7 +43,7 @@ public class PreCompile {
   }
 
   public void run() {
-    site.getResourceList().parallelStream().forEach(path -> preCompile(path));
+    site.getResourceList().forEach(path -> preCompile(path));
   }
 
   protected void preCompile(String path) {
