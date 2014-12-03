@@ -39,21 +39,23 @@ public class PreCompile {
   }
 
   public static void main(String[] args) {
-    new PreCompile(new Env(true, false, false, false)).run();
+    String destinationFolder = (args.length > 0) ? args[0] : APP_FOLDER;
+
+    new PreCompile(new Env(true, false, false, false)).run(destinationFolder);
   }
 
-  public void run() {
-    site.getResourceList().forEach(path -> preCompile(path));
+  public void run(String destinationFolder) {
+    site.getResourceList().forEach(path -> preCompile(path, destinationFolder));
   }
 
-  protected void preCompile(String path) {
+  protected void preCompile(String path, String destinationFolder) {
     String extension = Strings.extension(path);
     if (!compilers.canCompile(extension)) {
       return;
     }
 
     Path fromPath = Paths.get(path);
-    Path toPath = toPath(path, extension);
+    Path toPath = toPath(path, extension, destinationFolder);
 
     System.out.println("Pre-compile [" + fromPath + "] to [" + toPath + "]");
     try {
@@ -64,12 +66,12 @@ public class PreCompile {
     }
   }
 
-  protected Path toPath(String path, String extension) {
+  protected Path toPath(String path, String extension, String destinationFolder) {
     String compiledExtension = compilers.compiledExtension(extension);
 
     String newName = replaceLast(path, extension, compiledExtension);
 
-    return Paths.get(APP_FOLDER, newName);
+    return Paths.get(destinationFolder, newName);
   }
 
   protected byte[] compile(Path fromPath) throws IOException {
