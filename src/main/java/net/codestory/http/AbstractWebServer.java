@@ -40,7 +40,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
 
   protected HttpServerWrapper server;
   protected RoutesProvider routesProvider;
-  protected int port;
+  protected int port = -1;
 
   protected AbstractWebServer() {
     this.env = createEnv();
@@ -136,6 +136,10 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
   }
 
   public int port() {
+    if (port == -1) {
+      throw new IllegalStateException("The web server is not started");
+    }
+
     return port;
   }
 
