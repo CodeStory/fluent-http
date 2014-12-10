@@ -21,18 +21,20 @@ import static javax.script.ScriptContext.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import net.codestory.http.io.*;
 
 import javax.script.*;
 
 public final class NashornCompiler {
+  private static final ConcurrentMap<String, NashornCompiler> CACHE_BY_SCRIPT = new ConcurrentHashMap<>();
+
   private final CompiledScript compiledScript;
   private final Bindings bindings;
 
-  NashornCompiler(String... scriptPaths) {
-    String script = readScripts(scriptPaths);
-
+  private NashornCompiler(String script) {
     ScriptEngine nashorn = new ScriptEngineManager().getEngineByName("nashorn");
     try {
       compiledScript = ((Compilable) nashorn).compile(script);
@@ -42,7 +44,12 @@ public final class NashornCompiler {
     }
   }
 
-  private String readScripts(String... scriptPaths) {
+  public static NashornCompiler get(String... scriptPaths) {
+    String script = readScripts(scriptPaths);
+    return CACHE_BY_SCRIPT.computeIfAbsent(script, NashornCompiler::new);
+  }
+
+  private static String readScripts(String... scriptPaths) {
     StringBuilder concatenatedScript = new StringBuilder();
 
     for (String scriptPath : scriptPaths) {
