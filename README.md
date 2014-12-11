@@ -481,22 +481,25 @@ routes.get("/products", () -> Arrays.asList(new Product(...), new Product(...)))
 This route serves the Products serialized as json using [Jackson](http://jackson.codehaus.org/).
 The content type will be `application/json;charset=UTF-8`.
 
-## ObjectMapper override
+## ObjectMapper customization
 
 When fluent-http talks json, the [jackson json processor](http://jackson.codehaus.org/) is not far.
-Sometimes (meaning: Always in any decent sized project), you want to  provide your own home-cooked `ObjectMapper`. You can do this by using `TypeConvert.overrideMapper(ObjectMapper objectMapper)`.
+Sometimes (meaning: Always in any decent sized project), you want to  provide your own home-cooked `ObjectMapper`.
+You can do this by configuring or replacing the ObjectMapper through the `Extensions` interface.
 
+Like the example below, for instance let's say someone, let's name it Cedric, wants to map objects using the "new" jdk8
+ date api. He can do so by using :
 
-Like the example below, for instance let's say someone, let's name it Cedric, wants to map objects using the "new" jdk8 date api. He can do so by using :
 ```java
-ObjectMapper objectMapper = new ObjectMapper()
-.registerModule(new JSR310Module())
-.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-//Do you own cooking with your objectMapper then...
-TypeConvert.overrideMapper(objectMapper);
+routes.setExtensions(new Extensions() {
+  @Override
+  public ObjectMapper configureOrReplaceObjectMapper(ObjectMapper defaultObjectMapper, Env env) {
+    defaultObjectMapper.registerModule(new JSR310Module())
+    .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+    return defaultObjectMapper;
+  }
+});
 ```
-
-Take care of doing this early in your app start.
 
 ## Cookies
 
