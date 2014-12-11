@@ -37,11 +37,11 @@ Release versions are deployed on Maven Central:
 Starting a web server that responds `Hello World` on `/` uri is as simple as that:
 
 ```java
-import net.codestory.http.*;
+import net.codestory.http.WebServer;
 
 public class HelloWorld {
   public static void main(String[] args) {
-    new WebServer(routes -> routes.get("/", "Hello World")).start();
+    new WebServer().configure(routes -> routes.get("/", "Hello World")).start();
   }
 }
 ```
@@ -49,7 +49,7 @@ public class HelloWorld {
 Adding more routes is not hard either:
 
 ```java
-new WebServer(routes -> routes.
+new WebServer().configure(routes -> routes.
     get("/", "Hello World").
     get("/Test", "Test").
     get("/OtherTest", "Other Test")
@@ -70,7 +70,7 @@ Notice that path parameters have to be of type `String`.
 ## Resources
 
 The notation with lambdas is very compact but cannot support path parameters of type other than `String`. So we've added
-the notion of resource, in a way similar to jaxb.
+the notion of Resource, in a way similar to jaxb.
 
 ```java
 routes.add(new CalculationResource());
@@ -83,7 +83,7 @@ public class CalculationResource {
 }
 ```
 
-Each method annotated with `@Get` is a route. The method can have any name. The number of parameters must match the uri
+Each method annotated with `@Get` is a route. The method can have any name. The parameters must match the uri
 pattern. Parameters names are not important but it's a good practice to match the uri placeholders. The conversion between
 path parameters and method parameters is done with [Jackson](http://jackson.codehaus.org/).
 
@@ -101,7 +101,7 @@ is searched first on the classpath and then in the working directory.
 So the simplest way to start a web server is in fact:
 
 ```java
-import net.codestory.http.*;
+import net.codestory.http.WebServer;
 
 public class HelloWorld {
   public static void main(String[] args) {
@@ -114,9 +114,8 @@ public class HelloWorld {
 
 Instead of relying on the default port, you can specify the port yourself...
 
-
 ```java
-int port = new WebServer().port(4242);
+new WebServer().start(4242);
 ```
 
 ... or you can also let the web server find a tcp port available.
