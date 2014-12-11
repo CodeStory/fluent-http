@@ -8,13 +8,7 @@ This is the simplest fastest full fledged web server we could come up with.
 
 # Environment
 
-- `java-1.8`, `maven-3.1.1`
-
-# Build
-
-```bash
-mvn clean verify
-```
+- `java-1.8`
 
 # Usage
 
@@ -31,6 +25,10 @@ Release versions are deployed on Maven Central:
   <version>2.34</version>
 </dependency>
 ```
+
+## Sample projects
+
+Sample projects can be found [here](https://github.com/CodeStory/fluent-samples).
 
 ## Hello World
 
@@ -693,6 +691,12 @@ mvn license:format
 + include file not in _includes
 + Merge static resources
 
+
+# Build
+
+```bash
+mvn clean verify
+```
 
 # Deploy on Maven Central
 
