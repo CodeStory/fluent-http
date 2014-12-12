@@ -24,6 +24,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import net.codestory.http.io.*;
 
 import javax.script.*;
@@ -35,7 +36,16 @@ public final class NashornCompiler {
   private final Bindings bindings;
 
   private NashornCompiler(String script) {
-    ScriptEngine nashorn = new ScriptEngineManager().getEngineByName("nashorn");
+    NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
+
+    String engineVersion = factory.getEngineVersion();
+    String cacheLocation = Paths.get(System.getProperty("user.home"), ".code-story", "nashorn_code_cache_" + engineVersion).toFile().getAbsolutePath();
+    System.setProperty("nashorn.persistent.code.cache", cacheLocation);
+
+    // --optimistic-types=true in JDK 8u40 slows down everything
+    // Don't use varargs because it was introduced only in 8u40
+    ScriptEngine nashorn = factory.getScriptEngine(new String[]{"--persistent-code-cache=true", "--lazy-compilation=false"});
+
     try {
       compiledScript = ((Compilable) nashorn).compile(script);
       bindings = nashorn.getBindings(ENGINE_SCOPE);
