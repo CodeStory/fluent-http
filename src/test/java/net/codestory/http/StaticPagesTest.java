@@ -24,6 +24,10 @@ public class StaticPagesTest extends AbstractProdWebServerTest {
   public void webJars() {
     get("/webjars/bootstrap/3.3.1/css/bootstrap.min.css").should().respond(200).haveType("text/css").contain("Bootstrap v3.3.1");
     get("/webjars/bootstrap/3.3.1/js/bootstrap.min.js").should().respond(200).haveType("application/javascript").contain("Bootstrap v3.3.1");
+  }
+
+  @Test
+  public void unknown_webJar_resource() {
     get("/webjars/").should().respond(404);
   }
 
