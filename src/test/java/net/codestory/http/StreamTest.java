@@ -44,7 +44,7 @@ public class StreamTest extends AbstractProdWebServerTest {
   }
 
   @Test
-  public void stream() {
+  public void byte_stream() {
     byte[] buffer = "Hello World".getBytes(UTF_8);
 
     configure(routes -> routes.get("/stream", () -> new ByteArrayInputStream(buffer)));
