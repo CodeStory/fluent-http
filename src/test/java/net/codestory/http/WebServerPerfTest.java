@@ -23,7 +23,7 @@ import java.util.List;
 import static java.util.stream.IntStream.rangeClosed;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class WebServerTest {
+public class WebServerPerfTest {
   @Test
   public void launch_lots_of_servers_without_port_conflict_nor_thread_leak() {
     for (int j = 0; j < 5; j++) {
