@@ -24,7 +24,7 @@ import java.util.Map;
 public class PostTest extends AbstractProdWebServerTest {
   @Test
   public void post() {
-    server.configure(routes -> routes
+    configure(routes -> routes
             .post("/post", () -> "Done")
     );
 
@@ -33,7 +33,7 @@ public class PostTest extends AbstractProdWebServerTest {
 
   @Test
   public void get_and_post_on_same_url() {
-    server.configure(routes -> routes
+    configure(routes -> routes
             .get("/action", () -> "Done GET")
             .post("/action", () -> "Done POST")
     );
@@ -44,7 +44,7 @@ public class PostTest extends AbstractProdWebServerTest {
 
   @Test
   public void post_params() {
-    server.configure(routes -> routes
+    configure(routes -> routes
             .post("/post/:who", (context, who) -> "Done " + who)
     );
 
@@ -53,7 +53,7 @@ public class PostTest extends AbstractProdWebServerTest {
 
   @Test
   public void annotated_resource() {
-    server.configure(routes -> routes
+    configure(routes -> routes
             .add(new Object() {
               @Post("/person")
               @Post("/person_alt")
@@ -75,7 +75,7 @@ public class PostTest extends AbstractProdWebServerTest {
 
   @Test
   public void wrong_method() {
-    server.configure(routes -> routes
+    configure(routes -> routes
             .get("/get", () -> "Done")
     );
 
@@ -90,7 +90,7 @@ public class PostTest extends AbstractProdWebServerTest {
 
   @Test
   public void forms() {
-    server.configure(routes -> routes.
+    configure(routes -> routes.
         post("/postForm", context -> "CREATED " + context.get("firstName") + " " + context.get("lastName")).
         post("/postForm", context -> "CREATED " + context.get("firstName") + " " + context.get("lastName")).
         add(new Object() {

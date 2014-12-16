@@ -23,21 +23,21 @@ import org.junit.*;
 public class DeleteTest extends AbstractProdWebServerTest {
   @Test
   public void delete() {
-    server.configure(routes -> routes.delete("/delete", () -> "Deleted"));
+    configure(routes -> routes.delete("/delete", () -> "Deleted"));
 
     delete("/delete").should().respond(200).haveType("text/html").contain("Deleted");
   }
 
   @Test
   public void resource() {
-    server.configure(routes -> routes.add(new DeleteResource()));
+    configure(routes -> routes.add(new DeleteResource()));
 
     delete("/delete").should().respond(200).haveType("text/html").contain("Deleted");
   }
 
   @Test
   public void resource_class() {
-    server.configure(routes -> routes.add(DeleteResource.class));
+    configure(routes -> routes.add(DeleteResource.class));
 
     delete("/delete").should().respond(200).haveType("text/html").contain("Deleted");
   }

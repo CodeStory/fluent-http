@@ -31,7 +31,7 @@ public class CORSTest extends AbstractProdWebServerTest {
 
   @Test
   public void preflight() {
-    server.configure(routes -> routes
+    configure(routes -> routes
       .options("/cors", context -> {
         if (!context.isCORS() || context.isPreflight()) {
           throw new BadRequestException();
@@ -64,7 +64,7 @@ public class CORSTest extends AbstractProdWebServerTest {
 
   @Test
   public void programmatic() {
-    server.configure(routes -> routes.
+    configure(routes -> routes.
       options("/origin", ok().withAllowOrigin("http://www.code-story.net")).
       options("/originall", ok().withAllowOrigin("*")).
       options("/methods", ok().withAllowMethods("GET")).
@@ -85,7 +85,7 @@ public class CORSTest extends AbstractProdWebServerTest {
 
   @Test
   public void annotations() {
-    server.configure(routes -> routes.add(CorsResource.class));
+    configure(routes -> routes.add(CorsResource.class));
 
     options("/origin").should().haveHeader("Access-Control-Allow-Origin", "http://www.code-story.net");
     options("/originall").should().haveHeader("Access-Control-Allow-Origin", "*");

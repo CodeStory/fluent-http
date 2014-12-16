@@ -23,35 +23,35 @@ import org.junit.*;
 public class PutTest extends AbstractProdWebServerTest {
   @Test
   public void put() {
-    server.configure(routes -> routes.put("/put", () -> "Done"));
+    configure(routes -> routes.put("/put", () -> "Done"));
 
     put("/put").should().contain("Done");
   }
 
   @Test
   public void content() {
-    server.configure(routes -> routes.put("/put", context -> context.content()));
+    configure(routes -> routes.put("/put", context -> context.content()));
 
     put("/put", "Bob").should().contain("Bob");
   }
 
   @Test
   public void content_as_string() {
-    server.configure(routes -> routes.put("/put", context -> context.contentAsString()));
+    configure(routes -> routes.put("/put", context -> context.contentAsString()));
 
     put("/put", "Joe").should().contain("Joe");
   }
 
   @Test
   public void resource() {
-    server.configure(routes -> routes.add(new PutResource()));
+    configure(routes -> routes.add(new PutResource()));
 
     put("/order/12", "{\"name\":\"foo\",\"quantity\":42}").should().contain("order 12 : 42xfoo");
   }
 
   @Test
   public void resource_class() {
-    server.configure(routes -> routes.add(PutResource.class));
+    configure(routes -> routes.add(PutResource.class));
 
     put("/order/12", "{\"name\":\"foo\",\"quantity\":42}").should().contain("order 12 : 42xfoo");
   }

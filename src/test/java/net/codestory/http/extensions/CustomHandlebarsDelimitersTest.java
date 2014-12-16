@@ -25,23 +25,23 @@ import org.junit.Test;
 // This test has side effects. Start it in its own server
 //
 public class CustomHandlebarsDelimitersTest implements FluentRestTest {
-  private final WebServer webServer = new WebServer().startOnRandomPort();
+  private final WebServer server = new WebServer().startOnRandomPort();
 
   @Override
   public int port() {
-    return webServer.port();
+    return server.port();
   }
 
   @Test
   public void configure_handlebars() {
-    webServer.configure(routes -> routes
-      .get("/extensions/custom_delimiters", Model.of("name", "Bob"))
-      .setExtensions(new Extensions() {
-        @Override
-        public void configureCompilers(CompilerFacade compilers, Env env) {
-          compilers.configureHandlebars(hb -> hb.startDelimiter("((").endDelimiter("))"));
-        }
-      }));
+    server.configure(routes -> routes
+        .get("/extensions/custom_delimiters", Model.of("name", "Bob"))
+        .setExtensions(new Extensions() {
+          @Override
+          public void configureCompilers(CompilerFacade compilers, Env env) {
+            compilers.configureHandlebars(hb -> hb.startDelimiter("((").endDelimiter("))"));
+          }
+        }));
 
     get("/extensions/custom_delimiters").should().contain("Hello Bob");
   }

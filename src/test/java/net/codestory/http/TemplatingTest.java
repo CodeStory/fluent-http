@@ -28,28 +28,28 @@ public class TemplatingTest extends AbstractProdWebServerTest {
 
   @Test
   public void model_and_view() {
-    server.configure(routes -> routes.get("/hello/:name", (context, name) -> ModelAndView.of("1variable.txt", "name", name)));
+    configure(routes -> routes.get("/hello/:name", (context, name) -> ModelAndView.of("1variable.txt", "name", name)));
 
     get("/hello/Joe").should().haveType("text/plain").contain("Hello Joe");
   }
 
   @Test
   public void view() {
-    server.configure(routes -> routes.get("/bye", () -> ModelAndView.of("goodbye")));
+    configure(routes -> routes.get("/bye", () -> ModelAndView.of("goodbye")));
 
     get("/bye").should().haveType("text/html").contain("<p><strong>Good Bye</strong></p>");
   }
 
   @Test
   public void infer_template_from_route() {
-    server.configure(routes -> routes.get("/1variable", Model.of("name", "Toto")));
+    configure(routes -> routes.get("/1variable", Model.of("name", "Toto")));
 
     get("/1variable").should().haveType("text/plain").contain("Hello Toto");
   }
 
   @Test
   public void infer_template_for_index() {
-    server.configure(routes -> routes.get("/section/", Model.of("name", "Bob")));
+    configure(routes -> routes.get("/section/", Model.of("name", "Bob")));
 
     get("/section/").should().haveType("text/plain").contain("Hello Bob");
   }

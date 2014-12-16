@@ -27,7 +27,7 @@ import org.junit.*;
 public class FilterTest extends AbstractProdWebServerTest {
   @Test
   public void filter() {
-    server.configure(routes -> routes.
+    configure(routes -> routes.
       get("/", "NOT FILTERED").
       get("/other", "OTHER").
       filter((uri, context, nextFilter) -> {
@@ -43,14 +43,14 @@ public class FilterTest extends AbstractProdWebServerTest {
 
   @Test
   public void filter_class() {
-    server.configure(routes -> routes.filter(CatchAll.class));
+    configure(routes -> routes.filter(CatchAll.class));
 
     get("/").should().contain("FILTERED");
   }
 
   @Test
   public void etag() {
-    server.configure(routes -> routes.get("/", "Hello World"));
+    configure(routes -> routes.get("/", "Hello World"));
 
     get("/").should().respond(200).haveType("text/html").contain("Hello World");
     get("/").withHeader("If-None-Match", Md5.of("Hello World".getBytes(UTF_8))).should().respond(304);
@@ -58,7 +58,7 @@ public class FilterTest extends AbstractProdWebServerTest {
 
   @Test
   public void filter_are_executed_in_order_of_definition() {
-    server.configure(routes -> routes
+    configure(routes -> routes
       .get("/", "NOT FILTERED")
       .filter((uri, context, next) -> new Payload("FILTER1>" + next.get().rawContent()))
       .filter((uri, context, next) -> new Payload("FILTER2>" + next.get().rawContent())));

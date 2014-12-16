@@ -25,7 +25,7 @@ import java.nio.file.Path;
 public class CustomCompilerInDevTest extends AbstractDevWebServerTest {
   @Test
   public void custom_compiler() {
-    server.configure(routes -> routes
+    configure(routes -> routes
       .setExtensions(new Extensions() {
         @Override
         public void configureCompilers(CompilerFacade compilers, Env env) {

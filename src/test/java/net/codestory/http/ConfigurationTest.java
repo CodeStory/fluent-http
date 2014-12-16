@@ -22,14 +22,14 @@ import org.junit.*;
 public class ConfigurationTest extends AbstractProdWebServerTest {
   @Test
   public void priority_to_route_over_file() {
-    server.configure(routes -> routes.get("/", "PRIORITY"));
+    configure(routes -> routes.get("/", "PRIORITY"));
 
     get("/").should().contain("PRIORITY");
   }
 
   @Test
   public void first_route_serves_first() {
-    server.configure(routes -> routes.
+    configure(routes -> routes.
       get("/", "FIRST").
       get("/", "SECOND"));
 
@@ -38,7 +38,7 @@ public class ConfigurationTest extends AbstractProdWebServerTest {
 
   @Test
   public void multiple_routes_same_uri() {
-    server.configure(routes -> routes
+    configure(routes -> routes
       .with("/").
         get(() -> "Index GET").
         post(() -> "Index POST")
@@ -55,7 +55,7 @@ public class ConfigurationTest extends AbstractProdWebServerTest {
 
   @Test
   public void catch_all() {
-    server.configure(routes -> routes.catchAll("HELLO"));
+    configure(routes -> routes.catchAll("HELLO"));
 
     get("/any").should().contain("HELLO");
     get("/random").should().contain("HELLO");

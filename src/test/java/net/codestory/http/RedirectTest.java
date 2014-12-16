@@ -23,7 +23,7 @@ import org.junit.*;
 public class RedirectTest extends AbstractProdWebServerTest {
   @Test
   public void redirect() {
-    server.configure(routes -> routes.
+    configure(routes -> routes.
       get("/", Payload.seeOther("/login")).
       get("/login", "LOGIN").
       get("/dynamic/", "Dynamic"));

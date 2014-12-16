@@ -15,8 +15,9 @@
  */
 package net.codestory.http.testhelpers;
 
+import net.codestory.http.Configuration;
 import net.codestory.rest.FluentRestTest;
-import org.junit.*;
+import org.junit.ClassRule;
 
 public abstract class AbstractProdWebServerTest implements FluentRestTest {
   @ClassRule
@@ -25,5 +26,9 @@ public abstract class AbstractProdWebServerTest implements FluentRestTest {
   @Override
   public int port() {
     return server.port();
+  }
+
+  protected void configure(Configuration configuration) {
+    server.configure(configuration);
   }
 }

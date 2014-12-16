@@ -25,7 +25,7 @@ import org.junit.*;
 public class AnnotationsTest extends AbstractProdWebServerTest {
   @Test
   public void annotated_resources() {
-    server.configure(routes -> routes.add(new MyResource()));
+    configure(routes -> routes.add(new MyResource()));
 
     get("/hello").should().contain("Hello");
     get("/").should().contain("Hello");
@@ -40,7 +40,7 @@ public class AnnotationsTest extends AbstractProdWebServerTest {
 
   @Test
   public void resources_class() {
-    server.configure(routes -> routes.add(MyResource.class));
+    configure(routes -> routes.add(MyResource.class));
 
     get("/hello").should().contain("Hello");
   }
@@ -91,21 +91,21 @@ public class AnnotationsTest extends AbstractProdWebServerTest {
 
   @Test
   public void prefix() {
-    server.configure(routes -> routes.add("/say", new TestResource()));
+    configure(routes -> routes.add("/say", new TestResource()));
 
     get("/say/hello").should().contain("Hello");
   }
 
   @Test
   public void add_with_prefix() {
-    server.configure(routes -> routes.add("/say", TestResource.class));
+    configure(routes -> routes.add("/say", TestResource.class));
 
     get("/say/hello").should().contain("Hello");
   }
 
   @Test
   public void resource_with_prefix() {
-    server.configure(routes -> routes.add(ResourceWithPrefix.class));
+    configure(routes -> routes.add(ResourceWithPrefix.class));
 
     get("/prefix/route1").should().contain("Route 1");
     get("/prefix/route2").should().contain("Route 2");
@@ -113,7 +113,7 @@ public class AnnotationsTest extends AbstractProdWebServerTest {
 
   @Test
   public void add_prefixed_resource_with_prefix() {
-    server.configure(routes -> routes.add("/test", ResourceWithPrefix.class));
+    configure(routes -> routes.add("/test", ResourceWithPrefix.class));
 
     get("/test/prefix/route1").should().contain("Route 1");
     get("/test/prefix/route2").should().contain("Route 2");
@@ -121,7 +121,7 @@ public class AnnotationsTest extends AbstractProdWebServerTest {
 
   @Test
   public void inject_parameters() {
-    server.configure(routes -> routes.add(ResourceWithInjection.class));
+    configure(routes -> routes.add(ResourceWithInjection.class));
 
     get("/injection/first/second").should().contain("first/second/Context/SimpleRequest/SimpleResponse/SimpleCookies");
   }

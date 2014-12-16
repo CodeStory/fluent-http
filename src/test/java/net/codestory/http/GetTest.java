@@ -29,7 +29,7 @@ import org.junit.*;
 public class GetTest extends AbstractProdWebServerTest {
   @Test
   public void content_types() {
-    server.configure(routes -> routes.
+    configure(routes -> routes.
       get("/index", "Index").
       get("/text", new Payload("text/plain", "TEXT")).
       get("/html", new Payload("text/html", "<body>HTML</body>")).
@@ -47,7 +47,7 @@ public class GetTest extends AbstractProdWebServerTest {
 
   @Test
   public void request_params() {
-    server.configure(routes -> routes.
+    configure(routes -> routes.
       get("/hello/:name", (context, name) -> "Hello " + name).
       get("/say/:what/how/:loud", (context, what, loud) -> what + " " + loud).
       get("/:one/:two/:three", (context, one, two, three) -> one + " " + two + " " + three));
@@ -60,7 +60,7 @@ public class GetTest extends AbstractProdWebServerTest {
 
   @Test
   public void query_params() {
-    server.configure(routes -> routes.
+    configure(routes -> routes.
       get("/index", "Hello").
       get("/hello?name=:name", (context, name) -> "Hello " + name).
       add(new Object() {
@@ -77,7 +77,7 @@ public class GetTest extends AbstractProdWebServerTest {
 
   @Test
   public void io_streams() {
-    server.configure(routes -> routes.get("/", () -> new Payload("text/html", new ByteArrayInputStream("Hello".getBytes()))));
+    configure(routes -> routes.get("/", () -> new Payload("text/html", new ByteArrayInputStream("Hello".getBytes()))));
 
     get("/").should().haveType("text/html").contain("Hello");
   }

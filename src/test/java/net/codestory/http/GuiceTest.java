@@ -26,23 +26,23 @@ import org.junit.*;
 import com.google.inject.*;
 
 public class GuiceTest implements FluentRestTest {
-  WebServer webServer = new WebServer().startOnRandomPort();
+  WebServer server = new WebServer().startOnRandomPort();
 
   @Override
   public int port() {
-    return webServer.port();
+    return server.port();
   }
 
   @Test
   public void configuration() {
-    webServer.configure(new MyAppConfiguration());
+    server.configure(new MyAppConfiguration());
 
     get("/").should().contain("PRODUCTION");
   }
 
   @Test
   public void override_bean() {
-    webServer.configure(new MyAppConfiguration(new TestModule()));
+    server.configure(new MyAppConfiguration(new TestModule()));
 
     get("/").should().contain("OVERRIDDEN");
   }

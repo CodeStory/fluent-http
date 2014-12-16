@@ -34,7 +34,7 @@ public class StreamTest extends AbstractProdWebServerTest {
     AtomicLong index = new AtomicLong(0);
     Supplier<String> messageSupplier = () -> "MESSAGE" + index.incrementAndGet();
 
-    server.configure(routes -> routes.get("/events", () -> Stream.generate(messageSupplier).limit(1000)));
+    configure(routes -> routes.get("/events", () -> Stream.generate(messageSupplier).limit(1000)));
 
     get("/events").should().contain("data: MESSAGE1\n\n" + "data: MESSAGE2\n\n" + "data: MESSAGE3\n\n");
   }
@@ -44,7 +44,7 @@ public class StreamTest extends AbstractProdWebServerTest {
     AtomicLong index = new AtomicLong(0);
     Supplier<String> messageSupplier = () -> "MESSAGE\n" + index.incrementAndGet();
 
-    server.configure(routes -> routes.get("/events", () -> Stream.generate(messageSupplier).limit(1000)));
+    configure(routes -> routes.get("/events", () -> Stream.generate(messageSupplier).limit(1000)));
 
     get("/events").should().contain("data: MESSAGE\ndata: 1\n\n" + "data: MESSAGE\ndata: 2\n\n" + "data: MESSAGE\ndata: 3\n\n");
   }
@@ -53,7 +53,7 @@ public class StreamTest extends AbstractProdWebServerTest {
   public void stream() {
     byte[] buffer = "Hello World".getBytes(UTF_8);
 
-    server.configure(routes -> routes.get("/stream", () -> new ByteArrayInputStream(buffer)));
+    configure(routes -> routes.get("/stream", () -> new ByteArrayInputStream(buffer)));
 
     get("/stream").should().contain("Hello World");
   }
@@ -62,7 +62,7 @@ public class StreamTest extends AbstractProdWebServerTest {
   public void support_multiple_clients_in_parallel() {
     byte[] buffer = "Hello World".getBytes(UTF_8);
 
-    server.configure(routes -> routes
+    configure(routes -> routes
         .get("/blocking", () -> Stream.generate(() -> {
           try {
             HOURS.sleep(1);

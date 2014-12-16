@@ -27,7 +27,7 @@ public class CacheTest extends AbstractProdWebServerTest {
 
   @Test
   public void etag() {
-    server.configure(routes -> routes.get("/", "Hello"));
+    configure(routes -> routes.get("/", "Hello"));
 
     get("/").should().respond(200).haveType("text/html").contain("Hello").haveHeader("Etag", "8b1a9953c4611296a827abf8c47804d7");
     get("/").withHeader("If-None-Match", "8b1a9953c4611296a827abf8c47804d7").should().respond(304);
@@ -36,7 +36,7 @@ public class CacheTest extends AbstractProdWebServerTest {
 
   @Test
   public void date() {
-    server.configure(routes -> routes.get("/", new Payload("Hello").withHeader("Last-Modified", "Wed, 12 Nov 2014 17:53:14 GMT")));
+    configure(routes -> routes.get("/", new Payload("Hello").withHeader("Last-Modified", "Wed, 12 Nov 2014 17:53:14 GMT")));
 
     get("/").withHeader("If-Modified-Since", "Wed, 12 Nov 2014 17:53:14 GMT").should().respond(200);
     get("/").withHeader("If-Modified-Since", "Thu, 13 Nov 2014 17:53:14 GMT").should().respond(304);

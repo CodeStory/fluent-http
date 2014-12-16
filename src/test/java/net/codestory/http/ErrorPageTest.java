@@ -28,7 +28,7 @@ import org.junit.*;
 public class ErrorPageTest extends AbstractProdWebServerTest {
   @Test
   public void not_found_exception() {
-    server.configure(routes -> routes.get("/error", () -> {
+    configure(routes -> routes.get("/error", () -> {
       throw new NotFoundException();
     }));
 
@@ -37,14 +37,14 @@ public class ErrorPageTest extends AbstractProdWebServerTest {
 
   @Test
   public void not_found_payload() {
-    server.configure(routes -> routes.get("/notfound", Payload.notFound()));
+    configure(routes -> routes.get("/notfound", Payload.notFound()));
 
     get("/notfound").should().respond(404).haveType("text/html").contain("Page not found");
   }
 
   @Test
   public void not_found_optional() {
-    server.configure(routes -> routes.get("/notfound", Optional.<String>empty()));
+    configure(routes -> routes.get("/notfound", Optional.<String>empty()));
 
     get("/notfound").should().respond(404).haveType("text/html").contain("Page not found");
   }
@@ -56,7 +56,7 @@ public class ErrorPageTest extends AbstractProdWebServerTest {
 
   @Test
   public void error() {
-    server.configure(routes -> routes.get("/", () -> {
+    configure(routes -> routes.get("/", () -> {
       throw new RuntimeException("BUG");
     }));
 
@@ -65,7 +65,7 @@ public class ErrorPageTest extends AbstractProdWebServerTest {
 
   @Test
   public void not_found_if_null() {
-    server.configure(routes -> routes.get("/hello/:name", (context, name) -> {
+    configure(routes -> routes.get("/hello/:name", (context, name) -> {
       String result = name.equals("Bob") ? "Hello Bob" : null;
       return notFoundIfNull(result);
     }));
@@ -76,7 +76,7 @@ public class ErrorPageTest extends AbstractProdWebServerTest {
 
   @Test
   public void error_message_header() {
-    server.configure(routes -> routes.get("/error", () -> {
+    configure(routes -> routes.get("/error", () -> {
       throw new RuntimeException("NASTY BUG");
     }));
 

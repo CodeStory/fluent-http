@@ -24,16 +24,16 @@ import org.springframework.beans.factory.*;
 import org.springframework.context.annotation.*;
 
 public class SpringTest implements FluentRestTest {
-  WebServer webServer = new WebServer().startOnRandomPort();
+  WebServer server = new WebServer().startOnRandomPort();
 
   @Override
   public int port() {
-    return webServer.port();
+    return server.port();
   }
 
   @Test
   public void configuration() {
-    webServer.configure(new SpringConfiguration(App.class));
+    server.configure(new SpringConfiguration(App.class));
 
     get("/").should().contain("PRODUCTION");
   }

@@ -29,7 +29,7 @@ import java.io.IOException;
 public class CustomPayloadWriterTest extends AbstractProdWebServerTest {
   @Test
   public void add_resolver() {
-    server.configure(routes -> routes
+    configure(routes -> routes
       .get("/", new CustomPayload())
       .setExtensions(new Extensions() {
         @Override

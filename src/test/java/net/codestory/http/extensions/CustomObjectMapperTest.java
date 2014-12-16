@@ -31,7 +31,7 @@ import java.io.IOException;
 public class CustomObjectMapperTest extends AbstractProdWebServerTest {
   @Test
   public void add_resolver() {
-    server.configure(routes -> routes
+    configure(routes -> routes
       .add(PersonResource.class)
       .setExtensions(new Extensions() {
         @Override

@@ -27,7 +27,7 @@ import org.junit.*;
 public class AuthenticationTest extends AbstractProdWebServerTest {
   @Test
   public void public_page() {
-    server.configure(routes -> routes.
+    configure(routes -> routes.
       filter(new BasicAuthFilter("/secure", "codestory", of("jl", "polka"))).
       get("/", "Public"));
 
@@ -36,7 +36,7 @@ public class AuthenticationTest extends AbstractProdWebServerTest {
 
   @Test
   public void unauthorized() {
-    server.configure(routes -> routes.
+    configure(routes -> routes.
       filter(new BasicAuthFilter("/secure", "codestory", of("jl", "polka"))).
       get("/secure", "Private"));
 
@@ -45,7 +45,7 @@ public class AuthenticationTest extends AbstractProdWebServerTest {
 
   @Test
   public void secured() {
-    server.configure(routes -> routes.
+    configure(routes -> routes.
       filter(new BasicAuthFilter("/secure", "codestory", of("jl", "polka"))).
       get("/secure", "Private"));
 
@@ -54,7 +54,7 @@ public class AuthenticationTest extends AbstractProdWebServerTest {
 
   @Test
   public void wrong_password() {
-    server.configure(routes -> routes.
+    configure(routes -> routes.
       filter(new BasicAuthFilter("/secure", "codestory", of("jl", "polka"))).
       get("/secure", "Private"));
 
@@ -63,7 +63,7 @@ public class AuthenticationTest extends AbstractProdWebServerTest {
 
   @Test
   public void get_user_id() {
-    server.configure(routes -> routes.
+    configure(routes -> routes.
       filter(new BasicAuthFilter("/secure", "codestory", of("Dave", "pwd"))).
       get("/secure", context -> "Hello " + context.currentUser().login()));
 
@@ -72,7 +72,7 @@ public class AuthenticationTest extends AbstractProdWebServerTest {
 
   @Test
   public void support_basic_auth_with_mixed_filter() {
-    server.configure(routes -> routes.
+    configure(routes -> routes.
       filter(new MixedAuthFilter("/secure", "codestory", Users.forMap(of("Dave", "pwd")), SessionIdStore.inMemory())).
       get("/secure", context -> "Hello " + context.currentUser().login()));
 
@@ -82,7 +82,7 @@ public class AuthenticationTest extends AbstractProdWebServerTest {
 
 //  @Test
 //  public void support_form_auth_with_mixed_filter() {
-//    server.configure(routes -> routes.
+//    configure(routes -> routes.
 //      filter(new MixedAuthFilter("/secure", "codestory", Users.forMap(of("Dave", "pwd")), SessionIdStore.inMemory())).
 //      get("/secure", context -> "Hello " + context.currentUser().login()));
 //

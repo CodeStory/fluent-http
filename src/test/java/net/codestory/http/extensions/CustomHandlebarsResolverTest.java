@@ -24,7 +24,7 @@ import org.junit.Test;
 public class CustomHandlebarsResolverTest extends AbstractProdWebServerTest {
   @Test
   public void add_resolver() {
-    server.configure(routes -> routes.setExtensions(new Extensions() {
+    configure(routes -> routes.setExtensions(new Extensions() {
       @Override
       public void configureCompilers(CompilerFacade compilers, Env env) {
         compilers.addHandlebarResolver(new HelloWorldResolver());

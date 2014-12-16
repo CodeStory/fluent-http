@@ -24,7 +24,7 @@ import org.junit.*;
 public class TemplatingInDevTest extends AbstractDevWebServerTest {
   @Test
   public void google_analytics_in_dev_mode() {
-    server.configure(NO_ROUTE);
+    configure(NO_ROUTE);
 
     get("/indexGoogleAnalytics.html").should().contain("<body>\n</body>\n\n</html>");
   }
