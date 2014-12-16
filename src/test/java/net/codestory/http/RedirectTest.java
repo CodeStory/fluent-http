@@ -24,8 +24,8 @@ public class RedirectTest extends AbstractProdWebServerTest {
   @Test
   public void seeOther() {
     configure(routes -> routes
-            .get("/", Payload.seeOther("/login"))
-            .get("/login", "LOGIN")
+        .get("/", Payload.seeOther("/login"))
+        .get("/login", "LOGIN")
     );
 
     get("/").should().contain("LOGIN");
@@ -34,7 +34,7 @@ public class RedirectTest extends AbstractProdWebServerTest {
   @Test
   public void default_to_route_without_slash() {
     configure(routes -> routes
-            .get("/dynamic/", "Dynamic")
+        .get("/dynamic/", "Dynamic")
     );
 
     get("/dynamic/").should().haveType("text/html").contain("Dynamic");
