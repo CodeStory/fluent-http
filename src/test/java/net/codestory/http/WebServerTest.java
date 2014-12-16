@@ -33,9 +33,7 @@ public class WebServerTest {
 
       assertThat(servers).hasSize(100);
 
-      for (WebServer server : servers) {
-        server.stop();
-      }
+      servers.parallelStream().forEach(server -> server.stop());
     }
   }
 }
