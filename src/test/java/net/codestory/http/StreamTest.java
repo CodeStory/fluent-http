@@ -20,8 +20,6 @@ import static java.util.concurrent.TimeUnit.*;
 import static java.util.stream.IntStream.*;
 
 import java.io.*;
-import java.util.concurrent.atomic.*;
-import java.util.function.*;
 import java.util.stream.*;
 
 import net.codestory.http.testhelpers.*;
@@ -64,12 +62,12 @@ public class StreamTest extends AbstractProdWebServerTest {
             // Ignore
           }
           return "OK";
-        }).limit(1))
-        .get("/stream", () -> new ByteArrayInputStream(buffer))
+        }))
+        .get("/non_blocking", () -> new ByteArrayInputStream(buffer))
     );
 
     new Thread(() -> get("/blocking").should().contain("OK")).start();
 
-    range(1, 1000).parallel().forEach(i -> get("/stream").should().contain("Hello World"));
+    range(1, 1000).parallel().forEach(i -> get("/non_blocking").should().contain("Hello World"));
   }
 }
