@@ -15,64 +15,96 @@
  */
 package net.codestory.http;
 
-import java.util.*;
+import net.codestory.http.annotations.Post;
+import net.codestory.http.testhelpers.AbstractProdWebServerTest;
+import org.junit.Test;
 
-import net.codestory.http.annotations.*;
-import net.codestory.http.testhelpers.*;
-
-import org.junit.*;
+import java.util.Map;
 
 public class PostTest extends AbstractProdWebServerTest {
   @Test
   public void post() {
-    server.configure(routes -> routes.
-      post("/post", () -> "Done").
-      get("/get", () -> "Done").
-      get("/action", () -> "Done GET").
-      post("/action", () -> "Done POST").
-      post("/post/:who", (context, who) -> "Done " + who).
-      add(new Object() {
-        @Post("/person")
-        @Post("/person_alt")
-        public String create() {
-          return "CREATED";
-        }
-
-        @Post("/order/:id")
-        public String order(String id, Order order) {
-          return "order " + id + " : " + order.quantity + "x" + order.name;
-        }
-      }));
+    server.configure(routes -> routes
+            .post("/post", () -> "Done")
+    );
 
     post("/post").should().contain("Done");
-    post("/post/Bob").should().contain("Done Bob");
+  }
+
+  @Test
+  public void get_and_post_on_same_url() {
+    server.configure(routes -> routes
+            .get("/action", () -> "Done GET")
+            .post("/action", () -> "Done POST")
+    );
+
     post("/action").should().contain("Done POST");
     get("/action").should().contain("Done GET");
+  }
+
+  @Test
+  public void post_params() {
+    server.configure(routes -> routes
+            .post("/post/:who", (context, who) -> "Done " + who)
+    );
+
+    post("/post/Bob").should().contain("Done Bob");
+  }
+
+  @Test
+  public void annotated_resource() {
+    server.configure(routes -> routes
+            .add(new Object() {
+              @Post("/person")
+              @Post("/person_alt")
+              public String create() {
+                return "CREATED";
+              }
+
+              @Post("/order/:id")
+              public String order(String id, Order order) {
+                return "order " + id + " : " + order.quantity + "x" + order.name;
+              }
+            })
+    );
+
     post("/person").should().contain("CREATED");
     post("/order/12", "name", "Book", "quantity", "42").should().contain("order 12 : 42xBook");
     post("/order/12", "{\"name\":\"foo\",\"quantity\":42}").should().contain("order 12 : 42xfoo");
+  }
+
+  @Test
+  public void wrong_method() {
+    server.configure(routes -> routes
+            .get("/get", () -> "Done")
+    );
+
     post("/get").should().respond(405);
     post("/index.html").should().respond(405);
+  }
+
+  @Test
+  public void not_found() {
     post("/unknown").should().respond(404);
   }
 
   @Test
   public void forms() {
     server.configure(routes -> routes.
-      post("/postForm", context -> "CREATED " + context.get("firstName") + " " + context.get("lastName")).
-      post("/postForm", context -> "CREATED " + context.get("firstName") + " " + context.get("lastName")).
-      add(new Object() {
-        @Post("/postFormResource")
-        public String create(Map<String, String> keyValues) {
-          return "CREATED " + keyValues.get("firstName") + " " + keyValues.get("lastName");
-        }
-      }).
-      add(new Object() {
-        @Post("/postBean")
-        public String create(Human human) {
-          return "CREATED " + human.firstName + " " + human.lastName;
-        }
-      }));
+        post("/postForm", context -> "CREATED " + context.get("firstName") + " " + context.get("lastName")).
+        post("/postForm", context -> "CREATED " + context.get("firstName") + " " + context.get("lastName")).
+        add(new Object() {
+          @Post("/postFormResource")
+          public String create(Map<String, String> keyValues) {
+            return "CREATED " + keyValues.get("firstName") + " " + keyValues.get("lastName");
+          }
+        }).
+        add(new Object() {
+          @Post("/postBean")
+          public String create(Human human) {
+            return "CREATED " + human.firstName + " " + human.lastName;
+          }
+        }));
 
     post("/postForm", "firstName", "John", "lastName", "Doe").should().contain("CREATED John Doe");
     post("/postFormResource", "firstName", "Jane", "lastName", "Doe").should().contain("CREATED Jane Doe");
