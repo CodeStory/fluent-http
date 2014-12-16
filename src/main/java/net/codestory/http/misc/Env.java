@@ -48,7 +48,7 @@ public class Env {
   }
 
   public int overriddenPort(int port) {
-    return getInt("PORT", getInt("app.port", port));
+    return getInt("PORT", port);
   }
 
   public boolean disableClassPath() {
