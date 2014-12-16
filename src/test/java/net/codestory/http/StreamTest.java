@@ -70,6 +70,6 @@ public class StreamTest extends AbstractProdWebServerTest {
 
     new Thread(() -> get("/blocking").should().contain("OK")).start();
 
-    range(1, 1000).forEach(i -> get("/stream").should().contain("Hello World"));
+    range(1, 1000).parallel().forEach(i -> get("/stream").should().contain("Hello World"));
   }
 }
