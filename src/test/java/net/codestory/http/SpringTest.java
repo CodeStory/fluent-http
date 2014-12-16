@@ -18,22 +18,16 @@ package net.codestory.http;
 import net.codestory.http.injection.*;
 import net.codestory.http.routes.*;
 
+import net.codestory.http.testhelpers.AbstractProdWebServerTest;
 import net.codestory.rest.FluentRestTest;
 import org.junit.*;
 import org.springframework.beans.factory.*;
 import org.springframework.context.annotation.*;
 
-public class SpringTest implements FluentRestTest {
-  WebServer server = new WebServer().startOnRandomPort();
-
-  @Override
-  public int port() {
-    return server.port();
-  }
-
+public class SpringTest extends AbstractProdWebServerTest implements FluentRestTest {
   @Test
   public void configuration() {
-    server.configure(new SpringConfiguration(App.class));
+    configure(new SpringConfiguration(App.class));
 
     get("/").should().contain("PRODUCTION");
   }
