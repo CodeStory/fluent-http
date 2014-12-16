@@ -63,7 +63,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     Random random = new Random();
     for (int i = 0; i < 30; i++) {
       try {
-        int port = 8183 + random.nextInt(30000);
+        int port = 8183 + random.nextInt(50000);
         return start(port);
       } catch (IllegalStateException e) {
         if (!e.getMessage().contains("Port already in use")) {
