@@ -25,7 +25,7 @@ public class PostTest extends AbstractProdWebServerTest {
   @Test
   public void post() {
     configure(routes -> routes
-            .post("/post", () -> "Done")
+        .post("/post", () -> "Done")
     );
 
     post("/post").should().contain("Done");
@@ -34,8 +34,8 @@ public class PostTest extends AbstractProdWebServerTest {
   @Test
   public void get_and_post_on_same_url() {
     configure(routes -> routes
-            .get("/action", () -> "Done GET")
-            .post("/action", () -> "Done POST")
+        .get("/action", () -> "Done GET")
+        .post("/action", () -> "Done POST")
     );
 
     post("/action").should().contain("Done POST");
@@ -45,7 +45,7 @@ public class PostTest extends AbstractProdWebServerTest {
   @Test
   public void post_params() {
     configure(routes -> routes
-            .post("/post/:who", (context, who) -> "Done " + who)
+        .post("/post/:who", (context, who) -> "Done " + who)
     );
 
     post("/post/Bob").should().contain("Done Bob");
@@ -54,18 +54,18 @@ public class PostTest extends AbstractProdWebServerTest {
   @Test
   public void annotated_resource() {
     configure(routes -> routes
-            .add(new Object() {
-              @Post("/person")
-              @Post("/person_alt")
-              public String create() {
-                return "CREATED";
-              }
+        .add(new Object() {
+          @Post("/person")
+          @Post("/person_alt")
+          public String create() {
+            return "CREATED";
+          }
 
-              @Post("/order/:id")
-              public String order(String id, Order order) {
-                return "order " + id + " : " + order.quantity + "x" + order.name;
-              }
-            })
+          @Post("/order/:id")
+          public String order(String id, Order order) {
+            return "order " + id + " : " + order.quantity + "x" + order.name;
+          }
+        })
     );
 
     post("/person").should().contain("CREATED");
@@ -76,7 +76,7 @@ public class PostTest extends AbstractProdWebServerTest {
   @Test
   public void wrong_method() {
     configure(routes -> routes
-            .get("/get", () -> "Done")
+        .get("/get", () -> "Done")
     );
 
     post("/get").should().respond(405);
@@ -89,25 +89,40 @@ public class PostTest extends AbstractProdWebServerTest {
   }
 
   @Test
-  public void forms() {
+  public void post_form() {
     configure(routes -> routes.
-        post("/postForm", context -> "CREATED " + context.get("firstName") + " " + context.get("lastName")).
+        post("/post", context -> "CREATED " + context.get("firstName") + " " + context.get("lastName"))
+    );
+
+    post("/post", "firstName", "John", "lastName", "Doe").should().contain("CREATED John Doe");
+  }
+
+  @Test
+  public void post_form_with_resource() {
+    configure(routes -> routes.
         add(new Object() {
-          @Post("/postFormResource")
+          @Post("/post")
           public String create(Map<String, String> keyValues) {
             return "CREATED " + keyValues.get("firstName") + " " + keyValues.get("lastName");
           }
-        }).
+        })
+    );
+
+    post("/post", "firstName", "Jane", "lastName", "Doe").should().contain("CREATED Jane Doe");
+  }
+
+  @Test
+  public void post_bean() {
+    configure(routes -> routes.
         add(new Object() {
-          @Post("/postBean")
+          @Post("/post")
           public String create(Human human) {
             return "CREATED " + human.firstName + " " + human.lastName;
           }
-        }));
+        })
+    );
 
-    post("/postForm", "firstName", "John", "lastName", "Doe").should().contain("CREATED John Doe");
-    post("/postFormResource", "firstName", "Jane", "lastName", "Doe").should().contain("CREATED Jane Doe");
-    post("/postBean", "firstName", "John", "lastName", "Doe").should().contain("CREATED John Doe");
+    post("/post", "firstName", "John", "lastName", "Doe").should().contain("CREATED John Doe");
   }
 
   static class Human {
