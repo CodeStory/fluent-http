@@ -19,9 +19,18 @@ import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
 
+import static net.codestory.http.Configuration.NO_ROUTE;
+
 public class ConfigurationTest extends AbstractProdWebServerTest {
   @Test
-  public void priority_to_route_over_file() {
+  public void send_static_page() {
+    configure(NO_ROUTE);
+
+    get("/").should().contain("Hello From a File");
+  }
+
+  @Test
+  public void override_static_file_with_route() {
     configure(routes -> routes
         .get("/", "PRIORITY")
     );
@@ -30,7 +39,7 @@ public class ConfigurationTest extends AbstractProdWebServerTest {
   }
 
   @Test
-  public void first_route_serves_first() {
+  public void first_route_is_served_first() {
     configure(routes -> routes
         .get("/", "FIRST")
         .get("/", "SECOND")
@@ -57,7 +66,7 @@ public class ConfigurationTest extends AbstractProdWebServerTest {
   }
 
   @Test
-  public void catch_all() {
+  public void catch_all_route() {
     configure(routes -> routes
         .catchAll("HELLO")
     );

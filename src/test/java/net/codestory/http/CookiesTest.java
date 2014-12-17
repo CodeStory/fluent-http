@@ -22,7 +22,7 @@ import org.junit.*;
 
 public class CookiesTest extends AbstractProdWebServerTest {
   @Test
-  public void cookies() {
+  public void set_cookie() {
     configure(routes -> routes
         .get("/set", () -> new Payload("").withCookie("id", "Bob"))
     );

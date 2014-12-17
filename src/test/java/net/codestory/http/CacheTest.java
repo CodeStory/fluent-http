@@ -19,26 +19,50 @@ import net.codestory.http.payload.Payload;
 import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
-import org.junit.rules.*;
 
 public class CacheTest extends AbstractProdWebServerTest {
-  @Rule
-  public TemporaryFolder temp = new TemporaryFolder();
-
   @Test
-  public void etag() {
-    configure(routes -> routes.get("/", "Hello"));
+  public void set_etag_header() {
+    configure(routes -> routes
+        .get("/", "Hello")
+    );
 
     get("/").should().respond(200).haveType("text/html").contain("Hello").haveHeader("Etag", "8b1a9953c4611296a827abf8c47804d7");
+  }
+
+  @Test
+  public void dont_send_page_with_same_etag() {
+    configure(routes -> routes
+        .get("/", "Hello")
+    );
+
     get("/").withHeader("If-None-Match", "8b1a9953c4611296a827abf8c47804d7").should().respond(304);
+  }
+
+  @Test
+  public void recognize_quoted_syntax() {
+    configure(routes -> routes
+        .get("/", "Hello")
+    );
+
     get("/").withHeader("If-None-Match", "\"8b1a9953c4611296a827abf8c47804d7\"").should().respond(304);
   }
 
   @Test
-  public void date() {
-    configure(routes -> routes.get("/", new Payload("Hello").withHeader("Last-Modified", "Wed, 12 Nov 2014 17:53:14 GMT")));
+  public void set_last_modified() {
+    configure(routes -> routes
+        .get("/", new Payload("Hello").withHeader("Last-Modified", "Wed, 12 Nov 2014 17:53:14 GMT"))
+    );
 
     get("/").withHeader("If-Modified-Since", "Wed, 12 Nov 2014 17:53:14 GMT").should().respond(200);
+  }
+
+  @Test
+  public void dont_send_unmodified_page() {
+    configure(routes -> routes
+        .get("/", new Payload("Hello").withHeader("Last-Modified", "Wed, 12 Nov 2014 17:53:14 GMT"))
+    );
+
     get("/").withHeader("If-Modified-Since", "Thu, 13 Nov 2014 17:53:14 GMT").should().respond(304);
   }
 }
