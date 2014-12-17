@@ -22,16 +22,19 @@ import org.junit.*;
 public class ConfigurationTest extends AbstractProdWebServerTest {
   @Test
   public void priority_to_route_over_file() {
-    configure(routes -> routes.get("/", "PRIORITY"));
+    configure(routes -> routes
+        .get("/", "PRIORITY")
+    );
 
     get("/").should().contain("PRIORITY");
   }
 
   @Test
   public void first_route_serves_first() {
-    configure(routes -> routes.
-      get("/", "FIRST").
-      get("/", "SECOND"));
+    configure(routes -> routes
+        .get("/", "FIRST")
+        .get("/", "SECOND")
+    );
 
     get("/").should().contain("FIRST");
   }
@@ -39,12 +42,12 @@ public class ConfigurationTest extends AbstractProdWebServerTest {
   @Test
   public void multiple_routes_same_uri() {
     configure(routes -> routes
-      .with("/").
-        get(() -> "Index GET").
-        post(() -> "Index POST")
-      .with("/action").
-        get(() -> "Action GET").
-        post(() -> "Action POST")
+        .with("/").
+          get(() -> "Index GET").
+          post(() -> "Index POST")
+        .with("/action").
+          get(() -> "Action GET").
+          post(() -> "Action POST")
     );
 
     get("/").should().contain("Index GET");
@@ -55,7 +58,9 @@ public class ConfigurationTest extends AbstractProdWebServerTest {
 
   @Test
   public void catch_all() {
-    configure(routes -> routes.catchAll("HELLO"));
+    configure(routes -> routes
+        .catchAll("HELLO")
+    );
 
     get("/any").should().contain("HELLO");
     get("/random").should().contain("HELLO");

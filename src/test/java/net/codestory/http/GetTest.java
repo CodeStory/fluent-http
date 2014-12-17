@@ -29,13 +29,14 @@ import org.junit.*;
 public class GetTest extends AbstractProdWebServerTest {
   @Test
   public void content_types() {
-    configure(routes -> routes.
-      get("/index", "Index").
-      get("/text", new Payload("text/plain", "TEXT")).
-      get("/html", new Payload("text/html", "<body>HTML</body>")).
-      get("/raw", "RAW".getBytes(UTF_8)).
-      get("/json", new Person("NAME", 42)).
-      get("/optionalIndex", Optional.of("Index")));
+    configure(routes -> routes
+        .get("/index", "Index")
+        .get("/text", new Payload("text/plain", "TEXT"))
+        .get("/html", new Payload("text/html", "<body>HTML</body>"))
+        .get("/raw", "RAW".getBytes(UTF_8))
+        .get("/json", new Person("NAME", 42))
+        .get("/optionalIndex", Optional.of("Index"))
+    );
 
     get("/index").should().haveType("text/html").contain("Index");
     get("/text").should().haveType("text/plain").contain("TEXT");
@@ -47,10 +48,11 @@ public class GetTest extends AbstractProdWebServerTest {
 
   @Test
   public void request_params() {
-    configure(routes -> routes.
-      get("/hello/:name", (context, name) -> "Hello " + name).
-      get("/say/:what/how/:loud", (context, what, loud) -> what + " " + loud).
-      get("/:one/:two/:three", (context, one, two, three) -> one + " " + two + " " + three));
+    configure(routes -> routes
+        .get("/hello/:name", (context, name) -> "Hello " + name)
+        .get("/say/:what/how/:loud", (context, what, loud) -> what + " " + loud)
+        .get("/:one/:two/:three", (context, one, two, three) -> one + " " + two + " " + three)
+    );
 
     get("/hello/Dave").should().contain("Hello Dave");
     get("/hello/John%20Doe").should().contain("Hello John Doe");
@@ -60,15 +62,16 @@ public class GetTest extends AbstractProdWebServerTest {
 
   @Test
   public void query_params() {
-    configure(routes -> routes.
-      get("/index", "Hello").
-      get("/hello?name=:name", (context, name) -> "Hello " + name).
-      add(new Object() {
-        @Get("/keyValues")
-        public String keyValues(Map<String, String> keyValues) {
-          return keyValues.toString();
-        }
-      }));
+    configure(routes -> routes
+        .get("/index", "Hello")
+        .get("/hello?name=:name", (context, name) -> "Hello " + name)
+        .add(new Object() {
+          @Get("/keyValues")
+          public String keyValues(Map<String, String> keyValues) {
+            return keyValues.toString();
+          }
+        })
+    );
 
     get("/index?query=useless").should().contain("Hello");
     get("/hello?name=Dave").should().contain("Hello Dave");
@@ -77,7 +80,9 @@ public class GetTest extends AbstractProdWebServerTest {
 
   @Test
   public void io_streams() {
-    configure(routes -> routes.get("/", () -> new Payload("text/html", new ByteArrayInputStream("Hello".getBytes()))));
+    configure(routes -> routes
+        .get("/", () -> new Payload("text/html", new ByteArrayInputStream("Hello".getBytes())))
+    );
 
     get("/").should().haveType("text/html").contain("Hello");
   }

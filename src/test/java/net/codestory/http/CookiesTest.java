@@ -23,7 +23,9 @@ import org.junit.*;
 public class CookiesTest extends AbstractProdWebServerTest {
   @Test
   public void cookies() {
-    configure(routes -> routes.get("/set", () -> new Payload("").withCookie("id", "Bob")));
+    configure(routes -> routes
+        .get("/set", () -> new Payload("").withCookie("id", "Bob"))
+    );
 
     get("/set").should().haveCookie("id", "Bob");
   }

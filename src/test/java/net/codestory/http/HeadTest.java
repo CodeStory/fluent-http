@@ -23,21 +23,27 @@ import org.junit.*;
 public class HeadTest extends AbstractProdWebServerTest {
   @Test
   public void implicit_head() {
-    configure(routes -> routes.get("/", "Hello"));
+    configure(routes -> routes
+        .get("/", "Hello")
+    );
 
     head("/").should().respond(200).haveType("").contain("");
   }
 
   @Test
   public void explicit_head() {
-    configure(routes -> routes.head("/", "Hello"));
+    configure(routes -> routes
+        .head("/", "Hello")
+    );
 
     head("/").should().respond(200).haveType("").contain("");
   }
 
   @Test
   public void implicit_head_resource() {
-    configure(routes -> routes.add(Resource.class));
+    configure(routes -> routes
+        .add(Resource.class)
+    );
 
     head("/implicit").should().respond(200).haveType("").contain("");
     head("/explicit").should().respond(200).haveType("").contain("");

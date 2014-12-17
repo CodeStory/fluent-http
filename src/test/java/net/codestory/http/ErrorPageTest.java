@@ -28,23 +28,29 @@ import org.junit.*;
 public class ErrorPageTest extends AbstractProdWebServerTest {
   @Test
   public void not_found_exception() {
-    configure(routes -> routes.get("/error", () -> {
-      throw new NotFoundException();
-    }));
+    configure(routes -> routes
+        .get("/error", () -> {
+          throw new NotFoundException();
+        })
+    );
 
     get("/error").should().respond(404).haveType("text/html").contain("Page not found");
   }
 
   @Test
   public void not_found_payload() {
-    configure(routes -> routes.get("/notfound", Payload.notFound()));
+    configure(routes -> routes
+        .get("/notfound", Payload.notFound())
+    );
 
     get("/notfound").should().respond(404).haveType("text/html").contain("Page not found");
   }
 
   @Test
   public void not_found_optional() {
-    configure(routes -> routes.get("/notfound", Optional.<String>empty()));
+    configure(routes -> routes
+        .get("/notfound", Optional.empty())
+    );
 
     get("/notfound").should().respond(404).haveType("text/html").contain("Page not found");
   }
@@ -56,19 +62,23 @@ public class ErrorPageTest extends AbstractProdWebServerTest {
 
   @Test
   public void error() {
-    configure(routes -> routes.get("/", () -> {
-      throw new RuntimeException("BUG");
-    }));
+    configure(routes -> routes
+        .get("/", () -> {
+          throw new RuntimeException("BUG");
+        })
+    );
 
     get("/").should().respond(500).haveType("text/html").contain("An error occurred on the server");
   }
 
   @Test
   public void not_found_if_null() {
-    configure(routes -> routes.get("/hello/:name", (context, name) -> {
-      String result = name.equals("Bob") ? "Hello Bob" : null;
-      return notFoundIfNull(result);
-    }));
+    configure(routes -> routes
+        .get("/hello/:name", (context, name) -> {
+          String result = name.equals("Bob") ? "Hello Bob" : null;
+          return notFoundIfNull(result);
+        })
+    );
 
     get("/hello/Bob").should().haveType("text/html").contain("Hello Bob");
     get("/hello/Dave").should().respond(404).haveType("text/html").contain("Page not found");
@@ -76,9 +86,11 @@ public class ErrorPageTest extends AbstractProdWebServerTest {
 
   @Test
   public void error_message_header() {
-    configure(routes -> routes.get("/error", () -> {
-      throw new RuntimeException("NASTY BUG");
-    }));
+    configure(routes -> routes
+        .get("/error", () -> {
+          throw new RuntimeException("NASTY BUG");
+        })
+    );
 
     get("/error").should().respond(500).haveType("text/html").contain("An error occurred on the server").haveHeader("reason", "NASTY BUG");
   }
