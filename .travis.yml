@@ -1,4 +1,10 @@
+# Use docker-based build environment
 sudo: false
+
 language: java
 jdk:
   - oraclejdk8
+
+cache:
+  directories:
+    - '$HOME/.m2/repository'
