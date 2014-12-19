@@ -144,19 +144,20 @@ public class PayloadWriter {
   }
 
   protected void writeEventStream(Payload payload) throws IOException {
-    Stream<?> stream = (Stream<?>) payload.rawContent();
-
     PrintStream printStream = new PrintStream(response.outputStream());
 
-    stream.forEach(item -> {
-      String jsonOrPlainString = (item instanceof String) ? (String) item : TypeConvert.toJson(item);
+    try (Stream<?> stream = (Stream<?>) payload.rawContent()) {
+      stream.forEach(item -> {
+        String jsonOrPlainString = (item instanceof String) ? (String) item : TypeConvert.toJson(item);
 
-      printStream
-        .append("data: ")
-        .append(jsonOrPlainString.replaceAll("[\n]", "\ndata: "))
-        .append("\n\n")
-        .flush();
-    });
+        printStream
+          .append("data: ")
+          .append(jsonOrPlainString.replaceAll("[\n]", "\ndata: "))
+          .append("\n\n")
+          .flush();
+      });
+    }
+
     close();
   }
 
