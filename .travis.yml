@@ -1,7 +1,12 @@
 # Use docker-based build environment
 sudo: false
 
-language: java
+os:
+  - linux
+
+language:
+  - java
+
 jdk:
   - oraclejdk8
 
