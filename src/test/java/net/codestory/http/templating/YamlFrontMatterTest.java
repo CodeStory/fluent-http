@@ -29,7 +29,7 @@ public class YamlFrontMatterTest {
 
     YamlFrontMatter parsed = YamlFrontMatter.parse(Paths.get("empty"), content);
 
-    assertThat(parsed.getPath().toString()).isEqualTo("empty");
+    assertThat((Object) parsed.getPath()).isEqualTo(Paths.get("empty"));
     assertThat(parsed.getContent()).isEmpty();
     assertThat(parsed.getVariables())
       .hasSize(3)
@@ -44,7 +44,7 @@ public class YamlFrontMatterTest {
 
     YamlFrontMatter parsed = YamlFrontMatter.parse(Paths.get("folder/file.md"), content);
 
-    assertThat(parsed.getPath().toString()).isEqualTo("folder/file.md");
+    assertThat((Object) parsed.getPath()).isEqualTo(Paths.get("folder/file.md"));
     assertThat(parsed.getContent()).isEqualTo("CONTENT");
     assertThat(parsed.getVariables())
       .hasSize(3)
