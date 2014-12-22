@@ -5,6 +5,7 @@ This is the simplest fastest full fledged web server we could come up with.
 # Build status
 
 Linux: [![Build Status](https://api.travis-ci.org/CodeStory/fluent-http.png)](https://travis-ci.org/CodeStory/fluent-http)
+
 Windows: [![Build status](https://ci.appveyor.com/api/projects/status/bv4lnbafr0dnrckx/branch/master)](https://ci.appveyor.com/project/dgageot/fluent-http)
 
 # Environment
