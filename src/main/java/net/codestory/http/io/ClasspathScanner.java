@@ -45,9 +45,10 @@ public class ClasspathScanner {
       Enumeration<URL> urls = ClasspathScanner.class.getClassLoader().getResources(name);
       while (urls.hasMoreElements()) {
         URL url = urls.nextElement();
-        int index = url.toExternalForm().lastIndexOf(name);
+        String externalForm = url.toExternalForm().replace('\\', '/');
+        int index = externalForm.lastIndexOf(name);
         if (index != -1) {
-          result.add(new URL(url.toExternalForm().substring(0, index)));
+          result.add(new URL(externalForm.substring(0, index)));
         } else {
           result.add(url);
         }
