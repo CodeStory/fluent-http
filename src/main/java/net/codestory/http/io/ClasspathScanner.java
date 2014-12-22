@@ -27,9 +27,10 @@ public class ClasspathScanner {
     Set<String> resources = new LinkedHashSet<>();
 
     for (URL url : urls(prefix)) {
-      for (String path : ClassPaths.fromURL(url)) {
+      for (String rawPath : ClassPaths.fromURL(url)) {
+        String path = rawPath.replace('\\', '/');
         if (path.startsWith(prefix) && !path.endsWith(".class")) {
-          resources.add(path.replace('\\', '/'));
+          resources.add(path);
         }
       }
     }
