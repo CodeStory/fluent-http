@@ -1,13 +1,22 @@
+branches:
+  only:
+    - master
+
+skip_tags: true
+
 os: Windows Server 2012
-
-install:
-  - cinst maven
-
-cache:
-  - C:\Users\appveyor\.m2\repository
 
 environment:
   JAVA_HOME: C:\Program Files\Java\jdk1.8.0
 
+cache:
+  - C:\bin\apache-maven-3.2.3
+  - C:\Users\appveyor\.m2\repository
+
+install:
+  - cmd: set PATH=%PATH%;C:\bin\apache-maven-3.2.3\bin
+  - cmd: set MVN_VERSION=3.2.3
+  - cmd: IF NOT exist "C:\bin\apache-maven-%MVN_VERSION%\bin\*.*" (echo Maven %MVN_VERSION% not installed, so install it & cinst maven -Version %MVN_VERSION%) ELSE (echo  Maven %MVN_VERSION% already installed)
+
 build_script:
-  - C:\bin\apache-maven-3.2.3\bin\mvn clean install
+  - cmd: mvn clean verify
