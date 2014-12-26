@@ -15,14 +15,14 @@
  */
 package net.codestory.http;
 
-import net.codestory.http.testhelpers.AbstractProdWebServerTest;
+import net.codestory.http.testhelpers.AbstractDevWebServerTest;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.StandardOutputStreamLog;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class WebjarsTest extends AbstractProdWebServerTest {
+public class WebjarsInDevTest extends AbstractDevWebServerTest {
   @Rule
   public final StandardOutputStreamLog console = new StandardOutputStreamLog();
 
@@ -38,14 +38,29 @@ public class WebjarsTest extends AbstractProdWebServerTest {
 
   @Test
   public void unknown_webjars() {
-    get("/webjars/missing").should().respond(404);
-    get("/webjars/").should().respond(404);
+    get("/webjars/missing.js").should().respond(404);
+    get("/webjars/missing.unknown").should().respond(404);
+    get("/webjars").should().respond(404);
   }
 
   @Test
-  public void dont_print_debug_logs() {
+  public void print_possible_candidates() {
     get("/webjars/missing.js").should().respond(404);
 
-    assertThat(console.getLog()).doesNotContain("Found these webjars files");
+    assertThat(console.getLog())
+      .contains("Found these webjars files with extension: .js")
+      .contains("/webjars/bootstrap/3.3.1/js/bootstrap.js")
+      .contains("/webjars/bootstrap/3.3.1/js/bootstrap.min.js")
+      .contains("/webjars/jquery/1.11.1/jquery.js")
+      .doesNotContain("/webjars/bootstrap/3.3.1/css/bootstrap.min.css");
+  }
+
+  @Test
+  public void print_debug_information() {
+    get("/webjars/missing.unknown").should().respond(404);
+
+    assertThat(console.getLog())
+      .contains("Unable to find this webjar file: /webjars/missing.unknown")
+      .contains("And no webjar file has extension [.unknown]");
   }
 }
