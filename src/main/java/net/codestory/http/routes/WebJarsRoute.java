@@ -17,8 +17,11 @@ package net.codestory.http.routes;
 
 import static java.time.ZonedDateTime.*;
 import static java.time.format.DateTimeFormatter.*;
+import static java.util.stream.Collectors.toList;
 import static net.codestory.http.constants.Headers.*;
 import static net.codestory.http.constants.Methods.*;
+import static net.codestory.http.io.Strings.extension;
+import static net.codestory.http.io.Strings.substringBeforeLast;
 
 import java.io.*;
 import java.net.*;
@@ -43,20 +46,36 @@ class WebJarsRoute implements Route {
 
   @Override
   public boolean matchUri(String uri) {
-    if (uri.startsWith("/webjars/") && !uri.endsWith("/") && (getResource(uri) != null)) {
+    if (!uri.startsWith("/webjars/")) {
+      return false; // Fail fast
+    }
+
+    if (!uri.endsWith("/") && (getResource(uri) != null)) {
       return true;
     }
 
-    if ((!prodMode) && uri.contains("webjar") && uri.endsWith("/")) {
-      printKnownWebjars();
+    if ((!prodMode) && uri.endsWith("/")) {
+      String wantedUri = substringBeforeLast(uri, "/");
+      printKnownWebjars(wantedUri);
     }
 
     return false;
   }
 
-  private void printKnownWebjars() {
-    Set<String> uris = new ClasspathScanner().getResources(Paths.get("META-INF/resources/webjars/"));
-    Logs.printKnownWebjars(uris);
+  private void printKnownWebjars(String wantedUri) {
+    String extension = extension(wantedUri);
+
+    List<String> filteredUris = new ClasspathScanner()
+      .getResources(Paths.get("META-INF/resources/webjars/"))
+      .stream()
+      .filter(uri -> uri.endsWith(extension))
+      .collect(toList());
+
+    if (!filteredUris.isEmpty()) {
+      Logs.printKnownWebjars(filteredUris, extension);
+    } else {
+      Logs.printUnknownWebjar(wantedUri, extension);
+    }
   }
 
   @Override

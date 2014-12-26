@@ -61,11 +61,16 @@ public class Logs {
     logs.info("Reloading configuration...");
   }
 
-  public static void printKnownWebjars(Collection<String> uris) {
-    logs.info("Found these webjars files:");
+  public static void printKnownWebjars(Collection<String> uris, String extension) {
+    logs.info("Found these webjars files with extension: " + extension);
     for (String uri : uris) {
       logs.info(" + " + substringAfter(uri, "META-INF/resources"));
     }
+  }
+
+  public static void printUnknownWebjar(String uri, String extension) {
+    logs.info("Unable to find this webjar file: " + uri);
+    logs.info("And no webjar file has extension [" + extension + "]");
   }
 
   public static void unableToConfigureRoutes(Throwable e) {
