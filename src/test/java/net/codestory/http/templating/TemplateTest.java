@@ -124,6 +124,8 @@ public class TemplateTest {
         "<body>" +
         "Hello World" +
         "</body>" +
+        "<script src=\"angular.js\"></script>" +
+        "<script src=\"app.js\"></script>" +
         "</html>");
   }
 
