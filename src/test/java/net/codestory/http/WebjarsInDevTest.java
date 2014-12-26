@@ -18,13 +18,13 @@ package net.codestory.http;
 import net.codestory.http.testhelpers.AbstractDevWebServerTest;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.contrib.java.lang.system.StandardOutputStreamLog;
+import org.junit.contrib.java.lang.system.StandardErrorStreamLog;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class WebjarsInDevTest extends AbstractDevWebServerTest {
   @Rule
-  public final StandardOutputStreamLog console = new StandardOutputStreamLog();
+  public final StandardErrorStreamLog stderr = new StandardErrorStreamLog();
 
   @Test
   public void webjar_css() {
@@ -47,7 +47,7 @@ public class WebjarsInDevTest extends AbstractDevWebServerTest {
   public void print_possible_candidates() {
     get("/webjars/missing.js").should().respond(404);
 
-    assertThat(console.getLog())
+    assertThat(stderr.getLog())
       .contains("Found these webjars files with extension: .js")
       .contains("/webjars/bootstrap/3.3.1/js/bootstrap.js")
       .contains("/webjars/bootstrap/3.3.1/js/bootstrap.min.js")
@@ -59,7 +59,7 @@ public class WebjarsInDevTest extends AbstractDevWebServerTest {
   public void print_debug_information() {
     get("/webjars/missing.unknown").should().respond(404);
 
-    assertThat(console.getLog())
+    assertThat(stderr.getLog())
       .contains("Unable to find this webjar file: /webjars/missing.unknown")
       .contains("And no webjar file has extension [.unknown]");
   }
