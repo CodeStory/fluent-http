@@ -21,17 +21,6 @@ import org.junit.*;
 
 public class StaticPagesTest extends AbstractProdWebServerTest {
   @Test
-  public void webJars() {
-    get("/webjars/bootstrap/3.3.1/css/bootstrap.min.css").should().respond(200).haveType("text/css").contain("Bootstrap v3.3.1");
-    get("/webjars/bootstrap/3.3.1/js/bootstrap.min.js").should().respond(200).haveType("application/javascript").contain("Bootstrap v3.3.1");
-  }
-
-  @Test
-  public void unknown_webJar_resource() {
-    get("/webjars/").should().respond(404);
-  }
-
-  @Test
   public void html() {
     get("/").should().haveType("text/html").contain("Hello From a File");
     get("/index.html").should().haveType("text/html").contain("Hello From a File");
