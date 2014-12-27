@@ -60,7 +60,7 @@ class FolderWatcher {
 
       return watcher;
     } catch (IOException e) {
-      throw new IllegalStateException("Unable to watch folder " + folder);
+      throw new IllegalStateException("Unable to watch folder " + folder, e);
     }
   }
 
