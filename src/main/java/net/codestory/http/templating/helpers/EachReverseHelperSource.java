@@ -18,14 +18,12 @@ package net.codestory.http.templating.helpers;
 import java.io.*;
 import java.util.*;
 
-import org.apache.commons.lang3.*;
-
 import com.github.jknack.handlebars.*;
 
 public class EachReverseHelperSource {
   public CharSequence each_reverse(Object context, Options options) throws IOException {
     if (context == null) {
-      return StringUtils.EMPTY;
+      return "";
     }
 
     return (context instanceof Iterable<?>)

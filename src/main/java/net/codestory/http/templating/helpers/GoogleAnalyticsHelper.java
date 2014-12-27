@@ -17,7 +17,6 @@ package net.codestory.http.templating.helpers;
 
 import static com.github.jknack.handlebars.Handlebars.*;
 import static com.github.jknack.handlebars.Handlebars.Utils.*;
-import static org.apache.commons.lang3.StringUtils.*;
 
 import com.github.jknack.handlebars.*;
 
@@ -35,12 +34,12 @@ public class GoogleAnalyticsHelper {
   public CharSequence google_analytics(Object context, Options options) {
     String trackingId = (context != null) ? context.toString() : id;
     if (trackingId == null) {
-      return EMPTY;
+      return "";
     }
 
     Boolean prodMode = options.get("env.prodMode");
     if ((prodMode != null) && (!prodMode)) {
-      return EMPTY;
+      return "";
     }
 
     return new SafeString("<script type=\"text/javascript\">\n" +

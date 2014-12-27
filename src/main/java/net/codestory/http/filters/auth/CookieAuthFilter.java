@@ -15,12 +15,14 @@
  */
 package net.codestory.http.filters.auth;
 
+import static java.lang.Long.toHexString;
 import static java.util.stream.Stream.*;
 import static net.codestory.http.constants.Headers.*;
 import static net.codestory.http.constants.Methods.*;
 import static net.codestory.http.payload.Payload.*;
 
 import java.io.*;
+import java.util.Random;
 import java.util.concurrent.*;
 
 import net.codestory.http.*;
@@ -29,9 +31,8 @@ import net.codestory.http.filters.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.security.*;
 
-import org.apache.commons.lang3.*;
-
 public class CookieAuthFilter implements Filter {
+  private static final Random RANDOM = new Random();
   private static final int ONE_DAY = (int) TimeUnit.DAYS.toSeconds(1L);
   private static final String[] DEFAULT_EXCLUDE = {".less", ".css", ".map", ".js", ".coffee", ".ico", ".jpeg", ".jpg", ".gif", ".png", ".svg", ".eot", ".ttf", ".woff", ".js", ".coffee", "robots.txt"};
 
@@ -134,7 +135,7 @@ public class CookieAuthFilter implements Filter {
   }
 
   private String newSessionId(String login) {
-    String sessionId = RandomStringUtils.random(32, true, true);
+    String sessionId = toHexString(RANDOM.nextLong()) + toHexString(RANDOM.nextLong());
     sessionIdStore.put(sessionId, login);
     return sessionId;
   }
