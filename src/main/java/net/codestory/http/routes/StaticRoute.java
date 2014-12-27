@@ -72,10 +72,10 @@ class StaticRoute implements Route {
       return path;
     }
 
-    return findUriCompilableTo(uri);
+    return findCompilableTo(uri);
   }
 
-  private Object findUriCompilableTo(String uri) {
+  private Object findCompilableTo(String uri) {
     String extension = extension(uri);
 
     for (String sourceExtension : compilers.extensionsThatCompileTo(extension)) {

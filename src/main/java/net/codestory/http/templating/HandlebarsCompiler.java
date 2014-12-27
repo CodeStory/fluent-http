@@ -60,6 +60,7 @@ public class HandlebarsCompiler {
       .registerHelpers(new EachReverseHelperSource())
       .registerHelpers(new EachValueHelperSource())
       .registerHelpers(new GoogleAnalyticsHelper())
+      .registerHelpers(new AssetsHelperSource(compilers))
       .registerHelpers(StringHelpers.class)
       .with(new ConcurrentMapTemplateCache())
       .with(new AbstractTemplateLoader() {
