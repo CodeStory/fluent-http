@@ -80,7 +80,7 @@ public class HandlebarsCompiler {
 
   private Context context(Map<String, ?> variables) {
     return Context.newBuilder(null)
-        .resolver(resolvers.toArray(new ValueResolver[resolvers.size()]))
+        .resolver(resolvers.stream().toArray(ValueResolver[]::new))
         .combine(variables)
         .build();
   }
