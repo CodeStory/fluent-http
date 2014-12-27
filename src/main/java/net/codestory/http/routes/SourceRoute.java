@@ -45,7 +45,7 @@ public class SourceRoute implements Route {
   }
 
   @Override
-  public Object body(Context context) {
+  public Path body(Context context) {
     String sourceUri = getSourcePath(context.uri());
     return findPath(context.uri(), sourceUri);
   }
