@@ -17,13 +17,11 @@ package net.codestory.http.routes;
 
 import static net.codestory.http.constants.Methods.*;
 
-import java.io.*;
 import java.nio.file.*;
 
 import net.codestory.http.*;
 import net.codestory.http.compilers.*;
 import net.codestory.http.io.*;
-import net.codestory.http.payload.*;
 
 class SourceMapRoute implements Route {
   @Override
@@ -37,13 +35,13 @@ class SourceMapRoute implements Route {
   }
 
   @Override
-  public Payload body(Context context) throws IOException {
+  public CompiledPath body(Context context) {
     String uri = context.uri();
 
     Path sourcePath = pathSource(uri);
     Path mapPath = Paths.get(uri);
 
-    return new Payload(new CompiledPath(sourcePath, mapPath));
+    return new CompiledPath(sourcePath, mapPath);
   }
 
   private static Path pathSource(String uri) {
