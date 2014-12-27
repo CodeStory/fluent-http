@@ -21,6 +21,6 @@ import org.webjars.*;
 
 public class ExtractWebjars {
   public static void main(String[] args) throws IOException {
-    new WebJarExtractor().extractAllWebJarsTo(new File("target/webjars"));
+    new WebJarExtractor().extractAllWebJarsTo(new File("target", "webjars"));
   }
 }
