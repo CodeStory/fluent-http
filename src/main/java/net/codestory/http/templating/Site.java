@@ -49,13 +49,13 @@ public class Site {
 
     yaml = memoize(() -> loadYamlConfig("_config.yml"));
 
-    data = memoize(() -> resourceList.get()
+    data = memoize(() -> getResourceList()
         .stream()
         .filter(path -> path.startsWith("_data/"))
         .collect(toMap(path -> nameWithoutExtension(path), path -> readYaml(path)))
     );
 
-    pages = memoize(() -> resourceList.get()
+    pages = memoize(() -> getResourceList()
         .stream()
         .filter(path -> !path.startsWith("_"))
         .map(path -> Site.pathToMap(path))
