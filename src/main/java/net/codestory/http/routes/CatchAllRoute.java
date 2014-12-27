@@ -36,6 +36,6 @@ class CatchAllRoute implements Route {
 
   @Override
   public Object body(Context context) {
-    return route.body(context, new String[0]);
+    return route.body(context);
   }
 }
