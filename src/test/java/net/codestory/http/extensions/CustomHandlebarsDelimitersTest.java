@@ -16,7 +16,7 @@
 package net.codestory.http.extensions;
 
 import net.codestory.http.WebServer;
-import net.codestory.http.compilers.CompilerFacade;
+import net.codestory.http.compilers.CompilersConfiguration;
 import net.codestory.http.misc.Env;
 import net.codestory.http.templating.Model;
 import net.codestory.rest.FluentRestTest;
@@ -38,7 +38,7 @@ public class CustomHandlebarsDelimitersTest implements FluentRestTest {
         .get("/extensions/custom_delimiters", Model.of("name", "Bob"))
         .setExtensions(new Extensions() {
           @Override
-          public void configureCompilers(CompilerFacade compilers, Env env) {
+          public void configureCompilers(CompilersConfiguration compilers, Env env) {
             compilers.configureHandlebars(hb -> hb.startDelimiter("((").endDelimiter("))"));
           }
         }));

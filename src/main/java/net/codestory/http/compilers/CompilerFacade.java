@@ -28,7 +28,7 @@ import com.github.jknack.handlebars.ValueResolver;
 import net.codestory.http.misc.*;
 import net.codestory.http.templating.*;
 
-public class CompilerFacade {
+public class CompilerFacade implements CompilersConfiguration {
   protected final Supplier<Compilers> compilers;
   protected final Supplier<HandlebarsCompiler> handlebars;
 
@@ -39,16 +39,19 @@ public class CompilerFacade {
 
   // Configuration
 
+  @Override
+  public void registerCompiler(Supplier<Compiler> compilerFactory, String targetExtension, String firstExtension, String... moreExtensions) {
+    compilers.get().register(compilerFactory, targetExtension, firstExtension, moreExtensions);
+  }
+
+  @Override
   public void configureHandlebars(Consumer<Handlebars> action) {
     handlebars.get().configure(action);
   }
 
-  public void addHandlebarResolver(ValueResolver resolver) {
+  @Override
+  public void addHandlebarsResolver(ValueResolver resolver) {
     handlebars.get().addResolver(resolver);
-  }
-
-  public void registerCompiler(Supplier<Compiler> compilerFactory, String targetExtension, String firstExtension, String... moreExtensions) {
-    compilers.get().register(compilerFactory, targetExtension, firstExtension, moreExtensions);
   }
 
   // Compilation

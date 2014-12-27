@@ -20,6 +20,7 @@ import net.codestory.http.Context;
 import net.codestory.http.Request;
 import net.codestory.http.Response;
 import net.codestory.http.compilers.CompilerFacade;
+import net.codestory.http.compilers.CompilersConfiguration;
 import net.codestory.http.injection.IocAdapter;
 import net.codestory.http.misc.Env;
 import net.codestory.http.payload.PayloadWriter;
@@ -41,7 +42,7 @@ public interface Extensions extends Serializable {
   /**
    * Called each time routes are loaded.
    */
-  default void configureCompilers(CompilerFacade compilers, Env env) {
+  default void configureCompilers(CompilersConfiguration compilers, Env env) {
   }
 
   /**

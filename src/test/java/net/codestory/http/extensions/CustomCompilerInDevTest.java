@@ -15,7 +15,7 @@
  */
 package net.codestory.http.extensions;
 
-import net.codestory.http.compilers.CompilerFacade;
+import net.codestory.http.compilers.CompilersConfiguration;
 import net.codestory.http.misc.Env;
 import net.codestory.http.testhelpers.AbstractDevWebServerTest;
 import org.junit.Test;
@@ -28,7 +28,7 @@ public class CustomCompilerInDevTest extends AbstractDevWebServerTest {
     configure(routes -> routes
       .setExtensions(new Extensions() {
         @Override
-        public void configureCompilers(CompilerFacade compilers, Env env) {
+        public void configureCompilers(CompilersConfiguration compilers, Env env) {
           compilers.registerCompiler(ToLowerCaseCompiler::new, ".html", ".script");
         }
       }));
