@@ -19,18 +19,18 @@ import java.nio.file.*;
 
 public class CompiledPath {
   private final Path sourcePath;
-  private final Path reponsePath;
+  private final Path responsePath;
 
-  public CompiledPath(Path sourcePath, Path reponsePath) {
+  public CompiledPath(Path sourcePath, Path responsePath) {
     this.sourcePath = sourcePath;
-    this.reponsePath = reponsePath;
+    this.responsePath = responsePath;
   }
 
   public Path getSourcePath() {
     return sourcePath;
   }
 
-  public Path getReponsePath() {
-    return reponsePath;
+  public Path getResponsePath() {
+    return responsePath;
   }
 }

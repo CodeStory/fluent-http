@@ -245,7 +245,7 @@ public class PayloadWriter {
     }
     if (content instanceof CompiledPath) {
       CompiledPath compiledPath = (CompiledPath) content;
-      return ContentTypes.get(compiledPath.getReponsePath());
+      return ContentTypes.get(compiledPath.getResponsePath());
     }
     if (content instanceof byte[]) {
       return "application/octet-stream";
