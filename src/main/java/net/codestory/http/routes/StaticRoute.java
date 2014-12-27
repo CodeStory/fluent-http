@@ -79,10 +79,10 @@ class StaticRoute implements Route {
     String extension = extension(uri);
 
     for (String sourceExtension : compilers.extensionsThatCompileTo(extension)) {
-      Path sourcePath = Paths.get(replaceLast(uri, extension, sourceExtension));
+      Path path = Paths.get(replaceLast(uri, extension, sourceExtension));
 
-      if (isPublic(sourcePath)) {
-        return new CompiledPath(sourcePath, sourcePath);
+      if (isPublic(path)) {
+        return new CompiledPath(path, path);
       }
     }
 
