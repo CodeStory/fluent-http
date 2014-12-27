@@ -84,7 +84,7 @@ class WebJarsRoute implements Route {
   }
 
   @Override
-  public Payload body(Context context) throws IOException {
+  public Payload body(Context context)  {
     String uri = context.uri();
 
     URL classpathUrl = webJarUrlFinder.url(uri);
@@ -97,6 +97,8 @@ class WebJarsRoute implements Route {
         .withHeader(CACHE_CONTROL, "public, max-age=31536000")
         .withHeader(LAST_MODIFIED, RFC_1123_DATE_TIME.format(now().minusMonths(1L)))
         .withHeader(EXPIRES, RFC_1123_DATE_TIME.format(now().plusWeeks(1L)));
+    } catch (IOException e) {
+      throw new IllegalStateException("Unable to read webjar file:" + uri);
     }
   }
 
