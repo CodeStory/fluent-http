@@ -76,7 +76,7 @@ public class Compilers {
   }
 
   public CacheEntry compile(Path path, String content) {
-    return cache.computeIfAbsent(path.toString() + ";" + content, ignore -> doCompile(path, content));
+    return cache.computeIfAbsent(path.toString() + ';' + content, ignore -> doCompile(path, content));
   }
 
   private CacheEntry doCompile(Path path, String content) {
