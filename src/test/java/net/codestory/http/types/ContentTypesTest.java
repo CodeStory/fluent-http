@@ -53,29 +53,29 @@ public class ContentTypesTest {
 
   @Test
   public void compatibility_with_templating() {
-    assertThat(support_templating(Paths.get("index.html"))).isTrue();
-    assertThat(support_templating(Paths.get("data.xml"))).isTrue();
-    assertThat(support_templating(Paths.get("test.md"))).isTrue();
-    assertThat(support_templating(Paths.get("test.markdown"))).isTrue();
-    assertThat(support_templating(Paths.get("text.txt"))).isTrue();
-    assertThat(support_templating(Paths.get("style.css.map"))).isFalse();
-    assertThat(support_templating(Paths.get("style.css"))).isFalse();
-    assertThat(support_templating(Paths.get("style.less"))).isFalse();
-    assertThat(support_templating(Paths.get("text.zip"))).isFalse();
-    assertThat(support_templating(Paths.get("text.gz"))).isFalse();
-    assertThat(support_templating(Paths.get("text.pdf"))).isFalse();
-    assertThat(support_templating(Paths.get("image.gif"))).isFalse();
-    assertThat(support_templating(Paths.get("image.jpeg"))).isFalse();
-    assertThat(support_templating(Paths.get("image.jpg"))).isFalse();
-    assertThat(support_templating(Paths.get("image.png"))).isFalse();
-    assertThat(support_templating(Paths.get("font.svg"))).isFalse();
-    assertThat(support_templating(Paths.get("font.eot"))).isFalse();
-    assertThat(support_templating(Paths.get("font.ttf"))).isFalse();
-    assertThat(support_templating(Paths.get("font.woff"))).isFalse();
-    assertThat(support_templating(Paths.get("script.js"))).isFalse();
-    assertThat(support_templating(Paths.get("script.coffee"))).isFalse();
-    assertThat(support_templating(Paths.get("script.litcoffee"))).isFalse();
-    assertThat(support_templating(Paths.get("favicon.ico"))).isFalse();
-    assertThat(support_templating(Paths.get("unknown"))).isFalse();
+    assertThat(supportsTemplating(Paths.get("index.html"))).isTrue();
+    assertThat(supportsTemplating(Paths.get("data.xml"))).isTrue();
+    assertThat(supportsTemplating(Paths.get("test.md"))).isTrue();
+    assertThat(supportsTemplating(Paths.get("test.markdown"))).isTrue();
+    assertThat(supportsTemplating(Paths.get("text.txt"))).isTrue();
+    assertThat(supportsTemplating(Paths.get("style.css.map"))).isFalse();
+    assertThat(supportsTemplating(Paths.get("style.css"))).isFalse();
+    assertThat(supportsTemplating(Paths.get("style.less"))).isFalse();
+    assertThat(supportsTemplating(Paths.get("text.zip"))).isFalse();
+    assertThat(supportsTemplating(Paths.get("text.gz"))).isFalse();
+    assertThat(supportsTemplating(Paths.get("text.pdf"))).isFalse();
+    assertThat(supportsTemplating(Paths.get("image.gif"))).isFalse();
+    assertThat(supportsTemplating(Paths.get("image.jpeg"))).isFalse();
+    assertThat(supportsTemplating(Paths.get("image.jpg"))).isFalse();
+    assertThat(supportsTemplating(Paths.get("image.png"))).isFalse();
+    assertThat(supportsTemplating(Paths.get("font.svg"))).isFalse();
+    assertThat(supportsTemplating(Paths.get("font.eot"))).isFalse();
+    assertThat(supportsTemplating(Paths.get("font.ttf"))).isFalse();
+    assertThat(supportsTemplating(Paths.get("font.woff"))).isFalse();
+    assertThat(supportsTemplating(Paths.get("script.js"))).isFalse();
+    assertThat(supportsTemplating(Paths.get("script.coffee"))).isFalse();
+    assertThat(supportsTemplating(Paths.get("script.litcoffee"))).isFalse();
+    assertThat(supportsTemplating(Paths.get("favicon.ico"))).isFalse();
+    assertThat(supportsTemplating(Paths.get("unknown"))).isFalse();
   }
 }

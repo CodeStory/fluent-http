@@ -77,7 +77,7 @@ public class ContentTypes {
     }
   }
 
-  public static boolean support_templating(Path path) {
+  public static boolean supportsTemplating(Path path) {
     switch (extension(path)) {
       case ".txt":
       case ".md":

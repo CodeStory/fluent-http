@@ -350,7 +350,7 @@ public class PayloadWriter {
   }
 
   protected byte[] forPath(Path path) throws IOException {
-    if (ContentTypes.support_templating(path)) {
+    if (ContentTypes.supportsTemplating(path)) {
       return forTemplatePath(path);
     }
 
@@ -359,7 +359,7 @@ public class PayloadWriter {
 
   protected byte[] forCompiledPath(CompiledPath compiledPath) throws IOException {
     Path path = compiledPath.getSourcePath();
-    if (ContentTypes.support_templating(path)) {
+    if (ContentTypes.supportsTemplating(path)) {
       return forTemplatePath(path);
     }
 

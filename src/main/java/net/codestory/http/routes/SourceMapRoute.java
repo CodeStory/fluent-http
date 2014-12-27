@@ -16,6 +16,7 @@
 package net.codestory.http.routes;
 
 import static net.codestory.http.constants.Methods.*;
+import static net.codestory.http.io.Strings.substringBeforeLast;
 
 import java.nio.file.*;
 
@@ -45,6 +46,6 @@ class SourceMapRoute implements Route {
   }
 
   private static Path pathSource(String uri) {
-    return Paths.get(Strings.substringBeforeLast(uri, ".map"));
+    return Paths.get(substringBeforeLast(uri, ".map"));
   }
 }
