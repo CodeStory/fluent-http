@@ -30,17 +30,30 @@ public class YamlParserTest {
   YamlParser parser = YamlParser.INSTANCE;
 
   @Test
-  public void parse_map() {
-    Map<String, Object> variables = parser.parseMap("name: Bob");
+  public void parse_empty_map() {
+    Map<String, Object> map = parser.parseMap("");
 
-    assertThat(variables).hasSize(1).containsEntry("name", "Bob");
+    assertThat(map).isEmpty();
+  }
+
+  @Test
+  public void parse_map() {
+    Map<String, Object> map = parser.parseMap("name: Bob");
+
+    assertThat(map).containsExactly(
+      entry("name", "Bob")
+    );
   }
 
   @Test
   @SuppressWarnings("unchecked")
-  public void parse() throws IOException {
-    List<Object> list = (List<Object>) parser.parse(Resources.read(Paths.get("_data", "members.yml"), UTF_8));
+  public void parse_object() throws IOException {
+    List<Object> members = (List<Object>) parser.parse(Resources.read(Paths.get("_data", "members.yml"), UTF_8));
 
-    assertThat(list).hasSize(3);
+    assertThat(members).hasSize(3);
+    assertThat((Map<String, Object>) members.get(0)).containsExactly(
+      entry("name", "Tom Preston-Werner"),
+      entry("github", "mojombo")
+    );
   }
 }
