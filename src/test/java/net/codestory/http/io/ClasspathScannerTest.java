@@ -23,7 +23,7 @@ import java.util.*;
 import org.junit.*;
 
 public class ClasspathScannerTest {
-  ClasspathScanner classpathScanner = new ClasspathScanner();
+  static ClasspathScanner classpathScanner = new ClasspathScanner();
 
   @Test
   public void scan_main_resources() {
