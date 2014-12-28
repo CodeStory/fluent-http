@@ -22,13 +22,14 @@ import java.nio.file.*;
 import org.junit.*;
 
 public class CoffeeSourceMapCompilerTest {
-  CoffeeSourceMapCompiler compiler = new CoffeeSourceMapCompiler();
+  static CoffeeSourceMapCompiler compiler = new CoffeeSourceMapCompiler();
 
   @Test
-  public void generate_sourcemapfile_with_filename_and_sources() {
-    String result = compiler.compile(Paths.get("polka.coffee.map"), "a=b=3\nc=4\nd=(a+b)*c");
+  public void sourcemap_with_filename_and_sources() {
+    String javascript = compiler.compile(Paths.get("polka.coffee.map"), "a=b=3\nc=4\nd=(a+b)*c");
 
-    assertThat(result).isEqualTo("{\n" +
+    assertThat(javascript).isEqualTo(
+      "{\n" +
       " \"version\": 3,\n" +
       " \"file\": \"polka.coffee.source\",\n" +
       " \"sources\": [\n" +

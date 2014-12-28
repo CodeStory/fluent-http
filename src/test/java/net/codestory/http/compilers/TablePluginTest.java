@@ -22,36 +22,39 @@ import static org.assertj.core.api.Assertions.*;
 
 import org.junit.*;
 
+import java.util.List;
+import java.util.Map;
+
 public class TablePluginTest {
-  private static TablePlugin plugin = new TablePlugin();
+  static TablePlugin plugin = new TablePlugin();
+
+  private String applyPlugin(List<String> lines, Map<String, String> parameters) {
+    StringBuilder html = new StringBuilder();
+    plugin.emit(html, lines, parameters);
+    return html.toString();
+  }
 
   @Test
   public void empty() {
-    StringBuilder out = new StringBuilder();
+    String html = applyPlugin(asList(""), emptyMap());
 
-    plugin.emit(out, asList(""), emptyMap());
-
-    assertThat(out.toString()).isEqualTo("<table>\n</table>\n");
+    assertThat(html).isEqualTo("<table>\n</table>\n");
   }
 
   @Test
   public void header() {
-    StringBuilder out = new StringBuilder();
+    String html = applyPlugin(asList("H1|H2|H3"), emptyMap());
 
-    plugin.emit(out, asList("H1|H2|H3"), emptyMap());
-
-    assertThat(out.toString()).isEqualTo("<table>\n" +
+    assertThat(html).isEqualTo("<table>\n" +
       "<tr><th>H1</th><th>H2</th><th>H3</th></tr>\n" +
       "</table>\n");
   }
 
   @Test
   public void rows() {
-    StringBuilder out = new StringBuilder();
+    String html = applyPlugin(asList("H1|H2|H3", "A1|A2|A3", "B1|B2|B3"), emptyMap());
 
-    plugin.emit(out, asList("H1|H2|H3", "A1|A2|A3", "B1|B2|B3"), emptyMap());
-
-    assertThat(out.toString()).isEqualTo("<table>\n" +
+    assertThat(html).isEqualTo("<table>\n" +
       "<tr><th>H1</th><th>H2</th><th>H3</th></tr>\n" +
       "<tr><td>A1</td><td>A2</td><td>A3</td></tr>\n" +
       "<tr><td>B1</td><td>B2</td><td>B3</td></tr>\n" +
@@ -60,10 +63,8 @@ public class TablePluginTest {
 
   @Test
   public void id() {
-    StringBuilder out = new StringBuilder();
+    String html = applyPlugin(asList(""), singletonMap("id", "AN_ID"));
 
-    plugin.emit(out, asList(""), singletonMap("id", "AN_ID"));
-
-    assertThat(out.toString()).isEqualTo("<table id=\"AN_ID\">\n</table>\n");
+    assertThat(html).isEqualTo("<table id=\"AN_ID\">\n</table>\n");
   }
 }

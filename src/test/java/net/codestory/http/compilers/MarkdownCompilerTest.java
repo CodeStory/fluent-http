@@ -22,7 +22,7 @@ import java.nio.file.*;
 import org.junit.*;
 
 public class MarkdownCompilerTest {
-  private static MarkdownCompiler compiler = new MarkdownCompiler();
+  static MarkdownCompiler compiler = new MarkdownCompiler();
 
   @Test
   public void empty() {

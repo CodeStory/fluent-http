@@ -26,7 +26,7 @@ import net.codestory.http.misc.*;
 import org.junit.*;
 
 public class CompilersTest {
-  private static Compilers compilers = new Compilers(prodMode());
+  static Compilers compilers = new Compilers(prodMode());
 
   @Test
   public void do_not_compile_plain_file() {

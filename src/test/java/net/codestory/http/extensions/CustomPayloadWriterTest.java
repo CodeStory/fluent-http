@@ -51,7 +51,6 @@ public class CustomPayloadWriterTest extends AbstractProdWebServerTest {
       if (payload instanceof CustomPayload) {
         return "text/html;charset=UTF-8";
       }
-
       return super.getContentType(payload, uri);
     }
 
@@ -60,7 +59,6 @@ public class CustomPayloadWriterTest extends AbstractProdWebServerTest {
       if (payload instanceof CustomPayload) {
         return forString(((CustomPayload) payload).content());
       }
-
       return super.getData(payload, uri);
     }
   }

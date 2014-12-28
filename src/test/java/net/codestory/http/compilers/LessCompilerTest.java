@@ -23,7 +23,7 @@ import org.junit.*;
 import org.junit.rules.*;
 
 public class LessCompilerTest {
-  private static LessCompiler compiler = new LessCompiler(false);
+  static LessCompiler compiler = new LessCompiler(false);
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();
@@ -46,7 +46,7 @@ public class LessCompilerTest {
   }
 
   @Test
-  public void dont_set_sourcemap_in_prod_mode() {
+  public void no_sourcemap_in_prod_mode() {
     LessCompiler compiler = new LessCompiler(true);
 
     String css = compiler.compile(Paths.get("file.less"), "body { h1 { color: red; } }");

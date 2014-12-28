@@ -23,7 +23,7 @@ import org.junit.*;
 import org.junit.rules.*;
 
 public class CoffeeCompilerTest {
-  private static CoffeeCompiler compiler = new CoffeeCompiler(false);
+  static CoffeeCompiler compiler = new CoffeeCompiler(false);
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();

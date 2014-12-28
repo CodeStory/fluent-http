@@ -15,31 +15,24 @@
  */
 package net.codestory.http.extensions;
 
-import net.codestory.http.WebServer;
 import net.codestory.http.compilers.CompilersConfiguration;
 import net.codestory.http.misc.Env;
 import net.codestory.http.templating.Model;
-import net.codestory.rest.FluentRestTest;
+import net.codestory.http.testhelpers.AbstractDevWebServerTest;
 import org.junit.Test;
 
-// This test has side effects. Start it in its own server
-//
-public class CustomHandlebarsDelimitersTest implements FluentRestTest {
-  private final WebServer server = new WebServer().startOnRandomPort();
-
-  @Override
-  public int port() {
-    return server.port();
-  }
-
+public class CustomHandlebarsDelimitersTest extends AbstractDevWebServerTest {
   @Test
   public void configure_handlebars() {
-    server.configure(routes -> routes
+    configure(routes -> routes
         .get("/extensions/custom_delimiters", Model.of("name", "Bob"))
         .setExtensions(new Extensions() {
           @Override
           public void configureCompilers(CompilersConfiguration compilers, Env env) {
-            compilers.configureHandlebars(hb -> hb.startDelimiter("((").endDelimiter("))"));
+            compilers.configureHandlebars(hb -> hb
+              .startDelimiter("((")
+              .endDelimiter("))")
+            );
           }
         }));
 

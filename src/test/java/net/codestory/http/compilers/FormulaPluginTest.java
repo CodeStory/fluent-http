@@ -24,6 +24,7 @@ import org.junit.*;
 
 public class FormulaPluginTest {
   static FormulaPlugin plugin = new FormulaPlugin();
+
   StringBuilder output = new StringBuilder();
 
   @Test
