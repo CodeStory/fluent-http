@@ -208,10 +208,10 @@ public class Context {
         return this;
       }
       if (clazz.isAssignableFrom(Request.class)) {
-        return request();
+        return request;
       }
       if (clazz.isAssignableFrom(Response.class)) {
-        return response();
+        return response;
       }
       if (clazz.isAssignableFrom(Cookies.class)) {
         return cookies();
@@ -220,7 +220,7 @@ public class Context {
         return query();
       }
       if (clazz.isAssignableFrom(User.class)) {
-        return currentUser();
+        return currentUser;
       }
       if (clazz.isAssignableFrom(byte[].class)) {
         return content();
@@ -229,7 +229,7 @@ public class Context {
         return contentAsString();
       }
       if (clazz.isAssignableFrom(Site.class)) {
-        return site();
+        return site;
       }
     }
 
