@@ -440,10 +440,12 @@ public class RouteCollection implements Routes {
       return response;
     };
 
-    for (Supplier<Filter> filter : filters) {
-      if (filter.get().matches(uri, context)) {
+    for (Supplier<Filter> filterSupplier : filters) {
+      Filter filter = filterSupplier.get();
+
+      if (filter.matches(uri, context)) {
         PayloadSupplier nextFilter = payloadSupplier;
-        payloadSupplier = () -> filter.get().apply(uri, context, nextFilter);
+        payloadSupplier = () -> filter.apply(uri, context, nextFilter);
       }
     }
 
