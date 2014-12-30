@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.compilers;
+package net.codestory.http.compilers.markdown;
 
 import java.nio.file.*;
 
@@ -21,7 +21,7 @@ import org.markdown4j.*;
 
 import com.github.rjeschke.txtmark.*;
 
-public class MarkdownCompiler implements Compiler {
+public class MarkdownCompiler implements net.codestory.http.compilers.Compiler {
   private final Configuration configuration;
 
   public MarkdownCompiler() {

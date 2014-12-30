@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.compilers;
+package net.codestory.http.compilers.markdown;
 
 import static java.util.Arrays.*;
 import static java.util.Collections.emptyMap;
@@ -22,37 +22,44 @@ import static org.assertj.core.api.Assertions.*;
 
 import org.junit.*;
 
+import java.util.List;
+import java.util.Map;
+
 public class FormulaPluginTest {
   static FormulaPlugin plugin = new FormulaPlugin();
 
-  StringBuilder output = new StringBuilder();
+  private String applyPlugin(List<String> lines, Map<String, String> parameters) {
+    StringBuilder html = new StringBuilder();
+    plugin.emit(html, lines, parameters);
+    return html.toString();
+  }
 
   @Test
   public void to_formula_url() {
-    plugin.emit(output, asList("1+2"), emptyMap());
+    String html = applyPlugin(asList("1+2"), emptyMap());
 
-    assertThat(output.toString()).isEqualTo("<img src=\"http://latex.codecogs.com/png.download?1%2B2\" />");
+    assertThat(html).isEqualTo("<img src=\"http://latex.codecogs.com/png.download?1%2B2\" />");
   }
 
   @Test
   public void to_gif() {
-    plugin.emit(output, asList("2+3"), singletonMap("type", "gif"));
+    String html = applyPlugin(asList("2+3"), singletonMap("type", "gif"));
 
-    assertThat(output.toString()).isEqualTo("<img src=\"http://latex.codecogs.com/gif.download?2%2B3\" />");
+    assertThat(html).isEqualTo("<img src=\"http://latex.codecogs.com/gif.download?2%2B3\" />");
   }
 
   @Test
   public void skip_blank_lines() {
-    plugin.emit(output, asList(" ", "2+3", ""), emptyMap());
+    String html = applyPlugin(asList(" ", "2+3", ""), emptyMap());
 
-    assertThat(output.toString()).isEqualTo("<img src=\"http://latex.codecogs.com/png.download?2%2B3\" />");
+    assertThat(html).isEqualTo("<img src=\"http://latex.codecogs.com/png.download?2%2B3\" />");
   }
 
   @Test
   public void dont_replace_spaces_with_plus_sign() {
-    plugin.emit(output, asList(" ", "a b", ""), emptyMap());
+    String html = applyPlugin(asList(" ", "a b", ""), emptyMap());
 
-    assertThat(output.toString()).isEqualTo("<img src=\"http://latex.codecogs.com/png.download?a%20b\" />");
+    assertThat(html).isEqualTo("<img src=\"http://latex.codecogs.com/png.download?a%20b\" />");
   }
 
   @Test

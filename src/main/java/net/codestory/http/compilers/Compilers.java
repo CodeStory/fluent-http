@@ -15,6 +15,7 @@
  */
 package net.codestory.http.compilers;
 
+import net.codestory.http.compilers.markdown.MarkdownCompiler;
 import net.codestory.http.misc.Env;
 import net.codestory.http.misc.Sha1;
 
