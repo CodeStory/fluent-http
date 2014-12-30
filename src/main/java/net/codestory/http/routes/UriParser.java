@@ -84,7 +84,6 @@ public class UriParser {
   }
 
   public static int paramsCount(String uriPattern) {
-    return Strings.countMatches(uriPattern, "/:") +
-      Strings.countMatches(uriPattern, "=:");
+    return Strings.countMatches(uriPattern, ':');
   }
 }

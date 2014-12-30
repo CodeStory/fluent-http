@@ -32,6 +32,18 @@ public class Strings {
     return count;
   }
 
+  public static int countMatches(CharSequence in, char what) {
+    int count = 0;
+
+    for (int i = 0, n = in.length(); i < n; i++) {
+      if (what == in.charAt(i)) {
+        count++;
+      }
+    }
+
+    return count;
+  }
+
   public static String substringBeforeLast(String in, String what) {
     int index = in.lastIndexOf(what);
     if (index == -1) {
