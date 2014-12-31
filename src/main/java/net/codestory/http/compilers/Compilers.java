@@ -74,31 +74,27 @@ public class Compilers {
   }
 
   public CacheEntry compile(SourceFile sourceFile) {
-    return cache.computeIfAbsent(sourceFile.getFileName() + ';' + sourceFile.getSource(), ignore -> doCompile(sourceFile));
-  }
+    String key = sourceFile.getFileName() + ';' + sourceFile.getSource();
 
-  private CacheEntry doCompile(SourceFile sourceFile) {
-    for (Entry<String, Supplier<Compiler>> entry : compilerByExtension.entrySet()) {
-      String extension = entry.getKey();
-      Supplier<Compiler> compilerSupplier = entry.getValue();
+    return cache.computeIfAbsent(key, ignore -> {
+      for (Entry<String, Supplier<Compiler>> entry : compilerByExtension.entrySet()) {
+        String extension = entry.getKey();
+        Supplier<Compiler> compiler = entry.getValue();
 
-      if (sourceFile.hasExtension(extension)) {
-        // Hack until I find something better
-        if (extension.equals(".less")) { // TODO: handle ".less.source"
-          if (sourceFile.getSource().contains("@import")) {
-            return CacheEntry.noCache(doCompile(sourceFile, compilerSupplier));
+        if (sourceFile.hasExtension(extension)) {
+          // Hack until I find something better
+          if (extension.equals(".less")) { // TODO: handle ".less.source"
+            if (sourceFile.getSource().contains("@import")) {
+              return CacheEntry.noCache(compiler.get().compile(sourceFile));
+            }
           }
+
+          String sha1 = sourceFile.sha1();
+          return diskCache.computeIfAbsent(sha1, extension, () -> compiler.get().compile(sourceFile));
         }
-
-        String sha1 = sourceFile.sha1();
-        return diskCache.computeIfAbsent(sha1, extension, () -> doCompile(sourceFile, compilerSupplier));
       }
-    }
 
-    return CacheEntry.fromString(sourceFile.getSource());
-  }
-
-  private String doCompile(SourceFile sourceFile, Supplier<Compiler> compilerSupplier) {
-    return compilerSupplier.get().compile(sourceFile);
+      return CacheEntry.fromString(sourceFile.getSource());
+    });
   }
 }
