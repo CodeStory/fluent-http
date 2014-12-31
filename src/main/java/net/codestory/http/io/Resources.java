@@ -73,7 +73,7 @@ public class Resources {
     return existsInFileSystem(pathWithPrefix) || existsInClassPath(pathWithPrefix);
   }
 
-  public String read(Path path, Charset charset) throws IOException {
+  private String read(Path path, Charset charset) throws IOException {
     String pathWithPrefix = withPrefix(path);
     return existsInFileSystem(pathWithPrefix) ? readFile(pathWithPrefix, charset) : readClasspath(pathWithPrefix, charset);
   }

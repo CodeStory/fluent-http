@@ -17,8 +17,7 @@ package net.codestory.http.templating.helpers;
 
 import com.github.jknack.handlebars.Handlebars.SafeString;
 import net.codestory.http.compilers.CacheEntry;
-import net.codestory.http.compilers.Compilers;
-import net.codestory.http.compilers.SourceFile;
+import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.io.Resources;
 import net.codestory.http.misc.Sha1;
 
@@ -31,9 +30,9 @@ import static net.codestory.http.io.Strings.replaceLast;
 
 public class AssetsHelperSource {
   private final Resources resources;
-  private final Compilers compilers;
+  private final CompilerFacade compilers;
 
-  public AssetsHelperSource(Resources resources, Compilers compilers) {
+  public AssetsHelperSource(Resources resources, CompilerFacade compilers) {
     this.resources = resources;
     this.compilers = compilers;
   }
@@ -60,7 +59,7 @@ public class AssetsHelperSource {
   }
 
   private String sha1(Path path) throws IOException {
-    CacheEntry compile = compilers.compile(resources.sourceFile(path));
+    CacheEntry compile = compilers.compile(path);
     return Sha1.of(compile.toBytes());
   }
 

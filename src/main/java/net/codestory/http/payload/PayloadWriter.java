@@ -350,9 +350,9 @@ public class PayloadWriter {
     keyValues.put("env", env);
     keyValues.put("site", site);
 
-    Template template = new Template(resources, view);
+    Template template = new Template(compilers, resources, view);
 
-    return forString(template.render(keyValues, compilers));
+    return forString(template.render(keyValues));
   }
 
   protected byte[] forURL(URL url) throws IOException {
@@ -377,7 +377,7 @@ public class PayloadWriter {
       return forTemplatePath(path);
     }
 
-    return compilers.compile(resources.sourceFile(path)).toBytes();
+    return compilers.compile(path).toBytes();
   }
 
   protected byte[] forTemplatePath(Path path) {

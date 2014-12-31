@@ -17,6 +17,7 @@ package net.codestory.http.templating;
 
 import java.util.*;
 
+import net.codestory.http.compilers.SourceFile;
 import org.yaml.snakeyaml.*;
 
 import static java.util.Collections.emptyMap;
@@ -26,14 +27,19 @@ public enum YamlParser {
 
   @SuppressWarnings("unchecked")
   public Map<String, Object> parseMap(String content) {
-    Map<String, Object> variables = (Map<String, Object>) parse(content);
+    Map<String, Object> variables = (Map<String, Object>) createYaml().load(content);
 
     return variables != null ? variables : emptyMap();
   }
 
   @SuppressWarnings("unchecked")
-  public Object parse(String content) {
-    return createYaml().load(content);
+  public Map<String, Object> parseMap(SourceFile sourceFile) {
+    return parseMap(sourceFile.getSource());
+  }
+
+  @SuppressWarnings("unchecked")
+  public Object parse(SourceFile sourceFile) {
+    return createYaml().load(sourceFile.getSource());
   }
 
   // Not thread-safe

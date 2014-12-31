@@ -24,26 +24,28 @@ import net.codestory.http.io.*;
 import net.codestory.http.markdown.MarkdownCompiler;
 
 public class Template {
+  private final CompilerFacade compilerFacade;
   private final Resources resources;
   private final Path path;
 
-  public Template(Resources resources, String uri) {
-    this(resources, uri, resources.findExistingPath(uri));
+  public Template(CompilerFacade compilerFacade, Resources resources, String uri) {
+    this(compilerFacade, resources, uri, resources.findExistingPath(uri));
   }
 
-  private Template(Resources resources, String folder, String name) {
-    this(resources, folder + "/" + name, resources.findExistingPath(folder, name));
+  private Template(CompilerFacade compilerFacade, Resources resources, String folder, String name) {
+    this(compilerFacade, resources, folder + "/" + name, resources.findExistingPath(folder, name));
   }
 
-  private Template(Resources resources, String uri, Path path) {
+  private Template(CompilerFacade compilerFacade, Resources resources, String uri, Path path) {
     if (path == null) {
       throw new IllegalArgumentException("Template not found " + uri);
     }
+    this.compilerFacade = compilerFacade;
     this.resources = resources;
     this.path = path;
   }
 
-  public String render(Map<String, ?> keyValues, CompilerFacade compilerFacade) {
+  public String render(Map<String, ?> keyValues) {
     try {
       YamlFrontMatter yamlFrontMatter = YamlFrontMatter.parse(resources.sourceFile(path));
 
@@ -61,7 +63,7 @@ public class Template {
         return body;
       }
 
-      String layoutContent = new Template(resources, "_layouts", layout).render(allKeyValues, compilerFacade);
+      String layoutContent = new Template(compilerFacade, resources, "_layouts", layout).render(allKeyValues);
       String bodyWithLayout = layoutContent.replace("[[body]]", body);
       return bodyWithLayout;
     } catch (IOException e) {

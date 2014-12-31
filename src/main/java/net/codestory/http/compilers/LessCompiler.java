@@ -31,15 +31,15 @@ public class LessCompiler implements Compiler {
   }
 
   @Override
-  public String compile(SourceFile sourcefile) {
+  public String compile(SourceFile sourceFile) {
     try {
       Configuration configuration = new Configuration();
 
       configureSourceMap(configuration);
 
-      return new ThreadUnsafeLessCompiler().compile(new PathSource(resources, sourcefile), configuration).getCss();
+      return new ThreadUnsafeLessCompiler().compile(new PathSource(resources, sourceFile), configuration).getCss();
     } catch (Less4jException e) {
-      String message = cleanMessage(sourcefile, e.getMessage());
+      String message = cleanMessage(sourceFile, e.getMessage());
       throw new CompilerException(message);
     }
   }

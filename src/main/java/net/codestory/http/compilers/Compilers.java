@@ -30,11 +30,11 @@ import static java.util.Map.Entry;
 import static net.codestory.http.misc.MemoizingSupplier.memoize;
 
 public class Compilers {
+  private final DiskCache diskCache;
   private final Map<String, Supplier<Compiler>> compilerByExtension = new HashMap<>();
   private final Map<String, Set<String>> extensionsThatCompileTo = new HashMap<>();
   private final Map<String, String> compiledExtension = new HashMap<>();
   private final Map<String, CacheEntry> cache = new ConcurrentHashMap<>();
-  private final DiskCache diskCache;
 
   public Compilers(Env env, Resources resources) {
     boolean prodMode = env.prodMode();
@@ -80,24 +80,25 @@ public class Compilers {
   private CacheEntry doCompile(SourceFile sourceFile) {
     for (Entry<String, Supplier<Compiler>> entry : compilerByExtension.entrySet()) {
       String extension = entry.getKey();
+      Supplier<Compiler> compilerSupplier = entry.getValue();
 
       if (sourceFile.hasExtension(extension)) {
         // Hack until I find something better
         if (extension.equals(".less")) { // TODO: handle ".less.source"
           if (sourceFile.getSource().contains("@import")) {
-            return CacheEntry.noCache(doCompile(sourceFile, entry.getValue()));
+            return CacheEntry.noCache(doCompile(sourceFile, compilerSupplier));
           }
         }
 
         String sha1 = sourceFile.sha1();
-        return diskCache.computeIfAbsent(sha1, extension, () -> doCompile(sourceFile, entry.getValue()));
+        return diskCache.computeIfAbsent(sha1, extension, () -> doCompile(sourceFile, compilerSupplier));
       }
     }
 
     return CacheEntry.fromString(sourceFile.getSource());
   }
 
-  private String doCompile(SourceFile sourcefile, Supplier<Compiler> compilerSupplier) {
-    return compilerSupplier.get().compile(sourcefile);
+  private String doCompile(SourceFile sourceFile, Supplier<Compiler> compilerSupplier) {
+    return compilerSupplier.get().compile(sourceFile);
   }
 }

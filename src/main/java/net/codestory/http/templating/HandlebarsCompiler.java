@@ -38,7 +38,7 @@ public class HandlebarsCompiler {
   private final Handlebars handlebars;
   private final List<ValueResolver> resolvers;
 
-  public HandlebarsCompiler(Resources resources, Compilers compilers) {
+  public HandlebarsCompiler(Resources resources, CompilerFacade compilers) {
     this.handlebars = handlebars(resources, compilers);
     this.resolvers = new ArrayList<>(asList(
         MapValueResolver.INSTANCE,
@@ -53,7 +53,7 @@ public class HandlebarsCompiler {
     return handlebars.compileInline(template).apply(context(variables));
   }
 
-  private static Handlebars handlebars(Resources resources, Compilers compilers) {
+  private static Handlebars handlebars(Resources resources, CompilerFacade compilers) {
     return new Handlebars()
       .startDelimiter("[[")
       .endDelimiter("]]")
@@ -75,7 +75,7 @@ public class HandlebarsCompiler {
           if (MarkdownCompiler.supports(include)) {
             body = MarkdownCompiler.INSTANCE.compile(resources.sourceFile(include).getSource());
           } else {
-            body = compilers.compile(resources.sourceFile(include)).content();
+            body = compilers.compile(include).content();
           }
 
           return new StringTemplateSource(location, body);

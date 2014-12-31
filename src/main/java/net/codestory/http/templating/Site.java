@@ -15,7 +15,6 @@
  */
 package net.codestory.http.templating;
 
-import static java.nio.charset.StandardCharsets.*;
 import static java.nio.file.Files.*;
 import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toList;
@@ -30,7 +29,6 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.Collectors;
 
-import net.codestory.http.compilers.SourceFile;
 import net.codestory.http.convert.*;
 import net.codestory.http.io.*;
 import net.codestory.http.misc.*;
@@ -143,7 +141,7 @@ public class Site {
 
   private Object readYaml(String path) {
     try {
-      return YamlParser.INSTANCE.parse(resources.read(Paths.get(path), UTF_8));
+      return YamlParser.INSTANCE.parse(resources.sourceFile(Paths.get(path)));
     } catch (IOException e) {
       throw new IllegalStateException("Unable to read file: " + path, e);
     }
@@ -169,7 +167,7 @@ public class Site {
     }
 
     try {
-      return YamlParser.INSTANCE.parseMap(resources.read(configPath, UTF_8));
+      return YamlParser.INSTANCE.parseMap(resources.sourceFile(configPath));
     } catch (IOException e) {
       throw new IllegalStateException("Unable to read " + configFile, e);
     }

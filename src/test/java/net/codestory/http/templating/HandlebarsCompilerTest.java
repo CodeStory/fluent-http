@@ -35,7 +35,7 @@ import com.github.jknack.handlebars.*;
 public class HandlebarsCompilerTest {
   static Env env = prodMode();
   static Resources resources = new Resources(env);
-  static HandlebarsCompiler compiler = new HandlebarsCompiler(resources, new Compilers(env, resources));
+  static HandlebarsCompiler compiler = new HandlebarsCompiler(resources, new CompilerFacade(env, resources));
 
   private String compile(String content, Map<String, Object> variables) throws IOException {
     return compiler.compile(content, variables);

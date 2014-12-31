@@ -15,13 +15,13 @@
  */
 package net.codestory.http.templating;
 
-import static java.nio.charset.StandardCharsets.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
+import net.codestory.http.compilers.SourceFile;
 import net.codestory.http.io.*;
 
 import net.codestory.http.misc.Env;
@@ -33,14 +33,14 @@ public class YamlParserTest {
 
   @Test
   public void parse_empty_map() {
-    Map<String, Object> map = parser.parseMap("");
+    Map<String, Object> map = parser.parseMap(new SourceFile(null, ""));
 
     assertThat(map).isEmpty();
   }
 
   @Test
   public void parse_map() {
-    Map<String, Object> map = parser.parseMap("name: Bob");
+    Map<String, Object> map = parser.parseMap(new SourceFile(null, "name: Bob"));
 
     assertThat(map).containsExactly(
       entry("name", "Bob")
@@ -50,7 +50,7 @@ public class YamlParserTest {
   @Test
   @SuppressWarnings("unchecked")
   public void parse_object() throws IOException {
-    List<Object> members = (List<Object>) parser.parse(resources.read(Paths.get("_data", "members.yml"), UTF_8));
+    List<Object> members = (List<Object>) parser.parse(resources.sourceFile(Paths.get("_data", "members.yml")));
 
     assertThat(members).hasSize(3);
     assertThat((Map<String, Object>) members.get(0)).containsExactly(

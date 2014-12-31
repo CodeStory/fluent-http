@@ -19,5 +19,5 @@ import java.io.*;
 
 @FunctionalInterface
 public interface Compiler extends Serializable {
-  String compile(SourceFile sourcefile);
+  String compile(SourceFile sourceFile);
 }

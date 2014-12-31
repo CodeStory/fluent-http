@@ -29,19 +29,19 @@ import org.junit.*;
 public class CompilersTest {
   static Compilers compilers = new Compilers(prodMode(), new Resources(new Env()));
 
-  private String compile(String filename, String content) {
+  private String compile(String filename, String content) throws IOException {
     return compilers.compile(new SourceFile(Paths.get(filename), content)).content();
   }
 
   @Test
-  public void do_not_compile_plain_file() {
+  public void do_not_compile_plain_file() throws IOException {
     String css = compile("plain.txt", "Hello");
 
     assertThat(css).isEqualTo("Hello");
   }
 
   @Test
-  public void register_custom_compiler() {
+  public void register_custom_compiler() throws IOException {
     compilers.register(() -> (sourceFile) -> sourceFile.getSource() + sourceFile.getSource(), ".html", ".copycat");
 
     String source = compile("file.copycat", "Hello");
@@ -50,7 +50,7 @@ public class CompilersTest {
   }
 
   @Test
-  public void supports_file_cache_being_destroyed() {
+  public void supports_file_cache_being_destroyed() throws IOException {
     // Delete cache
     File cacheFile = Paths.get(System.getProperty("user.home"), ".code-story", "cache", "V5", "prod", "coffee", "469d8cd9668f810e3a9984472792076cae0e1883").toFile();
     cacheFile.delete();
