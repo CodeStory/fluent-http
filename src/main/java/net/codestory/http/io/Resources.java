@@ -69,14 +69,35 @@ public class Resources {
     return existsInFileSystem(pathWithPrefix) || existsInClassPath(pathWithPrefix);
   }
 
-  private String read(Path path, Charset charset) throws IOException {
-    String pathWithPrefix = withPrefix(path);
-    return existsInFileSystem(pathWithPrefix) ? readFile(pathWithPrefix, charset) : readClasspath(pathWithPrefix, charset);
-  }
-
   public byte[] readBytes(Path path) throws IOException {
     String pathWithPrefix = withPrefix(path);
     return existsInFileSystem(pathWithPrefix) ? readFileBytes(pathWithPrefix) : readClasspathBytes(pathWithPrefix);
+  }
+
+  // static
+
+  public static String relativePath(Path parent, Path path) {
+    return toUnixString(parent.relativize(path));
+  }
+
+  public static String toUnixString(Path path) {
+    return path.toString().replace('\\', '/');
+  }
+
+  public static String extension(Path path) {
+    String filename = toUnixString(path);
+    int dotIndex = filename.lastIndexOf('.');
+    if (dotIndex <= 0) {
+      return "";
+    }
+    return filename.substring(dotIndex);
+  }
+
+  // private
+
+  private String read(Path path, Charset charset) throws IOException {
+    String pathWithPrefix = withPrefix(path);
+    return existsInFileSystem(pathWithPrefix) ? readFile(pathWithPrefix, charset) : readClasspath(pathWithPrefix, charset);
   }
 
   private String withPrefix(Path path) {
@@ -131,6 +152,7 @@ public class Resources {
     }
   }
 
+  // Visible for testing
   File fileForClasspath(URL url) {
     String filename = url.getFile();
     if ((filename == null) || filename.contains(".jar!")) {
@@ -151,23 +173,6 @@ public class Resources {
     } catch (UnsupportedEncodingException e) {
       throw new IllegalArgumentException("Invalid filename classpath: " + url, e);
     }
-  }
-
-  public static String relativePath(Path parent, Path path) {
-    return toUnixString(parent.relativize(path));
-  }
-
-  public static String toUnixString(Path path) {
-    return path.toString().replace('\\', '/');
-  }
-
-  public static String extension(Path path) {
-    String filename = toUnixString(path);
-    int dotIndex = filename.lastIndexOf('.');
-    if (dotIndex <= 0) {
-      return "";
-    }
-    return filename.substring(dotIndex);
   }
 
   private static boolean existsInFileSystem(String path) {
