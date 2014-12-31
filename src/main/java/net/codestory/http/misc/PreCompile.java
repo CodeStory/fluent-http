@@ -28,11 +28,12 @@ import java.nio.file.Paths;
 import static net.codestory.http.io.Strings.replaceLast;
 
 public class PreCompile {
+  private final Resources resources;
   private final CompilerFacade compilers;
   private final Site site;
 
   public PreCompile(Env env) {
-    Resources resources = new Resources(env);
+    this.resources = new Resources(env);
     this.compilers = new CompilerFacade(env, resources);
     this.site = new Site(env, resources);
   }
@@ -74,7 +75,7 @@ public class PreCompile {
   }
 
   protected byte[] compile(Path fromPath) throws IOException {
-    return compilers.compile(fromPath).toBytes();
+    return compilers.compile(resources.sourceFile(fromPath)).toBytes();
   }
 
   protected void write(byte[] bytes, Path toPath) throws IOException {

@@ -31,7 +31,7 @@ public class ViewCompilerTest {
   static Env env = prodMode();
   static Resources resources = new Resources(env);
   static CompilerFacade compilerFacade = new CompilerFacade(env, resources);
-  static ViewCompiler viewCompiler = new ViewCompiler(compilerFacade, resources);
+  static ViewCompiler viewCompiler = new ViewCompiler(resources, compilerFacade);
 
   String render(String name, Map<String, Object> model) {
     return viewCompiler.render(name, model);

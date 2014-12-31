@@ -27,7 +27,7 @@ public class ViewCompiler {
   private final CompilerFacade compilerFacade;
   private final Resources resources;
 
-  public ViewCompiler(CompilerFacade compilerFacade, Resources resources) {
+  public ViewCompiler(Resources resources, CompilerFacade compilerFacade) {
     this.compilerFacade = compilerFacade;
     this.resources = resources;
   }

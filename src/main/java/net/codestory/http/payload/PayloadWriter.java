@@ -348,9 +348,8 @@ public class PayloadWriter {
     keyValues.put("env", env);
     keyValues.put("site", site);
 
-    ViewCompiler viewCompiler = new ViewCompiler(compilers, resources);
-
-    return forString(viewCompiler.render(modelAndView.view(), keyValues));
+    String body = compilers.renderView(modelAndView.view(), keyValues);
+    return forString(body);
   }
 
   protected byte[] forURL(URL url) throws IOException {
@@ -375,7 +374,7 @@ public class PayloadWriter {
       return forTemplatePath(path);
     }
 
-    return compilers.compile(path).toBytes();
+    return compilers.compile(resources.sourceFile(path)).toBytes();
   }
 
   protected byte[] forTemplatePath(Path path) {
