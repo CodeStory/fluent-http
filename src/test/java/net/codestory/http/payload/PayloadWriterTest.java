@@ -20,6 +20,7 @@ import net.codestory.http.Cookies;
 import net.codestory.http.Request;
 import net.codestory.http.Response;
 import net.codestory.http.compilers.CompilerFacade;
+import net.codestory.http.io.Resources;
 import net.codestory.http.misc.Env;
 import net.codestory.http.templating.Site;
 import org.junit.Before;
@@ -43,15 +44,16 @@ import static org.mockito.Mockito.*;
 
 public class PayloadWriterTest {
   static Env env = new Env();
-  static Site site = new Site(env);
-  static CompilerFacade compilerFacade = new CompilerFacade(env);
+  static Resources resources = new Resources();
+  static Site site = new Site(env, resources);
+  static CompilerFacade compilerFacade = new CompilerFacade(env, resources);
 
   Request request = mock(Request.class);
   Response response = mock(Response.class);
   OutputStream outputStream = mock(OutputStream.class);
   Cookies cookies = mock(Cookies.class);
 
-  PayloadWriter writer = new PayloadWriter(request, response, env, site, compilerFacade);
+  PayloadWriter writer = new PayloadWriter(request, response, env, site, resources, compilerFacade);
 
   @Before
   public void setupContext() throws IOException {

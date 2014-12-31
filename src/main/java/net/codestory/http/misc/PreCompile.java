@@ -16,6 +16,7 @@
 package net.codestory.http.misc;
 
 import net.codestory.http.compilers.CompilerFacade;
+import net.codestory.http.io.Resources;
 import net.codestory.http.io.Strings;
 import net.codestory.http.templating.Site;
 
@@ -25,21 +26,21 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static net.codestory.http.io.Resources.APP_FOLDER;
-import static net.codestory.http.io.Resources.read;
 import static net.codestory.http.io.Strings.replaceLast;
 
 public class PreCompile {
-  private final Site site;
+  private final Resources resources;
   private final CompilerFacade compilers;
+  private final Site site;
 
   public PreCompile(Env env) {
-    this.site = new Site(env);
-    this.compilers = new CompilerFacade(env);
+    this.resources = new Resources();
+    this.compilers = new CompilerFacade(env, resources);
+    this.site = new Site(env, resources);
   }
 
   public static void main(String[] args) {
-    String destinationFolder = (args.length > 0) ? args[0] : APP_FOLDER;
+    String destinationFolder = (args.length > 0) ? args[0] : Resources.APP_FOLDER;
 
     new PreCompile(new Env(true, false, false, false)).run(destinationFolder);
   }
@@ -75,7 +76,7 @@ public class PreCompile {
   }
 
   protected byte[] compile(Path fromPath) throws IOException {
-    return compilers.compile(fromPath, read(fromPath, UTF_8)).toBytes();
+    return compilers.compile(fromPath, resources.read(fromPath, UTF_8)).toBytes();
   }
 
   protected void write(byte[] bytes, Path toPath) throws IOException {

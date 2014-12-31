@@ -21,12 +21,13 @@ import static org.mockito.Mockito.*;
 import java.io.*;
 import java.nio.file.*;
 
+import net.codestory.http.io.Resources;
 import net.codestory.http.misc.*;
 
 import org.junit.*;
 
 public class CompilersTest {
-  static Compilers compilers = new Compilers(prodMode());
+  static Compilers compilers = new Compilers(prodMode(), new Resources());
 
   private String compile(String filename, String content) {
     return compilers.compile(Paths.get(filename), content).content();

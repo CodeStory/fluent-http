@@ -25,6 +25,7 @@ import java.util.function.Supplier;
 
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.ValueResolver;
+import net.codestory.http.io.Resources;
 import net.codestory.http.misc.*;
 import net.codestory.http.templating.*;
 
@@ -32,9 +33,9 @@ public class CompilerFacade implements CompilersConfiguration {
   protected final Supplier<Compilers> compilers;
   protected final Supplier<HandlebarsCompiler> handlebars;
 
-  public CompilerFacade(Env env) {
-    this.compilers = memoize(() -> new Compilers(env));
-    this.handlebars = memoize(() -> new HandlebarsCompiler(compilers.get()));
+  public CompilerFacade(Env env, Resources resources) {
+    this.compilers = memoize(() -> new Compilers(env, resources));
+    this.handlebars = memoize(() -> new HandlebarsCompiler(resources, compilers.get()));
   }
 
   // Configuration

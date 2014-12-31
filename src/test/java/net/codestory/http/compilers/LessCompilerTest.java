@@ -19,11 +19,13 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.nio.file.*;
 
+import net.codestory.http.io.Resources;
 import org.junit.*;
 import org.junit.rules.*;
 
 public class LessCompilerTest {
-  static LessCompiler compiler = new LessCompiler(false);
+  static Resources resources = new Resources();
+  static LessCompiler compiler = new LessCompiler(resources, false);
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();
@@ -51,7 +53,7 @@ public class LessCompilerTest {
 
   @Test
   public void no_sourcemap_in_prod_mode() {
-    LessCompiler compiler = new LessCompiler(true);
+    LessCompiler compiler = new LessCompiler(resources, true);
 
     String css = compiler.compile(Paths.get("file.less"), "body { h1 { color: red; } }");
 

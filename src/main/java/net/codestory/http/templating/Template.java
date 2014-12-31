@@ -23,26 +23,28 @@ import net.codestory.http.compilers.*;
 import net.codestory.http.io.*;
 
 public class Template {
+  private final Resources resources;
   private final Path path;
 
-  public Template(String uri) {
-    this(uri, Resources.findExistingPath(uri));
+  public Template(Resources resources, String uri) {
+    this(resources, uri, resources.findExistingPath(uri));
   }
 
-  private Template(String folder, String name) {
-    this(folder + "/" + name, Resources.findExistingPath(folder, name));
+  private Template(Resources resources, String folder, String name) {
+    this(resources, folder + "/" + name, resources.findExistingPath(folder, name));
   }
 
-  private Template(String uri, Path path) {
+  private Template(Resources resources, String uri, Path path) {
     if (path == null) {
       throw new IllegalArgumentException("Template not found " + uri);
     }
+    this.resources = resources;
     this.path = path;
   }
 
   public CacheEntry render(Map<String, ?> keyValues, CompilerFacade compilerFacade) {
     try {
-      YamlFrontMatter yamlFrontMatter = YamlFrontMatter.parse(path);
+      YamlFrontMatter yamlFrontMatter = YamlFrontMatter.parse(resources, path);
 
       String content = yamlFrontMatter.getContent();
       Map<String, Object> variables = yamlFrontMatter.getVariables();
@@ -56,7 +58,7 @@ public class Template {
         return entry;
       }
 
-      String layoutContent = new Template("_layouts", layout).render(allKeyValues, compilerFacade).content();
+      String layoutContent = new Template(resources, "_layouts", layout).render(allKeyValues, compilerFacade).content();
       String bodyWithLayout = layoutContent.replace("[[body]]", entry.content());
 
       return CacheEntry.fromString(bodyWithLayout);

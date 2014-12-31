@@ -16,6 +16,7 @@
 package net.codestory.http.compilers;
 
 import net.codestory.http.compilers.markdown.MarkdownCompiler;
+import net.codestory.http.io.Resources;
 import net.codestory.http.misc.Env;
 import net.codestory.http.misc.Sha1;
 
@@ -38,14 +39,14 @@ public class Compilers {
   private final Map<String, CacheEntry> cache = new ConcurrentHashMap<>();
   private final DiskCache diskCache;
 
-  public Compilers(Env env) {
+  public Compilers(Env env, Resources resources) {
     boolean prodMode = env.prodMode();
 
     diskCache = new DiskCache("V5", prodMode);
     register(() -> new CoffeeCompiler(prodMode), ".js", ".coffee", ".litcoffee");
     register(() -> new CoffeeSourceMapCompiler(), ".map", ".coffee.map", ".litcoffee.map"); // ?
     register(() -> new MarkdownCompiler(), ".html", ".md", ".markdown");
-    register(() -> new LessCompiler(prodMode), ".css", ".less");
+    register(() -> new LessCompiler(resources, prodMode), ".css", ".less");
   }
 
   public void register(Supplier<Compiler> compilerFactory, String targetExtension, String firstExtension, String... moreExtensions) {

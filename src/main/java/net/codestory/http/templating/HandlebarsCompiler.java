@@ -38,8 +38,8 @@ public class HandlebarsCompiler {
   private final Handlebars handlebars;
   private final List<ValueResolver> resolvers;
 
-  public HandlebarsCompiler(Compilers compilers) {
-    this.handlebars = handlebars(compilers);
+  public HandlebarsCompiler(Resources resources, Compilers compilers) {
+    this.handlebars = handlebars(resources, compilers);
     this.resolvers = new ArrayList<>(asList(
         MapValueResolver.INSTANCE,
         JavaBeanValueResolver.INSTANCE,
@@ -53,25 +53,25 @@ public class HandlebarsCompiler {
     return handlebars.compileInline(template).apply(context(variables));
   }
 
-  private static Handlebars handlebars(Compilers compilers) {
+  private static Handlebars handlebars(Resources resources, Compilers compilers) {
     return new Handlebars()
       .startDelimiter("[[")
       .endDelimiter("]]")
       .registerHelpers(new EachReverseHelperSource())
       .registerHelpers(new EachValueHelperSource())
       .registerHelpers(new GoogleAnalyticsHelper())
-      .registerHelpers(new AssetsHelperSource(compilers))
+      .registerHelpers(new AssetsHelperSource(resources, compilers))
       .registerHelpers(StringHelpers.class)
       .with(new ConcurrentMapTemplateCache())
       .with(new AbstractTemplateLoader() {
         @Override
         public TemplateSource sourceAt(String location) throws IOException {
-          Path include = Resources.findExistingPath("_includes", location);
+          Path include = resources.findExistingPath("_includes", location);
           if (include == null) {
             throw new IOException("Template not found " + location);
           }
 
-          String template = Resources.read(include, UTF_8);
+          String template = resources.read(include, UTF_8);
           CacheEntry compiled = compilers.compile(include, template);
           return new StringTemplateSource(location, compiled.content());
         }

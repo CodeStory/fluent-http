@@ -19,7 +19,6 @@ import static java.nio.charset.StandardCharsets.*;
 import static java.nio.file.Files.*;
 import static java.util.stream.Stream.of;
 import static net.codestory.http.io.FileVisitor.*;
-import static net.codestory.http.io.Resources.*;
 
 import java.io.*;
 import java.net.*;
@@ -153,7 +152,7 @@ public class ClassPaths {
     final Path parent = file.toPath();
 
     final List<String> files = new ArrayList<>();
-    walkFileTree(parent, onFile(path -> files.add(relativePath(parent, path))));
+    walkFileTree(parent, onFile(path -> files.add(Resources.relativePath(parent, path))));
     return files;
   }
 }

@@ -21,11 +21,14 @@ import java.nio.file.*;
 
 import com.github.sommeri.less4j.*;
 import com.github.sommeri.less4j.core.*;
+import net.codestory.http.io.Resources;
 
 public class LessCompiler implements Compiler {
+  private final Resources resources;
   private final boolean inline;
 
-  public LessCompiler(boolean prodMode) {
+  public LessCompiler(Resources resources, boolean prodMode) {
+    this.resources = resources;
     this.inline = !prodMode;
   }
 
@@ -36,7 +39,7 @@ public class LessCompiler implements Compiler {
 
       configureSourceMap(configuration);
 
-      return new ThreadUnsafeLessCompiler().compile(new PathSource(path, source), configuration).getCss();
+      return new ThreadUnsafeLessCompiler().compile(new PathSource(resources, path, source), configuration).getCss();
     } catch (Less4jException e) {
       String message = cleanMessage(path, e.getMessage());
       throw new CompilerException(message);

@@ -19,12 +19,13 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.*;
 
+import net.codestory.http.io.Resources;
 import net.codestory.http.misc.*;
 
 import org.junit.*;
 
 public class SiteTest {
-  private static Site site = new Site(new Env());
+  static Site site = new Site(new Env(), new Resources());
 
   @Test
   public void pages() {

@@ -21,15 +21,17 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.*;
 
 import net.codestory.http.compilers.*;
+import net.codestory.http.io.Resources;
 import net.codestory.http.misc.*;
 
 import org.junit.*;
 
 public class TemplateTest {
-  private static CompilerFacade compilerFacade = new CompilerFacade(prodMode());
+  static Resources resources = new Resources();
+  static CompilerFacade compilerFacade = new CompilerFacade(prodMode(), resources);
 
   String render(String name, Map<String, Object> model) {
-    return new Template(name).render(model, compilerFacade).content();
+    return new Template(resources, name).render(model, compilerFacade).content();
   }
 
   String render(String name) {

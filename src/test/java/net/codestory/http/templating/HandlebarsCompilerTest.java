@@ -23,6 +23,7 @@ import java.io.*;
 import java.util.*;
 
 import net.codestory.http.compilers.*;
+import net.codestory.http.io.Resources;
 import net.codestory.http.misc.*;
 import net.codestory.http.templating.helpers.*;
 
@@ -31,7 +32,8 @@ import org.junit.*;
 import com.github.jknack.handlebars.*;
 
 public class HandlebarsCompilerTest {
-  static HandlebarsCompiler compiler = new HandlebarsCompiler(new Compilers(prodMode()));
+  static Resources resources = new Resources();
+  static HandlebarsCompiler compiler = new HandlebarsCompiler(resources, new Compilers(prodMode(), resources));
 
   @Test
   public void compile() throws IOException {

@@ -25,9 +25,15 @@ import net.codestory.http.compilers.*;
 import net.codestory.http.io.*;
 
 class SourceMapRoute implements Route {
+  private final Resources resources;
+
+  SourceMapRoute(Resources resources) {
+    this.resources = resources;
+  }
+
   @Override
   public boolean matchUri(String uri) {
-    return uri.endsWith(".map") && Resources.isPublic(pathSource(uri));
+    return uri.endsWith(".map") && resources.isPublic(pathSource(uri));
   }
 
   @Override

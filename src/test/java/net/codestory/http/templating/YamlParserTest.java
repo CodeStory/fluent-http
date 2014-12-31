@@ -27,7 +27,8 @@ import net.codestory.http.io.*;
 import org.junit.*;
 
 public class YamlParserTest {
-  YamlParser parser = YamlParser.INSTANCE;
+  static Resources resources = new Resources();
+  static YamlParser parser = YamlParser.INSTANCE;
 
   @Test
   public void parse_empty_map() {
@@ -48,7 +49,7 @@ public class YamlParserTest {
   @Test
   @SuppressWarnings("unchecked")
   public void parse_object() throws IOException {
-    List<Object> members = (List<Object>) parser.parse(Resources.read(Paths.get("_data", "members.yml"), UTF_8));
+    List<Object> members = (List<Object>) parser.parse(resources.read(Paths.get("_data", "members.yml"), UTF_8));
 
     assertThat(members).hasSize(3);
     assertThat((Map<String, Object>) members.get(0)).containsExactly(

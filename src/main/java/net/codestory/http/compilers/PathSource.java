@@ -26,10 +26,12 @@ import net.codestory.http.io.*;
 import com.github.sommeri.less4j.*;
 
 class PathSource extends LessSource {
+  private final Resources resources;
   private final Path path;
   private final String content;
 
-  PathSource(Path path, String content) {
+  PathSource(Resources resources, Path path, String content) {
+    this.resources = resources;
     this.path = path;
     this.content = content;
   }
@@ -46,14 +48,14 @@ class PathSource extends LessSource {
     }
 
     Path relativePath = Paths.get(filename);
-    if (!Resources.exists(relativePath)) {
+    if (!resources.exists(relativePath)) {
       throw new FileNotFound();
     }
 
     try {
-      String includeContent = Resources.read(relativePath, UTF_8);
+      String includeContent = resources.read(relativePath, UTF_8);
 
-      return new PathSource(relativePath, includeContent);
+      return new PathSource(resources, relativePath, includeContent);
     } catch (IOException e) {
       throw new CannotReadFile();
     }
@@ -71,12 +73,12 @@ class PathSource extends LessSource {
 
   @Override
   public byte[] getBytes() throws CannotReadFile, FileNotFound {
-    if (!Resources.exists(path)) {
+    if (!resources.exists(path)) {
       throw new FileNotFound();
     }
 
     try {
-      return Resources.readBytes(path);
+      return resources.readBytes(path);
     } catch (IOException e) {
       throw new CannotReadFile();
     }

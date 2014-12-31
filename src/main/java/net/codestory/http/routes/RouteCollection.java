@@ -26,12 +26,12 @@ import net.codestory.http.filters.Filter;
 import net.codestory.http.filters.PayloadSupplier;
 import net.codestory.http.injection.IocAdapter;
 import net.codestory.http.injection.Singletons;
+import net.codestory.http.io.Resources;
 import net.codestory.http.misc.Env;
 import net.codestory.http.payload.Payload;
 import net.codestory.http.payload.PayloadWriter;
 import net.codestory.http.templating.Site;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Deque;
 import java.util.LinkedList;
@@ -44,6 +44,7 @@ import static net.codestory.http.routes.UriParser.paramsCount;
 
 public class RouteCollection implements Routes {
   protected final Env env;
+  protected final Resources resources;
   protected final CompilerFacade compilers;
   protected final Site site;
   protected final Deque<Route> routes;
@@ -54,8 +55,9 @@ public class RouteCollection implements Routes {
 
   public RouteCollection(Env env) {
     this.env = env;
-    this.compilers = new CompilerFacade(env);
-    this.site = new Site(env);
+    this.resources = new Resources();
+    this.compilers = new CompilerFacade(env, resources);
+    this.site = new Site(env, resources);
     this.routes = new LinkedList<>();
     this.filters = new LinkedList<>();
     this.iocAdapter = new Singletons();
@@ -75,15 +77,15 @@ public class RouteCollection implements Routes {
 
   private void addStaticRoutes(boolean prodMode) {
     routes.add(new WebJarsRoute(prodMode));
-    routes.add(new StaticRoute(prodMode, compilers));
+    routes.add(new StaticRoute(prodMode, resources, compilers));
     if (!prodMode) {
-      routes.add(new SourceMapRoute());
-      routes.add(new SourceRoute(compilers));
+      routes.add(new SourceMapRoute(resources));
+      routes.add(new SourceRoute(resources, compilers));
     }
   }
 
   public PayloadWriter createPayloadWriter(Request request, Response response) {
-    return extensions.createPayloadWriter(request, response, env, site, compilers);
+    return extensions.createPayloadWriter(request, response, env, site, resources, compilers);
   }
 
   public Context createContext(Request request, Response response) {

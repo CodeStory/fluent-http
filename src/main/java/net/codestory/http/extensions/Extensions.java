@@ -22,6 +22,7 @@ import net.codestory.http.Response;
 import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.compilers.CompilersConfiguration;
 import net.codestory.http.injection.IocAdapter;
+import net.codestory.http.io.Resources;
 import net.codestory.http.misc.Env;
 import net.codestory.http.payload.PayloadWriter;
 import net.codestory.http.templating.Site;
@@ -55,7 +56,7 @@ public interface Extensions extends Serializable {
   /**
    * Called each request.
    */
-  default PayloadWriter createPayloadWriter(Request request, Response response, Env env, Site site, CompilerFacade compilers) {
-    return new PayloadWriter(request, response, env, site, compilers);
+  default PayloadWriter createPayloadWriter(Request request, Response response, Env env, Site site, Resources resources, CompilerFacade compilers) {
+    return new PayloadWriter(request, response, env, site, resources, compilers);
   }
 }

@@ -18,6 +18,7 @@ package net.codestory.http.routes;
 import net.codestory.http.Context;
 import net.codestory.http.compilers.CompiledPath;
 import net.codestory.http.compilers.CompilerFacade;
+import net.codestory.http.io.Resources;
 import net.codestory.http.misc.Cache;
 
 import java.nio.file.Path;
@@ -26,24 +27,24 @@ import java.util.function.*;
 
 import static net.codestory.http.constants.Methods.GET;
 import static net.codestory.http.constants.Methods.HEAD;
-import static net.codestory.http.io.Resources.findExistingPath;
-import static net.codestory.http.io.Resources.isPublic;
 import static net.codestory.http.io.Strings.extension;
 import static net.codestory.http.io.Strings.replaceLast;
 
 class StaticRoute implements Route {
   private static final Path NOT_FOUND = Paths.get("");
 
+  private final Resources resources;
   private final CompilerFacade compilers;
   private final Function<String, Object> findPath;
 
-  StaticRoute(boolean cached, CompilerFacade compilers) {
-    this.compilers = compilers;
+  StaticRoute(boolean cached, Resources resources, CompilerFacade compilers) {
     if (cached) {
       this.findPath = new Cache<>(this::findPath);
     } else {
       this.findPath = this::findPath;
     }
+    this.resources = resources;
+    this.compilers = compilers;
   }
 
   @Override
@@ -64,8 +65,8 @@ class StaticRoute implements Route {
   }
 
   private Object findPath(String uri) {
-    Path path = findExistingPath(uri);
-    if ((path != null) && isPublic(path)) {
+    Path path = resources.findExistingPath(uri);
+    if ((path != null) && resources.isPublic(path)) {
       if (compilers.canCompile(extension(uri))) {
         return new CompiledPath(path, path);
       }
@@ -81,7 +82,7 @@ class StaticRoute implements Route {
     for (String sourceExtension : compilers.extensionsThatCompileTo(extension)) {
       Path path = Paths.get(replaceLast(uri, extension, sourceExtension));
 
-      if (isPublic(path)) {
+      if (resources.isPublic(path)) {
         return new CompiledPath(path, path);
       }
     }

@@ -26,14 +26,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static net.codestory.http.io.Resources.isPublic;
 import static net.codestory.http.io.Strings.extension;
 import static net.codestory.http.io.Strings.replaceLast;
 
 public class AssetsHelperSource {
+  private final Resources resources;
   private final Compilers compilers;
 
-  public AssetsHelperSource(Compilers compilers) {
+  public AssetsHelperSource(Resources resources, Compilers compilers) {
+    this.resources = resources;
     this.compilers = compilers;
   }
 
@@ -59,7 +60,7 @@ public class AssetsHelperSource {
   }
 
   private String sha1(Path path) throws IOException {
-    CacheEntry compile = compilers.compile(path, Resources.read(path, UTF_8));
+    CacheEntry compile = compilers.compile(path, resources.read(path, UTF_8));
     return Sha1.of(compile.toBytes());
   }
 
@@ -69,7 +70,7 @@ public class AssetsHelperSource {
     for (String sourceExtension : compilers.extensionsThatCompileTo(extension)) {
       Path sourcePath = Paths.get(replaceLast(uri, extension, sourceExtension));
 
-      if (isPublic(sourcePath)) {
+      if (resources.isPublic(sourcePath)) {
         return sourcePath;
       }
     }

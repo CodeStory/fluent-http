@@ -18,6 +18,7 @@ package net.codestory.http.extensions;
 import net.codestory.http.Request;
 import net.codestory.http.Response;
 import net.codestory.http.compilers.CompilerFacade;
+import net.codestory.http.io.Resources;
 import net.codestory.http.misc.Env;
 import net.codestory.http.payload.PayloadWriter;
 import net.codestory.http.templating.Site;
@@ -33,8 +34,8 @@ public class CustomPayloadWriterTest extends AbstractProdWebServerTest {
       .get("/", new CustomPayload())
       .setExtensions(new Extensions() {
         @Override
-        public PayloadWriter createPayloadWriter(Request request, Response response, Env env, Site site, CompilerFacade compilers) {
-          return new CustomPayloadWriter(request, response, env, site, compilers);
+        public PayloadWriter createPayloadWriter(Request request, Response response, Env env, Site site, Resources resources, CompilerFacade compilers) {
+          return new CustomPayloadWriter(request, response, env, site, resources, compilers);
         }
       }));
 
@@ -42,8 +43,8 @@ public class CustomPayloadWriterTest extends AbstractProdWebServerTest {
   }
 
   static class CustomPayloadWriter extends PayloadWriter {
-    public CustomPayloadWriter(Request request, Response response, Env env, Site site, CompilerFacade compilers) {
-      super(request, response, env, site, compilers);
+    public CustomPayloadWriter(Request request, Response response, Env env, Site site, Resources resources, CompilerFacade compilers) {
+      super(request, response, env, site, resources, compilers);
     }
 
     @Override

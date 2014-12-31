@@ -43,13 +43,15 @@ public class PayloadWriter {
   protected final Response response;
   protected final Env env;
   protected final Site site;
+  protected final Resources resources;
   protected final CompilerFacade compilers;
 
-  public PayloadWriter(Request request, Response response, Env env, Site site, CompilerFacade compilers) {
+  public PayloadWriter(Request request, Response response, Env env, Site site, Resources resources, CompilerFacade compilers) {
     this.request = request;
     this.response = response;
     this.env = env;
     this.site = site;
+    this.resources = resources;
     this.compilers = compilers;
   }
 
@@ -267,12 +269,12 @@ public class PayloadWriter {
       return "text/event-stream";
     }
     if (content instanceof ModelAndView) {
-      Path path = Resources.findExistingPath(((ModelAndView) content).view());
+      Path path = resources.findExistingPath(((ModelAndView) content).view());
       requireNonNull(path, "View not found for " + uri);
       return ContentTypes.get(path.toString());
     }
     if (content instanceof Model) {
-      Path path = Resources.findExistingPath(uri);
+      Path path = resources.findExistingPath(uri);
       requireNonNull(path, "View not found for " + uri);
       return ContentTypes.get(path.toString());
     }
@@ -348,7 +350,7 @@ public class PayloadWriter {
     keyValues.put("env", env);
     keyValues.put("site", site);
 
-    CacheEntry html = new Template(view).render(keyValues, compilers);
+    CacheEntry html = new Template(resources, view).render(keyValues, compilers);
 
     return html.toBytes();
   }
@@ -366,7 +368,7 @@ public class PayloadWriter {
       return forTemplatePath(path);
     }
 
-    return Resources.readBytes(path);
+    return resources.readBytes(path);
   }
 
   protected byte[] forCompiledPath(CompiledPath compiledPath) throws IOException {
@@ -375,7 +377,7 @@ public class PayloadWriter {
       return forTemplatePath(path);
     }
 
-    String content = Resources.read(path, UTF_8);
+    String content = resources.read(path, UTF_8);
     return compilers.compile(path, content).toBytes();
   }
 

@@ -37,6 +37,7 @@ import net.codestory.http.misc.*;
 import com.github.jknack.handlebars.*;
 
 public class Site {
+  private final Resources resources;
   private final Supplier<Set<String>> resourceList;
   private final Supplier<Map<String, Object>> yaml;
   private final Supplier<Map<String, Object>> data;
@@ -44,7 +45,8 @@ public class Site {
   private final Supplier<Map<String, List<Map<String, Object>>>> tags;
   private final Supplier<Map<String, List<Map<String, Object>>>> categories;
 
-  public Site(Env env) {
+  public Site(Env env, Resources resources) {
+    this.resources = resources;
     resourceList = memoize(() -> list(env));
 
     yaml = memoize(() -> loadYamlConfig("_config.yml"));
@@ -58,7 +60,7 @@ public class Site {
     pages = memoize(() -> getResourceList()
         .stream()
         .filter(path -> !path.startsWith("_"))
-        .map(path -> Site.pathToMap(path))
+        .map(path -> pathToMap(path))
         .collect(toList())
     );
 
@@ -129,17 +131,17 @@ public class Site {
     return categories.get();
   }
 
-  private static Map<String, Object> pathToMap(String path) {
+  private Map<String, Object> pathToMap(String path) {
     try {
-      return YamlFrontMatter.parse(Paths.get(path)).getVariables();
+      return YamlFrontMatter.parse(resources, Paths.get(path)).getVariables();
     } catch (IOException e) {
       throw new IllegalStateException("Unable to read file: " + path, e);
     }
   }
 
-  private static Object readYaml(String path) {
+  private Object readYaml(String path) {
     try {
-      return YamlParser.INSTANCE.parse(Resources.read(Paths.get(path), UTF_8));
+      return YamlParser.INSTANCE.parse(resources.read(Paths.get(path), UTF_8));
     } catch (IOException e) {
       throw new IllegalStateException("Unable to read file: " + path, e);
     }
@@ -160,12 +162,12 @@ public class Site {
   @SuppressWarnings("unchecked")
   private Map<String, Object> loadYamlConfig(String configFile) {
     Path configPath = Paths.get(configFile);
-    if (!Resources.exists(configPath)) {
+    if (!resources.exists(configPath)) {
       return emptyMap();
     }
 
     try {
-      return YamlParser.INSTANCE.parseMap(Resources.read(configPath, UTF_8));
+      return YamlParser.INSTANCE.parseMap(resources.read(configPath, UTF_8));
     } catch (IOException e) {
       throw new IllegalStateException("Unable to read " + configFile, e);
     }

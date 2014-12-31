@@ -23,34 +23,36 @@ import java.nio.file.*;
 import org.junit.*;
 
 public class ResourcesTest {
+  private static Resources resources = new Resources();
+
   @Test
   public void exists() {
-    assertThat(Resources.exists(Paths.get("_layouts/default.html"))).isTrue();
-    assertThat(Resources.exists(Paths.get("index.html"))).isTrue();
-    assertThat(Resources.exists(Paths.get("/index.html"))).isTrue();
-    assertThat(Resources.exists(Paths.get("assets/style.css"))).isTrue();
-    assertThat(Resources.exists(Paths.get("js"))).isFalse();
+    assertThat(resources.exists(Paths.get("_layouts/default.html"))).isTrue();
+    assertThat(resources.exists(Paths.get("index.html"))).isTrue();
+    assertThat(resources.exists(Paths.get("/index.html"))).isTrue();
+    assertThat(resources.exists(Paths.get("assets/style.css"))).isTrue();
+    assertThat(resources.exists(Paths.get("js"))).isFalse();
   }
 
   @Test
   public void normalize_windows_path() {
-    assertThat(Resources.exists(Paths.get("assets\\style.css"))).isTrue();
+    assertThat(resources.exists(Paths.get("assets\\style.css"))).isTrue();
   }
 
   @Test
   public void extension() {
-    assertThat(Resources.extension(Paths.get("file.txt"))).isEqualTo(".txt");
-    assertThat(Resources.extension(Paths.get("file.css.map"))).isEqualTo(".map");
-    assertThat(Resources.extension(Paths.get(".dotfile.ext"))).isEqualTo(".ext");
+    assertThat(resources.extension(Paths.get("file.txt"))).isEqualTo(".txt");
+    assertThat(resources.extension(Paths.get("file.css.map"))).isEqualTo(".map");
+    assertThat(resources.extension(Paths.get(".dotfile.ext"))).isEqualTo(".ext");
 
-    assertThat(Resources.extension(Paths.get("file"))).isEmpty();
-    assertThat(Resources.extension(Paths.get(".dotfile"))).isEmpty();
-    assertThat(Resources.extension(Paths.get("."))).isEmpty();
+    assertThat(resources.extension(Paths.get("file"))).isEmpty();
+    assertThat(resources.extension(Paths.get(".dotfile"))).isEmpty();
+    assertThat(resources.extension(Paths.get("."))).isEmpty();
   }
 
   @Test
   public void read_resource_from_sources_not_from_target_to_accelerate_feedback() {
-    File file = Resources.fileForClasspath(ClassPaths.getResource("app/_layouts/default.html"));
+    File file = resources.fileForClasspath(ClassPaths.getResource("app/_layouts/default.html"));
 
     assertThat(file.getAbsolutePath().replace('\\', '/'))
       .contains("src/main/resources/app/_layouts/default.html")

@@ -27,7 +27,7 @@ import net.codestory.http.types.*;
 public class Resources {
   public static String APP_FOLDER = "app";
 
-  private Resources() {
+  public Resources() {
     // Static utility class
   }
 
@@ -35,7 +35,11 @@ public class Resources {
     return toUnixString(parent.relativize(path));
   }
 
-  public static boolean isPublic(Path path) {
+  public static String toUnixString(Path path) {
+    return path.toString().replace('\\', '/');
+  }
+
+  public boolean isPublic(Path path) {
     for (Path part : path) {
       if (part.toString().equals("..") || part.toString().startsWith("_")) {
         return false;
@@ -44,11 +48,11 @@ public class Resources {
     return exists(path);
   }
 
-  public static Path findExistingPath(String folder, String name) {
+  public Path findExistingPath(String folder, String name) {
     return findExistingPath(folder + (name.startsWith("/") ? name : "/" + name));
   }
 
-  public static Path findExistingPath(String uri) {
+  public Path findExistingPath(String uri) {
     if (uri.endsWith("/")) {
       return findExistingPath(uri + "index");
     }
@@ -61,30 +65,26 @@ public class Resources {
     return null;
   }
 
-  public static boolean exists(Path path) {
+  public boolean exists(Path path) {
     String pathWithPrefix = withPrefix(path);
     return existsInFileSystem(pathWithPrefix) || existsInClassPath(pathWithPrefix);
   }
 
-  public static String read(Path path, Charset charset) throws IOException {
+  public String read(Path path, Charset charset) throws IOException {
     String pathWithPrefix = withPrefix(path);
     return existsInFileSystem(pathWithPrefix) ? readFile(pathWithPrefix, charset) : readClasspath(pathWithPrefix, charset);
   }
 
-  public static byte[] readBytes(Path path) throws IOException {
+  public byte[] readBytes(Path path) throws IOException {
     String pathWithPrefix = withPrefix(path);
     return existsInFileSystem(pathWithPrefix) ? readFileBytes(pathWithPrefix) : readClasspathBytes(pathWithPrefix);
   }
 
-  private static String withPrefix(Path path) {
+  private String withPrefix(Path path) {
     return toUnixString(Paths.get(APP_FOLDER, path.toString()));
   }
 
-  public static String toUnixString(Path path) {
-    return path.toString().replace('\\', '/');
-  }
-
-  public static String extension(Path path) {
+  public String extension(Path path) {
     String filename = toUnixString(path);
     int dotIndex = filename.lastIndexOf('.');
     if (dotIndex <= 0) {
@@ -93,7 +93,7 @@ public class Resources {
     return filename.substring(dotIndex);
   }
 
-  private static boolean existsInClassPath(String path) {
+  private boolean existsInClassPath(String path) {
     URL url = getResource(path);
     if (url == null) {
       return false;
@@ -103,11 +103,11 @@ public class Resources {
     return (file == null) || file.isFile();
   }
 
-  private static boolean existsInFileSystem(String path) {
+  private boolean existsInFileSystem(String path) {
     return new File(path).isFile();
   }
 
-  private static String readClasspath(String path, Charset charset) throws IOException {
+  private String readClasspath(String path, Charset charset) throws IOException {
     URL url = getResource(path);
     if (url == null) {
       throw new IllegalArgumentException("Classpath resource not found classpath:" + path);
@@ -126,7 +126,7 @@ public class Resources {
     }
   }
 
-  private static byte[] readClasspathBytes(String path) throws IOException {
+  private byte[] readClasspathBytes(String path) throws IOException {
     URL url = getResource(path);
     if (url == null) {
       throw new IllegalArgumentException("Invalid file classpath: " + path);
@@ -145,7 +145,7 @@ public class Resources {
     }
   }
 
-  private static String readFile(String path, Charset charset) throws IOException {
+  private String readFile(String path, Charset charset) throws IOException {
     if (!new File(path).isFile()) {
       throw new IllegalArgumentException("Invalid file path: " + path);
     }
@@ -155,7 +155,7 @@ public class Resources {
     }
   }
 
-  private static byte[] readFileBytes(String path) throws IOException {
+  private byte[] readFileBytes(String path) throws IOException {
     if (!new File(path).isFile()) {
       throw new IllegalArgumentException("Invalid file path: " + path);
     }
@@ -165,7 +165,7 @@ public class Resources {
     }
   }
 
-  static File fileForClasspath(URL url) {
+  File fileForClasspath(URL url) {
     String filename = url.getFile();
     if ((filename == null) || filename.contains(".jar!")) {
       return null;

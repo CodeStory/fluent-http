@@ -53,8 +53,9 @@ public class YamlFrontMatter {
     return variables;
   }
 
-  public static YamlFrontMatter parse(Path path) throws IOException {
-    return parse(path, Resources.read(path, UTF_8));
+  // TODO: remove reference to Resources
+  public static YamlFrontMatter parse(Resources resources, Path path) throws IOException {
+    return parse(path, resources.read(path, UTF_8));
   }
 
   public static YamlFrontMatter parse(Path path, String text) {
