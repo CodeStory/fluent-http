@@ -15,10 +15,8 @@
  */
 package net.codestory.http.templating;
 
-import static java.nio.charset.StandardCharsets.*;
 import static java.util.regex.Pattern.*;
 
-import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.regex.*;
@@ -51,11 +49,6 @@ public class YamlFrontMatter {
 
   public Map<String, Object> getVariables() {
     return variables;
-  }
-
-  // TODO: remove reference to Resources
-  public static YamlFrontMatter parse(Resources resources, Path path) throws IOException {
-    return parse(path, resources.read(path, UTF_8));
   }
 
   public static YamlFrontMatter parse(Path path, String text) {
