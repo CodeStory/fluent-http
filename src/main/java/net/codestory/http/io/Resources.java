@@ -22,21 +22,14 @@ import java.net.*;
 import java.nio.charset.*;
 import java.nio.file.*;
 
+import net.codestory.http.misc.Env;
 import net.codestory.http.types.*;
 
 public class Resources {
-  public static String APP_FOLDER = "app";
+  private final String root;
 
   public Resources() {
-    // Static utility class
-  }
-
-  public static String relativePath(Path parent, Path path) {
-    return toUnixString(parent.relativize(path));
-  }
-
-  public static String toUnixString(Path path) {
-    return path.toString().replace('\\', '/');
+    this.root = Env.APP_FOLDER;
   }
 
   public boolean isPublic(Path path) {
@@ -81,16 +74,7 @@ public class Resources {
   }
 
   private String withPrefix(Path path) {
-    return toUnixString(Paths.get(APP_FOLDER, path.toString()));
-  }
-
-  public String extension(Path path) {
-    String filename = toUnixString(path);
-    int dotIndex = filename.lastIndexOf('.');
-    if (dotIndex <= 0) {
-      return "";
-    }
-    return filename.substring(dotIndex);
+    return toUnixString(Paths.get(root, path.toString()));
   }
 
   private boolean existsInClassPath(String path) {
@@ -101,10 +85,6 @@ public class Resources {
 
     File file = fileForClasspath(url);
     return (file == null) || file.isFile();
-  }
-
-  private boolean existsInFileSystem(String path) {
-    return new File(path).isFile();
   }
 
   private String readClasspath(String path, Charset charset) throws IOException {
@@ -145,26 +125,6 @@ public class Resources {
     }
   }
 
-  private String readFile(String path, Charset charset) throws IOException {
-    if (!new File(path).isFile()) {
-      throw new IllegalArgumentException("Invalid file path: " + path);
-    }
-
-    try (InputStream from = new FileInputStream(path)) {
-      return InputStreams.readString(from, charset);
-    }
-  }
-
-  private byte[] readFileBytes(String path) throws IOException {
-    if (!new File(path).isFile()) {
-      throw new IllegalArgumentException("Invalid file path: " + path);
-    }
-
-    try (InputStream from = new FileInputStream(path)) {
-      return InputStreams.readBytes(from);
-    }
-  }
-
   File fileForClasspath(URL url) {
     String filename = url.getFile();
     if ((filename == null) || filename.contains(".jar!")) {
@@ -175,7 +135,7 @@ public class Resources {
       String path = URLDecoder.decode(filename, "US-ASCII");
 
       // Search for file in sources instead of target to speed up live reload
-      String sourcePath = Paths.get("src/main/resources/", APP_FOLDER, Strings.substringAfter(path, "/" + APP_FOLDER + "/")).toString();
+      String sourcePath = Paths.get("src/main/resources/", root, Strings.substringAfter(path, '/' + root + '/')).toString();
       File file = new File(sourcePath);
       if (file.exists()) {
         return file;
@@ -184,6 +144,47 @@ public class Resources {
       return new File(path);
     } catch (UnsupportedEncodingException e) {
       throw new IllegalArgumentException("Invalid filename classpath: " + url, e);
+    }
+  }
+
+  public static String relativePath(Path parent, Path path) {
+    return toUnixString(parent.relativize(path));
+  }
+
+  public static String toUnixString(Path path) {
+    return path.toString().replace('\\', '/');
+  }
+
+  public static String extension(Path path) {
+    String filename = toUnixString(path);
+    int dotIndex = filename.lastIndexOf('.');
+    if (dotIndex <= 0) {
+      return "";
+    }
+    return filename.substring(dotIndex);
+  }
+
+  private static boolean existsInFileSystem(String path) {
+    return new File(path).isFile();
+  }
+
+  private static String readFile(String path, Charset charset) throws IOException {
+    if (!new File(path).isFile()) {
+      throw new IllegalArgumentException("Invalid file path: " + path);
+    }
+
+    try (InputStream from = new FileInputStream(path)) {
+      return InputStreams.readString(from, charset);
+    }
+  }
+
+  private static byte[] readFileBytes(String path) throws IOException {
+    if (!new File(path).isFile()) {
+      throw new IllegalArgumentException("Invalid file path: " + path);
+    }
+
+    try (InputStream from = new FileInputStream(path)) {
+      return InputStreams.readBytes(from);
     }
   }
 }

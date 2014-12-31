@@ -15,11 +15,12 @@
  */
 package net.codestory.http.misc;
 
-import static net.codestory.http.io.Resources.APP_FOLDER;
-
-import java.nio.file.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Env {
+  public static String APP_FOLDER = "app";
+
   private final boolean prodMode;
   private final boolean disableClassPath;
   private final boolean disableFilesystem;
