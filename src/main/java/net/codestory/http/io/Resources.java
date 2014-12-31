@@ -69,6 +69,11 @@ public class Resources {
     return existsInFileSystem(pathWithPrefix) || existsInClassPath(pathWithPrefix);
   }
 
+  public String read(Path path, Charset charset) throws IOException {
+    String pathWithPrefix = withPrefix(path);
+    return existsInFileSystem(pathWithPrefix) ? readFile(pathWithPrefix, charset) : readClasspath(pathWithPrefix, charset);
+  }
+
   public byte[] readBytes(Path path) throws IOException {
     String pathWithPrefix = withPrefix(path);
     return existsInFileSystem(pathWithPrefix) ? readFileBytes(pathWithPrefix) : readClasspathBytes(pathWithPrefix);
@@ -84,21 +89,7 @@ public class Resources {
     return path.toString().replace('\\', '/');
   }
 
-  public static String extension(Path path) {
-    String filename = toUnixString(path);
-    int dotIndex = filename.lastIndexOf('.');
-    if (dotIndex <= 0) {
-      return "";
-    }
-    return filename.substring(dotIndex);
-  }
-
   // private
-
-  private String read(Path path, Charset charset) throws IOException {
-    String pathWithPrefix = withPrefix(path);
-    return existsInFileSystem(pathWithPrefix) ? readFile(pathWithPrefix, charset) : readClasspath(pathWithPrefix, charset);
-  }
 
   private String withPrefix(Path path) {
     return toUnixString(Paths.get(root, path.toString()));

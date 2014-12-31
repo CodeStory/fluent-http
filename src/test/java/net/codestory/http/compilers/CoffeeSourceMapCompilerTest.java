@@ -30,12 +30,12 @@ public class CoffeeSourceMapCompilerTest {
 
   @Test
   public void sourcemap_with_filename_and_sources() {
-    String javascript = compile("polka.coffee.map", "a=b=3\nc=4\nd=(a+b)*c");
+    String javascript = compile("polka.coffee", "a=b=3\nc=4\nd=(a+b)*c");
 
     assertThat(javascript).isEqualTo(
       "{\n" +
       " \"version\": 3,\n" +
-      " \"file\": \"polka.coffee.source\",\n" +
+      " \"file\": \"polka.coffee\",\n" +
       " \"sources\": [\n" +
       "  \"polka.coffee.source\"\n" +
       " ],\n" +

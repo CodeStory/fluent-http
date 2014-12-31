@@ -15,25 +15,30 @@
  */
 package net.codestory.http.routes;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static net.codestory.http.constants.Methods.*;
 import static net.codestory.http.io.Strings.substringBeforeLast;
 
+import java.io.IOException;
 import java.nio.file.*;
 
 import net.codestory.http.*;
 import net.codestory.http.compilers.*;
 import net.codestory.http.io.*;
+import net.codestory.http.payload.Payload;
 
 class SourceMapRoute implements Route {
   private final Resources resources;
+  private final CompilerFacade compilerFacade;
 
-  SourceMapRoute(Resources resources) {
+  SourceMapRoute(Resources resources, CompilerFacade compilerFacade) {
     this.resources = resources;
+    this.compilerFacade = compilerFacade;
   }
 
   @Override
   public boolean matchUri(String uri) {
-    return uri.endsWith(".map") && resources.isPublic(pathSource(uri));
+    return uri.endsWith(".coffee.map") && resources.isPublic(pathSource(uri));
   }
 
   @Override
@@ -42,13 +47,14 @@ class SourceMapRoute implements Route {
   }
 
   @Override
-  public CompiledPath body(Context context) {
+  public Payload body(Context context) throws IOException {
     String uri = context.uri();
 
-    Path sourcePath = pathSource(uri);
     Path mapPath = Paths.get(uri);
+    Path sourcePath = pathSource(uri);
 
-    return new CompiledPath(sourcePath, mapPath);
+    String compile = compilerFacade.compile(new SourceFile(mapPath, resources.read(sourcePath, UTF_8))).content();
+    return new Payload("text/plain;charset=UTF-8", compile); // Temp
   }
 
   private static Path pathSource(String uri) {

@@ -50,7 +50,7 @@ public class CompilersTest {
   @Test
   public void supports_file_cache_being_destroyed() throws IOException {
     // Delete cache
-    File cacheFile = Paths.get(System.getProperty("user.home"), ".code-story", "cache", "V5", "prod", "coffee", "469d8cd9668f810e3a9984472792076cae0e1883").toFile();
+    File cacheFile = Paths.get(System.getProperty("user.home"), ".code-story", "cache", "V6", "prod", "coffee", "469d8cd9668f810e3a9984472792076cae0e1883").toFile();
     cacheFile.delete();
 
     // Fill cache

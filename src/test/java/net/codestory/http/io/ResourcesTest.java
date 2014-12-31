@@ -41,17 +41,6 @@ public class ResourcesTest {
   }
 
   @Test
-  public void extension() {
-    assertThat(Resources.extension(Paths.get("file.txt"))).isEqualTo(".txt");
-    assertThat(Resources.extension(Paths.get("file.css.map"))).isEqualTo(".map");
-    assertThat(Resources.extension(Paths.get(".dotfile.ext"))).isEqualTo(".ext");
-
-    assertThat(Resources.extension(Paths.get("file"))).isEmpty();
-    assertThat(Resources.extension(Paths.get(".dotfile"))).isEmpty();
-    assertThat(Resources.extension(Paths.get("."))).isEmpty();
-  }
-
-  @Test
   public void read_resource_from_sources_not_from_target_to_accelerate_feedback() {
     File file = resources.fileForClasspath(ClassPaths.getResource("app/_layouts/default.html"));
 

@@ -15,28 +15,38 @@
  */
 package net.codestory.http;
 
-import net.codestory.http.testhelpers.*;
-
-import org.junit.*;
+import net.codestory.http.testhelpers.AbstractDevWebServerTest;
+import org.junit.Test;
 
 public class StaticPageInDevTest extends AbstractDevWebServerTest {
   @Test
-  public void server_coffeescript_source() {
+  public void coffeescript_source() {
     get("/js/script.coffee.source").should().haveType("application/javascript").contain("console.log 'Hello'");
-  }
-
-  @Test
-  public void server_coffeescript_source_with_js_extension() {
     get("/js/anotherscript.js.source").should().haveType("application/javascript").contain("console.log 'foobar'");
   }
 
   @Test
-  public void server_less_source() {
-    get("/assets/style.less.source").should().haveType("text/css").contain("body {\n  h1 {\n    color: red;\n  }\n}");
+  public void coffeescript_map() {
+    get("/js/script.coffee.map").should().haveType("text/plain")
+      .contain("\"file\": \"/js/script.coffee\"")
+      .contain("\"sources\": [\n  \"/js/script.coffee.source\"\n ]")
+      .contain("\"mappings\": \"AAAA,OAAO,CAAC,GAAR,CAAY,OAAZ,CAAA,CAAA\"");
   }
 
   @Test
-  public void server_less_source_with_css_extension() {
+  public void less_source() {
+    get("/assets/style.less.source").should().haveType("text/css").contain("body {\n  h1 {\n    color: red;\n  }\n}");
     get("/assets/anotherstyle.css.source").should().haveType("text/css").contain("body { h1 { color: red; } }");
+  }
+
+  @Test
+  public void less_inline_map() {
+    get("/assets/anotherstyle.less.map").should().respond(404);
+    get("/assets/anotherstyle.css").should().contain("sourceMappingURL");
+  }
+
+  @Test
+  public void serve_overriding_css() {
+    get("/assets/style.css").should().contain("* {}");
   }
 }

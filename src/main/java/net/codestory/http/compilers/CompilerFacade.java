@@ -80,6 +80,10 @@ public class CompilerFacade implements CompilersConfiguration {
     return compilers.get().compile(resources.sourceFile(path));
   }
 
+  public CacheEntry compile(SourceFile sourceFile) throws IOException {
+    return compilers.get().compile(sourceFile);
+  }
+
   public String handlebar(String template, Map<String, ?> variables) throws IOException {
     return handlebars.get().compile(template, variables);
   }

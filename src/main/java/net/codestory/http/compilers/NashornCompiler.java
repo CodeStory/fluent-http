@@ -89,7 +89,7 @@ public final class NashornCompiler {
   }
 
   private String getFileName(SourceFile sourceFile) {
-    return sourceFile.getFileName().replace(".map", ".source");
+    return sourceFile.getFileName().replace(".map", ""); // Should be in CoffeeSourceMapCompiler
   }
 
   private static String cleanMessage(SourceFile sourceFile, String message) {

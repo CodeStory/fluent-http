@@ -39,10 +39,12 @@ public class Compilers {
   public Compilers(Env env, Resources resources) {
     boolean prodMode = env.prodMode();
 
-    diskCache = new DiskCache("V5", prodMode);
-    register(() -> new CoffeeCompiler(prodMode), ".js", ".coffee", ".litcoffee");
-    register(() -> new CoffeeSourceMapCompiler(), ".map", ".coffee.map", ".litcoffee.map"); // ?
+    diskCache = new DiskCache("V6", prodMode);
     register(() -> new LessCompiler(resources, prodMode), ".css", ".less");
+    register(() -> new CoffeeCompiler(prodMode), ".js", ".coffee", ".litcoffee");
+    if (!prodMode) {
+      register(() -> new CoffeeSourceMapCompiler(), ".coffee.map", ".coffee.map"); // Temp
+    }
   }
 
   public void register(Supplier<Compiler> compilerFactory, String targetExtension, String firstExtension, String... moreExtensions) {
