@@ -22,6 +22,7 @@ import static net.codestory.http.constants.Headers.*;
 import static net.codestory.http.constants.Methods.*;
 import static net.codestory.http.io.Strings.extension;
 import static net.codestory.http.io.Strings.substringBeforeLast;
+import static org.webjars.WebJarAssetLocator.WEBJARS_PATH_PREFIX;
 
 import java.io.*;
 import java.net.*;
@@ -66,7 +67,7 @@ class WebJarsRoute implements Route {
     String extension = extension(wantedUri);
 
     List<String> filteredUris = new ClasspathScanner()
-      .getResources(Paths.get("META-INF/resources/webjars/"))
+      .getResources(Paths.get(WEBJARS_PATH_PREFIX))
       .stream()
       .filter(uri -> uri.endsWith(extension))
       .collect(toList());
