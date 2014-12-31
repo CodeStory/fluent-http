@@ -27,7 +27,7 @@ import net.codestory.http.misc.*;
 import org.junit.*;
 
 public class CompilersTest {
-  static Compilers compilers = new Compilers(prodMode(), new Resources());
+  static Compilers compilers = new Compilers(prodMode(), new Resources(new Env()));
 
   private String compile(String filename, String content) {
     return compilers.compile(Paths.get(filename), content).content();

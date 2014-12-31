@@ -20,10 +20,11 @@ import static org.assertj.core.api.Assertions.*;
 import java.io.*;
 import java.nio.file.*;
 
+import net.codestory.http.misc.Env;
 import org.junit.*;
 
 public class ResourcesTest {
-  private static Resources resources = new Resources();
+  private static Resources resources = new Resources(new Env());
 
   @Test
   public void exists() {
@@ -41,13 +42,13 @@ public class ResourcesTest {
 
   @Test
   public void extension() {
-    assertThat(resources.extension(Paths.get("file.txt"))).isEqualTo(".txt");
-    assertThat(resources.extension(Paths.get("file.css.map"))).isEqualTo(".map");
-    assertThat(resources.extension(Paths.get(".dotfile.ext"))).isEqualTo(".ext");
+    assertThat(Resources.extension(Paths.get("file.txt"))).isEqualTo(".txt");
+    assertThat(Resources.extension(Paths.get("file.css.map"))).isEqualTo(".map");
+    assertThat(Resources.extension(Paths.get(".dotfile.ext"))).isEqualTo(".ext");
 
-    assertThat(resources.extension(Paths.get("file"))).isEmpty();
-    assertThat(resources.extension(Paths.get(".dotfile"))).isEmpty();
-    assertThat(resources.extension(Paths.get("."))).isEmpty();
+    assertThat(Resources.extension(Paths.get("file"))).isEmpty();
+    assertThat(Resources.extension(Paths.get(".dotfile"))).isEmpty();
+    assertThat(Resources.extension(Paths.get("."))).isEmpty();
   }
 
   @Test

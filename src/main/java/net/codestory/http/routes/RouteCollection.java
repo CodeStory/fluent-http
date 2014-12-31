@@ -55,7 +55,7 @@ public class RouteCollection implements Routes {
 
   public RouteCollection(Env env) {
     this.env = env;
-    this.resources = new Resources();
+    this.resources = new Resources(env);
     this.compilers = new CompilerFacade(env, resources);
     this.site = new Site(env, resources);
     this.routes = new LinkedList<>();

@@ -16,6 +16,7 @@
 package net.codestory.http.templating;
 
 import static java.util.Arrays.*;
+import static net.codestory.http.misc.Env.DEFAULT_APP_FOLDER;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -32,8 +33,9 @@ import org.junit.*;
 import com.github.jknack.handlebars.*;
 
 public class HandlebarsCompilerTest {
-  static Resources resources = new Resources();
-  static HandlebarsCompiler compiler = new HandlebarsCompiler(resources, new Compilers(prodMode(), resources));
+  static Env env = prodMode();
+  static Resources resources = new Resources(env);
+  static HandlebarsCompiler compiler = new HandlebarsCompiler(resources, new Compilers(env, resources));
 
   private String compile(String content, Map<String, Object> variables) throws IOException {
     return compiler.compile(content, variables);
@@ -221,9 +223,7 @@ public class HandlebarsCompilerTest {
   }
 
   private static Env prodMode() {
-    Env env = mock(Env.class);
-    when(env.prodMode()).thenReturn(true);
-    return env;
+    return new Env(DEFAULT_APP_FOLDER, true, false, false, false);
   }
 
   private static Map<String, Object> map(String key, Object value) {

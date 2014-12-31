@@ -28,8 +28,8 @@ import net.codestory.http.types.*;
 public class Resources {
   private final String root;
 
-  public Resources() {
-    this.root = Env.APP_FOLDER;
+  public Resources(Env env) {
+    this.root = env.appFolder();
   }
 
   public boolean isPublic(Path path) {

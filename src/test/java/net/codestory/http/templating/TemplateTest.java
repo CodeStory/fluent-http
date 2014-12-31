@@ -16,6 +16,7 @@
 package net.codestory.http.templating;
 
 import static java.util.Collections.*;
+import static net.codestory.http.misc.Env.DEFAULT_APP_FOLDER;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.*;
@@ -27,8 +28,9 @@ import net.codestory.http.misc.*;
 import org.junit.*;
 
 public class TemplateTest {
-  static Resources resources = new Resources();
-  static CompilerFacade compilerFacade = new CompilerFacade(prodMode(), resources);
+  static Env env = prodMode();
+  static Resources resources = new Resources(env);
+  static CompilerFacade compilerFacade = new CompilerFacade(env, resources);
 
   String render(String name, Map<String, Object> model) {
     return new Template(resources, name).render(model, compilerFacade).content();
@@ -136,6 +138,6 @@ public class TemplateTest {
   }
 
   private static Env prodMode() {
-    return new Env(true, false, false, false);
+    return new Env(DEFAULT_APP_FOLDER, true, false, false, false);
   }
 }

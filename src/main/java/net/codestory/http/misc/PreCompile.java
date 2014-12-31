@@ -34,15 +34,15 @@ public class PreCompile {
   private final Site site;
 
   public PreCompile(Env env) {
-    this.resources = new Resources();
+    this.resources = new Resources(env);
     this.compilers = new CompilerFacade(env, resources);
     this.site = new Site(env, resources);
   }
 
   public static void main(String[] args) {
-    String destinationFolder = (args.length > 0) ? args[0] : Resources.APP_FOLDER;
+    String destinationFolder = (args.length > 0) ? args[0] : Env.DEFAULT_APP_FOLDER;
 
-    new PreCompile(new Env(true, false, false, false)).run(destinationFolder);
+    new PreCompile(new Env(Env.DEFAULT_APP_FOLDER, true, false, false, false)).run(destinationFolder);
   }
 
   public void run(String destinationFolder) {

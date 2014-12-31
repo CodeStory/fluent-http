@@ -20,11 +20,12 @@ import static org.assertj.core.api.Assertions.*;
 import java.nio.file.*;
 
 import net.codestory.http.io.Resources;
+import net.codestory.http.misc.Env;
 import org.junit.*;
 import org.junit.rules.*;
 
 public class LessCompilerTest {
-  static Resources resources = new Resources();
+  static Resources resources = new Resources(new Env());
   static LessCompiler compiler = new LessCompiler(resources, false);
 
   @Rule

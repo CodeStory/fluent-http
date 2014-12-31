@@ -16,6 +16,7 @@
 package net.codestory.http.testhelpers;
 
 import static net.codestory.http.Configuration.NO_ROUTE;
+import static net.codestory.http.misc.Env.DEFAULT_APP_FOLDER;
 import static net.codestory.http.misc.MemoizingSupplier.*;
 
 import java.util.function.*;
@@ -29,7 +30,7 @@ public class DevWebServerRule extends ExternalResource {
   private static Supplier<WebServer> server = memoize(() -> new WebServer() {
     @Override
     protected Env createEnv() {
-      return new Env(false, false, false, false);
+      return new Env(DEFAULT_APP_FOLDER, false, false, false, false);
     }
   }.startOnRandomPort());
 

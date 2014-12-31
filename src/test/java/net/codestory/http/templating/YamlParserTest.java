@@ -24,10 +24,11 @@ import java.util.*;
 
 import net.codestory.http.io.*;
 
+import net.codestory.http.misc.Env;
 import org.junit.*;
 
 public class YamlParserTest {
-  static Resources resources = new Resources();
+  static Resources resources = new Resources(new Env());
   static YamlParser parser = YamlParser.INSTANCE;
 
   @Test

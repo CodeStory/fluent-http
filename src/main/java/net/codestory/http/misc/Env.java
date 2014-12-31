@@ -19,21 +19,24 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Env {
-  public static String APP_FOLDER = "app";
+  public static String DEFAULT_APP_FOLDER = "app";
 
+  private final String appFolder;
   private final boolean prodMode;
   private final boolean disableClassPath;
   private final boolean disableFilesystem;
   private final boolean disableGzip;
 
   public Env() {
+    this.appFolder = DEFAULT_APP_FOLDER;
     this.prodMode = getBoolean("PROD_MODE", false);
     this.disableClassPath = getBoolean("http.disable.classpath", false);
     this.disableFilesystem = getBoolean("http.disable.filesystem", false);
     this.disableGzip = getBoolean("http.disable.gzip", false);
   }
 
-  public Env(boolean prodMode, boolean disableClassPath, boolean disableFilesystem, boolean disableGzip) {
+  public Env(String appFolder, boolean prodMode, boolean disableClassPath, boolean disableFilesystem, boolean disableGzip) {
+    this.appFolder = appFolder;
     this.prodMode = prodMode;
     this.disableClassPath = disableClassPath;
     this.disableFilesystem = disableFilesystem;
@@ -41,7 +44,11 @@ public class Env {
   }
 
   public Path appPath() {
-    return Paths.get(APP_FOLDER);
+    return Paths.get(appFolder());
+  }
+
+  public String appFolder() {
+    return appFolder;
   }
 
   public boolean prodMode() {
