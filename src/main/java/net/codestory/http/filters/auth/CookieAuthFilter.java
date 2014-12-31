@@ -21,7 +21,6 @@ import static net.codestory.http.constants.Headers.*;
 import static net.codestory.http.constants.Methods.*;
 import static net.codestory.http.payload.Payload.*;
 
-import java.io.*;
 import java.util.Random;
 import java.util.concurrent.*;
 
@@ -66,11 +65,11 @@ public class CookieAuthFilter implements Filter {
   }
 
   @Override
-  public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
+  public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws Exception {
     return uri.startsWith("/auth/") ? authenticationUri(uri, context, nextFilter) : otherUri(uri, context, nextFilter);
   }
 
-  private Payload authenticationUri(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
+  private Payload authenticationUri(String uri, Context context, PayloadSupplier nextFilter) throws Exception {
     String method = context.method();
 
     if (uri.equals("/auth/signin") && method.equals(POST)) {
@@ -84,7 +83,7 @@ public class CookieAuthFilter implements Filter {
     return nextFilter.get(); // Don't protect other /auth/ pages. Login and lost password pages for eg.
   }
 
-  private Payload otherUri(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
+  private Payload otherUri(String uri, Context context, PayloadSupplier nextFilter) throws Exception {
     String sessionId = readSessionIdInCookie(context);
     if (sessionId != null) {
       String login = sessionIdStore.getLogin(sessionId);

@@ -19,10 +19,10 @@ import net.codestory.http.*;
 
 @FunctionalInterface
 public interface ThreeParamsRoute extends AnyRoute {
-  Object body(Context context, String pathParameter1, String pathParameter2, String pathParameter3);
+  Object body(Context context, String pathParameter1, String pathParameter2, String pathParameter3) throws Exception;
 
   @Override
-  default Object body(Context context, String[] pathParameters) {
+  default Object body(Context context, String[] pathParameters) throws Exception {
     return body(context, pathParameters[0], pathParameters[1], pathParameters[2]);
   }
 }

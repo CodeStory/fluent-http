@@ -21,5 +21,5 @@ import net.codestory.http.*;
 
 @FunctionalInterface
 interface AnyRoute extends Serializable {
-  Object body(Context context, String... pathParameters);
+  Object body(Context context, String... pathParameters) throws Exception;
 }

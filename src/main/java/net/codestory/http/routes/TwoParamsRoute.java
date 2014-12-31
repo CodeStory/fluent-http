@@ -19,10 +19,10 @@ import net.codestory.http.*;
 
 @FunctionalInterface
 public interface TwoParamsRoute extends AnyRoute {
-  Object body(Context context, String pathParameters1, String pathParameters2);
+  Object body(Context context, String pathParameters1, String pathParameters2) throws Exception;
 
   @Override
-  default Object body(Context context, String[] pathParameters) {
+  default Object body(Context context, String[] pathParameters) throws Exception {
     return body(context, pathParameters[0], pathParameters[1]);
   }
 }

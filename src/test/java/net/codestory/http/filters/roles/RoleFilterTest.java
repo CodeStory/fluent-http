@@ -19,7 +19,6 @@ import static net.codestory.http.constants.HttpStatus.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import java.io.*;
 import java.util.*;
 
 import net.codestory.http.*;
@@ -46,7 +45,7 @@ public class RoleFilterTest {
   }
 
   @Test
-  public void no_user() throws IOException {
+  public void no_user() throws Exception {
     when(context.currentUser()).thenReturn(null);
     when(nextFilter.get()).thenReturn(nextPayload);
 
@@ -56,7 +55,7 @@ public class RoleFilterTest {
   }
 
   @Test
-  public void authorized() throws IOException {
+  public void authorized() throws Exception {
     when(context.currentUser()).thenReturn(user);
     when(user.isInRole("USER")).thenReturn(true);
     when(nextFilter.get()).thenReturn(nextPayload);
@@ -67,7 +66,7 @@ public class RoleFilterTest {
   }
 
   @Test
-  public void not_authorized() throws IOException {
+  public void not_authorized() throws Exception {
     when(context.currentUser()).thenReturn(user);
     when(user.isInRole("USER")).thenReturn(false);
 
@@ -77,7 +76,7 @@ public class RoleFilterTest {
   }
 
   @Test
-  public void authorized_admin() throws IOException {
+  public void authorized_admin() throws Exception {
     when(context.currentUser()).thenReturn(user);
     when(user.isInRole("ADMIN")).thenReturn(true);
     when(nextFilter.get()).thenReturn(nextPayload);
@@ -88,7 +87,7 @@ public class RoleFilterTest {
   }
 
   @Test
-  public void not_authorized_admin() throws IOException {
+  public void not_authorized_admin() throws Exception {
     when(context.currentUser()).thenReturn(user);
     when(user.isInRole("USER")).thenReturn(true);
     when(user.isInRole("ADMIN")).thenReturn(false);

@@ -21,6 +21,6 @@ import net.codestory.http.payload.*;
 
 @FunctionalInterface
 public interface PayloadSupplier extends Serializable {
-  Payload get() throws IOException;
+  Payload get() throws Exception;
 }
 

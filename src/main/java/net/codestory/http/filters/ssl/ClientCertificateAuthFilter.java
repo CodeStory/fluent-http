@@ -15,8 +15,6 @@
  */
 package net.codestory.http.filters.ssl;
 
-import java.io.*;
-
 import net.codestory.http.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.payload.*;
@@ -30,7 +28,7 @@ public class ClientCertificateAuthFilter implements Filter {
   }
 
   @Override
-  public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
+  public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws Exception {
     if (context.request().isSecure()) {
       User user = mapper.map(context);
       context.setCurrentUser(user);

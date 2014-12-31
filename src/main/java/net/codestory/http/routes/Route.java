@@ -21,7 +21,7 @@ import net.codestory.http.*;
 import net.codestory.http.payload.*;
 
 public interface Route extends Serializable {
-  default Payload apply(String uri, Context context) {
+  default Payload apply(String uri, Context context) throws Exception {
     Object body = body(context);
     return new Payload(body);
   }
@@ -30,6 +30,6 @@ public interface Route extends Serializable {
 
   boolean matchMethod(String method);
 
-  Object body(Context context);
+  Object body(Context context) throws Exception;
 }
 

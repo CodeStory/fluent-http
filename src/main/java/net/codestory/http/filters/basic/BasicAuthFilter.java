@@ -19,7 +19,6 @@ import static java.nio.charset.StandardCharsets.*;
 import static net.codestory.http.constants.Headers.*;
 import static net.codestory.http.payload.Payload.*;
 
-import java.io.*;
 import java.util.*;
 
 import net.codestory.http.*;
@@ -48,7 +47,7 @@ public class BasicAuthFilter implements Filter {
   }
 
   @Override
-  public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
+  public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws Exception {
     String authorization = context.header(AUTHORIZATION);
     if ((authorization == null) || (!authorization.toLowerCase(Locale.ENGLISH).startsWith("basic "))) {
       return unauthorized(realm);

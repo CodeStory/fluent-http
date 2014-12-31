@@ -17,8 +17,6 @@ package net.codestory.http.filters.mixed;
 
 import static net.codestory.http.constants.Headers.*;
 
-import java.io.*;
-
 import net.codestory.http.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.filters.auth.*;
@@ -41,7 +39,7 @@ public class MixedAuthFilter implements Filter {
   }
 
   @Override
-  public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
+  public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws Exception {
     return authFilter(context).apply(uri, context, nextFilter);
   }
 

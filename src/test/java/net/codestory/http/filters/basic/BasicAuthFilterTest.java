@@ -20,7 +20,6 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentCaptor.*;
 import static org.mockito.Mockito.*;
 
-import java.io.*;
 import java.util.*;
 
 import net.codestory.http.*;
@@ -47,7 +46,7 @@ public class BasicAuthFilterTest {
   }
 
   @Test
-  public void answer_401_on_non_authenticated_query() throws IOException {
+  public void answer_401_on_non_authenticated_query() throws Exception {
     Payload payload = filter.apply("/secure/foo", context, nextFilter);
 
     assertThat(payload.code()).isEqualTo(401);
@@ -55,7 +54,7 @@ public class BasicAuthFilterTest {
   }
 
   @Test
-  public void authorized_query() throws IOException {
+  public void authorized_query() throws Exception {
     when(context.header("Authorization")).thenReturn("Basic amw6cG9sa2E="); // "jl:polka" encoded in base64
 
     Payload payload = filter.apply("/secure/foo", context, nextFilter);
@@ -66,7 +65,7 @@ public class BasicAuthFilterTest {
   }
 
   @Test
-  public void answer_401_on_invalid_password() throws IOException {
+  public void answer_401_on_invalid_password() throws Exception {
     when(context.header("Authorization")).thenReturn("Basic amw6V1JPTkc="); // "jl:WRONG" encoded in base64
 
     Payload payload = filter.apply("/secure/foo", context, nextFilter);
@@ -76,7 +75,7 @@ public class BasicAuthFilterTest {
   }
 
   @Test
-  public void bad_request() throws IOException {
+  public void bad_request() throws Exception {
     when(context.header("Authorization")).thenReturn("Basic INVALID");
 
     Payload payload = filter.apply("/secure/foo", context, nextFilter);

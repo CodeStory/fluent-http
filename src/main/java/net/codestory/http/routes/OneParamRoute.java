@@ -19,10 +19,10 @@ import net.codestory.http.*;
 
 @FunctionalInterface
 public interface OneParamRoute extends AnyRoute {
-  Object body(Context context, String pathParameter);
+  Object body(Context context, String pathParameter) throws Exception;
 
   @Override
-  default Object body(Context context, String[] pathParameters) {
+  default Object body(Context context, String[] pathParameters) throws Exception {
     return body(context, pathParameters[0]);
   }
 }

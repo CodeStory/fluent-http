@@ -15,7 +15,6 @@
  */
 package net.codestory.http.filters.roles;
 
-import java.io.*;
 import java.util.*;
 
 import net.codestory.http.*;
@@ -30,7 +29,7 @@ public class RoleFilter implements Filter {
   }
 
   @Override
-  public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
+  public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws Exception {
     String role = findRole(uri);
     if ((role != null) && (context.currentUser() != null) && !context.currentUser().isInRole(role)) {
       return Payload.forbidden();

@@ -414,7 +414,7 @@ public class RouteCollection implements Routes {
     return this;
   }
 
-  public Payload apply(Context context) throws IOException {
+  public Payload apply(Context context) throws Exception {
     String uri = context.uri();
     if (uri == null) {
       return notFound();

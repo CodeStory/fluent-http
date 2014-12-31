@@ -35,7 +35,7 @@ class CatchAllRoute implements Route {
   }
 
   @Override
-  public Object body(Context context) {
+  public Object body(Context context) throws Exception {
     return route.body(context);
   }
 }

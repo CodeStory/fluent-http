@@ -15,8 +15,6 @@
  */
 package net.codestory.http.filters.log;
 
-import java.io.*;
-
 import net.codestory.http.*;
 import net.codestory.http.filters.*;
 import net.codestory.http.logs.*;
@@ -24,7 +22,7 @@ import net.codestory.http.payload.*;
 
 public class LogRequestFilter implements Filter {
   @Override
-  public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
+  public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws Exception {
     Logs.uri(uri);
     return nextFilter.get();
   }
