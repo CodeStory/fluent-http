@@ -151,11 +151,6 @@ public class Context {
     return request.method();
   }
 
-  public String clientAddress() {
-    String forwarded = header(X_FORWARDED_FOR);
-    return (forwarded != null) ? forwarded : request.clientAddress().toString();
-  }
-
   public <T> T getBean(Class<T> type) {
     return iocAdapter.get(type);
   }

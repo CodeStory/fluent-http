@@ -26,6 +26,7 @@ import net.codestory.http.internal.*;
 import net.codestory.http.io.InputStreams;
 
 import static java.util.stream.Collectors.toMap;
+import static net.codestory.http.constants.Headers.X_FORWARDED_FOR;
 
 public interface Request extends Unwrappable {
   String uri();
@@ -69,6 +70,11 @@ public interface Request extends Unwrappable {
   InputStream inputStream() throws IOException;
 
   InetSocketAddress clientAddress();
+
+  default String clientAddressForwarded() {
+    String forwarded = header(X_FORWARDED_FOR);
+    return (forwarded != null) ? forwarded : clientAddress().toString();
+  }
 
   boolean isSecure();
 
