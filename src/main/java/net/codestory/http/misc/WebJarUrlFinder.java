@@ -28,12 +28,12 @@ public class WebJarUrlFinder {
 
   public URL url(String path) {
     URL urlMinified = getResource(minified(path));
-    URL urlNonMinified = getResource(notMinified(path));
+    URL urlNotMinified = getResource(notMinified(path));
 
     if (useMinifiedVersions) {
-      return (urlMinified != null) ? urlMinified : urlNonMinified;
+      return (urlMinified != null) ? urlMinified : urlNotMinified;
     } else {
-      return (urlNonMinified != null) ? urlNonMinified : urlMinified;
+      return (urlNotMinified != null) ? urlNotMinified : urlMinified;
     }
   }
 
