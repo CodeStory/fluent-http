@@ -28,7 +28,7 @@ public class Env {
   private final boolean disableGzip;
 
   public Env() {
-    this.appFolder = DEFAULT_APP_FOLDER;
+    this.appFolder = getString("APP_FOLDER", DEFAULT_APP_FOLDER);
     this.prodMode = getBoolean("PROD_MODE", false);
     this.disableClassPath = getBoolean("http.disable.classpath", false);
     this.disableFilesystem = getBoolean("http.disable.filesystem", false);
@@ -74,6 +74,11 @@ public class Env {
   private static String get(String propertyName) {
     String env = System.getenv(propertyName);
     return (env != null) ? env : System.getProperty(propertyName);
+  }
+
+  private static String getString(String propertyName, String defaultValue) {
+    String value = get(propertyName);
+    return (value == null) ? defaultValue : value;
   }
 
   private static boolean getBoolean(String propertyName, boolean defaultValue) {
