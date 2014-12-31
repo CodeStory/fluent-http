@@ -15,19 +15,22 @@
  */
 package net.codestory.http.templating;
 
-import static org.assertj.core.api.Assertions.*;
+import org.junit.Test;
 
-import java.nio.file.*;
-import java.util.*;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
 
-import org.junit.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class YamlFrontMatterTest {
+  private YamlFrontMatter parse(String path, String... lines) {
+    return YamlFrontMatter.parse(Paths.get(path), String.join("\n", lines));
+  }
+
   @Test
   public void should_read_empty_file() {
-    String content = content("");
-
-    YamlFrontMatter parsed = YamlFrontMatter.parse(Paths.get("empty"), content);
+    YamlFrontMatter parsed = parse("empty", "");
 
     assertThat((Object) parsed.getPath()).isEqualTo(Paths.get("empty"));
     assertThat(parsed.getContent()).isEmpty();
@@ -40,9 +43,9 @@ public class YamlFrontMatterTest {
 
   @Test
   public void should_read_file_without_headers() {
-    String content = content("CONTENT");
-
-    YamlFrontMatter parsed = YamlFrontMatter.parse(Paths.get("folder/file.md"), content);
+    YamlFrontMatter parsed = parse("folder/file.md",
+      "CONTENT"
+    );
 
     assertThat((Object) parsed.getPath()).isEqualTo(Paths.get("folder/file.md"));
     assertThat(parsed.getContent()).isEqualTo("CONTENT");
@@ -55,14 +58,13 @@ public class YamlFrontMatterTest {
 
   @Test
   public void should_read_header_variables() {
-    String content = content(
+    YamlFrontMatter parsed = parse("",
       "---",
       "layout: standard",
       "title: CodeStory - Devoxx Fight",
       "---",
-      "BODY");
-
-    YamlFrontMatter parsed = YamlFrontMatter.parse(Paths.get(""), content);
+      "BODY"
+    );
 
     assertThat(parsed.getContent()).isEqualTo("BODY");
     assertThat(parsed.getVariables())
@@ -73,14 +75,13 @@ public class YamlFrontMatterTest {
 
   @Test
   public void should_ignore_commented_variable() {
-    String content = content(
+    YamlFrontMatter parsed = parse("",
       "---",
       "#layout: standard",
       "title: CodeStory - Devoxx Fight",
       "---",
-      "CONTENT");
-
-    YamlFrontMatter parsed = YamlFrontMatter.parse(Paths.get(""), content);
+      "CONTENT"
+    );
 
     assertThat(parsed.getVariables())
       .doesNotContainEntry("layout", "standard")
@@ -90,13 +91,12 @@ public class YamlFrontMatterTest {
 
   @Test
   public void escape_strings_with_quotes() {
-    String content = content(
+    YamlFrontMatter parsed = parse("",
       "---",
       "title: \'{{Code}} Fight by Code-Story\'",
       "---",
-      "CONTENT");
-
-    YamlFrontMatter parsed = YamlFrontMatter.parse(Paths.get(""), content);
+      "CONTENT"
+    );
 
     assertThat(parsed.getVariables())
       .containsEntry("title", "{{Code}} Fight by Code-Story");
@@ -104,16 +104,15 @@ public class YamlFrontMatterTest {
 
   @Test
   public void complex_yaml() {
-    String content = content(
+    YamlFrontMatter parsed = parse("",
       " ",
       "  ---",
       "products: ",
       " - name: PROD1",
       " - name: PROD2",
       "---  ",
-      "CONTENT");
-
-    YamlFrontMatter parsed = YamlFrontMatter.parse(Paths.get(""), content);
+      "CONTENT"
+    );
 
     @SuppressWarnings("unchecked")
     List<Map<String, Object>> products = (List<Map<String, Object>>) parsed.getVariables().get("products");
@@ -124,7 +123,7 @@ public class YamlFrontMatterTest {
 
   @Test
   public void ignore_dashes_in_content() {
-    String content = content(
+    YamlFrontMatter parsed = parse("",
       "---",
       "title: TITLE",
       "---",
@@ -133,13 +132,7 @@ public class YamlFrontMatterTest {
       "END"
     );
 
-    YamlFrontMatter parsed = YamlFrontMatter.parse(Paths.get(""), content);
-
     assertThat(parsed.getContent()).isEqualTo("START\n---\nEND");
     assertThat(parsed.getVariables()).containsEntry("title", "TITLE");
-  }
-
-  static String content(String... lines) {
-    return String.join("\n", lines);
   }
 }
