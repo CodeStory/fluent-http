@@ -94,7 +94,7 @@ public class Compilers {
         }
       }
 
-      return CacheEntry.fromString(sourceFile.getSource());
+      throw new IllegalArgumentException("Unable to compile " + sourceFile.getFileName() + ". Unknown extension");
     });
   }
 }

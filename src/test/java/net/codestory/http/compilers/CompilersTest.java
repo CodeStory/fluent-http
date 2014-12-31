@@ -33,11 +33,9 @@ public class CompilersTest {
     return compilers.compile(new SourceFile(Paths.get(filename), content)).content();
   }
 
-  @Test
+  @Test(expected = IllegalArgumentException.class)
   public void do_not_compile_plain_file() throws IOException {
-    String css = compile("plain.txt", "Hello");
-
-    assertThat(css).isEqualTo("Hello");
+    compile("plain.txt", "");
   }
 
   @Test
