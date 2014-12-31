@@ -40,14 +40,24 @@ public interface Request extends Unwrappable {
   }
 
   default <T> T contentAs(Class<T> type) throws IOException {
+    if (isUrlEncodedForm()) {
+      return TypeConvert.convertValue(query().keyValues(), type);
+    }
     return TypeConvert.fromJson(content(), type);
   }
 
+  @SuppressWarnings("unchecked")
   default <T> T contentAs(Type type) throws IOException {
+    if (isUrlEncodedForm()) {
+      return (T) TypeConvert.convertValue(query().keyValues(), type);
+    }
     return TypeConvert.fromJson(content(), type);
   }
 
   default <T> T contentAs(TypeReference<T> type) throws IOException {
+    if (isUrlEncodedForm()) {
+      return TypeConvert.convertValue(query().keyValues(), type);
+    }
     return TypeConvert.fromJson(content(), type);
   }
 
@@ -74,6 +84,11 @@ public interface Request extends Unwrappable {
   default String clientAddressForwarded() {
     String forwarded = header(X_FORWARDED_FOR);
     return (forwarded != null) ? forwarded : clientAddress().toString();
+  }
+
+  default boolean isUrlEncodedForm() {
+    String contentType = header("Content-Type");
+    return (contentType != null) && (contentType.contains("application/x-www-form-urlencoded"));
   }
 
   boolean isSecure();

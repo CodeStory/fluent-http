@@ -25,7 +25,6 @@ import java.lang.reflect.*;
 import java.net.*;
 import java.util.*;
 
-import net.codestory.http.convert.*;
 import net.codestory.http.injection.*;
 import net.codestory.http.security.*;
 import net.codestory.http.templating.*;
@@ -163,11 +162,6 @@ public class Context {
     }
   }
 
-  public boolean isUrlEncodedForm() {
-    String contentType = header("Content-Type");
-    return (contentType != null) && (contentType.contains("application/x-www-form-urlencoded"));
-  }
-
   public Object extract(Type type) throws IOException {
     if (type instanceof Class) {
       Class<?> clazz = (Class<?>) type;
@@ -220,10 +214,6 @@ public class Context {
           return query().keyValues();
         }
       }
-    }
-
-    if (isUrlEncodedForm()) {
-      return TypeConvert.convertValue(query().keyValues(), type);
     }
 
     return request().contentAs(type);
