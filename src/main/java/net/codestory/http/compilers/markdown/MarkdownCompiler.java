@@ -33,6 +33,6 @@ public class MarkdownCompiler implements net.codestory.http.compilers.Compiler {
 
   @Override
   public String compile(SourceFile sourceFile) {
-    return Processor.process(sourceFile.getContent(), configuration);
+    return Processor.process(sourceFile.getSource(), configuration);
   }
 }

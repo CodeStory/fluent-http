@@ -15,6 +15,7 @@
  */
 package net.codestory.http.compilers;
 
+import net.codestory.http.io.Resources;
 import net.codestory.http.misc.Sha1;
 
 import java.nio.file.Path;
@@ -33,7 +34,7 @@ public class SourceFile {
   }
 
   public String getFileName() {
-    return path.getFileName().toString(); // TODO
+    return Resources.toUnixString(path);
   }
 
   public String sha1() {
@@ -42,10 +43,6 @@ public class SourceFile {
 
   public Path getPath() {
     return path;
-  }
-
-  public String getContent() {
-    return content;
   }
 
   public String getSource() {
