@@ -243,9 +243,9 @@ public class PayloadWriter {
       Path path = (Path) content;
       return ContentTypes.get(path.toString());
     }
-    if (content instanceof CompiledPath) {
-      CompiledPath compiledPath = (CompiledPath) content;
-      return ContentTypes.get(compiledPath.getResponsePath().toString());
+    if (content instanceof SourceFile) {
+      SourceFile sourceFile = (SourceFile) content;
+      return ContentTypes.get(sourceFile.getPath().toString());
     }
     if (content instanceof URL) {
       return ContentTypes.get(((URL) content).getFile());
@@ -291,8 +291,8 @@ public class PayloadWriter {
     if (content instanceof Path) {
       return forPath((Path) content);
     }
-    if (content instanceof CompiledPath) {
-      return forCompiledPath((CompiledPath) content);
+    if (content instanceof SourceFile) {
+      return forSourceFile((SourceFile) content);
     }
     if (content instanceof URL) {
       return forURL((URL) content);
@@ -368,13 +368,13 @@ public class PayloadWriter {
     return resources.readBytes(path);
   }
 
-  protected byte[] forCompiledPath(CompiledPath compiledPath) throws IOException {
-    Path path = compiledPath.getSourcePath();
+  protected byte[] forSourceFile(SourceFile sourceFile) throws IOException {
+    Path path = sourceFile.getPath();
     if (ContentTypes.supportsTemplating(path.toString())) {
       return forTemplatePath(path);
     }
 
-    return compilers.compile(path).toBytes();
+    return compilers.compile(sourceFile).toBytes();
   }
 
   protected byte[] forTemplatePath(Path path) {

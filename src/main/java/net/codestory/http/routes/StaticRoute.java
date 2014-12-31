@@ -16,11 +16,11 @@
 package net.codestory.http.routes;
 
 import net.codestory.http.Context;
-import net.codestory.http.compilers.CompiledPath;
 import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.io.Resources;
 import net.codestory.http.misc.Cache;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.*;
@@ -64,15 +64,19 @@ class StaticRoute implements Route {
   }
 
   private Object findPath(String uri) {
-    Path path = resources.findExistingPath(uri);
-    if ((path != null) && resources.isPublic(path)) {
-      if (compilers.canCompile(extension(uri))) {
-        return new CompiledPath(path, path);
+    try {
+      Path path = resources.findExistingPath(uri);
+      if ((path != null) && resources.isPublic(path)) {
+        if (compilers.canCompile(extension(uri))) {
+          return resources.sourceFile(path);
+        }
+        return path;
       }
-      return path;
-    }
 
-    Path sourcePath = compilers.findPublicSourceFor(uri);
-    return (sourcePath == null) ? NOT_FOUND : new CompiledPath(sourcePath, sourcePath);
+      Path sourcePath = compilers.findPublicSourceFor(uri);
+      return (sourcePath == null) ? NOT_FOUND : resources.sourceFile(sourcePath);
+    } catch (IOException e) {
+      throw new RuntimeException("Unable to read source file", e);
+    }
   }
 }
