@@ -28,7 +28,6 @@ import java.util.function.*;
 import static net.codestory.http.constants.Methods.GET;
 import static net.codestory.http.constants.Methods.HEAD;
 import static net.codestory.http.io.Strings.extension;
-import static net.codestory.http.io.Strings.replaceLast;
 
 class StaticRoute implements Route {
   private static final Path NOT_FOUND = Paths.get("");
@@ -73,20 +72,7 @@ class StaticRoute implements Route {
       return path;
     }
 
-    return findCompilableTo(uri);
-  }
-
-  private Object findCompilableTo(String uri) {
-    String extension = extension(uri);
-
-    for (String sourceExtension : compilers.extensionsThatCompileTo(extension)) {
-      Path path = Paths.get(replaceLast(uri, extension, sourceExtension));
-
-      if (resources.isPublic(path)) {
-        return new CompiledPath(path, path);
-      }
-    }
-
-    return NOT_FOUND;
+    Path sourcePath = compilers.findPublicSourceFor(uri);
+    return (sourcePath == null) ? NOT_FOUND : new CompiledPath(sourcePath, sourcePath);
   }
 }

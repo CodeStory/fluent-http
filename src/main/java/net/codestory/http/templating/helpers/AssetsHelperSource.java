@@ -18,22 +18,15 @@ package net.codestory.http.templating.helpers;
 import com.github.jknack.handlebars.Handlebars.SafeString;
 import net.codestory.http.compilers.CacheEntry;
 import net.codestory.http.compilers.CompilerFacade;
-import net.codestory.http.io.Resources;
 import net.codestory.http.misc.Sha1;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static net.codestory.http.io.Strings.extension;
-import static net.codestory.http.io.Strings.replaceLast;
 
 public class AssetsHelperSource {
-  private final Resources resources;
   private final CompilerFacade compilers;
 
-  public AssetsHelperSource(Resources resources, CompilerFacade compilers) {
-    this.resources = resources;
+  public AssetsHelperSource(CompilerFacade compilers) {
     this.compilers = compilers;
   }
 
@@ -50,7 +43,7 @@ public class AssetsHelperSource {
   }
 
   private String uriWithSha1(String uri) throws IOException {
-    Path path = findCompilableTo(uri);
+    Path path = compilers.findPublicSourceFor(uri);
     return (path == null) ? uri : uri + '?' + sha1(path);
   }
 
@@ -61,20 +54,5 @@ public class AssetsHelperSource {
   private String sha1(Path path) throws IOException {
     CacheEntry compile = compilers.compile(path);
     return Sha1.of(compile.toBytes());
-  }
-
-  // TODO: Remove duplication
-  private Path findCompilableTo(String uri) {
-    String extension = extension(uri);
-
-    for (String sourceExtension : compilers.extensionsThatCompileTo(extension)) {
-      Path sourcePath = Paths.get(replaceLast(uri, extension, sourceExtension));
-
-      if (resources.isPublic(sourcePath)) {
-        return sourcePath;
-      }
-    }
-
-    return null;
   }
 }

@@ -15,10 +15,13 @@
  */
 package net.codestory.http.compilers;
 
+import static net.codestory.http.io.Strings.extension;
+import static net.codestory.http.io.Strings.replaceLast;
 import static net.codestory.http.misc.MemoizingSupplier.memoize;
 
 import java.io.*;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -83,5 +86,19 @@ public class CompilerFacade implements CompilersConfiguration {
 
   public String renderView(String uri, Map<String, ?> variables) {
     return viewCompiler.get().render(uri, variables);
+  }
+
+  public Path findPublicSourceFor(String uri) {
+    String extension = extension(uri);
+
+    for (String sourceExtension : extensionsThatCompileTo(extension)) {
+      Path sourcePath = Paths.get(replaceLast(uri, extension, sourceExtension));
+
+      if (resources.isPublic(sourcePath)) {
+        return sourcePath;
+      }
+    }
+
+    return null;
   }
 }
