@@ -18,6 +18,7 @@ package net.codestory.http.templating.helpers;
 import com.github.jknack.handlebars.Handlebars.SafeString;
 import net.codestory.http.compilers.CacheEntry;
 import net.codestory.http.compilers.Compilers;
+import net.codestory.http.compilers.SourceFile;
 import net.codestory.http.io.Resources;
 import net.codestory.http.misc.Sha1;
 
@@ -25,7 +26,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static net.codestory.http.io.Strings.extension;
 import static net.codestory.http.io.Strings.replaceLast;
 
@@ -60,7 +60,7 @@ public class AssetsHelperSource {
   }
 
   private String sha1(Path path) throws IOException {
-    CacheEntry compile = compilers.compile(path, resources.read(path, UTF_8));
+    CacheEntry compile = compilers.compile(new SourceFile(resources, path));
     return Sha1.of(compile.toBytes());
   }
 

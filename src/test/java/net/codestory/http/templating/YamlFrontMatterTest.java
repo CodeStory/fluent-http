@@ -15,6 +15,7 @@
  */
 package net.codestory.http.templating;
 
+import net.codestory.http.compilers.SourceFile;
 import org.junit.Test;
 
 import java.nio.file.Paths;
@@ -25,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class YamlFrontMatterTest {
   private YamlFrontMatter parse(String path, String... lines) {
-    return YamlFrontMatter.parse(Paths.get(path), String.join("\n", lines));
+    return YamlFrontMatter.parse(new SourceFile(Paths.get(path), String.join("\n", lines)));
   }
 
   @Test

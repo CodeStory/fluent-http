@@ -17,8 +17,6 @@ package net.codestory.http.compilers;
 
 import static com.github.sommeri.less4j.LessCompiler.*;
 
-import java.nio.file.*;
-
 import com.github.sommeri.less4j.*;
 import com.github.sommeri.less4j.core.*;
 import net.codestory.http.io.Resources;
@@ -33,15 +31,15 @@ public class LessCompiler implements Compiler {
   }
 
   @Override
-  public String compile(Path path, String source) {
+  public String compile(SourceFile sourcefile) {
     try {
       Configuration configuration = new Configuration();
 
       configureSourceMap(configuration);
 
-      return new ThreadUnsafeLessCompiler().compile(new PathSource(resources, path, source), configuration).getCss();
+      return new ThreadUnsafeLessCompiler().compile(new PathSource(resources, sourcefile), configuration).getCss();
     } catch (Less4jException e) {
-      String message = cleanMessage(path, e.getMessage());
+      String message = cleanMessage(sourcefile, e.getMessage());
       throw new CompilerException(message);
     }
   }
@@ -52,7 +50,7 @@ public class LessCompiler implements Compiler {
     sourceMaps.setInline(inline);
   }
 
-  private static String cleanMessage(Path path, String message) {
-    return "Unable to compile less " + path + ": " + message.replace("Could not compile less. ", "");
+  private static String cleanMessage(SourceFile sourcefile, String message) {
+    return "Unable to compile less " + sourcefile.getFileName() + ": " + message.replace("Could not compile less. ", "");
   }
 }

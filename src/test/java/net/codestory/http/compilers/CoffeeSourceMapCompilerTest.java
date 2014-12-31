@@ -25,7 +25,7 @@ public class CoffeeSourceMapCompilerTest {
   static CoffeeSourceMapCompiler compiler = new CoffeeSourceMapCompiler();
 
   private String compile(String filename, String content) {
-    return compiler.compile(Paths.get(filename), content);
+    return compiler.compile(new SourceFile(Paths.get(filename), content));
   }
 
   @Test

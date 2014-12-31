@@ -18,9 +18,7 @@ package net.codestory.http.compilers;
 import net.codestory.http.compilers.markdown.MarkdownCompiler;
 import net.codestory.http.io.Resources;
 import net.codestory.http.misc.Env;
-import net.codestory.http.misc.Sha1;
 
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -77,32 +75,31 @@ public class Compilers {
     return compiledExtension.get(extension);
   }
 
-  public CacheEntry compile(Path path, String content) {
-    return cache.computeIfAbsent(path.toString() + ';' + content, ignore -> doCompile(path, content));
+  public CacheEntry compile(SourceFile sourceFile) {
+    return cache.computeIfAbsent(sourceFile.getFileName() + ';' + sourceFile.getSource(), ignore -> doCompile(sourceFile));
   }
 
-  private CacheEntry doCompile(Path path, String content) {
+  private CacheEntry doCompile(SourceFile sourceFile) {
     for (Entry<String, Supplier<Compiler>> entry : compilerByExtension.entrySet()) {
       String extension = entry.getKey();
 
-      if (path.toString().endsWith(extension)) {
+      if (sourceFile.hasExtension(extension)) {
         // Hack until I find something better
         if (extension.equals(".less")) { // TODO: handle ".less.source"
-          if (content.contains("@import")) {
-            return CacheEntry.noCache(doCompile(path, content, entry.getValue()));
+          if (sourceFile.getSource().contains("@import")) {
+            return CacheEntry.noCache(doCompile(sourceFile, entry.getValue()));
           }
         }
 
-        String sha1 = Sha1.of(content);
-        return diskCache.computeIfAbsent(sha1, extension, () -> doCompile(path, content, entry.getValue()));
+        String sha1 = sourceFile.sha1();
+        return diskCache.computeIfAbsent(sha1, extension, () -> doCompile(sourceFile, entry.getValue()));
       }
     }
 
-    return CacheEntry.fromString(content);
+    return CacheEntry.fromString(sourceFile.getSource());
   }
 
-  private String doCompile(Path path, String content, Supplier<Compiler> compilerSupplier) {
-    Compiler compiler = compilerSupplier.get();
-    return compiler.compile(path, content);
+  private String doCompile(SourceFile sourcefile, Supplier<Compiler> compilerSupplier) {
+    return compilerSupplier.get().compile(sourcefile);
   }
 }

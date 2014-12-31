@@ -75,27 +75,27 @@ public final class NashornCompiler {
     return concatenatedScript.toString();
   }
 
-  public synchronized String compile(Path path, String source, Map<String, Object> options) {
-    bindings.put("__filename", getFileName(path));
-    bindings.put("__source", source);
+  public synchronized String compile(SourceFile sourceFile, Map<String, Object> options) {
+    bindings.put("__filename", getFileName(sourceFile));
+    bindings.put("__source", sourceFile.getSource());
     options.forEach((name, value) -> bindings.put(name, value));
 
     try {
       return compiledScript.eval(bindings).toString();
     } catch (ScriptException e) {
-      String message = cleanMessage(path, e.getCause().getMessage());
+      String message = cleanMessage(sourceFile, e.getCause().getMessage());
       throw new CompilerException(message);
     }
   }
 
-  private String getFileName(Path path) {
-    return path.getFileName().toString().replace(".map", ".source");
+  private String getFileName(SourceFile sourceFile) {
+    return sourceFile.getFileName().replace(".map", ".source");
   }
 
-  private static String cleanMessage(Path path, String message) {
+  private static String cleanMessage(SourceFile sourceFile, String message) {
     return message.replace(
       "Unable to compile CoffeeScript [stdin]:",
-      "Unable to compile " + path + ":"
+      "Unable to compile " + sourceFile.getFileName() + ":"
     );
   }
 }

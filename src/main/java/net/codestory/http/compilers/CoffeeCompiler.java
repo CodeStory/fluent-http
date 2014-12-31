@@ -15,7 +15,6 @@
  */
 package net.codestory.http.compilers;
 
-import java.nio.file.*;
 import java.util.*;
 
 import static java.util.Collections.singletonMap;
@@ -32,19 +31,19 @@ public class CoffeeCompiler implements Compiler {
   }
 
   @Override
-  public String compile(Path path, String source) {
-    Map<String, Object> options = singletonMap("__literate", path.toString().endsWith(".litcoffee"));
+  public String compile(SourceFile sourceFile) {
+    Map<String, Object> options = singletonMap("__literate", sourceFile.hasExtension(".litcoffee"));
 
-    String javascript = nashornCompiler.compile(path, source, options);
+    String javascript = nashornCompiler.compile(sourceFile, options);
 
     if (sourceMaps) {
-      return addSourceMapping(javascript, path);
+      return addSourceMapping(javascript, sourceFile);
     }
 
     return javascript;
   }
 
-  private static String addSourceMapping(String javascript, Path path) {
-    return javascript + "\n//# sourceMappingURL=" + path.getFileName() + ".map";
+  private static String addSourceMapping(String javascript, SourceFile sourceFile) {
+    return javascript + "\n//# sourceMappingURL=" + sourceFile.getFileName() + ".map";
   }
 }

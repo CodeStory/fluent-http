@@ -29,7 +29,7 @@ public class CoffeeCompilerTest {
   public ExpectedException thrown = ExpectedException.none();
 
   private String compile(String filename, String content) {
-    return compiler.compile(Paths.get(filename), content);
+    return compiler.compile(new SourceFile(Paths.get(filename), content));
   }
 
   @Test
@@ -48,11 +48,11 @@ public class CoffeeCompilerTest {
 
   @Test
   public void for_performance_compile_coffee_to_js_only_once() {
-    new CoffeeCompiler(false).compile(Paths.get("warmup.coffee"), "life=" + 0);
+    new CoffeeCompiler(false).compile(new SourceFile(Paths.get("warmup.coffee"), "life=" + 0));
 
     long date1 = System.currentTimeMillis();
     for (int i = 1; i < 10; i++) {
-      String js = new CoffeeCompiler(false).compile(Paths.get("file.coffee"), "life=" + i);
+      String js = new CoffeeCompiler(false).compile(new SourceFile(Paths.get("file.coffee"), "life=" + i));
       assertThat(js).isNotEmpty();
     }
     long date2 = System.currentTimeMillis();
@@ -63,7 +63,7 @@ public class CoffeeCompilerTest {
   public void dont_set_sourcemap_in_prod_mode() {
     CoffeeCompiler compiler = new CoffeeCompiler(true);
 
-    String js = compiler.compile(Paths.get("file.coffee"), "life=42");
+    String js = compiler.compile(new SourceFile(Paths.get("file.coffee"), "life=42"));
 
     assertThat(js).isEqualTo("var life;\n\nlife = 42;\n");
   }

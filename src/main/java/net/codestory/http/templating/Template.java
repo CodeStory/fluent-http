@@ -16,14 +16,11 @@
 package net.codestory.http.templating;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
 
 import net.codestory.http.compilers.*;
 import net.codestory.http.io.*;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class Template {
   private final Resources resources;
@@ -47,14 +44,14 @@ public class Template {
 
   public CacheEntry render(Map<String, ?> keyValues, CompilerFacade compilerFacade) {
     try {
-      YamlFrontMatter yamlFrontMatter = YamlFrontMatter.parse(path, resources.read(path, UTF_8));
+      YamlFrontMatter yamlFrontMatter = YamlFrontMatter.parse(new SourceFile(resources, path));
 
       String content = yamlFrontMatter.getContent();
       Map<String, Object> variables = yamlFrontMatter.getVariables();
       Map<String, Object> allKeyValues = merge(variables, keyValues);
 
       String body = compilerFacade.handlebar(content, allKeyValues);
-      CacheEntry entry = compilerFacade.compile(path, body);
+      CacheEntry entry = compilerFacade.compile(new SourceFile(path, body));
 
       String layout = (String) variables.get("layout");
       if (layout == null) {

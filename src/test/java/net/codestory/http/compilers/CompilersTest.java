@@ -30,7 +30,7 @@ public class CompilersTest {
   static Compilers compilers = new Compilers(prodMode(), new Resources(new Env()));
 
   private String compile(String filename, String content) {
-    return compilers.compile(Paths.get(filename), content).content();
+    return compilers.compile(new SourceFile(Paths.get(filename), content)).content();
   }
 
   @Test
@@ -42,7 +42,7 @@ public class CompilersTest {
 
   @Test
   public void register_custom_compiler() {
-    compilers.register(() -> (path, source) -> source + source, ".html", ".copycat");
+    compilers.register(() -> (sourceFile) -> sourceFile.getSource() + sourceFile.getSource(), ".html", ".copycat");
 
     String source = compile("file.copycat", "Hello");
 

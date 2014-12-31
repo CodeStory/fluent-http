@@ -25,12 +25,12 @@ import static net.codestory.http.io.Resources.*;
 import static net.codestory.http.misc.MemoizingSupplier.*;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Collectors;
 
+import net.codestory.http.compilers.SourceFile;
 import net.codestory.http.convert.*;
 import net.codestory.http.io.*;
 import net.codestory.http.misc.*;
@@ -135,7 +135,7 @@ public class Site {
   private Map<String, Object> pathToMap(String path) {
     try {
       Path yamlPath = Paths.get(path);
-      return YamlFrontMatter.parse(yamlPath, resources.read(yamlPath, UTF_8)).getVariables();
+      return YamlFrontMatter.parse(new SourceFile(resources, yamlPath)).getVariables();
     } catch (IOException e) {
       throw new IllegalStateException("Unable to read file: " + path, e);
     }

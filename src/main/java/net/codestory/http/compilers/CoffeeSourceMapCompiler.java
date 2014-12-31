@@ -15,7 +15,6 @@
  */
 package net.codestory.http.compilers;
 
-import java.nio.file.*;
 import java.util.*;
 
 import static java.util.Collections.singletonMap;
@@ -26,9 +25,9 @@ public class CoffeeSourceMapCompiler implements Compiler {
     "coffee-script/toSourceMap.js");
 
   @Override
-  public String compile(Path path, String source) {
-    Map<String, Object> options = singletonMap("__literate", path.toString().endsWith(".litcoffee"));
+  public String compile(SourceFile sourceFile) {
+    Map<String, Object> options = singletonMap("__literate", sourceFile.hasExtension(".litcoffee"));
 
-    return nashornCompiler.compile(path, source, options);
+    return nashornCompiler.compile(sourceFile, options);
   }
 }

@@ -19,13 +19,14 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.nio.file.*;
 
+import net.codestory.http.compilers.SourceFile;
 import org.junit.*;
 
 public class MarkdownCompilerTest {
   static MarkdownCompiler compiler = new MarkdownCompiler();
 
   private String compile(String filename, String content) {
-    return compiler.compile(Paths.get(filename), content);
+    return compiler.compile(new SourceFile(Paths.get(filename), content));
   }
 
   @Test

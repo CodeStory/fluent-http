@@ -16,11 +16,10 @@
 package net.codestory.http.extensions;
 
 import net.codestory.http.compilers.CompilersConfiguration;
+import net.codestory.http.compilers.SourceFile;
 import net.codestory.http.misc.Env;
 import net.codestory.http.testhelpers.AbstractProdWebServerTest;
 import org.junit.Test;
-
-import java.nio.file.Path;
 
 public class CustomCompilerTest extends AbstractProdWebServerTest {
   @Test
@@ -41,8 +40,8 @@ public class CustomCompilerTest extends AbstractProdWebServerTest {
 
   static class ToLowerCaseCompiler implements net.codestory.http.compilers.Compiler {
     @Override
-    public String compile(Path path, String source) {
-      return source.toLowerCase();
+    public String compile(SourceFile sourceFile) {
+      return sourceFile.getSource().toLowerCase();
     }
   }
 }

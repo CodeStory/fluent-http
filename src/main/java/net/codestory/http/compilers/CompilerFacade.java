@@ -69,8 +69,8 @@ public class CompilerFacade implements CompilersConfiguration {
     return compilers.get().compiledExtension(extension);
   }
 
-  public CacheEntry compile(Path path, String content) {
-    return compilers.get().compile(path, content);
+  public CacheEntry compile(SourceFile sourcefile) {
+    return compilers.get().compile(sourcefile);
   }
 
   public String handlebar(String template, Map<String, ?> variables) throws IOException {

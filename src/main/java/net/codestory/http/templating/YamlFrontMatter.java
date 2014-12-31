@@ -21,6 +21,7 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.regex.*;
 
+import net.codestory.http.compilers.SourceFile;
 import net.codestory.http.io.*;
 
 public class YamlFrontMatter {
@@ -51,14 +52,14 @@ public class YamlFrontMatter {
     return variables;
   }
 
-  public static YamlFrontMatter parse(Path path, String text) {
-    Matcher matcher = FRONT_MATTER.matcher(text);
+  public static YamlFrontMatter parse(SourceFile sourceFile) {
+    Matcher matcher = FRONT_MATTER.matcher(sourceFile.getContent());
 
     boolean matches = matcher.matches();
     String header = matches ? matcher.group(1) : null;
-    String content = matches ? matcher.group(2) : text;
+    String content = matches ? matcher.group(2) : sourceFile.getContent();
 
-    return new YamlFrontMatter(path, content, parseVariables(header));
+    return new YamlFrontMatter(sourceFile.getPath(), content, parseVariables(header));
   }
 
   @SuppressWarnings("unchecked")

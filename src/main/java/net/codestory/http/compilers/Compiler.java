@@ -16,9 +16,8 @@
 package net.codestory.http.compilers;
 
 import java.io.*;
-import java.nio.file.*;
 
 @FunctionalInterface
 public interface Compiler extends Serializable {
-  String compile(Path path, String source);
+  String compile(SourceFile sourcefile);
 }

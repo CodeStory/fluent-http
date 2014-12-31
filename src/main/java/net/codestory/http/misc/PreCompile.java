@@ -16,6 +16,7 @@
 package net.codestory.http.misc;
 
 import net.codestory.http.compilers.CompilerFacade;
+import net.codestory.http.compilers.SourceFile;
 import net.codestory.http.io.Resources;
 import net.codestory.http.io.Strings;
 import net.codestory.http.templating.Site;
@@ -25,7 +26,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static net.codestory.http.io.Strings.replaceLast;
 
 public class PreCompile {
@@ -76,7 +76,7 @@ public class PreCompile {
   }
 
   protected byte[] compile(Path fromPath) throws IOException {
-    return compilers.compile(fromPath, resources.read(fromPath, UTF_8)).toBytes();
+    return compilers.compile(new SourceFile(resources, fromPath)).toBytes();
   }
 
   protected void write(byte[] bytes, Path toPath) throws IOException {

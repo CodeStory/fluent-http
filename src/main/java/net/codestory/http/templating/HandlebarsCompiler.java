@@ -71,8 +71,7 @@ public class HandlebarsCompiler {
             throw new IOException("Template not found " + location);
           }
 
-          String template = resources.read(include, UTF_8);
-          CacheEntry compiled = compilers.compile(include, template);
+          CacheEntry compiled = compilers.compile(new SourceFile(resources, include));
           return new StringTemplateSource(location, compiled.content());
         }
       });

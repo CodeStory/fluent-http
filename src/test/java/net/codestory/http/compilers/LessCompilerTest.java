@@ -32,7 +32,7 @@ public class LessCompilerTest {
   public ExpectedException thrown = ExpectedException.none();
 
   private String compile(String filename, String content) {
-    return compiler.compile(Paths.get(filename), content);
+    return compiler.compile(new SourceFile(Paths.get(filename), content));
   }
 
   @Test
@@ -56,7 +56,7 @@ public class LessCompilerTest {
   public void no_sourcemap_in_prod_mode() {
     LessCompiler compiler = new LessCompiler(resources, true);
 
-    String css = compiler.compile(Paths.get("file.less"), "body { h1 { color: red; } }");
+    String css = compiler.compile(new SourceFile(Paths.get("file.less"), "body { h1 { color: red; } }"));
 
     assertThat(css).isEqualTo("body h1 {\n  color: red;\n}\n");
   }

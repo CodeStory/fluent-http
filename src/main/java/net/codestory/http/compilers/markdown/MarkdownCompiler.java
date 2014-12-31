@@ -15,8 +15,7 @@
  */
 package net.codestory.http.compilers.markdown;
 
-import java.nio.file.*;
-
+import net.codestory.http.compilers.SourceFile;
 import org.markdown4j.*;
 
 import com.github.rjeschke.txtmark.*;
@@ -33,7 +32,7 @@ public class MarkdownCompiler implements net.codestory.http.compilers.Compiler {
   }
 
   @Override
-  public String compile(Path path, String source) {
-    return Processor.process(source, configuration);
+  public String compile(SourceFile sourceFile) {
+    return Processor.process(sourceFile.getContent(), configuration);
   }
 }

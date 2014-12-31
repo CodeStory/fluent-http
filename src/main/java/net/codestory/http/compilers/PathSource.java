@@ -15,8 +15,6 @@
  */
 package net.codestory.http.compilers;
 
-import static java.nio.charset.StandardCharsets.*;
-
 import java.io.*;
 import java.net.*;
 import java.nio.file.*;
@@ -27,13 +25,11 @@ import com.github.sommeri.less4j.*;
 
 class PathSource extends LessSource {
   private final Resources resources;
-  private final Path path;
-  private final String content;
+  private final SourceFile sourceFile;
 
-  PathSource(Resources resources, Path path, String content) {
+  PathSource(Resources resources, SourceFile sourceFile) {
     this.resources = resources;
-    this.path = path;
-    this.content = content;
+    this.sourceFile = sourceFile;
   }
 
   @Override
@@ -53,9 +49,7 @@ class PathSource extends LessSource {
     }
 
     try {
-      String includeContent = resources.read(relativePath, UTF_8);
-
-      return new PathSource(resources, relativePath, includeContent);
+      return new PathSource(resources, new SourceFile(resources, relativePath));
     } catch (IOException e) {
       throw new CannotReadFile();
     }
@@ -63,22 +57,22 @@ class PathSource extends LessSource {
 
   @Override
   public String getName() {
-    return Resources.toUnixString(path);
+    return Resources.toUnixString(sourceFile.getPath());
   }
 
   @Override
   public String getContent() {
-    return content;
+    return sourceFile.getContent();
   }
 
   @Override
   public byte[] getBytes() throws CannotReadFile, FileNotFound {
-    if (!resources.exists(path)) {
+    if (!resources.exists(sourceFile.getPath())) {
       throw new FileNotFound();
     }
 
     try {
-      return resources.readBytes(path);
+      return resources.readBytes(sourceFile.getPath());
     } catch (IOException e) {
       throw new CannotReadFile();
     }
