@@ -15,7 +15,6 @@
  */
 package net.codestory.http.compilers;
 
-import net.codestory.http.compilers.markdown.MarkdownCompiler;
 import net.codestory.http.io.Resources;
 import net.codestory.http.misc.Env;
 
@@ -43,7 +42,6 @@ public class Compilers {
     diskCache = new DiskCache("V5", prodMode);
     register(() -> new CoffeeCompiler(prodMode), ".js", ".coffee", ".litcoffee");
     register(() -> new CoffeeSourceMapCompiler(), ".map", ".coffee.map", ".litcoffee.map"); // ?
-    register(() -> new MarkdownCompiler(), ".html", ".md", ".markdown");
     register(() -> new LessCompiler(resources, prodMode), ".css", ".less");
   }
 

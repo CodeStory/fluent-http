@@ -13,81 +13,76 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.compilers.markdown;
+package net.codestory.http.markdown;
 
-import static org.assertj.core.api.Assertions.*;
+import org.junit.Test;
 
-import java.nio.file.*;
-
-import net.codestory.http.compilers.SourceFile;
-import org.junit.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class MarkdownCompilerTest {
-  static MarkdownCompiler compiler = new MarkdownCompiler();
-
-  private String compile(String filename, String content) {
-    return compiler.compile(new SourceFile(Paths.get(filename), content));
+  private String compile(String content) {
+    return MarkdownCompiler.INSTANCE.compile(content);
   }
 
   @Test
   public void empty() {
-    String html = compile("empty.md", "");
+    String html = compile("");
 
     assertThat(html).isEmpty();
   }
 
   @Test
   public void markdown_to_html() {
-    String html = compile("file.md", "This is **bold**");
+    String html = compile("This is **bold**");
 
     assertThat(html).isEqualTo("<p>This is <strong>bold</strong></p>\n");
   }
 
   @Test
   public void strikeout() {
-    String html = compile("file.md", "This is ~~deleted~~ text");
+    String html = compile("This is ~~deleted~~ text");
 
     assertThat(html).isEqualTo("<p>This is <s>deleted</s> text</p>\n");
   }
 
   @Test
   public void images() {
-    String html = compile("file.md", "![Alt text](/path/to/img.jpg)");
+    String html = compile("![Alt text](/path/to/img.jpg)");
 
     assertThat(html).isEqualTo("<p><img src=\"/path/to/img.jpg\" alt=\"Alt text\" /></p>\n");
   }
 
   @Test
   public void extension() {
-    String html = compile("file.markdown", "## HEADER ## {#ID}");
+    String html = compile("## HEADER ## {#ID}");
 
     assertThat(html).isEqualTo("<h2 id=\"ID\">HEADER</h2>\n");
   }
 
   @Test
   public void code_block() {
-    String html = compile("file.markdown", "``` java\nnop\n```\n");
+    String html = compile("``` java\nnop\n```\n");
 
     assertThat(html).isEqualTo("<pre><code class=\"java\">nop\n</code></pre>\n");
   }
 
   @Test
   public void google_maps() {
-    String html = compile("file.markdown", "<@15 rue de la paix Paris>");
+    String html = compile("<@15 rue de la paix Paris>");
 
     assertThat(html).isEqualTo("<p><a href=\"https://maps.google.com/maps?q=15+rue+de+la+paix+Paris\">15 rue de la paix Paris</a></p>\n");
   }
 
   @Test
   public void formula_as_png() {
-    String html = compile("file.markdown", "%%% formula\n(1+2)\n%%%\n");
+    String html = compile("%%% formula\n(1+2)\n%%%\n");
 
     assertThat(html).isEqualTo("<img src=\"http://latex.codecogs.com/png.download?%281%2B2%29\" />");
   }
 
   @Test
   public void table() {
-    String html = compile("file.markdown", "%%% table\nH1|H2|H3\n%%%\n");
+    String html = compile("%%% table\nH1|H2|H3\n%%%\n");
 
     assertThat(html).isEqualTo("<table>\n<tr><th>H1</th><th>H2</th><th>H3</th></tr>\n</table>\n");
   }

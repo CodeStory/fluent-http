@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.compilers.markdown;
+package net.codestory.http.markdown;
 
-import net.codestory.http.compilers.SourceFile;
+import com.github.rjeschke.txtmark.Configuration;
+import com.github.rjeschke.txtmark.Processor;
 import org.markdown4j.*;
 
-import com.github.rjeschke.txtmark.*;
+public enum MarkdownCompiler {
+  INSTANCE;
 
-public class MarkdownCompiler implements net.codestory.http.compilers.Compiler {
   private final Configuration configuration;
 
-  public MarkdownCompiler() {
+  MarkdownCompiler() {
     configuration = Configuration.builder()
       .forceExtentedProfile()
       .registerPlugins(new YumlPlugin(), new WebSequencePlugin(), new IncludePlugin(), new FormulaPlugin(), new TablePlugin())
@@ -31,8 +32,7 @@ public class MarkdownCompiler implements net.codestory.http.compilers.Compiler {
       .setCodeBlockEmitter(new CodeBlockEmitter()).build();
   }
 
-  @Override
-  public String compile(SourceFile sourceFile) {
-    return Processor.process(sourceFile.getSource(), configuration);
+  public String compile(String source) {
+    return Processor.process(source, configuration);
   }
 }

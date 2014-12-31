@@ -26,6 +26,7 @@ import java.util.function.*;
 
 import net.codestory.http.compilers.*;
 import net.codestory.http.io.*;
+import net.codestory.http.markdown.MarkdownCompiler;
 import net.codestory.http.templating.helpers.*;
 
 import com.github.jknack.handlebars.*;
@@ -71,8 +72,14 @@ public class HandlebarsCompiler {
             throw new IOException("Template not found " + location);
           }
 
-          CacheEntry compiled = compilers.compile(resources.sourceFile(include));
-          return new StringTemplateSource(location, compiled.content());
+          String body;
+          if (include.toString().endsWith(".md") || include.toString().endsWith(".markdown")) {
+            body = MarkdownCompiler.INSTANCE.compile(resources.sourceFile(include).getSource());
+          } else {
+            body = compilers.compile(resources.sourceFile(include)).content();
+          }
+
+          return new StringTemplateSource(location, body);
         }
       });
   }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.compilers.markdown;
+package net.codestory.http.markdown;
 
 import static java.util.Arrays.*;
 import static java.util.Collections.emptyMap;
@@ -25,8 +25,8 @@ import org.junit.*;
 import java.util.List;
 import java.util.Map;
 
-public class FormulaPluginTest {
-  static FormulaPlugin plugin = new FormulaPlugin();
+public class TablePluginTest {
+  static TablePlugin plugin = new TablePlugin();
 
   private String applyPlugin(List<String> lines, Map<String, String> parameters) {
     StringBuilder html = new StringBuilder();
@@ -35,37 +35,36 @@ public class FormulaPluginTest {
   }
 
   @Test
-  public void to_formula_url() {
-    String html = applyPlugin(asList("1+2"), emptyMap());
+  public void empty() {
+    String html = applyPlugin(asList(""), emptyMap());
 
-    assertThat(html).isEqualTo("<img src=\"http://latex.codecogs.com/png.download?1%2B2\" />");
+    assertThat(html).isEqualTo("<table>\n</table>\n");
   }
 
   @Test
-  public void to_gif() {
-    String html = applyPlugin(asList("2+3"), singletonMap("type", "gif"));
+  public void header() {
+    String html = applyPlugin(asList("H1|H2|H3"), emptyMap());
 
-    assertThat(html).isEqualTo("<img src=\"http://latex.codecogs.com/gif.download?2%2B3\" />");
+    assertThat(html).isEqualTo("<table>\n" +
+      "<tr><th>H1</th><th>H2</th><th>H3</th></tr>\n" +
+      "</table>\n");
   }
 
   @Test
-  public void skip_blank_lines() {
-    String html = applyPlugin(asList(" ", "2+3", ""), emptyMap());
+  public void rows() {
+    String html = applyPlugin(asList("H1|H2|H3", "A1|A2|A3", "B1|B2|B3"), emptyMap());
 
-    assertThat(html).isEqualTo("<img src=\"http://latex.codecogs.com/png.download?2%2B3\" />");
+    assertThat(html).isEqualTo("<table>\n" +
+      "<tr><th>H1</th><th>H2</th><th>H3</th></tr>\n" +
+      "<tr><td>A1</td><td>A2</td><td>A3</td></tr>\n" +
+      "<tr><td>B1</td><td>B2</td><td>B3</td></tr>\n" +
+      "</table>\n");
   }
 
   @Test
-  public void dont_replace_spaces_with_plus_sign() {
-    String html = applyPlugin(asList(" ", "a b", ""), emptyMap());
+  public void id() {
+    String html = applyPlugin(asList(""), singletonMap("id", "AN_ID"));
 
-    assertThat(html).isEqualTo("<img src=\"http://latex.codecogs.com/png.download?a%20b\" />");
-  }
-
-  @Test
-  public void encode_url() {
-    String encoded = FormulaPlugin.encode("https://www.google.fr/1 2");
-
-    assertThat(encoded).isEqualTo("https%3A%2F%2Fwww.google.fr%2F1%202");
+    assertThat(html).isEqualTo("<table id=\"AN_ID\">\n</table>\n");
   }
 }

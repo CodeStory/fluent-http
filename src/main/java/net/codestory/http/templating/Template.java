@@ -21,6 +21,7 @@ import java.util.*;
 
 import net.codestory.http.compilers.*;
 import net.codestory.http.io.*;
+import net.codestory.http.markdown.MarkdownCompiler;
 
 public class Template {
   private final Resources resources;
@@ -51,15 +52,17 @@ public class Template {
       Map<String, Object> allKeyValues = merge(variables, keyValues);
 
       String body = compilerFacade.handlebar(content, allKeyValues);
-      CacheEntry entry = compilerFacade.compile(new SourceFile(path, body));
+      if (path.toString().endsWith(".md") || path.toString().endsWith(".markdown")) {
+        body = MarkdownCompiler.INSTANCE.compile(body);
+      }
 
       String layout = (String) variables.get("layout");
       if (layout == null) {
-        return entry;
+        return CacheEntry.fromString(body);
       }
 
       String layoutContent = new Template(resources, "_layouts", layout).render(allKeyValues, compilerFacade).content();
-      String bodyWithLayout = layoutContent.replace("[[body]]", entry.content());
+      String bodyWithLayout = layoutContent.replace("[[body]]", body);
 
       return CacheEntry.fromString(bodyWithLayout);
     } catch (IOException e) {
