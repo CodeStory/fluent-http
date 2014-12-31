@@ -31,9 +31,10 @@ public class TemplateTest {
   static Env env = prodMode();
   static Resources resources = new Resources(env);
   static CompilerFacade compilerFacade = new CompilerFacade(env, resources);
+  static Template template = new Template(compilerFacade, resources);
 
   String render(String name, Map<String, Object> model) {
-    return new Template(compilerFacade, resources).render(name, resources.findExistingPath(name), model);
+    return template.render(name, model);
   }
 
   String render(String name) {

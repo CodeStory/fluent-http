@@ -32,7 +32,8 @@ public class Template {
     this.resources = resources;
   }
 
-  public String render(String uri, Path path, Map<String, ?> keyValues) {
+  public String render(String uri, Map<String, ?> keyValues) {
+    Path path = resources.findExistingPath(uri);
     if (path == null) {
       throw new IllegalArgumentException("Template not found " + uri);
     }
@@ -54,7 +55,7 @@ public class Template {
         return body;
       }
 
-      String layoutContent = render("_layouts" + "/" + layout, resources.findExistingPath("_layouts", layout), allKeyValues);
+      String layoutContent = render("_layouts/" + layout, allKeyValues);
       String bodyWithLayout = layoutContent.replace("[[body]]", body);
       return bodyWithLayout;
     } catch (IOException e) {

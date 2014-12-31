@@ -352,7 +352,7 @@ public class PayloadWriter {
 
     Template template = new Template(compilers, resources);
 
-    return forString(template.render(view, resources.findExistingPath(view), keyValues));
+    return forString(template.render(view, keyValues));
   }
 
   protected byte[] forURL(URL url) throws IOException {
