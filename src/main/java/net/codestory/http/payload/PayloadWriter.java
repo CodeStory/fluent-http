@@ -16,8 +16,6 @@
 package net.codestory.http.payload;
 
 import static java.nio.charset.StandardCharsets.*;
-import static java.time.ZonedDateTime.now;
-import static java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME;
 import static java.util.Objects.*;
 import static net.codestory.http.constants.Encodings.*;
 import static net.codestory.http.constants.Headers.*;
@@ -71,8 +69,8 @@ public class PayloadWriter {
   }
 
   protected void write(Payload payload) throws IOException {
-    payload.headers().forEach(response::setValue);
-    payload.cookies().forEach(response::setCookie);
+    response.setHeaders(payload.headers());
+    response.setCookies(payload.cookies());
 
     long lastModified = getLastModified(payload);
     if (lastModified >= 0) {

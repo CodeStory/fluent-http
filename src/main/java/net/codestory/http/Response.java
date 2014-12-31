@@ -19,6 +19,7 @@ import net.codestory.http.internal.Unwrappable;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 
 public interface Response extends Unwrappable {
   void close() throws IOException;
@@ -32,4 +33,12 @@ public interface Response extends Unwrappable {
   void setStatus(int statusCode);
 
   void setCookie(Cookie cookie);
+
+  default void setCookies(Iterable<Cookie> cookies) {
+    cookies.forEach(this::setCookie);
+  }
+
+  default void setHeaders(Map<String, String> headers) {
+    headers.forEach(this::setValue);
+  }
 }
