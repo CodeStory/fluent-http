@@ -24,7 +24,6 @@ import static net.codestory.http.io.Strings.extension;
 import static net.codestory.http.io.Strings.substringBeforeLast;
 import static org.webjars.WebJarAssetLocator.WEBJARS_PATH_PREFIX;
 
-import java.io.*;
 import java.net.*;
 import java.nio.file.*;
 import java.util.*;
@@ -34,7 +33,6 @@ import net.codestory.http.io.*;
 import net.codestory.http.logs.*;
 import net.codestory.http.misc.*;
 import net.codestory.http.payload.*;
-import net.codestory.http.types.*;
 
 class WebJarsRoute implements Route {
   private final boolean prodMode;
@@ -88,19 +86,12 @@ class WebJarsRoute implements Route {
   public Payload body(Context context)  {
     String uri = context.uri();
 
-    URL classpathUrl = webJarUrlFinder.url(uri);
+    URL url = webJarUrlFinder.url(uri);
 
-    try (InputStream stream = classpathUrl.openStream()) {
-      String contentType = ContentTypes.get(Paths.get(uri));
-      byte[] data = InputStreams.readBytes(stream);
-
-      return new Payload(contentType, data)
-        .withHeader(CACHE_CONTROL, "public, max-age=31536000")
-        .withHeader(LAST_MODIFIED, RFC_1123_DATE_TIME.format(now().minusMonths(1L)))
-        .withHeader(EXPIRES, RFC_1123_DATE_TIME.format(now().plusWeeks(1L)));
-    } catch (IOException e) {
-      throw new IllegalStateException("Unable to read webjar file:" + uri, e);
-    }
+    return new Payload(url)
+      .withHeader(CACHE_CONTROL, "public, max-age=31536000")
+      .withHeader(LAST_MODIFIED, RFC_1123_DATE_TIME.format(now().minusMonths(1L)))
+      .withHeader(EXPIRES, RFC_1123_DATE_TIME.format(now().plusWeeks(1L)));
   }
 
   private static URL getResource(String uri) {

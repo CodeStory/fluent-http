@@ -16,6 +16,8 @@
 package net.codestory.http.payload;
 
 import static java.nio.charset.StandardCharsets.*;
+import static java.time.ZonedDateTime.now;
+import static java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME;
 import static java.util.Objects.*;
 import static net.codestory.http.constants.Encodings.*;
 import static net.codestory.http.constants.Headers.*;
@@ -24,6 +26,7 @@ import static net.codestory.http.constants.Methods.*;
 import static net.codestory.http.io.Strings.*;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.*;
@@ -244,6 +247,9 @@ public class PayloadWriter {
       CompiledPath compiledPath = (CompiledPath) content;
       return ContentTypes.get(compiledPath.getResponsePath());
     }
+    if (content instanceof URL) {
+      return ContentTypes.get(Paths.get(((URL) content).getFile()));
+    }
     if (content instanceof byte[]) {
       return "application/octet-stream";
     }
@@ -287,6 +293,9 @@ public class PayloadWriter {
     }
     if (content instanceof CompiledPath) {
       return forCompiledPath((CompiledPath) content);
+    }
+    if (content instanceof URL) {
+      return forURL((URL) content);
     }
     if (content instanceof byte[]) {
       return (byte[]) content;
@@ -344,6 +353,14 @@ public class PayloadWriter {
     CacheEntry html = new Template(view).render(keyValues, compilers);
 
     return html.toBytes();
+  }
+
+  protected byte[] forURL(URL url) throws IOException {
+    try (InputStream stream = url.openStream()) {
+      return InputStreams.readBytes(stream);
+    } catch (IOException e) {
+      throw new IllegalStateException("Unable to read url:" + url, e);
+    }
   }
 
   protected byte[] forPath(Path path) throws IOException {
