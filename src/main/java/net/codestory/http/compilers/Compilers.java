@@ -79,19 +79,21 @@ public class Compilers {
     return cache.computeIfAbsent(key, ignore -> {
       for (Entry<String, Supplier<Compiler>> entry : compilerByExtension.entrySet()) {
         String extension = entry.getKey();
+        if (!sourceFile.hasExtension(extension)) {
+          continue;
+        }
+
         Supplier<Compiler> compiler = entry.getValue();
 
-        if (sourceFile.hasExtension(extension)) {
-          // Hack until I find something better
-          if (extension.equals(".less")) { // TODO: handle ".less.source"
-            if (sourceFile.getSource().contains("@import")) {
-              return CacheEntry.noCache(compiler.get().compile(sourceFile));
-            }
+        // Hack until I find something better
+        if (extension.equals(".less")) { // TODO: handle ".less.source"
+          if (sourceFile.getSource().contains("@import")) {
+            return CacheEntry.noCache(compiler.get().compile(sourceFile));
           }
-
-          String sha1 = sourceFile.sha1();
-          return diskCache.computeIfAbsent(sha1, extension, () -> compiler.get().compile(sourceFile));
         }
+
+        String sha1 = sourceFile.sha1();
+        return diskCache.computeIfAbsent(sha1, extension, () -> compiler.get().compile(sourceFile));
       }
 
       throw new IllegalArgumentException("Unable to compile " + sourceFile.getFileName() + ". Unknown extension");
