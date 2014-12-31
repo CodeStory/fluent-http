@@ -23,11 +23,11 @@ import net.codestory.http.compilers.*;
 import net.codestory.http.io.*;
 import net.codestory.http.markdown.MarkdownCompiler;
 
-public class Template {
+public class ViewCompiler {
   private final CompilerFacade compilerFacade;
   private final Resources resources;
 
-  public Template(CompilerFacade compilerFacade, Resources resources) {
+  public ViewCompiler(CompilerFacade compilerFacade, Resources resources) {
     this.compilerFacade = compilerFacade;
     this.resources = resources;
   }

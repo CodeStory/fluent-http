@@ -27,14 +27,14 @@ import net.codestory.http.misc.*;
 
 import org.junit.*;
 
-public class TemplateTest {
+public class ViewCompilerTest {
   static Env env = prodMode();
   static Resources resources = new Resources(env);
   static CompilerFacade compilerFacade = new CompilerFacade(env, resources);
-  static Template template = new Template(compilerFacade, resources);
+  static ViewCompiler viewCompiler = new ViewCompiler(compilerFacade, resources);
 
   String render(String name, Map<String, Object> model) {
-    return template.render(name, model);
+    return viewCompiler.render(name, model);
   }
 
   String render(String name) {

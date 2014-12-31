@@ -342,17 +342,15 @@ public class PayloadWriter {
   }
 
   protected byte[] forModelAndView(ModelAndView modelAndView) {
-    String view = modelAndView.view();
-
     Map<String, Object> keyValues = new HashMap<>();
     keyValues.putAll(modelAndView.model().keyValues());
     keyValues.put("cookies", request.cookies().keyValues());
     keyValues.put("env", env);
     keyValues.put("site", site);
 
-    Template template = new Template(compilers, resources);
+    ViewCompiler viewCompiler = new ViewCompiler(compilers, resources);
 
-    return forString(template.render(view, keyValues));
+    return forString(viewCompiler.render(modelAndView.view(), keyValues));
   }
 
   protected byte[] forURL(URL url) throws IOException {
