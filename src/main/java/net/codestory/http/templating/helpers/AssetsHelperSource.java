@@ -59,10 +59,11 @@ public class AssetsHelperSource {
   }
 
   private String sha1(Path path) throws IOException {
-    CacheEntry compile = compilers.compile(resources.sourceFile(path));
+    CacheEntry compile = compilers.compile(path);
     return Sha1.of(compile.toBytes());
   }
 
+  // TODO: Remove duplication
   private Path findCompilableTo(String uri) {
     String extension = extension(uri);
 

@@ -18,6 +18,7 @@ package net.codestory.http.compilers;
 import static net.codestory.http.misc.MemoizingSupplier.memoize;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -29,11 +30,13 @@ import net.codestory.http.misc.*;
 import net.codestory.http.templating.*;
 
 public class CompilerFacade implements CompilersConfiguration {
+  protected final Resources resources;
   protected final Supplier<Compilers> compilers;
   protected final Supplier<HandlebarsCompiler> handlebars;
   protected final Supplier<ViewCompiler> viewCompiler;
 
   public CompilerFacade(Env env, Resources resources) {
+    this.resources = resources;
     this.compilers = memoize(() -> new Compilers(env, resources));
     this.handlebars = memoize(() -> new HandlebarsCompiler(resources, this));
     this.viewCompiler = memoize(() -> new ViewCompiler(resources, this));
@@ -70,8 +73,8 @@ public class CompilerFacade implements CompilersConfiguration {
     return compilers.get().compiledExtension(extension);
   }
 
-  public CacheEntry compile(SourceFile sourceFile) throws IOException {
-    return compilers.get().compile(sourceFile);
+  public CacheEntry compile(Path path) throws IOException {
+    return compilers.get().compile(resources.sourceFile(path));
   }
 
   public String handlebar(String template, Map<String, ?> variables) throws IOException {
