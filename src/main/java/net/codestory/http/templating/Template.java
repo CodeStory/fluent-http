@@ -54,7 +54,7 @@ public class Template {
         return body;
       }
 
-      String layoutContent = new Template(compilerFacade, resources).render("_layouts" + "/" + layout, resources.findExistingPath("_layouts", layout), allKeyValues);
+      String layoutContent = render("_layouts" + "/" + layout, resources.findExistingPath("_layouts", layout), allKeyValues);
       String bodyWithLayout = layoutContent.replace("[[body]]", body);
       return bodyWithLayout;
     } catch (IOException e) {
