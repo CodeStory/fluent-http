@@ -16,9 +16,12 @@
 package net.codestory.http;
 
 import java.io.*;
+import java.lang.reflect.Type;
 import java.net.*;
 import java.util.*;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import net.codestory.http.convert.TypeConvert;
 import net.codestory.http.internal.*;
 import net.codestory.http.io.InputStreams;
 
@@ -33,6 +36,18 @@ public interface Request extends Unwrappable {
 
   default byte[] contentAsBytes() throws IOException {
     return InputStreams.readBytes(inputStream());
+  }
+
+  default <T> T contentAs(Class<T> type) throws IOException {
+    return TypeConvert.fromJson(content(), type);
+  }
+
+  default <T> T contentAs(Type type) throws IOException {
+    return TypeConvert.fromJson(content(), type);
+  }
+
+  default <T> T contentAs(TypeReference<T> type) throws IOException {
+    return TypeConvert.fromJson(content(), type);
   }
 
   String contentType();

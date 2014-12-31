@@ -27,7 +27,6 @@ import java.util.*;
 
 import net.codestory.http.convert.*;
 import net.codestory.http.injection.*;
-import net.codestory.http.io.*;
 import net.codestory.http.security.*;
 import net.codestory.http.templating.*;
 
@@ -157,16 +156,6 @@ public class Context {
     return (forwarded != null) ? forwarded : request.clientAddress().toString();
   }
 
-  public <T> T contentAs(Class<T> type) {
-    try {
-      String json = request.content();
-
-      return TypeConvert.fromJson(json, type);
-    } catch (IOException e) {
-      throw new IllegalArgumentException("Unable read content", e);
-    }
-  }
-
   public <T> T getBean(Class<T> type) {
     return iocAdapter.get(type);
   }
@@ -242,12 +231,6 @@ public class Context {
       return TypeConvert.convertValue(query().keyValues(), type);
     }
 
-    try {
-      String json = request.content();
-
-      return TypeConvert.fromJson(json, type);
-    } catch (IOException e) {
-      throw new IllegalArgumentException("Unable read content", e);
-    }
+    return request().contentAs(type);
   }
 }
