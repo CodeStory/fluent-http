@@ -71,13 +71,10 @@ public class HandlebarsCompiler {
             throw new IOException("Template not found " + location);
           }
 
-          SourceFile sourceFile = resources.sourceFile(include);
+          String body = resources.sourceFile(include).getSource();
 
-          String body;
           if (MarkdownCompiler.supports(include)) {
-            body = MarkdownCompiler.INSTANCE.compile(sourceFile.getSource());
-          } else {
-            body = compilers.compile(sourceFile).content();
+            body = MarkdownCompiler.INSTANCE.compile(body);
           }
 
           return new StringTemplateSource(location, body);
