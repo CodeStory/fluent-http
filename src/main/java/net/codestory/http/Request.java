@@ -22,19 +22,13 @@ import java.util.*;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import net.codestory.http.convert.TypeConvert;
+import net.codestory.http.cors.CORSHelper;
 import net.codestory.http.cors.CORSRequestType;
 import net.codestory.http.internal.*;
 import net.codestory.http.io.InputStreams;
 
 import static java.util.stream.Collectors.toMap;
-import static net.codestory.http.constants.Headers.ACCESS_CONTROL_REQUEST_METHOD;
-import static net.codestory.http.constants.Headers.ORIGIN;
 import static net.codestory.http.constants.Headers.X_FORWARDED_FOR;
-import static net.codestory.http.constants.Methods.*;
-import static net.codestory.http.constants.Methods.CONNECT;
-import static net.codestory.http.cors.CORSRequestType.*;
-import static net.codestory.http.cors.CORSRequestType.PRE_FLIGHT;
-import static net.codestory.http.types.ContentTypes.SIMPLE_HTTP_REQUEST_CONTENT_TYPE_VALUES;
 
 public interface Request extends Unwrappable {
   String uri();
@@ -42,6 +36,33 @@ public interface Request extends Unwrappable {
   String method();
 
   String content() throws IOException;
+
+  String contentType();
+
+  List<String> headerNames();
+
+  List<String> headers(String name);
+
+  String header(String name);
+
+  InputStream inputStream() throws IOException;
+
+  InetSocketAddress clientAddress();
+
+  boolean isSecure();
+
+  Cookies cookies();
+
+  Query query();
+
+  List<Part> parts();
+
+  // Content to Bean
+
+  default boolean isUrlEncodedForm() {
+    String contentType = header("Content-Type");
+    return (contentType != null) && (contentType.contains("application/x-www-form-urlencoded"));
+  }
 
   default byte[] contentAsBytes() throws IOException {
     return InputStreams.readBytes(inputStream());
@@ -69,13 +90,7 @@ public interface Request extends Unwrappable {
     return TypeConvert.fromJson(content(), type);
   }
 
-  String contentType();
-
-  List<String> headerNames();
-
-  List<String> headers(String name);
-
-  String header(String name);
+  // Headers helpers
 
   default String header(String name, String defaultValue) {
     return Optional.ofNullable(header(name)).orElse(defaultValue);
@@ -85,64 +100,17 @@ public interface Request extends Unwrappable {
     return headerNames().stream().collect(toMap(name -> name, name -> headers(name)));
   }
 
-  InputStream inputStream() throws IOException;
-
-  InetSocketAddress clientAddress();
+  // Support forwarding
 
   default String clientAddressForwarded() {
     String forwarded = header(X_FORWARDED_FOR);
     return (forwarded != null) ? forwarded : clientAddress().toString();
   }
 
-  default boolean isUrlEncodedForm() {
-    String contentType = header("Content-Type");
-    return (contentType != null) && (contentType.contains("application/x-www-form-urlencoded"));
-  }
-
-  boolean isSecure();
-
-  Cookies cookies();
-
-  Query query();
-
-  List<Part> parts();
-
-
+  // CORS
 
   default CORSRequestType corsRequestType() {
-    String origin = header(ORIGIN);
-    if (origin == null) {
-      return NOT_CORS;
-    }
-
-    if (isInvalidOrigin(origin)) {
-      return INVALID_CORS;
-    }
-
-    switch (method()) {
-      case OPTIONS:
-        String accessControl = header(ACCESS_CONTROL_REQUEST_METHOD);
-        if (accessControl == null) {
-          return ACTUAL;
-        }
-        return accessControl.isEmpty() ? INVALID_CORS : PRE_FLIGHT;
-      case GET:
-      case HEAD:
-        return SIMPLE;
-      case POST:
-        String contentType = contentType();
-        if (contentType == null) {
-          return INVALID_CORS;
-        }
-        return SIMPLE_HTTP_REQUEST_CONTENT_TYPE_VALUES.contains(contentType.toLowerCase().trim()) ? SIMPLE : ACTUAL;
-      case PUT:
-      case DELETE:
-      case TRACE:
-      case CONNECT:
-        return ACTUAL;
-      default:
-        return INVALID_CORS;
-    }
+    return CORSHelper.corsRequestType(this);
   }
 
   default boolean isCORS() {
@@ -151,16 +119,5 @@ public interface Request extends Unwrappable {
 
   default boolean isPreflight() {
     return corsRequestType().isPreflight();
-  }
-
-  /*private static*/ default boolean isInvalidOrigin(String origin) {
-    if (origin.isEmpty() || origin.contains("%")) {
-      return true;
-    }
-    try {
-      return new URI(origin).getScheme() == null;
-    } catch (URISyntaxException e) {
-      return true;
-    }
   }
 }
