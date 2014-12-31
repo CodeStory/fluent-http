@@ -24,9 +24,13 @@ import org.junit.*;
 public class CoffeeSourceMapCompilerTest {
   static CoffeeSourceMapCompiler compiler = new CoffeeSourceMapCompiler();
 
+  private String compile(String filename, String content) {
+    return compiler.compile(Paths.get(filename), content);
+  }
+
   @Test
   public void sourcemap_with_filename_and_sources() {
-    String javascript = compiler.compile(Paths.get("polka.coffee.map"), "a=b=3\nc=4\nd=(a+b)*c");
+    String javascript = compile("polka.coffee.map", "a=b=3\nc=4\nd=(a+b)*c");
 
     assertThat(javascript).isEqualTo(
       "{\n" +

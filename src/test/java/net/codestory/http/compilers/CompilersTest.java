@@ -28,9 +28,13 @@ import org.junit.*;
 public class CompilersTest {
   static Compilers compilers = new Compilers(prodMode());
 
+  private String compile(String filename, String content) {
+    return compilers.compile(Paths.get(filename), content).content();
+  }
+
   @Test
   public void do_not_compile_plain_file() {
-    String css = compilers.compile(Paths.get("plain.txt"), "Hello").content();
+    String css = compile("plain.txt", "Hello");
 
     assertThat(css).isEqualTo("Hello");
   }
@@ -39,7 +43,7 @@ public class CompilersTest {
   public void register_custom_compiler() {
     compilers.register(() -> (path, source) -> source + source, ".html", ".copycat");
 
-    String source = compilers.compile(Paths.get("file.copycat"), "Hello").content();
+    String source = compile("file.copycat", "Hello");
 
     assertThat(source).isEqualTo("HelloHello");
   }
@@ -51,14 +55,14 @@ public class CompilersTest {
     cacheFile.delete();
 
     // Fill cache
-    String javascript = compilers.compile(Paths.get("test.coffee"), "a=42").content();
+    String javascript = compile("test.coffee", "a=42");
 
     assertThat(cacheFile).exists();
     assertThat(javascript).contains("var a;\n\na = 42");
 
     // Delete cache
     cacheFile.delete();
-    String updated = compilers.compile(Paths.get("test.coffee"), "a=1337").content();
+    String updated = compile("test.coffee", "a=1337");
 
     assertThat(updated).contains("var a;\n\na = 1337");
   }

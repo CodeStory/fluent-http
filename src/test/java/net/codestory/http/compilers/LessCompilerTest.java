@@ -28,16 +28,20 @@ public class LessCompilerTest {
   @Rule
   public ExpectedException thrown = ExpectedException.none();
 
+  private String compile(String filename, String content) {
+    return compiler.compile(Paths.get(filename), content);
+  }
+
   @Test
   public void empty() {
-    String css = compiler.compile(Paths.get("empty.less"), "");
+    String css = compile("empty.less", "");
 
     assertThat(css).isEqualTo("\n/*# sourceMappingURL=data:application/json;base64,ewoidmVyc2lvbiI6MywKImZpbGUiOiJlbXB0eS5jc3MiLAoibGluZUNvdW50IjoxLAoibWFwcGluZ3MiOiI7IiwKInNvdXJjZXMiOltdLAoic291cmNlc0NvbnRlbnQiOltdLAoibmFtZXMiOltdCn0K */\n");
   }
 
   @Test
   public void to_css() {
-    String css = compiler.compile(Paths.get("file.less"), "body { h1 { color: red; } }");
+    String css = compile("file.less", "body { h1 { color: red; } }");
 
     assertThat(css).isEqualTo(
       "body h1 {\n  color: red;\n}\n" +
@@ -56,7 +60,7 @@ public class LessCompilerTest {
 
   @Test
   public void import_less() {
-    String css = compiler.compile(Paths.get("style.less"), "@import 'assets/style.less';");
+    String css = compile("style.less", "@import 'assets/style.less';");
 
     assertThat(css).isEqualTo(
       "body h1 {\n  color: red;\n}\n" +
@@ -66,7 +70,7 @@ public class LessCompilerTest {
 
   @Test
   public void import_less_from_webjar() {
-    String css = compiler.compile(Paths.get("style.less"), "@import '/webjars/bootstrap/3.3.1/less/bootstrap.less';");
+    String css = compile("style.less", "@import '/webjars/bootstrap/3.3.1/less/bootstrap.less';");
 
     assertThat(css).isNotEmpty().doesNotContain("@import");
   }
@@ -80,6 +84,6 @@ public class LessCompilerTest {
         "ERROR 1:6 required (...)+ loop did not match anything at input 'body' in selectors (which started at 1:6)\n" +
         "...");
 
-    compiler.compile(Paths.get("invalid.less"), "body body");
+    compile("invalid.less", "body body");
   }
 }

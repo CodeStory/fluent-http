@@ -28,16 +28,20 @@ public class CoffeeCompilerTest {
   @Rule
   public ExpectedException thrown = ExpectedException.none();
 
+  private String compile(String filename, String content) {
+    return compiler.compile(Paths.get(filename), content);
+  }
+
   @Test
   public void empty() {
-    String js = compiler.compile(Paths.get("empty.coffee"), "");
+    String js = compile("empty.coffee", "");
 
     assertThat(js).isEqualTo("\n\n//# sourceMappingURL=empty.coffee.map");
   }
 
   @Test
   public void to_javascript() {
-    String js = compiler.compile(Paths.get("file.coffee"), "life=42");
+    String js = compile("file.coffee", "life=42");
 
     assertThat(js).isEqualTo("var life;\n\nlife = 42;\n\n//# sourceMappingURL=file.coffee.map");
   }
@@ -69,24 +73,22 @@ public class CoffeeCompilerTest {
     thrown.expect(CompilerException.class);
     thrown.expectMessage("Unable to compile invalid.coffee:1:1: error: unexpected ==");
 
-    compiler.compile(Paths.get("invalid.coffee"), "===");
+    compile("invalid.coffee", "===");
   }
 
   @Test
   public void report_line_number() {
     thrown.expectMessage("Unable to compile invalid.coffee:3:1: error: unexpected ==");
 
-    compiler.compile(Paths.get("invalid.coffee"), "\n\n===");
+    compile("invalid.coffee", "\n\n===");
   }
 
   @Test
   public void literate_coffee() {
-    String js = compiler.compile(Paths.get("file.litcoffee"),
-      "Comment text\n" +
-        "\n" +
-        "    life=42\n" +
-        "\n"
-    );
+    String js = compile("file.litcoffee", "Comment text\n" +
+      "\n" +
+      "    life=42\n" +
+      "\n");
 
     assertThat(js).isEqualTo("var life;\n\nlife = 42;\n\n//# sourceMappingURL=file.litcoffee.map");
   }
