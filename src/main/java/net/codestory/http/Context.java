@@ -56,6 +56,50 @@ public class Context {
     return site;
   }
 
+  public String uri() {
+    return request.uri();
+  }
+
+  public Cookies cookies() {
+    return request.cookies();
+  }
+
+  public List<Part> parts() {
+    return request.parts();
+  }
+
+  public Query query() {
+    return request.query();
+  }
+
+  public String get(String key) {
+    return request.query().get(key);
+  }
+
+  public String header(String name) {
+    return request.header(name);
+  }
+
+  public List<String> headers(String name) {
+    return request.headers(name);
+  }
+
+  public String method() {
+    return request.method();
+  }
+
+  public <T> T getBean(Class<T> type) {
+    return iocAdapter.get(type);
+  }
+
+  public void setCurrentUser(User user) {
+    this.currentUser = user;
+  }
+
+  public User currentUser() {
+    return currentUser;
+  }
+
   public static enum CORSRequestType {
     SIMPLE,
     ACTUAL,
@@ -117,50 +161,6 @@ public class Context {
     } catch (URISyntaxException e) {
       return true;
     }
-  }
-
-  public String uri() {
-    return request.uri();
-  }
-
-  public Cookies cookies() {
-    return request.cookies();
-  }
-
-  public List<Part> parts() {
-    return request.parts();
-  }
-
-  public Query query() {
-    return request.query();
-  }
-
-  public String get(String key) {
-    return request.query().get(key);
-  }
-
-  public String header(String name) {
-    return request.header(name);
-  }
-
-  public List<String> headers(String name) {
-    return request.headers(name);
-  }
-
-  public String method() {
-    return request.method();
-  }
-
-  public <T> T getBean(Class<T> type) {
-    return iocAdapter.get(type);
-  }
-
-  public void setCurrentUser(User user) {
-    this.currentUser = user;
-  }
-
-  public User currentUser() {
-    return currentUser;
   }
 
   public boolean isUrlEncodedForm() {
