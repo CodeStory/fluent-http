@@ -66,7 +66,7 @@ public class HandlebarsCompiler {
       .with(new AbstractTemplateLoader() {
         @Override
         public TemplateSource sourceAt(String location) throws IOException {
-          Path include = resources.findExistingPath("_includes", location);
+          Path include = resources.findExistingPath("_includes/" + location);
           if (include == null) {
             throw new IOException("Template not found " + location);
           }

@@ -51,10 +51,6 @@ public class Resources {
     return exists(path);
   }
 
-  public Path findExistingPath(String folder, String name) {
-    return findExistingPath(folder + (name.startsWith("/") ? name : "/" + name));
-  }
-
   public Path findExistingPath(String uri) {
     if (uri.endsWith("/")) {
       return findExistingPath(uri + "index");
