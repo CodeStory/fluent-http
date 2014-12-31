@@ -79,7 +79,7 @@ public class PayloadWriter {
         response.setStatus(NOT_MODIFIED);
         return;
       }
-      response.setValue(LAST_MODIFIED, Dates.to_rfc_1123(lastModified));
+      response.setHeader(LAST_MODIFIED, Dates.to_rfc_1123(lastModified));
     }
 
     int code = payload.code();
@@ -94,7 +94,7 @@ public class PayloadWriter {
     String uri = request.uri();
 
     String contentTypeHeader = (contentType != null) ? contentType : getContentType(content, uri);
-    response.setValue(CONTENT_TYPE, contentTypeHeader);
+    response.setHeader(CONTENT_TYPE, contentTypeHeader);
     response.setStatus(code);
 
     if (HEAD.equals(request.method()) || (code == 204) || (code == 304) || ((code >= 100) && (code < 200))) {
@@ -121,15 +121,15 @@ public class PayloadWriter {
       response.setStatus(NOT_MODIFIED);
       return;
     }
-    response.setValue(ETAG, etag);
+    response.setHeader(ETAG, etag);
 
     byte[] data = lazyData.get();
     write(data);
   }
 
   protected void writeStreamingHeaders() throws IOException {
-    response.setValue(CACHE_CONTROL, "no-cache");
-    response.setValue(CONNECTION, "keep-alive");
+    response.setHeader(CACHE_CONTROL, "no-cache");
+    response.setHeader(CONNECTION, "keep-alive");
   }
 
   protected void streamPayload(String uri, Payload payload) throws IOException {
@@ -191,7 +191,7 @@ public class PayloadWriter {
   protected void write(byte[] data) throws IOException {
     try {
       if (shouldGzip()) {
-        response.setValue(CONTENT_ENCODING, GZIP);
+        response.setHeader(CONTENT_ENCODING, GZIP);
 
         GZIPOutputStream gzip = new GZIPOutputStream(response.outputStream());
         gzip.write(data);

@@ -33,6 +33,9 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonMap;
 import static net.codestory.http.constants.Headers.*;
 import static net.codestory.http.constants.HttpStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -61,7 +64,7 @@ public class PayloadWriterTest {
     writer.write(new Payload(new Payload("Hello")));
 
     verify(response).setStatus(200);
-    verify(response).setValue(CONTENT_TYPE, "text/html;charset=UTF-8");
+    verify(response).setHeader(CONTENT_TYPE, "text/html;charset=UTF-8");
     verify(outputStream).write("Hello".getBytes(UTF_8));
   }
 
@@ -71,7 +74,7 @@ public class PayloadWriterTest {
 
     writer.write(new Payload(bytes));
 
-    verify(response).setValue(CONTENT_TYPE, "application/octet-stream");
+    verify(response).setHeader(CONTENT_TYPE, "application/octet-stream");
     verify(outputStream).write(bytes);
   }
 
@@ -79,7 +82,7 @@ public class PayloadWriterTest {
   public void support_bean_to_json() throws IOException {
     writer.write(new Payload(new Person("NAME", 42)));
 
-    verify(response).setValue(CONTENT_TYPE, "application/json;charset=UTF-8");
+    verify(response).setHeader(CONTENT_TYPE, "application/json;charset=UTF-8");
     verify(outputStream).write("{\"name\":\"NAME\",\"age\":42}".getBytes(UTF_8));
   }
 
@@ -87,7 +90,7 @@ public class PayloadWriterTest {
   public void support_custom_content_type() throws IOException {
     writer.write(new Payload("text/plain", "Hello"));
 
-    verify(response).setValue(CONTENT_TYPE, "text/plain");
+    verify(response).setHeader(CONTENT_TYPE, "text/plain");
     verify(outputStream).write("Hello".getBytes(UTF_8));
   }
 
@@ -95,9 +98,9 @@ public class PayloadWriterTest {
   public void support_stream() throws IOException {
     writer.write(new Payload("text/plain", new ByteArrayInputStream("Hello".getBytes(UTF_8))));
 
-    verify(response).setValue(CONTENT_TYPE, "text/plain");
-    verify(response).setValue(CACHE_CONTROL, "no-cache");
-    verify(response).setValue(CONNECTION, "keep-alive");
+    verify(response).setHeader(CONTENT_TYPE, "text/plain");
+    verify(response).setHeader(CACHE_CONTROL, "no-cache");
+    verify(response).setHeader(CONNECTION, "keep-alive");
     verify(response, timeout(100)).close();
 
     ArgumentCaptor<byte[]> bytesCaptor = ArgumentCaptor.forClass(byte[].class);
@@ -109,7 +112,7 @@ public class PayloadWriterTest {
   public void support_present_optional() throws IOException {
     writer.write(new Payload("text/plain", Optional.of("TEXT")));
 
-    verify(response).setValue(CONTENT_TYPE, "text/plain");
+    verify(response).setHeader(CONTENT_TYPE, "text/plain");
     verify(outputStream).write("TEXT".getBytes(UTF_8));
   }
 
@@ -118,6 +121,8 @@ public class PayloadWriterTest {
     Payload payload = new Payload("text/plain", Optional.empty());
     writer.write(payload);
 
+    verify(response).setHeaders(emptyMap());
+    verify(response).setCookies(emptyList());
     verify(response).setStatus(NOT_FOUND);
     verify(response).setContentLength(0);
     verifyNoMoreInteractions(response);
@@ -139,7 +144,8 @@ public class PayloadWriterTest {
     Payload payload = Payload.seeOther("/url");
     writer.write(payload);
 
-    verify(response).setValue("Location", "/url");
+    verify(response).setHeaders(singletonMap("Location", "/url"));
+    verify(response).setCookies(emptyList());
     verify(response).setStatus(SEE_OTHER);
     verify(response).setContentLength(0);
     verifyNoMoreInteractions(response);
@@ -150,6 +156,8 @@ public class PayloadWriterTest {
     Payload payload = Payload.forbidden();
     writer.write(payload);
 
+    verify(response).setHeaders(emptyMap());
+    verify(response).setCookies(emptyList());
     verify(response).setStatus(FORBIDDEN);
     verify(response).setContentLength(0);
     verifyNoMoreInteractions(response);
@@ -160,7 +168,8 @@ public class PayloadWriterTest {
     Payload payload = Payload.movedPermanently("/url");
     writer.write(payload);
 
-    verify(response).setValue("Location", "/url");
+    verify(response).setHeaders(singletonMap("Location", "/url"));
+    verify(response).setCookies(emptyList());
     verify(response).setStatus(MOVED_PERMANENTLY);
     verify(response).setContentLength(0);
     verifyNoMoreInteractions(response);
@@ -171,7 +180,7 @@ public class PayloadWriterTest {
     Payload payload = new Payload(Paths.get("hello.md"));
     writer.write(payload);
 
-    verify(response).setValue(eq("Last-Modified"), anyString());
+    verify(response).setHeader(eq("Last-Modified"), anyString());
   }
 
   @Test
@@ -180,7 +189,7 @@ public class PayloadWriterTest {
     writer.write(payload);
 
     verify(response).setStatus(OK);
-    verify(response).setValue("ETag", "8b1a9953c4611296a827abf8c47804d7");
+    verify(response).setHeader("ETag", "8b1a9953c4611296a827abf8c47804d7");
   }
 
   @Test

@@ -47,7 +47,7 @@ class SimpleResponse implements Response {
   }
 
   @Override
-  public void setValue(String name, String value) {
+  public void setHeader(String name, String value) {
     response.setValue(name, value);
   }
 

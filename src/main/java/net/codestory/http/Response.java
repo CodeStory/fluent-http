@@ -28,7 +28,7 @@ public interface Response extends Unwrappable {
 
   void setContentLength(long length);
 
-  void setValue(String name, String value);
+  void setHeader(String name, String value);
 
   void setStatus(int statusCode);
 
@@ -39,6 +39,6 @@ public interface Response extends Unwrappable {
   }
 
   default void setHeaders(Map<String, String> headers) {
-    headers.forEach(this::setValue);
+    headers.forEach(this::setHeader);
   }
 }
