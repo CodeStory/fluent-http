@@ -237,18 +237,18 @@ public class PayloadWriter {
   protected String getContentType(Object content, String uri) {
     if (content instanceof File) {
       File file = (File) content;
-      return ContentTypes.get(file.toPath());
+      return ContentTypes.get(file.getName());
     }
     if (content instanceof Path) {
       Path path = (Path) content;
-      return ContentTypes.get(path);
+      return ContentTypes.get(path.toString());
     }
     if (content instanceof CompiledPath) {
       CompiledPath compiledPath = (CompiledPath) content;
-      return ContentTypes.get(compiledPath.getResponsePath());
+      return ContentTypes.get(compiledPath.getResponsePath().toString());
     }
     if (content instanceof URL) {
-      return ContentTypes.get(Paths.get(((URL) content).getFile()));
+      return ContentTypes.get(((URL) content).getFile());
     }
     if (content instanceof byte[]) {
       return "application/octet-stream";
@@ -271,12 +271,12 @@ public class PayloadWriter {
     if (content instanceof ModelAndView) {
       Path path = Resources.findExistingPath(((ModelAndView) content).view());
       requireNonNull(path, "View not found for " + uri);
-      return ContentTypes.get(path);
+      return ContentTypes.get(path.toString());
     }
     if (content instanceof Model) {
       Path path = Resources.findExistingPath(uri);
       requireNonNull(path, "View not found for " + uri);
-      return ContentTypes.get(path);
+      return ContentTypes.get(path.toString());
     }
     return "application/json;charset=UTF-8";
   }
@@ -364,7 +364,7 @@ public class PayloadWriter {
   }
 
   protected byte[] forPath(Path path) throws IOException {
-    if (ContentTypes.supportsTemplating(path)) {
+    if (ContentTypes.supportsTemplating(path.toString())) {
       return forTemplatePath(path);
     }
 
@@ -373,7 +373,7 @@ public class PayloadWriter {
 
   protected byte[] forCompiledPath(CompiledPath compiledPath) throws IOException {
     Path path = compiledPath.getSourcePath();
-    if (ContentTypes.supportsTemplating(path)) {
+    if (ContentTypes.supportsTemplating(path.toString())) {
       return forTemplatePath(path);
     }
 

@@ -34,8 +34,13 @@ public class ContentTypes {
     "text/plain"
   );
 
-  public static String get(Path path) {
-    switch (extension(path)) {
+  private static String extension(String filename) {
+    int dotIndex = filename.lastIndexOf('.');
+    return (dotIndex <= 0) ? "" : filename.substring(dotIndex);
+  }
+
+  public static String get(String filename) {
+    switch (extension(filename)) {
       case ".html":
       case ".md":
       case ".markdown":
@@ -77,8 +82,8 @@ public class ContentTypes {
     }
   }
 
-  public static boolean supportsTemplating(Path path) {
-    switch (extension(path)) {
+  public static boolean supportsTemplating(String filename) {
+    switch (extension(filename)) {
       case ".txt":
       case ".md":
       case ".markdown":
