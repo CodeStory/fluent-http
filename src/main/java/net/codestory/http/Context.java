@@ -157,14 +157,6 @@ public class Context {
     return (forwarded != null) ? forwarded : request.clientAddress().toString();
   }
 
-  public byte[] content() {
-    try {
-      return InputStreams.readBytes(request.inputStream());
-    } catch (IOException e) {
-      throw new IllegalStateException("Unable to read content", e);
-    }
-  }
-
   public <T> T contentAs(Class<T> type) {
     try {
       String json = request.content();
@@ -215,7 +207,7 @@ public class Context {
         return currentUser;
       }
       if (clazz.isAssignableFrom(byte[].class)) {
-        return content();
+        return request.contentAsBytes();
       }
       if (clazz.isAssignableFrom(String.class)) {
         return request.content();

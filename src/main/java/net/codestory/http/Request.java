@@ -20,6 +20,7 @@ import java.net.*;
 import java.util.*;
 
 import net.codestory.http.internal.*;
+import net.codestory.http.io.InputStreams;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -29,6 +30,10 @@ public interface Request extends Unwrappable {
   String method();
 
   String content() throws IOException;
+
+  default byte[] contentAsBytes() throws IOException {
+    return InputStreams.readBytes(inputStream());
+  }
 
   String contentType();
 

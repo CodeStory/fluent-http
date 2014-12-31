@@ -47,13 +47,14 @@ public class ContextTest {
 
   @Test
   public void extract() throws IOException {
-    byte[] rawContent = "Content".getBytes();
+    String content = "Content";
+    byte[] contentAsBytes = content.getBytes();
     User user = mock(User.class);
     Cookies cookies = mock(Cookies.class);
     Query query = mock(Query.class);
     context.setCurrentUser(user);
-    when(request.inputStream()).thenReturn(new ByteArrayInputStream(rawContent));
-    when(request.content()).thenReturn("Content");
+    when(request.contentAsBytes()).thenReturn(contentAsBytes);
+    when(request.content()).thenReturn(content);
     when(request.cookies()).thenReturn(cookies);
     when(request.query()).thenReturn(query);
 
@@ -61,8 +62,8 @@ public class ContextTest {
     assertThat(context.extract(Request.class)).isSameAs(request);
     assertThat(context.extract(Response.class)).isSameAs(response);
     assertThat(context.extract(User.class)).isSameAs(user);
-    assertThat(context.extract(byte[].class)).isEqualTo(rawContent);
-    assertThat(context.extract(String.class)).isSameAs("Content");
+    assertThat(context.extract(byte[].class)).isEqualTo(contentAsBytes);
+    assertThat(context.extract(String.class)).isSameAs(content);
     assertThat(context.extract(Cookies.class)).isSameAs(cookies);
     assertThat(context.extract(Query.class)).isSameAs(query);
     assertThat(context.extract(Site.class)).isSameAs(site);

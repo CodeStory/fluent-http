@@ -31,9 +31,9 @@ public class PutTest extends AbstractProdWebServerTest {
   }
 
   @Test
-  public void content() {
+  public void content_as_bytes() {
     configure(routes -> routes
-        .put("/put", context -> context.content())
+        .put("/put", context -> context.request().contentAsBytes())
     );
 
     put("/put", "Bob").should().contain("Bob");
