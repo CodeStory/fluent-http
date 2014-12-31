@@ -15,11 +15,9 @@
  */
 package net.codestory.http.compilers;
 
-import java.nio.file.Path;
 import java.util.*;
 
 import static java.util.Collections.singletonMap;
-import static net.codestory.http.io.Resources.toUnixString;
 
 public class CoffeeCompiler implements Compiler {
   private final NashornCompiler nashornCompiler = NashornCompiler.get(
