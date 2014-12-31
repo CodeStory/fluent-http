@@ -16,5 +16,13 @@
 package net.codestory.http.cors;
 
 public enum CORSRequestType {
-  SIMPLE, ACTUAL, PRE_FLIGHT, NOT_CORS, INVALID_CORS
+  SIMPLE, ACTUAL, PRE_FLIGHT, NOT_CORS, INVALID_CORS;
+
+  public boolean isCORS() {
+    return this != NOT_CORS;
+  }
+
+  public boolean isPreflight() {
+    return this == PRE_FLIGHT;
+  }
 }

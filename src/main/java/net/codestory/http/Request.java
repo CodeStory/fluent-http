@@ -146,11 +146,11 @@ public interface Request extends Unwrappable {
   }
 
   default boolean isCORS() {
-    return corsRequestType() != NOT_CORS;
+    return corsRequestType().isCORS();
   }
 
   default boolean isPreflight() {
-    return corsRequestType() == PRE_FLIGHT;
+    return corsRequestType().isPreflight();
   }
 
   /*private static*/ default boolean isInvalidOrigin(String origin) {
