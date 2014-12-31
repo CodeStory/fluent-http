@@ -15,14 +15,8 @@
  */
 package net.codestory.http;
 
-import static net.codestory.http.Context.CORSRequestType.*;
-import static net.codestory.http.constants.Headers.*;
-import static net.codestory.http.constants.Methods.*;
-import static net.codestory.http.types.ContentTypes.*;
-
 import java.io.*;
 import java.lang.reflect.*;
-import java.net.*;
 import java.util.*;
 
 import net.codestory.http.injection.*;
@@ -97,69 +91,6 @@ public class Context {
 
   public User currentUser() {
     return currentUser;
-  }
-
-  public static enum CORSRequestType {
-    SIMPLE,
-    ACTUAL,
-    PRE_FLIGHT,
-    NOT_CORS,
-    INVALID_CORS
-  }
-
-  public CORSRequestType corsRequestType() {
-    String origin = header(ORIGIN);
-    if (origin == null) {
-      return NOT_CORS;
-    }
-
-    if (isInvalidOrigin(origin)) {
-      return INVALID_CORS;
-    }
-
-    switch (method()) {
-      case OPTIONS:
-        String accessControl = header(ACCESS_CONTROL_REQUEST_METHOD);
-        if (accessControl == null) {
-          return ACTUAL;
-        }
-        return accessControl.isEmpty() ? INVALID_CORS : PRE_FLIGHT;
-      case GET:
-      case HEAD:
-        return SIMPLE;
-      case POST:
-        String contentType = request.contentType();
-        if (contentType == null) {
-          return INVALID_CORS;
-        }
-        return SIMPLE_HTTP_REQUEST_CONTENT_TYPE_VALUES.contains(contentType.toLowerCase().trim()) ? SIMPLE : ACTUAL;
-      case PUT:
-      case DELETE:
-      case TRACE:
-      case CONNECT:
-        return ACTUAL;
-      default:
-        return INVALID_CORS;
-    }
-  }
-
-  public boolean isCORS() {
-    return corsRequestType() != NOT_CORS;
-  }
-
-  public boolean isPreflight() {
-    return corsRequestType() == PRE_FLIGHT;
-  }
-
-  private static boolean isInvalidOrigin(String origin) {
-    if (origin.isEmpty() || origin.contains("%")) {
-      return true;
-    }
-    try {
-      return new URI(origin).getScheme() == null;
-    } catch (URISyntaxException e) {
-      return true;
-    }
   }
 
   public Object extract(Type type) throws IOException {

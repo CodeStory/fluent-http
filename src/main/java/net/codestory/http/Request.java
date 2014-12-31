@@ -22,11 +22,19 @@ import java.util.*;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import net.codestory.http.convert.TypeConvert;
+import net.codestory.http.cors.CORSRequestType;
 import net.codestory.http.internal.*;
 import net.codestory.http.io.InputStreams;
 
 import static java.util.stream.Collectors.toMap;
+import static net.codestory.http.constants.Headers.ACCESS_CONTROL_REQUEST_METHOD;
+import static net.codestory.http.constants.Headers.ORIGIN;
 import static net.codestory.http.constants.Headers.X_FORWARDED_FOR;
+import static net.codestory.http.constants.Methods.*;
+import static net.codestory.http.constants.Methods.CONNECT;
+import static net.codestory.http.cors.CORSRequestType.*;
+import static net.codestory.http.cors.CORSRequestType.PRE_FLIGHT;
+import static net.codestory.http.types.ContentTypes.SIMPLE_HTTP_REQUEST_CONTENT_TYPE_VALUES;
 
 public interface Request extends Unwrappable {
   String uri();
@@ -98,4 +106,61 @@ public interface Request extends Unwrappable {
   Query query();
 
   List<Part> parts();
+
+
+
+  default CORSRequestType corsRequestType() {
+    String origin = header(ORIGIN);
+    if (origin == null) {
+      return NOT_CORS;
+    }
+
+    if (isInvalidOrigin(origin)) {
+      return INVALID_CORS;
+    }
+
+    switch (method()) {
+      case OPTIONS:
+        String accessControl = header(ACCESS_CONTROL_REQUEST_METHOD);
+        if (accessControl == null) {
+          return ACTUAL;
+        }
+        return accessControl.isEmpty() ? INVALID_CORS : PRE_FLIGHT;
+      case GET:
+      case HEAD:
+        return SIMPLE;
+      case POST:
+        String contentType = contentType();
+        if (contentType == null) {
+          return INVALID_CORS;
+        }
+        return SIMPLE_HTTP_REQUEST_CONTENT_TYPE_VALUES.contains(contentType.toLowerCase().trim()) ? SIMPLE : ACTUAL;
+      case PUT:
+      case DELETE:
+      case TRACE:
+      case CONNECT:
+        return ACTUAL;
+      default:
+        return INVALID_CORS;
+    }
+  }
+
+  default boolean isCORS() {
+    return corsRequestType() != NOT_CORS;
+  }
+
+  default boolean isPreflight() {
+    return corsRequestType() == PRE_FLIGHT;
+  }
+
+  /*private static*/ default boolean isInvalidOrigin(String origin) {
+    if (origin.isEmpty() || origin.contains("%")) {
+      return true;
+    }
+    try {
+      return new URI(origin).getScheme() == null;
+    } catch (URISyntaxException e) {
+      return true;
+    }
+  }
 }

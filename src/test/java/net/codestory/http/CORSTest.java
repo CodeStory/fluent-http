@@ -33,7 +33,8 @@ public class CORSTest extends AbstractProdWebServerTest {
   public void preflight() {
     configure(routes -> routes
       .options("/cors", context -> {
-        if (!context.isCORS() || context.isPreflight()) {
+        Request request = context.request();
+        if (!request.isCORS() || request.isPreflight()) {
           throw new BadRequestException();
         }
 
@@ -44,7 +45,8 @@ public class CORSTest extends AbstractProdWebServerTest {
           .withMaxAge(3600);
       })
       .options("/corspf", context -> {
-        if (!context.isCORS() || !context.isPreflight() || !"PUT".equals(context.header("Access-Control-Request-Method"))) {
+        Request request = context.request();
+        if (!request.isCORS() || !request.isPreflight() || !"PUT".equals(context.header("Access-Control-Request-Method"))) {
           throw new BadRequestException();
         }
 
