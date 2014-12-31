@@ -33,7 +33,7 @@ public class TemplateTest {
   static CompilerFacade compilerFacade = new CompilerFacade(env, resources);
 
   String render(String name, Map<String, Object> model) {
-    return new Template(resources, name).render(model, compilerFacade).content();
+    return new Template(resources, name).render(model, compilerFacade);
   }
 
   String render(String name) {

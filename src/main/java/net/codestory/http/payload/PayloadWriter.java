@@ -350,9 +350,9 @@ public class PayloadWriter {
     keyValues.put("env", env);
     keyValues.put("site", site);
 
-    CacheEntry html = new Template(resources, view).render(keyValues, compilers);
+    Template template = new Template(resources, view);
 
-    return html.toBytes();
+    return forString(template.render(keyValues, compilers));
   }
 
   protected byte[] forURL(URL url) throws IOException {

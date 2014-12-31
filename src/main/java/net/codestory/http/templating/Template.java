@@ -43,7 +43,7 @@ public class Template {
     this.path = path;
   }
 
-  public CacheEntry render(Map<String, ?> keyValues, CompilerFacade compilerFacade) {
+  public String render(Map<String, ?> keyValues, CompilerFacade compilerFacade) {
     try {
       YamlFrontMatter yamlFrontMatter = YamlFrontMatter.parse(resources.sourceFile(path));
 
@@ -58,13 +58,12 @@ public class Template {
 
       String layout = (String) variables.get("layout");
       if (layout == null) {
-        return CacheEntry.fromString(body);
+        return body;
       }
 
-      String layoutContent = new Template(resources, "_layouts", layout).render(allKeyValues, compilerFacade).content();
+      String layoutContent = new Template(resources, "_layouts", layout).render(allKeyValues, compilerFacade);
       String bodyWithLayout = layoutContent.replace("[[body]]", body);
-
-      return CacheEntry.fromString(bodyWithLayout);
+      return bodyWithLayout;
     } catch (IOException e) {
       throw new IllegalStateException("Unable to render template", e);
     }
