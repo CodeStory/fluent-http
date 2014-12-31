@@ -44,7 +44,7 @@ public class Template {
 
   public CacheEntry render(Map<String, ?> keyValues, CompilerFacade compilerFacade) {
     try {
-      YamlFrontMatter yamlFrontMatter = YamlFrontMatter.parse(new SourceFile(resources, path));
+      YamlFrontMatter yamlFrontMatter = YamlFrontMatter.parse(resources.sourceFile(path));
 
       String content = yamlFrontMatter.getContent();
       Map<String, Object> variables = yamlFrontMatter.getVariables();

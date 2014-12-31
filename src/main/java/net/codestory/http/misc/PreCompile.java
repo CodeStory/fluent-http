@@ -76,7 +76,7 @@ public class PreCompile {
   }
 
   protected byte[] compile(Path fromPath) throws IOException {
-    return compilers.compile(new SourceFile(resources, fromPath)).toBytes();
+    return compilers.compile(resources.sourceFile(fromPath)).toBytes();
   }
 
   protected void write(byte[] bytes, Path toPath) throws IOException {

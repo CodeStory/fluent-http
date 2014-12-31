@@ -49,7 +49,7 @@ class PathSource extends LessSource {
     }
 
     try {
-      return new PathSource(resources, new SourceFile(resources, relativePath));
+      return new PathSource(resources, resources.sourceFile(relativePath));
     } catch (IOException e) {
       throw new CannotReadFile();
     }

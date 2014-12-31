@@ -15,6 +15,7 @@
  */
 package net.codestory.http.io;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static net.codestory.http.io.ClassPaths.*;
 
 import java.io.*;
@@ -22,6 +23,7 @@ import java.net.*;
 import java.nio.charset.*;
 import java.nio.file.*;
 
+import net.codestory.http.compilers.SourceFile;
 import net.codestory.http.misc.Env;
 import net.codestory.http.types.*;
 
@@ -34,6 +36,10 @@ public class Resources {
 
   public Resources(String root) {
     this.root = root;
+  }
+
+  public SourceFile sourceFile(Path path) throws IOException {
+    return new SourceFile(path, read(path, UTF_8));
   }
 
   public boolean isPublic(Path path) {

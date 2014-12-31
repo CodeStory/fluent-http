@@ -15,13 +15,9 @@
  */
 package net.codestory.http.compilers;
 
-import net.codestory.http.io.Resources;
 import net.codestory.http.misc.Sha1;
 
-import java.io.IOException;
 import java.nio.file.Path;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class SourceFile {
   private final Path path;
@@ -30,11 +26,6 @@ public class SourceFile {
   public SourceFile(Path path, String content) {
     this.path = path;
     this.content = content;
-  }
-
-  public SourceFile(Resources resources, Path path) throws IOException {
-    this.path = path;
-    this.content = resources.read(path, UTF_8);
   }
 
   public boolean hasExtension(String extension) {

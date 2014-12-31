@@ -377,7 +377,7 @@ public class PayloadWriter {
       return forTemplatePath(path);
     }
 
-    return compilers.compile(new SourceFile(resources, path)).toBytes();
+    return compilers.compile(resources.sourceFile(path)).toBytes();
   }
 
   protected byte[] forTemplatePath(Path path) {

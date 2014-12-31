@@ -60,7 +60,7 @@ public class AssetsHelperSource {
   }
 
   private String sha1(Path path) throws IOException {
-    CacheEntry compile = compilers.compile(new SourceFile(resources, path));
+    CacheEntry compile = compilers.compile(resources.sourceFile(path));
     return Sha1.of(compile.toBytes());
   }
 

@@ -135,7 +135,7 @@ public class Site {
   private Map<String, Object> pathToMap(String path) {
     try {
       Path yamlPath = Paths.get(path);
-      return YamlFrontMatter.parse(new SourceFile(resources, yamlPath)).getVariables();
+      return YamlFrontMatter.parse(resources.sourceFile(yamlPath)).getVariables();
     } catch (IOException e) {
       throw new IllegalStateException("Unable to read file: " + path, e);
     }
