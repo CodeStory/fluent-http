@@ -29,7 +29,11 @@ public class Resources {
   private final String root;
 
   public Resources(Env env) {
-    this.root = env.appFolder();
+    this(env.appFolder());
+  }
+
+  public Resources(String root) {
+    this.root = root;
   }
 
   public boolean isPublic(Path path) {
