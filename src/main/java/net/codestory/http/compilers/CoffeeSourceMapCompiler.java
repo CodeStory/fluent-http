@@ -15,9 +15,10 @@
  */
 package net.codestory.http.compilers;
 
-import java.util.*;
+import java.util.Map;
 
 import static java.util.Collections.singletonMap;
+import static net.codestory.http.io.Strings.replaceLast;
 
 public class CoffeeSourceMapCompiler implements Compiler {
   private final NashornCompiler nashornCompiler = NashornCompiler.get(
@@ -28,6 +29,10 @@ public class CoffeeSourceMapCompiler implements Compiler {
   public String compile(SourceFile sourceFile) {
     Map<String, Object> options = singletonMap("__literate", sourceFile.hasExtension(".litcoffee"));
 
-    return nashornCompiler.compile(sourceFile, options);
+    String fileName = replaceLast(sourceFile.getFileName(), ".map", "");
+    String sourceName = fileName + ".source";
+    String source = sourceFile.getSource();
+
+    return nashornCompiler.compile(fileName, sourceName, source, options);
   }
 }

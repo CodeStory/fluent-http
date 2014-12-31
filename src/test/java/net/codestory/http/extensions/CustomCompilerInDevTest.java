@@ -34,7 +34,6 @@ public class CustomCompilerInDevTest extends AbstractDevWebServerTest {
 
     get("/extensions/custom_compiler.html").should().contain("helloworld");
     get("/extensions/custom_compiler.script").should().contain("helloworld");
-    get("/extensions/custom_compiler.html.source").should().contain("HelloWorld");
     get("/extensions/custom_compiler.script.source").should().contain("HelloWorld");
   }
 

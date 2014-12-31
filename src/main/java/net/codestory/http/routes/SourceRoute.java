@@ -16,28 +16,22 @@
 package net.codestory.http.routes;
 
 import static net.codestory.http.constants.Methods.*;
-import static net.codestory.http.io.Strings.*;
 
 import java.nio.file.*;
 
 import net.codestory.http.*;
-import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.io.*;
 
 class SourceRoute implements Route {
-  private static final Path NOT_FOUND = Paths.get("");
-
   private final Resources resources;
-  private final CompilerFacade compilers;
 
-  SourceRoute(Resources resources, CompilerFacade compilers) {
+  SourceRoute(Resources resources) {
     this.resources = resources;
-    this.compilers = compilers;
   }
 
   @Override
   public boolean matchUri(String uri) {
-    return uri.endsWith(".source") && resources.isPublic(findPath(uri, getSourcePath(uri)));
+    return uri.endsWith(".source") && resources.isPublic(getSourcePath(uri));
   }
 
   @Override
@@ -47,29 +41,10 @@ class SourceRoute implements Route {
 
   @Override
   public Path body(Context context) {
-    String sourceUri = getSourcePath(context.uri());
-    return findPath(context.uri(), sourceUri);
+    return getSourcePath(context.uri());
   }
 
-  public Path findPath(String uri, String sourceUri) {
-    Path sourcePath = resources.findExistingPath(sourceUri);
-    if ((sourcePath != null) && resources.isPublic(sourcePath)) {
-      return sourcePath;
-    }
-
-    String extension = extension(sourceUri);
-    for (String sourceExtension : compilers.extensionsThatCompileTo(extension)) {
-      sourcePath = Paths.get(getSourcePath(replaceLast(uri, extension, sourceExtension)));
-
-      if (resources.isPublic(sourcePath)) {
-        return sourcePath;
-      }
-    }
-
-    return NOT_FOUND;
-  }
-
-  private static String getSourcePath(String uri) {
-    return Strings.substringBeforeLast(uri, ".source");
+  private static Path getSourcePath(String uri) {
+    return Paths.get(Strings.substringBeforeLast(uri, ".source"));
   }
 }

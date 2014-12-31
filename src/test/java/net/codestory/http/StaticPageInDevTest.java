@@ -22,7 +22,13 @@ public class StaticPageInDevTest extends AbstractDevWebServerTest {
   @Test
   public void coffeescript_source() {
     get("/js/script.coffee.source").should().haveType("application/javascript").contain("console.log 'Hello'");
-    get("/js/anotherscript.js.source").should().haveType("application/javascript").contain("console.log 'foobar'");
+    get("/js/anotherscript.coffee.source").should().haveType("application/javascript").contain("console.log 'foobar'");
+  }
+
+  @Test
+  public void coffeescript_map_url() {
+    get("/js/anotherscript.coffee").should().contain("sourceMappingURL=/js/anotherscript.coffee.map");
+    get("/js/anotherscript.js").should().contain("sourceMappingURL=/js/anotherscript.coffee.map");
   }
 
   @Test
@@ -36,7 +42,7 @@ public class StaticPageInDevTest extends AbstractDevWebServerTest {
   @Test
   public void less_source() {
     get("/assets/style.less.source").should().haveType("text/css").contain("body {\n  h1 {\n    color: red;\n  }\n}");
-    get("/assets/anotherstyle.css.source").should().haveType("text/css").contain("body { h1 { color: red; } }");
+    get("/assets/anotherstyle.less.source").should().haveType("text/css").contain("body { h1 { color: red; } }");
   }
 
   @Test
@@ -48,5 +54,10 @@ public class StaticPageInDevTest extends AbstractDevWebServerTest {
   @Test
   public void serve_overriding_css() {
     get("/assets/style.css").should().contain("* {}");
+  }
+
+  @Test
+  public void serve_overriding_script() {
+    get("/js/script.js").should().contain("console.log('Hello');");
   }
 }

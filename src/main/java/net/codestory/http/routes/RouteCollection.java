@@ -80,7 +80,7 @@ public class RouteCollection implements Routes {
     routes.add(new StaticRoute(prodMode, resources, compilers));
     if (!prodMode) {
       routes.add(new SourceMapRoute(resources, compilers));
-      routes.add(new SourceRoute(resources, compilers));
+      routes.add(new SourceRoute(resources));
     }
   }
 
