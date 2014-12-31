@@ -41,7 +41,7 @@ public class Resources {
         return false;
       }
     }
-    return Resources.exists(path);
+    return exists(path);
   }
 
   public static Path findExistingPath(String folder, String name) {
