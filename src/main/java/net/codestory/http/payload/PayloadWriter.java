@@ -350,9 +350,9 @@ public class PayloadWriter {
     keyValues.put("env", env);
     keyValues.put("site", site);
 
-    Template template = new Template(compilers, resources, view);
+    Template template = new Template(compilers, resources);
 
-    return forString(template.render(keyValues));
+    return forString(template.render(view, resources.findExistingPath(view), keyValues));
   }
 
   protected byte[] forURL(URL url) throws IOException {
