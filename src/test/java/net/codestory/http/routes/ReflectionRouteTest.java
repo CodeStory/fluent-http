@@ -22,11 +22,13 @@ import net.codestory.http.*;
 
 import org.junit.*;
 
+import java.io.IOException;
+
 public class ReflectionRouteTest {
   Context context = mock(Context.class);
 
   @Test
-  public void inject_context() {
+  public void inject_context() throws IOException {
     when(context.extract(Context.class)).thenReturn(context);
 
     Object[] parameters = ReflectionRoute.convert(context, new String[]{"param1", "param2"}, String.class, String.class, Context.class);
@@ -35,7 +37,7 @@ public class ReflectionRouteTest {
   }
 
   @Test
-  public void inject_request() {
+  public void inject_request() throws IOException {
     Request request = mock(Request.class);
     when(context.extract(Request.class)).thenReturn(request);
 

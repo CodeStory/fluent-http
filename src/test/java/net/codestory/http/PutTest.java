@@ -42,7 +42,7 @@ public class PutTest extends AbstractProdWebServerTest {
   @Test
   public void content_as_string() {
     configure(routes -> routes
-        .put("/put", context -> context.contentAsString())
+        .put("/put", context -> context.request().content())
     );
 
     put("/put", "Joe").should().contain("Joe");

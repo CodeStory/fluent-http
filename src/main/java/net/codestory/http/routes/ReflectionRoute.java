@@ -15,6 +15,7 @@
  */
 package net.codestory.http.routes;
 
+import java.io.IOException;
 import java.lang.reflect.*;
 import java.util.function.*;
 
@@ -85,7 +86,7 @@ class ReflectionRoute implements AnyRoute {
     }
   }
 
-  static Object[] convert(Context context, String[] pathParameters, Type... types) {
+  static Object[] convert(Context context, String[] pathParameters, Type... types) throws IOException {
     Object[] converted = new Object[types.length];
 
     // String parameters

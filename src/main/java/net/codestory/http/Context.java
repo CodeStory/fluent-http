@@ -165,14 +165,6 @@ public class Context {
     }
   }
 
-  public String contentAsString() {
-    try {
-      return request.content();
-    } catch (IOException e) {
-      throw new IllegalStateException("Unable to read content", e);
-    }
-  }
-
   public <T> T contentAs(Class<T> type) {
     try {
       String json = request.content();
@@ -200,7 +192,7 @@ public class Context {
     return (contentType != null) && (contentType.contains("application/x-www-form-urlencoded"));
   }
 
-  public Object extract(Type type) {
+  public Object extract(Type type) throws IOException {
     if (type instanceof Class) {
       Class<?> clazz = (Class<?>) type;
 
@@ -226,7 +218,7 @@ public class Context {
         return content();
       }
       if (clazz.isAssignableFrom(String.class)) {
-        return contentAsString();
+        return request.content();
       }
       if (clazz.isAssignableFrom(Site.class)) {
         return site;
