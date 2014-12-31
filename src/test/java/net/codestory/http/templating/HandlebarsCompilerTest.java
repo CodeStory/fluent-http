@@ -35,84 +35,88 @@ public class HandlebarsCompilerTest {
   static Resources resources = new Resources();
   static HandlebarsCompiler compiler = new HandlebarsCompiler(resources, new Compilers(prodMode(), resources));
 
+  private String compile(String content, Map<String, Object> variables) throws IOException {
+    return compiler.compile(content, variables);
+  }
+
   @Test
   public void compile() throws IOException {
-    String result = compiler.compile("-[[greeting]]-", map("greeting", "Hello"));
+    String result = compile("-[[greeting]]-", map("greeting", "Hello"));
 
     assertThat(result).isEqualTo("-Hello-");
   }
 
   @Test
   public void partials() throws IOException {
-    String result = compiler.compile("-[[>partial.txt]] [[>partial.txt]]-", map("name", "Bob"));
+    String result = compile("-[[>partial.txt]] [[>partial.txt]]-", map("name", "Bob"));
 
     assertThat(result).isEqualTo("-Hello Bob Hello Bob-");
   }
 
   @Test
   public void partial_with_context() throws IOException {
-    String result = compiler.compile("[[>partialWithContext ctx]]", map("ctx", map("firstName", "Bob", "age", "42")));
+    String result = compile("[[>partialWithContext ctx]]", map("ctx", map("firstName", "Bob", "age", "42")));
 
     assertThat(result).isEqualTo("Hello Bob/42");
   }
 
   @Test
   public void find_partial() throws IOException {
-    String result = compiler.compile("[[>partial]]", map("name", "Bob"));
+    String result = compile("[[>partial]]", map("name", "Bob"));
 
     assertThat(result).isEqualTo("Hello Bob");
   }
 
   @Test
   public void markdown_partial() throws IOException {
-    String result = compiler.compile("[[>map city]]", map("city", "Paris"));
+    String result = compile("[[>map city]]", map("city", "Paris"));
 
     assertThat(result).isEqualTo("<p><a href=\"https://maps.google.com/maps?q=+Paris\"> Paris</a></p>\n");
   }
 
   @Test(expected = HandlebarsException.class)
   public void unknown_partial() throws IOException {
-    compiler.compile("[[>unknown]]", map("", ""));
+    compile("[[>unknown]]", map("", ""));
   }
 
   @Test
   public void string_helpers() throws IOException {
-    String result = compiler.compile("Hello [[capitalizeFirst name]]", map("name", "joe"));
+    String result = compile("Hello [[capitalizeFirst name]]", map("name", "joe"));
 
     assertThat(result).isEqualTo("Hello Joe");
   }
 
   @Test
   public void java_getters_and_fields() throws IOException {
-    String result = compiler.compile("[[bean.name]] is [[bean.age]]", map("bean", new JavaBean("Bob", 12)));
+    String result = compile("[[bean.name]] is [[bean.age]]", map("bean", new JavaBean("Bob", 12)));
 
     assertThat(result).isEqualTo("Bob is 12");
   }
 
   @Test
   public void java_getter_method() throws IOException {
-    String result = compiler.compile("[[bean.fullDescription]]", map("bean", new JavaBean("Bob", 12)));
+    String result = compile("[[bean.fullDescription]]", map("bean", new JavaBean("Bob", 12)));
 
     assertThat(result).isEqualTo("Bob-12");
   }
 
   @Test
   public void java_plain_method() throws IOException {
-    String result = compiler.compile("[[bean.description]]", map("bean", new JavaBean("Bob", 12)));
+    String result = compile("[[bean.description]]", map("bean", new JavaBean("Bob", 12)));
 
     assertThat(result).isEqualTo("Bob");
   }
 
   @Test
   public void each() throws IOException {
-    String result = compiler.compile("[[#each list]][[.]][[/each]]", map("list", asList("A", "B")));
+    String result = compile("[[#each list]][[.]][[/each]]", map("list", asList("A", "B")));
 
     assertThat(result).isEqualTo("AB");
   }
 
   @Test
   public void each_reverse() throws IOException {
-    String result = compiler.compile("[[#each_reverse list]][[.]][[/each_reverse]]", map("list", asList("A", "B")));
+    String result = compile("[[#each_reverse list]][[.]][[/each_reverse]]", map("list", asList("A", "B")));
 
     assertThat(result).isEqualTo("BA");
   }
@@ -127,7 +131,7 @@ public class HandlebarsCompilerTest {
       put("C", "Letter C");
     }});
 
-    String result = compiler.compile("[[#each_value descriptions letters]][[@key]]=[[.]][[/each_value]]", variables);
+    String result = compile("[[#each_value descriptions letters]][[@key]]=[[.]][[/each_value]]", variables);
 
     assertThat(result).isEqualTo("A=Letter AB=Letter B");
   }
@@ -145,14 +149,14 @@ public class HandlebarsCompilerTest {
       put("C", "Description C");
     }});
 
-    String result = compiler.compile("[[#each_value descriptions letters]][[@value.id]]=[[.]][[/each_value]]", variables);
+    String result = compile("[[#each_value descriptions letters]][[@value.id]]=[[.]][[/each_value]]", variables);
 
     assertThat(result).isEqualTo("idA=Description AidB=Description B");
   }
 
   @Test
   public void unescaped_content() throws IOException {
-    String result = compiler.compile("[[&html]]", map("html", "<div>Hello</div>"));
+    String result = compile("[[&html]]", map("html", "<div>Hello</div>"));
 
     assertThat(result).isEqualTo("<div>Hello</div>");
   }
@@ -171,7 +175,7 @@ public class HandlebarsCompilerTest {
       }
     });
 
-    String result = compiler.compile("[[additional]]", new TreeMap<>());
+    String result = compile("[[additional]]", new TreeMap<>());
 
     assertThat(result).isEqualTo("SUCCESS");
   }
@@ -180,7 +184,7 @@ public class HandlebarsCompilerTest {
   public void google_analytics_with_fixed_id() throws IOException {
     compiler.configure(hb -> hb.registerHelpers(new GoogleAnalyticsHelper("ID")));
 
-    String result = compiler.compile("[[google_analytics]]", new TreeMap<>());
+    String result = compile("[[google_analytics]]", new TreeMap<>());
 
     assertThat(result).startsWith("<script ").contains("ID").endsWith("</script>");
   }
@@ -189,7 +193,7 @@ public class HandlebarsCompilerTest {
   public void google_analytics_with_dynamic_id() throws IOException {
     compiler.configure(hb -> hb.registerHelpers(new GoogleAnalyticsHelper()));
 
-    String result = compiler.compile("[[google_analytics UA]]", map("UA", "12345"));
+    String result = compile("[[google_analytics UA]]", map("UA", "12345"));
 
     assertThat(result).startsWith("<script ").contains("12345").endsWith("</script>");
   }
@@ -201,7 +205,7 @@ public class HandlebarsCompilerTest {
 
     compiler.configure(hb -> hb.registerHelpers(new GoogleAnalyticsHelper("ID")));
 
-    String result = compiler.compile("[[google_analytics UA]]", map("env", env));
+    String result = compile("[[google_analytics UA]]", map("env", env));
 
     assertThat(result).isEmpty();
   }
@@ -211,7 +215,7 @@ public class HandlebarsCompilerTest {
     compiler.configure(hb -> hb.registerHelpers(new GoogleAnalyticsHelper("DEFAULT_ID")));
     compiler.configure(hb -> hb.registerHelpers(new GoogleAnalyticsHelper("OVERRIDEN")));
 
-    String result = compiler.compile("[[google_analytics]]", new TreeMap<String, Object>());
+    String result = compile("[[google_analytics]]", new TreeMap<String, Object>());
 
     assertThat(result).contains("OVERRIDEN").doesNotContain("DEFAULT_ID");
   }
