@@ -19,6 +19,8 @@ import com.github.rjeschke.txtmark.Configuration;
 import com.github.rjeschke.txtmark.Processor;
 import org.markdown4j.*;
 
+import java.nio.file.Path;
+
 public enum MarkdownCompiler {
   INSTANCE;
 
@@ -30,6 +32,10 @@ public enum MarkdownCompiler {
       .registerPlugins(new YumlPlugin(), new WebSequencePlugin(), new IncludePlugin(), new FormulaPlugin(), new TablePlugin())
       .setDecorator(new ExtDecorator())
       .setCodeBlockEmitter(new CodeBlockEmitter()).build();
+  }
+
+  public static boolean supports(Path path) {
+    return path.toString().endsWith(".md") || path.toString().endsWith(".markdown");
   }
 
   public String compile(String source) {

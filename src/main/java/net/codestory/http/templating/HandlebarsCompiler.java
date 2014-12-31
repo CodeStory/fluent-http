@@ -15,7 +15,6 @@
  */
 package net.codestory.http.templating;
 
-import static java.nio.charset.StandardCharsets.*;
 import static java.util.Arrays.*;
 
 import java.io.*;
@@ -73,7 +72,7 @@ public class HandlebarsCompiler {
           }
 
           String body;
-          if (include.toString().endsWith(".md") || include.toString().endsWith(".markdown")) {
+          if (MarkdownCompiler.supports(include)) {
             body = MarkdownCompiler.INSTANCE.compile(resources.sourceFile(include).getSource());
           } else {
             body = compilers.compile(resources.sourceFile(include)).content();

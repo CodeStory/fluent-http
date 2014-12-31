@@ -52,7 +52,7 @@ public class Template {
       Map<String, Object> allKeyValues = merge(variables, keyValues);
 
       String body = compilerFacade.handlebar(content, allKeyValues);
-      if (path.toString().endsWith(".md") || path.toString().endsWith(".markdown")) {
+      if (MarkdownCompiler.supports(path)) {
         body = MarkdownCompiler.INSTANCE.compile(body);
       }
 
