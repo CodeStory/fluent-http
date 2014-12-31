@@ -17,6 +17,7 @@ package net.codestory.http.compilers;
 
 import net.codestory.http.io.Resources;
 import net.codestory.http.misc.Env;
+import net.codestory.http.misc.Sha1;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -94,7 +95,7 @@ public class Compilers {
           }
         }
 
-        String sha1 = sourceFile.sha1();
+        String sha1 = Sha1.of(key);
         return diskCache.computeIfAbsent(sha1, extension, () -> compiler.get().compile(sourceFile));
       }
 
