@@ -65,11 +65,11 @@ public class UriParser {
     return !(patternParts[lastPart].startsWith(":") && uriParts[lastPart].isEmpty());
   }
 
-  static String[] parts(String uri) {
+  private static String[] parts(String uri) {
     return uri.split("/", -1);
   }
 
-  static String[] queryParamsParts(String uri) {
+  private static String[] queryParamsParts(String uri) {
     return uri.split("[=&]", -1);
   }
 
