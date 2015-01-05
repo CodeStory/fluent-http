@@ -38,7 +38,7 @@ class SourceMapRoute implements Route {
 
   @Override
   public boolean matchUri(String uri) {
-    return uri.endsWith(".coffee.map") && resources.isPublic(pathSource(uri));
+    return (uri.endsWith(".coffee.map") || uri.endsWith(".litcoffee.map")) && resources.isPublic(pathSource(uri));
   }
 
   @Override

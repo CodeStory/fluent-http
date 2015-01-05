@@ -23,6 +23,7 @@ public class StaticPageInDevTest extends AbstractDevWebServerTest {
   public void coffeescript_source() {
     get("/js/script.coffee.source").should().haveType("application/javascript").contain("console.log 'Hello'");
     get("/js/anotherscript.coffee.source").should().haveType("application/javascript").contain("console.log 'foobar'");
+    get("/js/literate.litcoffee.source").should().haveType("application/javascript").contain("This is a literate coffee source with lots of comments");
   }
 
   @Test
@@ -37,6 +38,14 @@ public class StaticPageInDevTest extends AbstractDevWebServerTest {
       .contain("\"file\": \"/js/script.coffee\"")
       .contain("\"sources\": [\n  \"/js/script.coffee.source\"\n ]")
       .contain("\"mappings\": \"AAAA,OAAO,CAAC,GAAR,CAAY,OAAZ,CAAA,CAAA\"");
+  }
+
+  @Test
+  public void literate_coffeescript_map() {
+    get("/js/literate.litcoffee.map").should().haveType("text/plain")
+      .contain("\"file\": \"/js/literate.litcoffee\"")
+      .contain("\"sources\": [\n  \"/js/literate.litcoffee.source\"\n ]")
+      .contain("\"mappings\": \"AAEI,OAAO,CAAC,GAAR,CAAY,OAAZ,CAAA,CAAA\"");
   }
 
   @Test

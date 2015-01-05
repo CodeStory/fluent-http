@@ -27,7 +27,7 @@ public class CoffeeSourceMapCompiler implements Compiler {
 
   @Override
   public String compile(SourceFile sourceFile) {
-    Map<String, Object> options = singletonMap("__literate", sourceFile.hasExtension(".litcoffee"));
+    Map<String, Object> options = singletonMap("__literate", sourceFile.hasExtension(".litcoffee.map"));
 
     String fileName = replaceLast(sourceFile.getFileName(), ".map", "");
     String sourceName = fileName + ".source";
