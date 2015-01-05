@@ -29,10 +29,10 @@ public class CoffeeSourceMapCompiler implements Compiler {
   public String compile(SourceFile sourceFile) {
     Map<String, Object> options = singletonMap("__literate", sourceFile.hasExtension(".litcoffee.map"));
 
-    String fileName = replaceLast(sourceFile.getFileName(), ".map", "");
-    String sourceName = fileName + ".source";
+    String filename = replaceLast(sourceFile.getFileName(), ".map", "");
+    String sourceName = filename + ".source";
     String source = sourceFile.getSource();
 
-    return nashornCompiler.compile(fileName, sourceName, source, options);
+    return nashornCompiler.compile(filename, sourceName, source, options);
   }
 }
