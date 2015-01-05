@@ -16,9 +16,7 @@
 package net.codestory.http.templating.helpers;
 
 import com.github.jknack.handlebars.Handlebars.SafeString;
-import net.codestory.http.compilers.CacheEntry;
 import net.codestory.http.compilers.CompilerFacade;
-import net.codestory.http.misc.Sha1;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -63,8 +61,7 @@ public class AssetsHelperSource {
 
   private String sha1(Path path) {
     try {
-      CacheEntry compile = compilers.compile(path);
-      return Sha1.of(compile.toBytes());
+      return compilers.compile(path).sha1();
     } catch (IOException e) {
       throw new IllegalStateException("Unable to compute sha1 for: " + path);
     }
