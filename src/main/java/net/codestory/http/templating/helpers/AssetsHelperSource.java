@@ -32,7 +32,7 @@ public class AssetsHelperSource {
   public AssetsHelperSource(boolean prodMode, CompilerFacade compilers) {
     this.compilers = compilers;
     if (prodMode) {
-      this.sha1Supplier = path -> sha1Cache.computeIfAbsent(path, (p) -> sha1(p));
+      this.sha1Supplier = path -> sha1Cache.computeIfAbsent(path, p -> sha1(p));
     } else {
       this.sha1Supplier = path -> sha1(path);
     }
