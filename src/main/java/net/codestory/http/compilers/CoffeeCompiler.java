@@ -34,11 +34,11 @@ public class CoffeeCompiler implements Compiler {
   public String compile(SourceFile sourceFile) {
     Map<String, Object> options = singletonMap("__literate", sourceFile.hasExtension(".litcoffee"));
 
-    String fileName = sourceFile.getFileName();
-    String sourceName = fileName + ".source";
+    String filename = sourceFile.getFileName();
+    String sourceName = filename + ".source";
     String source = sourceFile.getSource();
 
-    String javascript = nashornCompiler.compile(fileName, sourceName + ".source", source, options);
+    String javascript = nashornCompiler.compile(filename, sourceName, source, options);
 
     if (sourceMaps) {
       return addSourceMapping(javascript, sourceFile);
