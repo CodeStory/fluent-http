@@ -27,7 +27,8 @@ import net.codestory.http.misc.*;
 import org.junit.*;
 
 public class CompilersTest {
-  static Compilers compilers = new Compilers(prodMode(), new Resources(new Env()));
+  static Resources resources = new Resources(new Env());
+  static Compilers compilers = new Compilers(prodMode(), resources);
 
   private String compile(String filename, String content) throws IOException {
     return compilers.compile(new SourceFile(Paths.get(filename), content)).content();
@@ -64,6 +65,26 @@ public class CompilersTest {
     String updated = compile("test.coffee", "a=1337");
 
     assertThat(updated).contains("var a;\n\na = 1337");
+  }
+
+  @Test
+  public void compare_cached_coffee_version_with_compiled_version() throws IOException {
+    String source = "a=42";
+
+    String cached = compile("source.coffee", source);
+    String compiled = new CoffeeCompiler(true).compile(new SourceFile(Paths.get("source.coffee"), source));
+
+    assertThat(cached).isEqualTo(compiled);
+  }
+
+  @Test
+  public void compare_cached_less_version_with_compiled_version() throws IOException {
+    String source = "body { h1 { color: red; } }";
+
+    String cached = compile("source.less", source);
+    String compiled = new LessCompiler(resources, true).compile(new SourceFile(Paths.get("source.less"), source));
+
+    assertThat(cached).isEqualTo(compiled);
   }
 
   private static Env prodMode() {
