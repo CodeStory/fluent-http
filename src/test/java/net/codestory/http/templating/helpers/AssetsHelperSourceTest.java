@@ -21,6 +21,7 @@ import net.codestory.http.misc.Env;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -67,6 +68,16 @@ public class AssetsHelperSourceTest {
   }
 
   @Test
+  public void multiple_scripts() throws IOException {
+    CharSequence script = assetsHelper.script(Arrays.asList("js/script", "js/anotherscript"));
+
+    assertThat(script.toString()).isEqualTo(
+        "<script src=\"js/script.js?c9810b7d718b08b48eb334341711af6a7dd11474\"></script>\n" +
+        "<script src=\"js/anotherscript.js?c950010bba0f376d0a970a76a1be245ed4d8779b\"></script>"
+    );
+  }
+
+  @Test
   public void css() throws IOException {
     CharSequence css = assetsHelper.css("assets/style.css");
 
@@ -92,5 +103,15 @@ public class AssetsHelperSourceTest {
     CharSequence script = assetsHelper.css("unknown.css");
 
     assertThat(script.toString()).isEqualTo("<link rel=\"stylesheet\" href=\"unknown.css\">");
+  }
+
+  @Test
+  public void multiple_css() throws IOException {
+    CharSequence css = assetsHelper.css(Arrays.asList("assets/style", "assets/anotherstyle"));
+
+    assertThat(css.toString()).isEqualTo(
+      "<link rel=\"stylesheet\" href=\"assets/style.css?f6b1dd2cbd097b0dbe07138aafd36ab0eafcb6ea\">\n" +
+      "<link rel=\"stylesheet\" href=\"assets/anotherstyle.css?d79d6fc6cd35431fbeb15e192895b038b43d29b0\">"
+    );
   }
 }

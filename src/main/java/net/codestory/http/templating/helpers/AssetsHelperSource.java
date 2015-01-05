@@ -20,9 +20,13 @@ import net.codestory.http.compilers.CompilerFacade;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+
+import static java.lang.String.join;
 
 public class AssetsHelperSource {
   private final CompilerFacade compilers;
@@ -39,24 +43,52 @@ public class AssetsHelperSource {
   }
 
   public CharSequence script(Object context) throws IOException {
-    String uri = addExtensionIfMissing(context.toString(), ".js");
+    List<CharSequence> scripts = new ArrayList<>();
 
-    return new SafeString("<script src=\"" + uriWithSha1(uri) + "\"></script>");
+    if (context instanceof Iterable<?>) {
+      for (Object value : (Iterable<?>) context) {
+        scripts.add(singleScript(value));
+      }
+    } else {
+      scripts.add(singleScript(context));
+    }
+
+    return new SafeString(join("\n", scripts));
   }
 
   public CharSequence css(Object context) throws IOException {
+    List<CharSequence> scripts = new ArrayList<>();
+
+    if (context instanceof Iterable<?>) {
+      for (Object value : (Iterable<?>) context) {
+        scripts.add(singleCss(value));
+      }
+    } else {
+      scripts.add(singleCss(context));
+    }
+
+    return new SafeString(join("\n", scripts));
+  }
+
+  private CharSequence singleScript(Object context) throws IOException {
+    String uri = addExtensionIfMissing(context.toString(), ".js");
+
+    return "<script src=\"" + uriWithSha1(uri) + "\"></script>";
+  }
+
+  private CharSequence singleCss(Object context) throws IOException {
     String uri = addExtensionIfMissing(context.toString(), ".css");
 
-    return new SafeString("<link rel=\"stylesheet\" href=\"" + uriWithSha1(uri) + "\">");
+    return "<link rel=\"stylesheet\" href=\"" + uriWithSha1(uri) + "\">";
+  }
+
+  private static String addExtensionIfMissing(String uri, String extension) {
+    return uri.endsWith(extension) ? uri : uri + extension;
   }
 
   private String uriWithSha1(String uri) throws IOException {
     Path path = compilers.findPublicSourceFor(uri);
     return (path == null) ? uri : uri + '?' + sha1Supplier.apply(path);
-  }
-
-  private static String addExtensionIfMissing(String uri, String extension) {
-    return uri.endsWith(extension) ? uri : uri + extension;
   }
 
   private String sha1(Path path) {
