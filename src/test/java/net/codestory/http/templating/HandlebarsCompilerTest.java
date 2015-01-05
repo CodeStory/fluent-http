@@ -33,7 +33,7 @@ import org.junit.*;
 import com.github.jknack.handlebars.*;
 
 public class HandlebarsCompilerTest {
-  static Env env = prodMode();
+  static Env env = Env.prod();
   static Resources resources = new Resources(env);
   static HandlebarsCompiler compiler = new HandlebarsCompiler(env, resources, new CompilerFacade(env, resources));
 
@@ -220,10 +220,6 @@ public class HandlebarsCompilerTest {
     String result = compile("[[google_analytics]]", new TreeMap<String, Object>());
 
     assertThat(result).contains("OVERRIDEN").doesNotContain("DEFAULT_ID");
-  }
-
-  private static Env prodMode() {
-    return new Env(DEFAULT_APP_FOLDER, true, false, false, false);
   }
 
   private static Map<String, Object> map(String key, Object value) {

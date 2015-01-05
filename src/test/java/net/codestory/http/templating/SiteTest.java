@@ -25,7 +25,7 @@ import net.codestory.http.misc.*;
 import org.junit.*;
 
 public class SiteTest {
-  static Env env = new Env();
+  static Env env = Env.prod();
   static Site site = new Site(env, new Resources(env));
 
   @Test

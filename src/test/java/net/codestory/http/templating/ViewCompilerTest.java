@@ -16,7 +16,6 @@
 package net.codestory.http.templating;
 
 import static java.util.Collections.*;
-import static net.codestory.http.misc.Env.DEFAULT_APP_FOLDER;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.*;
@@ -28,7 +27,7 @@ import net.codestory.http.misc.*;
 import org.junit.*;
 
 public class ViewCompilerTest {
-  static Env env = prodMode();
+  static Env env = Env.prod();
   static Resources resources = new Resources(env);
   static CompilerFacade compilerFacade = new CompilerFacade(env, resources);
   static ViewCompiler viewCompiler = new ViewCompiler(resources, compilerFacade);
@@ -136,9 +135,5 @@ public class ViewCompilerTest {
 
   private static String ignoreLineEndings(String text) {
     return text.replaceAll("[\\n\\r]", "");
-  }
-
-  private static Env prodMode() {
-    return new Env(DEFAULT_APP_FOLDER, true, false, false, false);
   }
 }

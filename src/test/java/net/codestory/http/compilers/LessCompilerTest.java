@@ -25,7 +25,7 @@ import org.junit.*;
 import org.junit.rules.*;
 
 public class LessCompilerTest {
-  static Resources resources = new Resources(new Env());
+  static Resources resources = new Resources(Env.prod());
   static LessCompiler compiler = new LessCompiler(resources, false);
 
   @Rule

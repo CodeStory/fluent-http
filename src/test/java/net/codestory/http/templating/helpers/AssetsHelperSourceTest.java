@@ -26,7 +26,7 @@ import java.util.Arrays;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AssetsHelperSourceTest {
-  static Env env = new Env();
+  static Env env = Env.prod();
   static Resources resources = new Resources(env);
   static CompilerFacade compilers = new CompilerFacade(env, resources);
 

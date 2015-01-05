@@ -43,7 +43,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class PayloadWriterTest {
-  static Env env = new Env();
+  static Env env = Env.dev();
   static Resources resources = new Resources(env);
   static Site site = new Site(env, resources);
   static CompilerFacade compilerFacade = new CompilerFacade(env, resources);

@@ -27,8 +27,9 @@ import net.codestory.http.misc.*;
 import org.junit.*;
 
 public class CompilersTest {
-  static Resources resources = new Resources(new Env());
-  static Compilers compilers = new Compilers(prodMode(), resources);
+  static Env env = Env.prod();
+  static Resources resources = new Resources(env);
+  static Compilers compilers = new Compilers(env, resources);
 
   private String compile(String filename, String content) throws IOException {
     return compilers.compile(new SourceFile(Paths.get(filename), content)).content();
@@ -85,11 +86,5 @@ public class CompilersTest {
     String compiled = new LessCompiler(resources, true).compile(new SourceFile(Paths.get("source.less"), source));
 
     assertThat(cached).isEqualTo(compiled);
-  }
-
-  private static Env prodMode() {
-    Env env = mock(Env.class);
-    when(env.prodMode()).thenReturn(true);
-    return env;
   }
 }

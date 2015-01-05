@@ -40,7 +40,7 @@ public class PreCompile {
   public static void main(String[] args) {
     String destinationFolder = (args.length > 0) ? args[0] : Env.DEFAULT_APP_FOLDER;
 
-    new PreCompile(new Env(Env.DEFAULT_APP_FOLDER, true, false, false, false)).run(destinationFolder);
+    new PreCompile(Env.prod()).run(destinationFolder);
   }
 
   public void run(String destinationFolder) {

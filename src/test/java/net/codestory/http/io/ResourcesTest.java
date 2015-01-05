@@ -24,7 +24,7 @@ import net.codestory.http.misc.Env;
 import org.junit.*;
 
 public class ResourcesTest {
-  private static Resources resources = new Resources(new Env());
+  private static Resources resources = new Resources(Env.prod());
 
   @Test
   public void exists() {

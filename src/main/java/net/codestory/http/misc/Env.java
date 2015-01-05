@@ -43,6 +43,16 @@ public class Env {
     this.disableGzip = disableGzip;
   }
 
+  // helper factories
+
+  public static Env prod() {
+    return new Env(DEFAULT_APP_FOLDER, true, false, false, false);
+  }
+
+  public static Env dev() {
+    return new Env(DEFAULT_APP_FOLDER, false, false, false, true);
+  }
+
   public Path appPath() {
     return Paths.get(appFolder());
   }
