@@ -34,7 +34,7 @@ public class Compilers {
   private final DiskCache diskCache;
   private final Map<String, Supplier<Compiler>> compilerByExtension = new HashMap<>();
   private final Map<String, Set<String>> extensionsThatCompileTo = new HashMap<>();
-  private final Map<String, String> compiledExtension = new HashMap<>();
+  private final Map<String, String> compiledExtensions = new HashMap<>();
   private final Map<String, CacheEntry> cache = new ConcurrentHashMap<>();
 
   public Compilers(Env env, Resources resources) {
@@ -42,27 +42,20 @@ public class Compilers {
 
     diskCache = new DiskCache("V6", prodMode);
     register(() -> new LessCompiler(resources, prodMode), ".css", ".less");
-    register(() -> new CoffeeCompiler(prodMode), ".js", ".coffee", ".litcoffee");
+    register(() -> new CoffeeCompiler(prodMode), ".js", ".coffee");
+    register(() -> new CoffeeCompiler(prodMode), ".js", ".litcoffee");
     if (!prodMode) {
       register(() -> new CoffeeSourceMapCompiler(), ".coffee.map", ".coffee.map"); // Temp
       register(() -> new CoffeeSourceMapCompiler(), ".litcoffee.map", ".litcoffee.map"); // Temp
     }
   }
 
-  public void register(Supplier<Compiler> compilerFactory, String targetExtension, String firstExtension, String... moreExtensions) {
+  public void register(Supplier<Compiler> compilerFactory, String compiledExtension, String sourceExtension) {
     Supplier<Compiler> compilerLazyFactory = memoize(compilerFactory);
 
-    Set<String> uncompiledExtensions = extensionsThatCompileTo.computeIfAbsent(targetExtension, k -> new HashSet<>());
-
-    compilerByExtension.put(firstExtension, compilerLazyFactory);
-    compiledExtension.put(firstExtension, targetExtension);
-    uncompiledExtensions.add(firstExtension);
-
-    for (String extension : moreExtensions) {
-      compilerByExtension.put(extension, compilerLazyFactory);
-      compiledExtension.put(extension, targetExtension);
-      uncompiledExtensions.add(extension);
-    }
+    compilerByExtension.put(sourceExtension, compilerLazyFactory);
+    compiledExtensions.put(sourceExtension, compiledExtension);
+    extensionsThatCompileTo.computeIfAbsent(compiledExtension, k -> new HashSet<>()).add(sourceExtension);
   }
 
   public boolean canCompile(String extension) {
@@ -74,7 +67,7 @@ public class Compilers {
   }
 
   public String compiledExtension(String extension) {
-    return compiledExtension.get(extension);
+    return compiledExtensions.get(extension);
   }
 
   public CacheEntry compile(SourceFile sourceFile) {

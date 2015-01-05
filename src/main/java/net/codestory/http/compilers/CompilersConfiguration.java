@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 public interface CompilersConfiguration {
   // Compilers
 
-  void registerCompiler(Supplier<Compiler> compilerFactory, String targetExtension, String firstExtension, String... moreExtensions);
+  void registerCompiler(Supplier<Compiler> compilerFactory, String compiledExtension, String sourceExtension);
 
   // Handlebars
 

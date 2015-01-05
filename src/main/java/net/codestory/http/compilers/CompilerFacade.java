@@ -48,8 +48,8 @@ public class CompilerFacade implements CompilersConfiguration {
   // Configuration
 
   @Override
-  public void registerCompiler(Supplier<Compiler> compilerFactory, String targetExtension, String firstExtension, String... moreExtensions) {
-    compilers.get().register(compilerFactory, targetExtension, firstExtension, moreExtensions);
+  public void registerCompiler(Supplier<Compiler> compilerFactory, String compiledExtension, String sourceExtension) {
+    compilers.get().register(compilerFactory, compiledExtension, sourceExtension);
   }
 
   @Override
