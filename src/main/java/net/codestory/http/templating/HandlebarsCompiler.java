@@ -26,6 +26,7 @@ import java.util.function.*;
 import net.codestory.http.compilers.*;
 import net.codestory.http.io.*;
 import net.codestory.http.markdown.MarkdownCompiler;
+import net.codestory.http.misc.Env;
 import net.codestory.http.templating.helpers.*;
 
 import com.github.jknack.handlebars.*;
@@ -38,8 +39,8 @@ public class HandlebarsCompiler {
   private final Handlebars handlebars;
   private final List<ValueResolver> resolvers;
 
-  public HandlebarsCompiler(Resources resources, CompilerFacade compilers) {
-    this.handlebars = handlebars(resources, compilers);
+  public HandlebarsCompiler(Env env, Resources resources, CompilerFacade compilers) {
+    this.handlebars = handlebars(env, resources, compilers);
     this.resolvers = new ArrayList<>(asList(
         MapValueResolver.INSTANCE,
         JavaBeanValueResolver.INSTANCE,
@@ -53,14 +54,14 @@ public class HandlebarsCompiler {
     return handlebars.compileInline(template).apply(context(variables));
   }
 
-  private static Handlebars handlebars(Resources resources, CompilerFacade compilers) {
+  private static Handlebars handlebars(Env env, Resources resources, CompilerFacade compilers) {
     return new Handlebars()
       .startDelimiter("[[")
       .endDelimiter("]]")
       .registerHelpers(new EachReverseHelperSource())
       .registerHelpers(new EachValueHelperSource())
       .registerHelpers(new GoogleAnalyticsHelper())
-      .registerHelpers(new AssetsHelperSource(compilers))
+      .registerHelpers(new AssetsHelperSource(env.prodMode(), compilers))
       .registerHelpers(StringHelpers.class)
       .with(new ConcurrentMapTemplateCache())
       .with(new AbstractTemplateLoader() {

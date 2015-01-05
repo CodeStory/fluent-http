@@ -41,7 +41,7 @@ public class CompilerFacade implements CompilersConfiguration {
   public CompilerFacade(Env env, Resources resources) {
     this.resources = resources;
     this.compilers = memoize(() -> new Compilers(env, resources));
-    this.handlebars = memoize(() -> new HandlebarsCompiler(resources, this));
+    this.handlebars = memoize(() -> new HandlebarsCompiler(env, resources, this));
     this.viewCompiler = memoize(() -> new ViewCompiler(resources, this));
   }
 

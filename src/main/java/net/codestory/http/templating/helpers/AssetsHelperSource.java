@@ -22,12 +22,22 @@ import net.codestory.http.misc.Sha1;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 public class AssetsHelperSource {
   private final CompilerFacade compilers;
+  private final Map<Path, String> sha1Cache = new ConcurrentHashMap<>();
+  private final Function<Path, String> sha1Supplier;
 
-  public AssetsHelperSource(CompilerFacade compilers) {
+  public AssetsHelperSource(boolean prodMode, CompilerFacade compilers) {
     this.compilers = compilers;
+    if (prodMode) {
+      this.sha1Supplier = path -> sha1Cache.computeIfAbsent(path, (p) -> sha1(p));
+    } else {
+      this.sha1Supplier = path -> sha1(path);
+    }
   }
 
   public CharSequence script(Object context) throws IOException {
@@ -44,15 +54,19 @@ public class AssetsHelperSource {
 
   private String uriWithSha1(String uri) throws IOException {
     Path path = compilers.findPublicSourceFor(uri);
-    return (path == null) ? uri : uri + '?' + sha1(path);
+    return (path == null) ? uri : uri + '?' + sha1Supplier.apply(path);
   }
 
   private static String addExtensionIfMissing(String uri, String extension) {
     return uri.endsWith(extension) ? uri : uri + extension;
   }
 
-  private String sha1(Path path) throws IOException {
-    CacheEntry compile = compilers.compile(path);
-    return Sha1.of(compile.toBytes());
+  private String sha1(Path path) {
+    try {
+      CacheEntry compile = compilers.compile(path);
+      return Sha1.of(compile.toBytes());
+    } catch (IOException e) {
+      throw new IllegalStateException("Unable to compute sha1 for: " + path);
+    }
   }
 }
