@@ -121,10 +121,10 @@ public class ViewCompilerTest {
         "  <meta name=\"keywords\" content=\"keyword1, keyword2\">" +
         "  <meta name=\"description\" content=\"description\">" +
         "  <meta name=\"author\" content=\"author\">" +
-        "  <link rel=\"stylesheet\" href=\"style.less\">" +
-        "  " +
+        "  <link rel=\"stylesheet\" href=\"style.css\">" +
         "  <link rel=\"stylesheet\" href=\"style1.css\">" +
         "  <link rel=\"stylesheet\" href=\"style2.css\">" +
+        "  " +
         "</head>" +
         "<body>" +
         "Hello World" +

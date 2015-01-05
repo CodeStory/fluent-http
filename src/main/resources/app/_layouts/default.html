@@ -7,13 +7,13 @@
   [[#if keywords]]<meta name="keywords" content="[[keywords]]">[[/if]]
   [[#if description]]<meta name="description" content="[[description]]">[[/if]]
   [[#if author]]<meta name="author" content="[[author]]">[[/if]]
-  [[#if style]]<link rel="stylesheet" href="[[style]]">[[/if]]
-  [[#each styles]]
-  <link rel="stylesheet" href="[[.]]">[[/each]]
+  [[#if style]][[css style]][[/if]]
+  [[#each styles]][[css .]]
+  [[/each]]
 </head>
 <body>
 [[body]]
 </body>
 [[#each scripts]]
-<script src="[[.]]"></script>[[/each]]
+[[script .]][[/each]]
 </html>
