@@ -94,23 +94,23 @@ public class UriParser implements Comparable<UriParser> {
       return compare;
     }
     int index = 0;
-    for(String part : patternParts) {
-        boolean hasPart1ADash =  part.startsWith(":");
-        boolean hasPart2ADash = other.patternParts[index].startsWith(":");
-        if (hasPart1ADash) {
-            if (!hasPart2ADash) {
-                return 1;
-            }
+    for (String part : patternParts) {
+      boolean hasPart1ADash = part.startsWith(":");
+      boolean hasPart2ADash = other.patternParts[index].startsWith(":");
+      if (hasPart1ADash) {
+        if (!hasPart2ADash) {
+          return 1;
         }
-        if (hasPart2ADash) {
-            if (!hasPart1ADash) {
-                return -1;
-            }
+      }
+      if (hasPart2ADash) {
+        if (!hasPart1ADash) {
+          return -1;
         }
-        index++;
-        if (other.patternParts.length == index) {
-          return 0;
-        }
+      }
+      index++;
+      if (other.patternParts.length == index) {
+        return 0;
+      }
     }
     return 0;
   }
