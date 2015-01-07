@@ -45,4 +45,8 @@ class RouteWrapper implements Route {
     String[] parameters = uriParser.params(context.uri(), context.request().query());
     return route.body(context, parameters);
   }
+
+  UriParser uriParser() {
+    return uriParser;
+  }
 }

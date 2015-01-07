@@ -18,7 +18,7 @@ package net.codestory.http.routes;
 import net.codestory.http.*;
 import net.codestory.http.io.*;
 
-public class UriParser {
+public class UriParser implements Comparable<UriParser> {
   private final String[] patternParts;
   private final String[] queryParamsParts;
   private final int paramsCount;
@@ -85,5 +85,30 @@ public class UriParser {
 
   public static int paramsCount(String uriPattern) {
     return Strings.countMatches(uriPattern, ':');
+  }
+
+  @Override
+  public int compareTo(UriParser other) {
+    int compare = Integer.compare(paramsCount, other.paramsCount);
+    if (compare != 0) {
+      return compare;
+    }
+    int index = 0;
+    for(String part : patternParts) {
+        boolean hasPart1ADash =  part.startsWith(":");
+        boolean hasPart2ADash = other.patternParts[index].startsWith(":");
+        if (hasPart1ADash) {
+            if (!hasPart2ADash) {
+                return 1;
+            }
+        }
+        if (hasPart2ADash) {
+            if (!hasPart1ADash) {
+                return -1;
+            }
+        }
+        index++;
+    }
+    return 0;
   }
 }

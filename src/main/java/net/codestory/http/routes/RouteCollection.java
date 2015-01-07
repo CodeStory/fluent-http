@@ -33,6 +33,7 @@ import net.codestory.http.payload.PayloadWriter;
 import net.codestory.http.templating.Site;
 
 import java.lang.reflect.Method;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.function.Supplier;
@@ -47,7 +48,7 @@ public class RouteCollection implements Routes {
   protected final Resources resources;
   protected final CompilerFacade compilers;
   protected final Site site;
-  protected final Deque<Route> routes;
+  protected final LinkedList<Route> routes;
   protected final Deque<Supplier<Filter>> filters;
 
   protected IocAdapter iocAdapter;
@@ -67,6 +68,20 @@ public class RouteCollection implements Routes {
   public void configure(Configuration configuration) {
     configuration.configure(this);
     installExtensions();
+      routes.sort(new Comparator<Route>() {
+          @Override
+          public int compare(Route route1, Route route2) {
+              if (route1 instanceof CatchAllRoute) {
+                  return 1;
+              }
+              if (route2 instanceof CatchAllRoute) {
+                  return -1;
+              }
+              RouteWrapper route1Wrapper = (RouteWrapper) route1;
+              RouteWrapper route2Wrapper = (RouteWrapper) route2;
+              return route1Wrapper.uriParser().compareTo(route2Wrapper.uriParser());
+          }
+      });
     addStaticRoutes(env.prodMode());
   }
 

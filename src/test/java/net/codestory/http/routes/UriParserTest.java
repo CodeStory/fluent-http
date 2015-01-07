@@ -86,6 +86,19 @@ public class UriParserTest {
     assertThat(new UriParser("/hello/:name?opt=:option").matches("/hello/?opt=OPTION")).isFalse();
   }
 
+  @Test
+  public void compare() {
+    assertThat(new UriParser("/:param")).isGreaterThan(new UriParser("/foo"));
+    assertThat(new UriParser("/foo/:param")).isGreaterThan(new UriParser("/foo/bar"));
+    assertThat(new UriParser("/:param/foo")).isGreaterThan(new UriParser("/foo/:param"));
+    assertThat(new UriParser("/foo/:param/:param/qix")).isGreaterThan(new UriParser("/foo/:param/bar/:param"));
+
+    assertThat(new UriParser("/foo")).isLessThan(new UriParser("/:param"));
+    assertThat(new UriParser("/foo/bar")).isLessThan(new UriParser("/foo/:param"));
+    assertThat(new UriParser("/foo/:param")).isLessThan(new UriParser("/:param/foo"));
+    assertThat(new UriParser("/foo/:param/bar/:param")).isLessThan(new UriParser("/foo/:param/:param/qix"));
+  }
+
   private static Query query(String key, String value) {
     Query query = mock(Query.class);
     when(query.get(key)).thenReturn(value);
