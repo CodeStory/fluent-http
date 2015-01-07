@@ -19,7 +19,16 @@ import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
 
+import static net.codestory.http.Configuration.NO_ROUTE;
+
 public class StaticPagesTest extends AbstractProdWebServerTest {
+  @Test
+  public void static_file() {
+    configure(NO_ROUTE);
+
+    get("/").should().contain("Hello From a File");
+  }
+
   @Test
   public void html() {
     get("/").should().haveType("text/html").contain("Hello From a File");
