@@ -108,6 +108,9 @@ public class UriParser implements Comparable<UriParser> {
             }
         }
         index++;
+        if (other.patternParts.length == index) {
+          return 0;
+        }
     }
     return 0;
   }

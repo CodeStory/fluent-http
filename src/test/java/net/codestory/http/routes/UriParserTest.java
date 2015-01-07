@@ -15,12 +15,12 @@
  */
 package net.codestory.http.routes;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import net.codestory.http.Query;
+import org.junit.Test;
 
-import net.codestory.http.*;
-
-import org.junit.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class UriParserTest {
   @Test
@@ -88,6 +88,9 @@ public class UriParserTest {
 
   @Test
   public void compare() {
+
+    assertThat(new UriParser("/foo/bar/qix")).isGreaterThanOrEqualTo(new UriParser("/foo"));
+
     assertThat(new UriParser("/:param")).isGreaterThan(new UriParser("/foo"));
     assertThat(new UriParser("/foo/:param")).isGreaterThan(new UriParser("/foo/bar"));
     assertThat(new UriParser("/:param/foo")).isGreaterThan(new UriParser("/foo/:param"));
