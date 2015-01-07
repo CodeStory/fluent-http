@@ -67,6 +67,16 @@ routes.get("/add/:first/to/:second", (context, first, second) -> Integer.parseIn
 
 Notice that path parameters have to be of type `String`.
 
+## Query Parameters
+
+Routes can have query parameters:
+
+```java
+routes.get("/hello?who=:who", (who) -> "Hello " + who));
+routes.get("/hello?to=:to&from=:from", (to, from) -> "Hello " + to + " from " + from));
+```
+Notice that query parameters can be issued in any order.
+
 ## Resources
 
 The notation with lambdas is very compact but cannot support path parameters of type other than `String`. So we've added
