@@ -88,18 +88,19 @@ public class UriParserTest {
 
   @Test
   public void compare() {
-
-    assertThat(new UriParser("/foo/bar/qix")).isGreaterThanOrEqualTo(new UriParser("/foo"));
-
     assertThat(new UriParser("/:param")).isGreaterThan(new UriParser("/foo"));
     assertThat(new UriParser("/foo/:param")).isGreaterThan(new UriParser("/foo/bar"));
     assertThat(new UriParser("/:param/foo")).isGreaterThan(new UriParser("/foo/:param"));
     assertThat(new UriParser("/foo/:param/:param/qix")).isGreaterThan(new UriParser("/foo/:param/bar/:param"));
+    assertThat(new UriParser("/foo/bar/:qix")).isGreaterThan(new UriParser("/foo/bar/bar/:qix"));
+    assertThat(new UriParser("/foo/bar/qix")).isGreaterThanOrEqualTo(new UriParser("/foo"));
 
     assertThat(new UriParser("/foo")).isLessThan(new UriParser("/:param"));
     assertThat(new UriParser("/foo/bar")).isLessThan(new UriParser("/foo/:param"));
     assertThat(new UriParser("/foo/:param")).isLessThan(new UriParser("/:param/foo"));
     assertThat(new UriParser("/foo/:param/bar/:param")).isLessThan(new UriParser("/foo/:param/:param/qix"));
+    assertThat(new UriParser("/foo/bar/bar/:qix")).isLessThan(new UriParser("/foo/bar/:qix"));
+    assertThat(new UriParser("/foo")).isLessThanOrEqualTo(new UriParser("/foo/bar/qix"));
   }
 
   private static Query query(String key, String value) {
