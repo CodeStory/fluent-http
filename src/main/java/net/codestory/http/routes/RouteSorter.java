@@ -15,9 +15,9 @@
  */
 package net.codestory.http.routes;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
-
-import static java.util.stream.Stream.of;
+import java.util.List;
 
 public class RouteSorter {
   private final LinkedList<RouteWithPattern> userRoutes;
@@ -43,11 +43,12 @@ public class RouteSorter {
   }
 
   public Route[] getSortedRoutes() {
-    // TODO: don't sort the original list
-    userRoutes.sort((left, right) -> left.uriParser().compareTo(right.uriParser()));
+    List<Route> sorted = new ArrayList<>();
 
-    return of(userRoutes, staticRoutes, catchAllRoutes)
-      .flatMap(routes -> routes.stream())
-      .toArray(Route[]::new);
+    userRoutes.stream().sorted((left, right) -> left.uriParser().compareTo(right.uriParser())).forEach(route -> sorted.add(route));
+    staticRoutes.forEach(route -> sorted.add(route));
+    catchAllRoutes.forEach(route -> sorted.add(route));
+
+    return sorted.toArray(new Route[sorted.size()]);
   }
 }
