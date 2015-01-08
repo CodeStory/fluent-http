@@ -33,7 +33,6 @@ import net.codestory.http.payload.PayloadWriter;
 import net.codestory.http.templating.Site;
 
 import java.lang.reflect.Method;
-import java.util.Comparator;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.function.Supplier;
@@ -48,41 +47,31 @@ public class RouteCollection implements Routes {
   protected final Resources resources;
   protected final CompilerFacade compilers;
   protected final Site site;
-  protected final LinkedList<Route> routes;
+  protected final RouteSorter routes;
   protected final Deque<Supplier<Filter>> filters;
 
   protected IocAdapter iocAdapter;
   protected Extensions extensions;
+  protected Route[] sortedRoutes;
 
   public RouteCollection(Env env) {
     this.env = env;
     this.resources = new Resources(env);
     this.compilers = new CompilerFacade(env, resources);
     this.site = new Site(env, resources);
-    this.routes = new LinkedList<>();
+    this.routes = new RouteSorter();
     this.filters = new LinkedList<>();
     this.iocAdapter = new Singletons();
     this.extensions = Extensions.DEFAULT;
   }
 
   public void configure(Configuration configuration) {
+    // TODO: make RouteSorter a local variable
     configuration.configure(this);
     installExtensions();
-    routes.sort(new Comparator<Route>() {
-      @Override
-      public int compare(Route route1, Route route2) {
-        if (route1 instanceof CatchAllRoute) {
-          return 1;
-        }
-        if (route2 instanceof CatchAllRoute) {
-          return -1;
-        }
-        RouteWrapper route1Wrapper = (RouteWrapper) route1;
-        RouteWrapper route2Wrapper = (RouteWrapper) route2;
-        return route1Wrapper.uriParser().compareTo(route2Wrapper.uriParser());
-      }
-    });
     addStaticRoutes(env.prodMode());
+
+    sortedRoutes = routes.getSortedRoutes();
   }
 
   private void installExtensions() {
@@ -91,11 +80,11 @@ public class RouteCollection implements Routes {
   }
 
   private void addStaticRoutes(boolean prodMode) {
-    routes.add(new WebJarsRoute(prodMode));
-    routes.add(new StaticRoute(prodMode, resources, compilers));
+    routes.addStaticRoute(new WebJarsRoute(prodMode));
+    routes.addStaticRoute(new StaticRoute(prodMode, resources, compilers));
     if (!prodMode) {
-      routes.add(new SourceMapRoute(resources, compilers));
-      routes.add(new SourceRoute(resources));
+      routes.addStaticRoute(new SourceMapRoute(resources, compilers));
+      routes.addStaticRoute(new SourceRoute(resources));
     }
   }
 
@@ -411,13 +400,13 @@ public class RouteCollection implements Routes {
 
   @Override
   public RouteCollection catchAll(NoParamRoute route) {
-    routes.add(new CatchAllRoute(route));
+    routes.addCatchAllRoute(new CatchAllRoute(route));
     return this;
   }
 
   @Override
   public RouteCollection catchAll(NoParamRouteWithContext route) {
-    routes.add(new CatchAllRoute(route));
+    routes.addCatchAllRoute(new CatchAllRoute(route));
     return this;
   }
 
@@ -427,7 +416,7 @@ public class RouteCollection implements Routes {
   }
 
   protected RouteCollection add(String method, String uriPattern, AnyRoute route) {
-    routes.add(new RouteWrapper(method, uriPattern, route));
+    routes.addUserRoute(new RouteWrapper(method, uriPattern, route));
     return this;
   }
 
@@ -440,7 +429,7 @@ public class RouteCollection implements Routes {
     PayloadSupplier payloadSupplier = () -> {
       Payload response = notFound();
 
-      for (Route route : routes) {
+      for (Route route : sortedRoutes) {
         if (route.matchUri(uri)) {
           if (route.matchMethod(context.method())) {
             return route.apply(uri, context);
