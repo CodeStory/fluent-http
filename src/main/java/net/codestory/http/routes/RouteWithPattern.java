@@ -19,12 +19,12 @@ import static net.codestory.http.constants.Methods.*;
 
 import net.codestory.http.*;
 
-class RouteWrapper implements Route {
+class RouteWithPattern implements Route {
   private final String method;
   private final UriParser uriParser;
   private final AnyRoute route;
 
-  RouteWrapper(String method, String uriPattern, AnyRoute route) {
+  RouteWithPattern(String method, String uriPattern, AnyRoute route) {
     this.method = method;
     this.uriParser = new UriParser(uriPattern);
     this.route = route;

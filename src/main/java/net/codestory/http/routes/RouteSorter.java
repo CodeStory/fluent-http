@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import static java.util.stream.Stream.of;
 
 public class RouteSorter {
-  private final LinkedList<RouteWrapper> userRoutes;
+  private final LinkedList<RouteWithPattern> userRoutes;
   private final LinkedList<Route> catchAllRoutes;
   private final LinkedList<Route> staticRoutes;
 
@@ -30,7 +30,7 @@ public class RouteSorter {
     this.staticRoutes = new LinkedList<>();
   }
 
-  public void addUserRoute(RouteWrapper route) {
+  public void addUserRoute(RouteWithPattern route) {
     userRoutes.add(route);
   }
 

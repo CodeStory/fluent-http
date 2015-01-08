@@ -416,7 +416,7 @@ public class RouteCollection implements Routes {
   }
 
   protected RouteCollection add(String method, String uriPattern, AnyRoute route) {
-    routes.addUserRoute(new RouteWrapper(method, uriPattern, route));
+    routes.addUserRoute(new RouteWithPattern(method, uriPattern, route));
     return this;
   }
 
