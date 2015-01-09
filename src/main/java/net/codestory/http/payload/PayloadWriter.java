@@ -347,6 +347,8 @@ public class PayloadWriter {
     keyValues.put("cookies", request.cookies().keyValues());
     keyValues.put("env", env);
     keyValues.put("site", site);
+    keyValues.put("request", request);
+    keyValues.put("response", response);
 
     String body = compilers.renderView(modelAndView.view(), keyValues);
     return forString(body);
