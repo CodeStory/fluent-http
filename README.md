@@ -151,6 +151,7 @@ The web server recognizes html files but not only. It is also able to transform 
  + Html (`.html`)
  + Markdown (`.md` or `.markdown`) -> Html
  + Xml (`.xml`)
+ + Json (`.json`)
  + Css (`.css`)
  + Less (`.less`) -> Css
  + Javascript (`.js`)

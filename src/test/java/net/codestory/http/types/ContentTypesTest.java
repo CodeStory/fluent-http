@@ -55,6 +55,7 @@ public class ContentTypesTest {
   public void compatibility_with_templating() {
     assertThat(supportsTemplating("index.html")).isTrue();
     assertThat(supportsTemplating("data.xml")).isTrue();
+    assertThat(supportsTemplating("data.json")).isTrue();
     assertThat(supportsTemplating("test.md")).isTrue();
     assertThat(supportsTemplating("test.markdown")).isTrue();
     assertThat(supportsTemplating("text.txt")).isTrue();

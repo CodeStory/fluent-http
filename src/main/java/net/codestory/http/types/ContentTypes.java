@@ -89,6 +89,7 @@ public class ContentTypes {
       case ".markdown":
       case ".html":
       case ".xml":
+      case ".json":
         return true;
       default:
         return false;
