@@ -15,11 +15,9 @@
  */
 package net.codestory.http.types;
 
-import static java.util.Arrays.*;
-import static net.codestory.http.io.Resources.*;
+import java.util.List;
 
-import java.nio.file.*;
-import java.util.*;
+import static java.util.Arrays.asList;
 
 public class ContentTypes {
   public static final String[] TEMPLATE_EXTENSIONS = {"", ".html", ".md", ".markdown", ".txt"};
@@ -47,6 +45,8 @@ public class ContentTypes {
         return "text/html;charset=UTF-8";
       case ".xml":
         return "application/xml;charset=UTF-8";
+      case ".json":
+        return "application/json;charset=UTF-8";
       case ".css":
       case ".less":
         return "text/css;charset=UTF-8";
