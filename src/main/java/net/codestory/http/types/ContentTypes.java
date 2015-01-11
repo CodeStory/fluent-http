@@ -15,9 +15,11 @@
  */
 package net.codestory.http.types;
 
-import java.util.List;
+import static java.util.Arrays.*;
+import static net.codestory.http.io.Resources.*;
 
-import static java.util.Arrays.asList;
+import java.nio.file.*;
+import java.util.*;
 
 public class ContentTypes {
   public static final String[] TEMPLATE_EXTENSIONS = {"", ".html", ".md", ".markdown", ".txt"};

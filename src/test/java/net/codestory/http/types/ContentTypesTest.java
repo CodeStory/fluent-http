@@ -15,11 +15,10 @@
  */
 package net.codestory.http.types;
 
-import org.junit.Test;
+import static net.codestory.http.types.ContentTypes.*;
+import static org.assertj.core.api.Assertions.*;
 
-import static net.codestory.http.types.ContentTypes.get;
-import static net.codestory.http.types.ContentTypes.supportsTemplating;
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.*;
 
 public class ContentTypesTest {
   @Test
