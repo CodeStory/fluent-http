@@ -61,7 +61,7 @@ public class PreCompile {
       byte[] bytes = compile(fromPath);
       write(bytes, toPath);
     } catch (IOException e) {
-      throw new RuntimeException("Unable to pre-compile " + path);
+      throw new RuntimeException("Unable to pre-compile " + path, e);
     }
   }
 

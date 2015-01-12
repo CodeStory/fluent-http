@@ -95,7 +95,7 @@ public class AssetsHelperSource {
     try {
       return compilers.compile(path).sha1();
     } catch (IOException e) {
-      throw new IllegalStateException("Unable to compute sha1 for: " + path);
+      throw new IllegalStateException("Unable to compute sha1 for: " + path, e);
     }
   }
 }
