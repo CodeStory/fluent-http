@@ -76,7 +76,7 @@ class ReloadingRoutesProvider implements RoutesProvider {
           this.appWatcher = new FolderWatcher(env.appPath(), ev -> dirty.set(true));
         }
         appWatcher.ensureStarted();
-      } catch (Throwable e) {
+      } catch (Exception e) {
         Logs.unableToConfigureRoutes(e);
       }
 
