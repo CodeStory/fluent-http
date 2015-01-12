@@ -105,7 +105,8 @@ public class CookieAuthFilter implements Filter {
 
     User user = users.find(login, password);
     if (user == null) {
-      return seeOther("/auth/login"); // Unknown user. Go back to login
+      // Unknown user. Go back to login
+      return seeOther("/auth/login");
     }
 
     return seeOther(notFavIcon(readRedirectUrlInCookie(context)))
