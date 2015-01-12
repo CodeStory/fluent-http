@@ -23,7 +23,7 @@ import java.util.*;
 import org.slf4j.*;
 
 public class Logs {
-  private final static LogsImplementation LOG = Boolean.getBoolean("PROD_MODE") ? new Slf4jLogs() : new ConsoleLogs();
+  private static final LogsImplementation LOG = Boolean.getBoolean("PROD_MODE") ? new Slf4jLogs() : new ConsoleLogs();
 
   private Logs() {
     // static class
