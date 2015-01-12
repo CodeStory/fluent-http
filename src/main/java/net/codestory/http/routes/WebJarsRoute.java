@@ -84,7 +84,7 @@ class WebJarsRoute implements Route {
   }
 
   @Override
-  public Payload body(Context context)  {
+  public Payload body(Context context) {
     String uri = context.uri();
 
     URL url = webJarUrlFinder.url(uri);
