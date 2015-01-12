@@ -21,13 +21,13 @@ import static javax.script.ScriptContext.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.*;
 
-import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import net.codestory.http.io.*;
 
 import javax.script.*;
+import jdk.nashorn.api.scripting.*;
+import jdk.nashorn.internal.runtime.options.*;
 
 public final class NashornCompiler {
   private static final ConcurrentMap<String, NashornCompiler> CACHE_BY_SCRIPT = new ConcurrentHashMap<>();
@@ -42,9 +42,7 @@ public final class NashornCompiler {
     String cacheLocation = Paths.get(System.getProperty("user.home"), ".code-story", "nashorn_code_cache_" + engineVersion).toFile().getAbsolutePath();
     System.setProperty("nashorn.persistent.code.cache", cacheLocation);
 
-    // --optimistic-types=true in JDK 8u40 slows down everything
-    // Don't use varargs because it was introduced only in 8u40
-    ScriptEngine nashorn = factory.getScriptEngine(new String[]{"--persistent-code-cache=true", "--lazy-compilation=false"});
+    ScriptEngine nashorn = factory.getScriptEngine(nashornOptions());
 
     try {
       compiledScript = ((Compilable) nashorn).compile(script);
@@ -52,6 +50,24 @@ public final class NashornCompiler {
     } catch (ScriptException e) {
       throw new IllegalStateException("Unable to compile javascript", e);
     }
+  }
+
+  private static String[] nashornOptions() {
+    List<String> options = new ArrayList<>();
+
+    // --optimistic-types=true in JDK 8u40 slows down everything
+    if (canUseOption("--persistent-code-cache")) {
+      options.add("--persistent-code-cache=true");
+    }
+    if (canUseOption("--lazy-compilation")) {
+      options.add("--lazy-compilation=false");
+    }
+
+    return options.stream().toArray(String[]::new);
+  }
+
+  private static boolean canUseOption(String name) {
+    return Options.getValidOptions().stream().anyMatch(validOption -> validOption.getName().equals(name));
   }
 
   public static NashornCompiler get(String... scriptPaths) {
