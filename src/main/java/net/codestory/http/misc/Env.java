@@ -19,7 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Env {
-  public static String DEFAULT_APP_FOLDER = "app";
+  public static final String DEFAULT_APP_FOLDER = "app";
 
   private final String appFolder;
   private final boolean prodMode;
