@@ -20,15 +20,15 @@ import static java.util.Arrays.*;
 import java.util.*;
 
 public class ContentTypes {
-  private ContentTypes() {
-    // Static class
-  }
-
   public static final List<String> SIMPLE_HTTP_REQUEST_CONTENT_TYPE_VALUES = asList(
     "application/x-www-form-urlencoded",
     "multipart/form-data",
     "text/plain"
   );
+
+  private ContentTypes() {
+    // Static class
+  }
 
   private static String extension(String filename) {
     int dotIndex = filename.lastIndexOf('.');
