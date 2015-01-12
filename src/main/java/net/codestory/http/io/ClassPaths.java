@@ -28,6 +28,10 @@ import java.util.jar.*;
 import java.util.zip.*;
 
 public class ClassPaths {
+  private ClassPaths() {
+    // Utility class
+  }
+
   public static URL[] getUrls(ClassLoader parent) {
     if (!(parent instanceof URLClassLoader)) {
       return new URL[0];

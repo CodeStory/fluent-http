@@ -20,6 +20,10 @@ import java.io.*;
 import org.webjars.*;
 
 public class ExtractWebjars {
+  private ExtractWebjars() {
+    // Utility class
+  }
+
   public static void main(String[] args) throws IOException {
     new WebJarExtractor().extractAllWebJarsTo(new File("target", "webjars"));
   }

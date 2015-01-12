@@ -16,6 +16,10 @@
 package net.codestory.http.misc;
 
 public class Hexa {
+  private Hexa() {
+    // Utility class
+  }
+
   public static String toHex(byte[] hash) {
     StringBuilder result = new StringBuilder();
     for (byte b : hash) {
