@@ -23,58 +23,58 @@ import java.util.*;
 import org.slf4j.*;
 
 public class Logs {
-  private final static LogsImplementation logs = Boolean.getBoolean("PROD_MODE") ? new Slf4jLogs() : new ConsoleLogs();
+  private final static LogsImplementation LOG = Boolean.getBoolean("PROD_MODE") ? new Slf4jLogs() : new ConsoleLogs();
 
   private Logs() {
     // static class
   }
 
   public static void unableToBindServer(Exception e) {
-    logs.error("Unable to bind server", e);
+    LOG.error("Unable to bind server", e);
   }
 
   public static void mode(boolean production) {
-    logs.info(production ? "Production mode" : "Dev mode");
+    LOG.info(production ? "Production mode" : "Dev mode");
   }
 
   public static void started(int port) {
-    logs.info("Server started on port {}", port);
+    LOG.info("Server started on port {}", port);
   }
 
   public static void compilerError(Exception e) {
-    logs.error(e.getMessage());
+    LOG.error(e.getMessage());
   }
 
   public static void unableToServerErrorPage(Exception e) {
-    logs.error("Unable to serve an error page", e);
+    LOG.error("Unable to serve an error page", e);
   }
 
   public static void cachingOnDisk(File path) {
-    logs.info("Caching on disk @ {}", path.getAbsolutePath());
+    LOG.info("Caching on disk @ {}", path.getAbsolutePath());
   }
 
   public static void uri(String uri) {
-    logs.info(uri);
+    LOG.info(uri);
   }
 
   public static void reloadingConfiguration() {
-    logs.info("Reloading configuration...");
+    LOG.info("Reloading configuration...");
   }
 
   public static void printKnownWebjars(Collection<String> uris, String extension) {
-    logs.error("Found these webjars files with extension: " + extension);
+    LOG.error("Found these webjars files with extension: " + extension);
     for (String uri : uris) {
-      logs.error(" + " + substringAfter(uri, "META-INF/resources"));
+      LOG.error(" + " + substringAfter(uri, "META-INF/resources"));
     }
   }
 
   public static void printUnknownWebjar(String uri, String extension) {
-    logs.error("Unable to find this webjar file: " + uri);
-    logs.error("And no webjar file has extension [" + extension + "]");
+    LOG.error("Unable to find this webjar file: " + uri);
+    LOG.error("And no webjar file has extension [" + extension + "]");
   }
 
   public static void unableToConfigureRoutes(Throwable e) {
-    logs.error("Unable to configure routes properly", e);
+    LOG.error("Unable to configure routes properly", e);
   }
 
   private static interface LogsImplementation {
