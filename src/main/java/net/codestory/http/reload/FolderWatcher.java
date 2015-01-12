@@ -54,9 +54,7 @@ class FolderWatcher {
     try {
       WatchService watcher = folder.getFileSystem().newWatchService();
 
-      walkFileTree(folder, onDirectory(dir -> {
-        dir.register(watcher, new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE}, HIGH);
-      }));
+      walkFileTree(folder, onDirectory(dir -> dir.register(watcher, new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE}, HIGH)));
 
       return watcher;
     } catch (IOException e) {
@@ -72,6 +70,7 @@ class FolderWatcher {
         take.pollEvents().forEach(action);
         take.reset();
       } catch (InterruptedException e) {
+        // Ignore
       }
     }
   }
