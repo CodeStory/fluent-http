@@ -56,8 +56,7 @@ public class ViewCompiler {
       }
 
       String layoutContent = render("_layouts/" + layout, allKeyValues);
-      String bodyWithLayout = layoutContent.replace("[[body]]", body);
-      return bodyWithLayout;
+      return layoutContent.replace("[[body]]", body);
     } catch (IOException e) {
       throw new IllegalStateException("Unable to render template", e);
     }
