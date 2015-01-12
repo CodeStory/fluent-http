@@ -66,7 +66,7 @@ class FolderWatcher {
     while (true) {
       try {
         WatchKey take = watcher.take();
-        // consume all events of this shitty API;
+        // consume all events of this shitty API
         take.pollEvents().forEach(action);
         take.reset();
       } catch (InterruptedException e) {
