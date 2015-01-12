@@ -16,11 +16,11 @@
 package net.codestory.http.constants;
 
 public abstract class Encodings {
-  private Encodings() {
-    // Do not allow subclassing
-  }
-
   public static final String GZIP = "gzip";
   public static final String DEFLATE = "deflate";
   public static final String SDCH = "sdch";
+
+  private Encodings() {
+    // Do not allow subclassing
+  }
 }

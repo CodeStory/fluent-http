@@ -16,10 +16,6 @@
 package net.codestory.http.constants;
 
 public abstract class HttpStatus {
-  private HttpStatus() {
-    // Do not allow subclassing
-  }
-
   public static final int OK = 200;
   public static final int CREATED = 201;
   public static final int ACCEPTED = 202;
@@ -56,4 +52,8 @@ public abstract class HttpStatus {
   public static final int SERVICE_UNAVAILABLE = 503;
   public static final int GATEWAY_TIMEOUT = 504;
   public static final int VERSION_NOT_SUPPORTED = 505;
+
+  private HttpStatus() {
+    // Do not allow subclassing
+  }
 }
