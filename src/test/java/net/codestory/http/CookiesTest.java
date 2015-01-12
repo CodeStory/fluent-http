@@ -15,6 +15,8 @@
  */
 package net.codestory.http;
 
+import static java.util.Arrays.*;
+
 import net.codestory.http.payload.*;
 import net.codestory.http.testhelpers.*;
 
@@ -22,11 +24,58 @@ import org.junit.*;
 
 public class CookiesTest extends AbstractProdWebServerTest {
   @Test
-  public void set_cookie() {
+  public void string_cookie() {
     configure(routes -> routes
         .get("/set", () -> new Payload("").withCookie("id", "Bob"))
     );
 
     get("/set").should().haveCookie("id", "Bob");
+  }
+
+  @Test
+  public void boolean_cookie() {
+    configure(routes -> routes
+        .get("/set", () -> new Payload("").withCookie("flag", true))
+    );
+
+    get("/set").should().haveCookie("flag", "true");
+  }
+
+  @Test
+  public void int_cookie() {
+    configure(routes -> routes
+        .get("/set", () -> new Payload("").withCookie("int", 42))
+    );
+
+    get("/set").should().haveCookie("int", "42");
+  }
+
+  @Test
+  public void long_cookie() {
+    configure(routes -> routes
+        .get("/set", () -> new Payload("").withCookie("long", Long.MAX_VALUE))
+    );
+
+    get("/set").should().haveCookie("long", "9223372036854775807");
+  }
+
+  @Test
+  public void cookie() {
+    configure(routes -> routes
+        .get("/set", () -> new Payload("").withCookie(new NewCookie("key", "value")))
+    );
+
+    get("/set").should().haveCookie("key", "value");
+  }
+
+  @Test
+  public void cookies_list() {
+    configure(routes -> routes
+        .get("/set", () -> new Payload("").withCookies(asList(new NewCookie("key1", "value1"), new NewCookie("key2", "value2"))))
+    );
+
+    get("/set").should()
+      .haveCookie("key1", "value1")
+      .haveCookie("key2", "value2");
   }
 }

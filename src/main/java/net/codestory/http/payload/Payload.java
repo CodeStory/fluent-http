@@ -146,8 +146,8 @@ public class Payload {
     return this;
   }
 
-  public Payload withCookies(List<Cookie> cookies) {
-    cookies.addAll(cookies);
+  public Payload withCookies(List<Cookie> cookieList) {
+    cookies.addAll(cookieList);
     return this;
   }
 
