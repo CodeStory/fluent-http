@@ -20,8 +20,6 @@ import static java.util.Arrays.*;
 import java.util.*;
 
 public class ContentTypes {
-  public static final String[] TEMPLATE_EXTENSIONS = {"", ".html", ".md", ".markdown", ".txt"};
-
   private ContentTypes() {
     // Static class
   }

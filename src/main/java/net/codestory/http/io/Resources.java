@@ -15,7 +15,7 @@
  */
 package net.codestory.http.io;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.charset.StandardCharsets.*;
 import static net.codestory.http.io.ClassPaths.*;
 
 import java.io.*;
@@ -23,11 +23,12 @@ import java.net.*;
 import java.nio.charset.*;
 import java.nio.file.*;
 
-import net.codestory.http.compilers.SourceFile;
-import net.codestory.http.misc.Env;
-import net.codestory.http.types.*;
+import net.codestory.http.compilers.*;
+import net.codestory.http.misc.*;
 
 public class Resources {
+  private static final String[] TEMPLATE_EXTENSIONS = {"", ".html", ".md", ".markdown", ".txt"};
+
   private final String root;
 
   public Resources(Env env) {
@@ -55,7 +56,7 @@ public class Resources {
     if (uri.endsWith("/")) {
       return findExistingPath(uri + "index");
     }
-    for (String extension : ContentTypes.TEMPLATE_EXTENSIONS) {
+    for (String extension : TEMPLATE_EXTENSIONS) {
       Path templatePath = Paths.get(uri + extension);
       if (exists(templatePath)) {
         return templatePath;
