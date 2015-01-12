@@ -20,9 +20,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class RouteSorter {
-  private final LinkedList<RouteWithPattern> userRoutes;
-  private final LinkedList<Route> catchAllRoutes;
-  private final LinkedList<Route> staticRoutes;
+  private final List<RouteWithPattern> userRoutes;
+  private final List<Route> catchAllRoutes;
+  private final List<Route> staticRoutes;
 
   public RouteSorter() {
     this.userRoutes = new LinkedList<>();

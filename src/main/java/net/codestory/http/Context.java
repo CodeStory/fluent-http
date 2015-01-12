@@ -135,10 +135,8 @@ public class Context {
           Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
           if (actualTypeArguments.length == 1) {
             Type argument = actualTypeArguments[0];
-            if (argument instanceof Class) {
-              if (Part.class.isAssignableFrom((Class<?>) argument)) {
-                return parts();
-              }
+            if ((argument instanceof Class) && Part.class.isAssignableFrom((Class<?>) argument)) {
+              return parts();
             }
           }
         } else if (Map.class.isAssignableFrom((Class<?>) rawType)) {

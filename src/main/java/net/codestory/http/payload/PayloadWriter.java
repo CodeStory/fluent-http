@@ -217,10 +217,8 @@ public class PayloadWriter {
     Throwable cause = e.getCause();
     if (cause != null) {
       String message = cause.getMessage();
-      if (message != null) {
-        if (message.contains("Connection reset by peer") || message.contains("Broken pipe")) {
-          return true;
-        }
+      if ((message != null) && (message.contains("Connection reset by peer") || message.contains("Broken pipe"))) {
+        return true;
       }
     }
     return false;

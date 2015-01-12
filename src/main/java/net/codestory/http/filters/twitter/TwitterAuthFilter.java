@@ -61,10 +61,10 @@ public class TwitterAuthFilter implements Filter {
     if (uri.equals(uriPrefix + "authenticate")) {
       User user;
       try {
-        String oauth_token = context.get("oauth_token");
-        String oauth_verifier = context.get("oauth_verifier");
+        String oauthToken = context.get("oauth_token");
+        String oauthVerifier = context.get("oauth_verifier");
 
-        user = twitterAuthenticator.authenticate(oauth_token, oauth_verifier);
+        user = twitterAuthenticator.authenticate(oauthToken, oauthVerifier);
       } catch (Exception e) {
         return Payload.forbidden();
       }
