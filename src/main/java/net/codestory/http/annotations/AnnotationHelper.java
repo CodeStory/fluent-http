@@ -27,10 +27,13 @@ public class AnnotationHelper {
     // static class
   }
 
-  public static void parseAnnotations(String urlPrefix, Class<?> type, MethodAnnotationCallback callback) {
+  public static void parseAnnotations(String urlPrefix, Class<?> clazz, MethodAnnotationCallback callback) {
     // Hack to support Mockito Spies
-    if (type.getName().contains("EnhancerByMockito")) {
-      type = type.getSuperclass();
+    Class<?> type;
+    if (clazz.getName().contains("EnhancerByMockito")) {
+      type = clazz.getSuperclass();
+    } else {
+      type = clazz;
     }
 
     Prefix prefixAnnotation = type.getAnnotation(Prefix.class);
