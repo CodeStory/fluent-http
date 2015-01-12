@@ -127,24 +127,35 @@ public class Context {
     }
 
     if (type instanceof ParameterizedType) {
-      ParameterizedType parameterizedType = (ParameterizedType) type;
-
-      Type rawType = parameterizedType.getRawType();
-      if (rawType instanceof Class) {
-        if (List.class.isAssignableFrom((Class<?>) rawType)) {
-          Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
-          if (actualTypeArguments.length == 1) {
-            Type argument = actualTypeArguments[0];
-            if ((argument instanceof Class) && Part.class.isAssignableFrom((Class<?>) argument)) {
-              return parts();
-            }
-          }
-        } else if (Map.class.isAssignableFrom((Class<?>) rawType)) {
-          return query().keyValues();
-        }
+      if (isListOfParts((ParameterizedType) type)) {
+        return parts();
+      }
+      if (isGenericMap((ParameterizedType) type)) {
+        return query().keyValues();
       }
     }
 
     return request().contentAs(type);
+  }
+
+  private static boolean isListOfParts(ParameterizedType type) {
+    Type rawType = type.getRawType();
+    if ((!(rawType instanceof Class)) || !List.class.isAssignableFrom((Class<?>) rawType)) {
+      return false;
+    }
+
+    Type[] actualTypeArguments = type.getActualTypeArguments();
+    if (actualTypeArguments.length != 1) {
+      return false;
+    }
+
+    Type argument = actualTypeArguments[0];
+    return (argument instanceof Class) && Part.class.isAssignableFrom((Class<?>) argument);
+
+  }
+
+  private static boolean isGenericMap(ParameterizedType type) {
+    Type rawType = type.getRawType();
+    return (rawType instanceof Class) && Map.class.isAssignableFrom((Class<?>) rawType);
   }
 }
