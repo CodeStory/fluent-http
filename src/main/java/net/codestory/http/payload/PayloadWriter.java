@@ -32,6 +32,7 @@ import java.util.zip.*;
 
 import net.codestory.http.*;
 import net.codestory.http.compilers.*;
+import net.codestory.http.constants.*;
 import net.codestory.http.convert.*;
 import net.codestory.http.io.*;
 import net.codestory.http.misc.*;
@@ -99,7 +100,7 @@ public class PayloadWriter {
     response.setHeader(CONTENT_TYPE, contentTypeHeader);
     response.setStatus(code);
 
-    if (HEAD.equals(request.method()) || (code == 204) || (code == 304) || ((code >= 100) && (code < 200))) {
+    if (HEAD.equals(request.method()) || (code == NO_CONTENT) || (code == NOT_MODIFIED) || ((code >= 100) && (code < OK))) {
       return;
     }
 
