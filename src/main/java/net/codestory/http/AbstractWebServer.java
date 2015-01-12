@@ -17,6 +17,7 @@ package net.codestory.http;
 
 import static java.util.Arrays.*;
 import static net.codestory.http.Configuration.*;
+import static net.codestory.http.constants.HttpStatus.*;
 
 import java.io.*;
 import java.net.*;
@@ -192,11 +193,11 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
   }
 
   protected Payload errorPage(Exception e) {
-    int code = 500;
+    int code = INTERNAL_SERVER_ERROR;
     if (e instanceof HttpException) {
       code = ((HttpException) e).code();
     } else if (e instanceof NoSuchElementException) {
-      code = 404;
+      code = NOT_FOUND;
     }
 
     return errorPage(new Payload(code), e);
