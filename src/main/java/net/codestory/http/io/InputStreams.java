@@ -22,7 +22,8 @@ public class InputStreams {
   private static final ThreadLocal<byte[]> BUFFER = new ThreadLocal<byte[]>() {
     @Override
     protected byte[] initialValue() {
-      return new byte[4096]; // Less GC
+      // Less GC
+      return new byte[4096];
     }
   };
 

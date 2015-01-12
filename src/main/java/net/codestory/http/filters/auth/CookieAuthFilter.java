@@ -80,7 +80,8 @@ public class CookieAuthFilter implements Filter {
       return signout(context);
     }
 
-    return nextFilter.get(); // Don't protect other /auth/ pages. Login and lost password pages for eg.
+    // Don't protect other /auth/ pages. Login and lost password pages for eg.
+    return nextFilter.get();
   }
 
   private Payload otherUri(String uri, Context context, PayloadSupplier nextFilter) throws Exception {
