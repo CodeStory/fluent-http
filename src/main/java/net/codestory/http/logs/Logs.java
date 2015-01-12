@@ -111,7 +111,7 @@ public class Logs {
   }
 
   private static class Slf4jLogs implements LogsImplementation {
-    private final static Logger LOG = LoggerFactory.getLogger("Fluent");
+    private static final Logger LOG = LoggerFactory.getLogger("Fluent");
 
     @Override
     public void info(String message) {
