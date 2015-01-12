@@ -44,7 +44,4 @@ public class ParentLastClassLoader extends URLClassLoader {
     }
     return c;
   }
-
-  // TODO classpath resources
-
 }

@@ -66,7 +66,6 @@ public class RouteCollection implements Routes {
   }
 
   public void configure(Configuration configuration) {
-    // TODO: make RouteSorter a local variable
     configuration.configure(this);
     installExtensions();
     addStaticRoutes(env.prodMode());

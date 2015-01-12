@@ -38,7 +38,6 @@ public class RoleFilter implements Filter {
     return nextFilter.get();
   }
 
-  // TODO: should use a Trie
   public String findRole(String uri) {
     for (Permission permission : permissions) {
       if (uri.startsWith(permission.uriPrefix)) {
