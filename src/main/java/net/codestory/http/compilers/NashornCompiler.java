@@ -72,7 +72,7 @@ public final class NashornCompiler {
 
   public static NashornCompiler get(String... scriptPaths) {
     String script = readScripts(scriptPaths);
-    return CACHE_BY_SCRIPT.computeIfAbsent(script, NashornCompiler::new);
+    return CACHE_BY_SCRIPT.computeIfAbsent(script, s -> new NashornCompiler(s));
   }
 
   private static String readScripts(String... scriptPaths) {
