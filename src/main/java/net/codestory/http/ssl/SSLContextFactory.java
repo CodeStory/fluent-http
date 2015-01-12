@@ -28,7 +28,7 @@ import net.codestory.http.misc.*;
 import javax.net.ssl.*;
 
 public class SSLContextFactory {
-  public SSLContext create(List<Path> pathCertificates, Path pathPrivateKey, List<Path> pathTrustAnchors) throws Exception {
+  public SSLContext create(List<Path> pathCertificates, Path pathPrivateKey, List<Path> pathTrustAnchors) throws GeneralSecurityException, IOException {
     X509Certificate[] chain = pathCertificates.stream().map(path -> {
       try {
         return generateCertificateFromDER(path);
@@ -67,17 +67,17 @@ public class SSLContextFactory {
     return context;
   }
 
-  private static KeyManager[] getKeyManagers(KeyStore keyStore) throws NoSuchAlgorithmException, UnrecoverableKeyException, KeyStoreException {
+  private static KeyManager[] getKeyManagers(KeyStore keyStore) throws GeneralSecurityException {
     KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
     kmf.init(keyStore, new char[0]);
     return kmf.getKeyManagers();
   }
 
-  private static X509Certificate generateCertificateFromDER(Path path) throws CertificateException, IOException {
+  private static X509Certificate generateCertificateFromDER(Path path) throws GeneralSecurityException, IOException {
     return generateCertificateFromDER(Files.readAllBytes(path));
   }
 
-  private static TrustManager[] getTrustManagers(KeyStore trustStore) throws NoSuchAlgorithmException, KeyStoreException {
+  private static TrustManager[] getTrustManagers(KeyStore trustStore) throws GeneralSecurityException {
     if (trustStore == null) {
       return null;
     }
@@ -86,15 +86,15 @@ public class SSLContextFactory {
     return tmf.getTrustManagers();
   }
 
-  private static X509Certificate generateCertificateFromDER(byte[] data) throws CertificateException {
+  private static X509Certificate generateCertificateFromDER(byte[] data) throws GeneralSecurityException {
     return (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate(new ByteArrayInputStream(data));
   }
 
-  private static RSAPrivateKey generatePrivateKeyFromDER(Path path) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+  private static RSAPrivateKey generatePrivateKeyFromDER(Path path) throws GeneralSecurityException, IOException {
     return generatePrivateKeyFromDER(Files.readAllBytes(path));
   }
 
-  private static RSAPrivateKey generatePrivateKeyFromDER(byte[] data) throws NoSuchAlgorithmException, InvalidKeySpecException {
+  private static RSAPrivateKey generatePrivateKeyFromDER(byte[] data) throws GeneralSecurityException {
     return (RSAPrivateKey) KeyFactory.getInstance("RSA").generatePrivate(new PKCS8EncodedKeySpec(data));
   }
 }
