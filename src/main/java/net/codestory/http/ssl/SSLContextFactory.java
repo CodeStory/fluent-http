@@ -29,7 +29,7 @@ import javax.net.ssl.*;
 
 public class SSLContextFactory {
   public SSLContext create(List<Path> pathCertificates, Path pathPrivateKey, List<Path> pathTrustAnchors) throws Exception {
-    X509Certificate[] chain = pathCertificates.stream().map((path) -> {
+    X509Certificate[] chain = pathCertificates.stream().map(path -> {
       try {
         return generateCertificateFromDER(path);
       } catch (Exception e) {
@@ -46,7 +46,7 @@ public class SSLContextFactory {
 
     KeyStore truststore = null;
     if (pathTrustAnchors != null && !pathTrustAnchors.isEmpty()) {
-      X509Certificate[] trustAnchors = pathTrustAnchors.stream().map((path) -> {
+      X509Certificate[] trustAnchors = pathTrustAnchors.stream().map(path -> {
         try {
           return generateCertificateFromDER(Files.readAllBytes(path));
         } catch (Exception e) {
