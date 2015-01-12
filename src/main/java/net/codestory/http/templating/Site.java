@@ -64,13 +64,13 @@ public class Site {
     );
 
     tags = memoize(() -> {
-      Map<String, List<Map<String, Object>>> tags = new TreeMap<>();
+      Map<String, List<Map<String, Object>>> pagesPerTag = new TreeMap<>();
       for (Map<String, Object> page : getPages()) {
         for (String tag : tags(page)) {
-          tags.computeIfAbsent(tag, key -> new ArrayList<>()).add(page);
+          pagesPerTag.computeIfAbsent(tag, key -> new ArrayList<>()).add(page);
         }
       }
-      return tags;
+      return pagesPerTag;
     });
 
     categories = memoize(() -> getPages().stream().collect(Collectors.groupingBy(page -> Site.category(page), TreeMap::new, toList())));
