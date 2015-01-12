@@ -78,7 +78,7 @@ public class EachReverseHelperSource {
   }
 
   private static <T> Iterator<T> reverse(Iterable<T> values) {
-    LinkedList<T> reversed = new LinkedList<>();
+    Deque<T> reversed = new LinkedList<>();
     for (T value : values) {
       reversed.add(value);
     }
