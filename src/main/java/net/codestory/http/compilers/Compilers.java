@@ -83,7 +83,7 @@ public class Compilers {
         Supplier<Compiler> compiler = entry.getValue();
 
         // Hack until I find something better
-        if (extension.equals(".less") && sourceFile.getSource().contains("@import")) {
+        if (".less".equals(extension) && sourceFile.getSource().contains("@import")) {
           return CacheEntry.noCache(compiler.get().compile(sourceFile));
         }
 
