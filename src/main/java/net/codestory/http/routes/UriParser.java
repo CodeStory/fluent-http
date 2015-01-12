@@ -15,6 +15,8 @@
  */
 package net.codestory.http.routes;
 
+import java.util.*;
+
 import net.codestory.http.*;
 import net.codestory.http.io.*;
 
@@ -85,6 +87,23 @@ public class UriParser implements Comparable<UriParser> {
 
   public static int paramsCount(String uriPattern) {
     return Strings.countMatches(uriPattern, ':');
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof UriParser) {
+      UriParser other = (UriParser) obj;
+
+      return Arrays.equals(patternParts, other.patternParts) &&
+        Arrays.equals(queryParamsParts, other.queryParamsParts) &&
+        (paramsCount == other.paramsCount);
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(patternParts, queryParamsParts, paramsCount);
   }
 
   @Override
