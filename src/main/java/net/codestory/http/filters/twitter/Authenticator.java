@@ -18,7 +18,7 @@ package net.codestory.http.filters.twitter;
 import java.net.*;
 
 public interface Authenticator {
-  URI getAuthenticateURI(String callbackUri) throws AuthenticationException;
+  URI getAuthenticateURI(String callbackUri);
 
-  User authenticate(String oauthToken, String oauthVerifier) throws AuthenticationException;
+  User authenticate(String oauthToken, String oauthVerifier);
 }
