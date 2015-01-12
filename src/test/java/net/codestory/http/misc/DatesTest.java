@@ -24,8 +24,8 @@ public class DatesTest {
   public void format_and_parse() {
     long currentTime = 1392134880000L;
 
-    String date = Dates.to_rfc_1123(currentTime);
-    long time = Dates.parse_rfc_1123(date);
+    String date = Dates.toRfc1123(currentTime);
+    long time = Dates.parseRfc1123(date);
 
     assertThat(time).isEqualTo(currentTime);
   }

@@ -52,11 +52,11 @@ public class Singletons implements IocAdapter {
     }
 
     // Slow path
-    return _get(type, 0);
+    return doGget(type, 0);
   }
 
   @SuppressWarnings("unchecked")
-  private <T> T _get(Class<T> type, int depth) {
+  private <T> T doGget(Class<T> type, int depth) {
     Object singleton = singletons.get(type);
     if (singleton != null) {
       return (T) singleton;
@@ -83,7 +83,7 @@ public class Singletons implements IocAdapter {
     Class<?>[] parameterTypes = constructor.getParameterTypes();
     Object[] parameters = new Object[parameterTypes.length];
     for (int i = 0; i < parameterTypes.length; i++) {
-      parameters[i] = _get(parameterTypes[i], depth + 1);
+      parameters[i] = doGget(parameterTypes[i], depth + 1);
     }
 
     return constructor.newInstance(parameters);

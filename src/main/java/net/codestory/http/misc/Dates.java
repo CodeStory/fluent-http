@@ -24,11 +24,11 @@ public class Dates {
     // Static class
   }
 
-  public static String to_rfc_1123(long date) {
+  public static String toRfc1123(long date) {
     return RFC_1123_DATE_TIME.format(ZonedDateTime.ofInstant(Instant.ofEpochMilli(date), ZoneOffset.systemDefault()));
   }
 
-  public static long parse_rfc_1123(String date) {
+  public static long parseRfc1123(String date) {
     return Instant.from(RFC_1123_DATE_TIME.parse(date, ZonedDateTime::from)).toEpochMilli();
   }
 }

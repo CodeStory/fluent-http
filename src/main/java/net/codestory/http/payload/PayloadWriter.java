@@ -77,11 +77,11 @@ public class PayloadWriter {
     long lastModified = getLastModified(payload);
     if (lastModified >= 0) {
       String previousLastModified = stripQuotes(request.header(IF_MODIFIED_SINCE));
-      if ((previousLastModified != null) && (lastModified < Dates.parse_rfc_1123(previousLastModified))) {
+      if ((previousLastModified != null) && (lastModified < Dates.parseRfc1123(previousLastModified))) {
         response.setStatus(NOT_MODIFIED);
         return;
       }
-      response.setHeader(LAST_MODIFIED, Dates.to_rfc_1123(lastModified));
+      response.setHeader(LAST_MODIFIED, Dates.toRfc1123(lastModified));
     }
 
     int code = payload.code();
@@ -323,7 +323,7 @@ public class PayloadWriter {
   protected long getLastModified(Payload payload) throws IOException {
     String lastModified = payload.headers().get(LAST_MODIFIED);
     if (lastModified != null) {
-      return Dates.parse_rfc_1123(lastModified);
+      return Dates.parseRfc1123(lastModified);
     }
 
     Object content = payload.rawContent();
