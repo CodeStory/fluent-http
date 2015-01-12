@@ -17,6 +17,8 @@ package net.codestory.http.io;
 
 import static java.nio.charset.StandardCharsets.*;
 import static java.nio.file.Files.*;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.of;
 import static net.codestory.http.io.FileVisitor.*;
 
@@ -25,7 +27,6 @@ import java.net.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.jar.*;
-import java.util.zip.*;
 
 public class ClassPaths {
   private ClassPaths() {
@@ -67,7 +68,7 @@ public class ClassPaths {
       // Ignore
     }
 
-    return Collections.emptyList();
+    return emptyList();
   }
 
   private static File getFile(URL url) {
@@ -135,27 +136,17 @@ public class ClassPaths {
   }
 
   private static List<String> forJarFile(JarFile jarFile) {
-    List<String> files = new ArrayList<>();
-
-    Enumeration<? extends ZipEntry> entries = jarFile.entries();
-    while (entries.hasMoreElements()) {
-      ZipEntry entry = entries.nextElement();
-      if (!entry.isDirectory()) {
-        files.add(entry.getName());
-      }
-    }
-
-    return files;
+    return jarFile.stream().filter(entry -> !entry.isDirectory()).map(entry -> entry.getName()).collect(toList());
   }
 
   private static List<String> forSystemDir(File file) throws IOException {
     if (file == null || !file.exists()) {
-      return Collections.emptyList();
+      return emptyList();
     }
 
-    final Path parent = file.toPath();
+    Path parent = file.toPath();
 
-    final List<String> files = new ArrayList<>();
+    List<String> files = new ArrayList<>();
     walkFileTree(parent, onFile(path -> files.add(Resources.relativePath(parent, path))));
     return files;
   }
