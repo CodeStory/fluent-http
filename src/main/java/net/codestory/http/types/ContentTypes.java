@@ -16,9 +16,7 @@
 package net.codestory.http.types;
 
 import static java.util.Arrays.*;
-import static net.codestory.http.io.Resources.*;
 
-import java.nio.file.*;
 import java.util.*;
 
 public class ContentTypes {
