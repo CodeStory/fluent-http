@@ -24,6 +24,7 @@ public class ContentTypesTest {
   @Test
   public void content_type_from_extension() {
     assertThat(get("index.html")).isEqualTo("text/html;charset=UTF-8");
+    assertThat(get("file.json")).isEqualTo("application/json;charset=UTF-8");
     assertThat(get("data.xml")).isEqualTo("application/xml;charset=UTF-8");
     assertThat(get("style.css")).isEqualTo("text/css;charset=UTF-8");
     assertThat(get("style.less")).isEqualTo("text/css;charset=UTF-8");
@@ -53,6 +54,7 @@ public class ContentTypesTest {
   public void compatibility_with_templating() {
     assertThat(supportsTemplating("index.html")).isTrue();
     assertThat(supportsTemplating("data.xml")).isTrue();
+    assertThat(supportsTemplating("data.json")).isTrue();
     assertThat(supportsTemplating("test.md")).isTrue();
     assertThat(supportsTemplating("test.markdown")).isTrue();
     assertThat(supportsTemplating("text.txt")).isTrue();

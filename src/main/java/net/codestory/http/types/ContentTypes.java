@@ -47,6 +47,8 @@ public class ContentTypes {
         return "text/html;charset=UTF-8";
       case ".xml":
         return "application/xml;charset=UTF-8";
+      case ".json":
+        return "application/json;charset=UTF-8";
       case ".css":
       case ".less":
         return "text/css;charset=UTF-8";
@@ -89,6 +91,7 @@ public class ContentTypes {
       case ".markdown":
       case ".html":
       case ".xml":
+      case ".json":
         return true;
       default:
         return false;
