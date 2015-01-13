@@ -15,7 +15,7 @@
  */
 package net.codestory.http.templating.helpers;
 
-import static java.lang.String.*;
+import static java.util.stream.Collectors.*;
 
 import java.io.*;
 import java.nio.file.*;
@@ -43,41 +43,39 @@ public class AssetsHelperSource {
     }
   }
 
-  public CharSequence script(Object context) throws IOException {
-    List<CharSequence> scripts = new ArrayList<>();
+  public CharSequence script(Object context) {
+    return toString(context, value -> singleScript(value.toString()));
+  }
+
+  public CharSequence css(Object context) {
+    return toString(context, value -> singleCss(value.toString()));
+  }
+
+  private static CharSequence toString(Object context, Function<Object, CharSequence> transform) {
+    return new SafeString(contextAsList(context).stream().map(transform).collect(joining("\n")));
+  }
+
+  private static List<Object> contextAsList(Object context) {
+    List<Object> list = new ArrayList<>();
 
     if (context instanceof Iterable<?>) {
       for (Object value : (Iterable<?>) context) {
-        scripts.add(singleScript(value));
+        list.add(value);
       }
     } else {
-      scripts.add(singleScript(context));
+      list.add(context);
     }
 
-    return new SafeString(join("\n", scripts));
+    return list;
   }
 
-  public CharSequence css(Object context) throws IOException {
-    List<CharSequence> scripts = new ArrayList<>();
-
-    if (context instanceof Iterable<?>) {
-      for (Object value : (Iterable<?>) context) {
-        scripts.add(singleCss(value));
-      }
-    } else {
-      scripts.add(singleCss(context));
-    }
-
-    return new SafeString(join("\n", scripts));
-  }
-
-  private CharSequence singleScript(Object context) throws IOException {
+  private CharSequence singleScript(Object context) {
     String uri = addExtensionIfMissing(context.toString(), ".js");
 
     return "<script src=\"" + uriWithSha1(uri) + "\"></script>";
   }
 
-  private CharSequence singleCss(Object context) throws IOException {
+  private CharSequence singleCss(Object context) {
     String uri = addExtensionIfMissing(context.toString(), ".css");
 
     return "<link rel=\"stylesheet\" href=\"" + urlSupplier.apply(uri) + "\">";
