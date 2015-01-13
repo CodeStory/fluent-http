@@ -61,7 +61,7 @@ public class HandlebarsCompiler {
       .registerHelpers(new EachReverseHelperSource())
       .registerHelpers(new EachValueHelperSource())
       .registerHelpers(new GoogleAnalyticsHelper())
-      .registerHelpers(new AssetsHelperSource(env.prodMode(), compilers))
+      .registerHelpers(new AssetsHelperSource(env.prodMode(), resources, compilers))
       .registerHelpers(StringHelpers.class)
       .with(new ConcurrentMapTemplateCache())
       .with(new AbstractTemplateLoader() {

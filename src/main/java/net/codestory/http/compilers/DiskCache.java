@@ -33,7 +33,7 @@ public class DiskCache {
     File file = new File(new File(root, extension.substring(1)), sha1);
     if (file.exists()) {
       try {
-        return CacheEntry.fromFile(sha1, file);
+        return CacheEntry.fromFile(file);
       } catch (IOException e) {
         // ignore cache entry
       }
@@ -43,7 +43,7 @@ public class DiskCache {
 
     try {
       writeToCache(file, compiled);
-      return CacheEntry.fromString(sha1, compiled);
+      return CacheEntry.fromString(compiled);
     } catch (IOException e) {
       throw new IllegalStateException(e);
     }

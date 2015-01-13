@@ -15,30 +15,31 @@
  */
 package net.codestory.http.templating.helpers;
 
-import com.github.jknack.handlebars.Handlebars.SafeString;
-import net.codestory.http.compilers.CompilerFacade;
+import static java.lang.String.*;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+import java.util.function.*;
 
-import static java.lang.String.join;
+import net.codestory.http.compilers.*;
+import net.codestory.http.io.*;
+import net.codestory.http.misc.*;
+
+import com.github.jknack.handlebars.Handlebars.*;
 
 public class AssetsHelperSource {
+  private final Resources resources;
   private final CompilerFacade compilers;
-  private final Map<Path, String> sha1Cache = new ConcurrentHashMap<>();
-  private final Function<Path, String> sha1Supplier;
+  private final Function<String, String> urlSupplier;
 
-  public AssetsHelperSource(boolean prodMode, CompilerFacade compilers) {
+  public AssetsHelperSource(boolean prodMode, Resources resources, CompilerFacade compilers) {
+    this.resources = resources;
     this.compilers = compilers;
     if (prodMode) {
-      this.sha1Supplier = path -> sha1Cache.computeIfAbsent(path, p -> sha1(p));
+      this.urlSupplier = new Cache<>(p -> uriWithSha1(p));
     } else {
-      this.sha1Supplier = path -> sha1(path);
+      this.urlSupplier = path -> uriWithSha1(path);
     }
   }
 
@@ -79,23 +80,28 @@ public class AssetsHelperSource {
   private CharSequence singleCss(Object context) throws IOException {
     String uri = addExtensionIfMissing(context.toString(), ".css");
 
-    return "<link rel=\"stylesheet\" href=\"" + uriWithSha1(uri) + "\">";
+    return "<link rel=\"stylesheet\" href=\"" + urlSupplier.apply(uri) + "\">";
   }
 
   private static String addExtensionIfMissing(String uri, String extension) {
     return uri.endsWith(extension) ? uri : uri + extension;
   }
 
-  private String uriWithSha1(String uri) throws IOException {
-    Path path = compilers.findPublicSourceFor(uri);
-    return (path == null) ? uri : uri + '?' + sha1Supplier.apply(path);
-  }
-
-  private String sha1(Path path) {
+  private String uriWithSha1(String uri) {
     try {
-      return compilers.compile(path).sha1();
+      Path path = resources.findExistingPath(uri);
+      if ((path != null) && (resources.isPublic(path))) {
+        return uri + '?' + Sha1.of(resources.readBytes(path));
+      }
+
+      Path sourcePath = compilers.findPublicSourceFor(uri);
+      if (sourcePath != null) {
+        return uri + '?' + Sha1.of(resources.readBytes(sourcePath));
+      }
     } catch (IOException e) {
-      throw new IllegalStateException("Unable to compute sha1 for: " + path, e);
+      throw new IllegalStateException("Unable to compute sha1 for: " + uri, e);
     }
+
+    return uri;
   }
 }
