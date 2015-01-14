@@ -34,7 +34,7 @@ public class Logs {
   }
 
   public static void mode(boolean production) {
-    LOG.info(production ? "Production mode" : "Dev mode");
+    LOG.info(production ? "Production mode" : "Dev mode. Start with -DPROD_MODE=true to run in production mode.");
   }
 
   public static void started(int port) {
