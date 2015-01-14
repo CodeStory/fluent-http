@@ -667,10 +667,16 @@ public enum HandleBarHelper implements Helper<Object> {
 }
 ```
 
-You wire it in, by declaring your class in the `handleBarHelper` property inside your `app/_config.yml` file.
+You wire it in, by adding your helper class to the CompilersConfiguration by the way of the Extensions interface.
 As of now, you can only have one class declared here, but as shown above this can be an `enum` so you can declare as many as you want inside one.
-```yaml
-handleBarHelper: com.foobar.HandleBarHelper
+```Java
+    routes
+      .setExtensions(new Extensions() {
+        @Override
+        public void configureCompilers(CompilersConfiguration compilers, Env env) {
+          compilers.addHandlebarsHelpers(HandleBarHelper.class);
+        }
+      })
 ```
 
 You are able to use your own helper in any of your template like this example for the code above.
