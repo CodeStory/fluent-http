@@ -684,6 +684,20 @@ Note that we provide quite a few helper by default like the [StringHelper](https
 
 TODO
 
+## Production Mode vs Developement mode
+
+By default, fluent-http runs in "developement mode".
+* recreate the routes configuration to each changes in `/app/` directory
+* actively reload the static files assets
+* provides .map for javascript files
+
+In production mode
+* don't do the three task cited above
+* aggresively cache each static files, loaded once and never look again
+
+We encourage you to use production mode whenever you deploy you website in real life and *not* activate it in dev mode.
+To activate production mode you should add the `-DPROD_MODE=true` in your VM options.
+
 ## Caching
 
 fluent-http uses a disk cache to store css and js files produced from less or coffeescript.
