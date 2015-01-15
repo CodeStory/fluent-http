@@ -152,6 +152,7 @@ public class AnnotationsTest extends AbstractProdWebServerTest {
     );
 
     get("/test?param1=param&param2=42&param3=true&param4=1337").should().contain("param1:param, param2:42, param3:true, param4:1337");
+    get("/test").should().contain("param1:null, param2:0, param3:false, param4:0");
   }
 
   public static class TestResource {

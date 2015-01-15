@@ -72,11 +72,19 @@ public class TypeConvert {
   }
 
   public static <T> T convertValue(Object value, Class<T> type) {
-    return CURRENT_OBJECT_MAPPER.convertValue(value, type);
+    T converted = CURRENT_OBJECT_MAPPER.convertValue(value, type);
+    if (converted == null) {
+      converted = PrimitiveDefaultValues.INSTANCE.get(type);
+    }
+    return converted;
   }
 
   public static Object convertValue(Object value, Type type) {
-    return CURRENT_OBJECT_MAPPER.convertValue(value, TypeFactory.defaultInstance().constructType(type));
+    Object converted = CURRENT_OBJECT_MAPPER.convertValue(value, TypeFactory.defaultInstance().constructType(type));
+    if ((converted == null) && (type instanceof Class<?>)) {
+      converted = PrimitiveDefaultValues.INSTANCE.get((Class<?>) type);
+    }
+    return converted;
   }
 
   public static <T> T convertValue(Object value, TypeReference<T> type) {
