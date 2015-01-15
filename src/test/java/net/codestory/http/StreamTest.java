@@ -15,16 +15,13 @@
  */
 package net.codestory.http;
 
-import static java.nio.charset.StandardCharsets.*;
-import static java.util.concurrent.TimeUnit.*;
-import static java.util.stream.IntStream.*;
+import net.codestory.http.testhelpers.AbstractProdWebServerTest;
+import org.junit.Test;
 
-import java.io.*;
-import java.util.stream.*;
+import java.io.ByteArrayInputStream;
 
-import net.codestory.http.testhelpers.*;
-
-import org.junit.*;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.stream.IntStream.range;
 
 public class StreamTest extends AbstractProdWebServerTest {
   @Test
@@ -52,24 +49,5 @@ public class StreamTest extends AbstractProdWebServerTest {
     );
 
     get("/stream").should().contain("Hello World");
-  }
-
-  @Test(timeout = 5000)
-  public void support_multiple_clients_in_parallel() {
-    configure(routes -> routes
-        .get("/blocking", () -> Stream.generate(() -> {
-          try {
-            HOURS.sleep(1);
-          } catch (InterruptedException e) {
-            // Ignore
-          }
-          return "OK";
-        }))
-        .get("/non_blocking", () -> new ByteArrayInputStream("Hello World".getBytes(UTF_8)))
-    );
-
-    new Thread(() -> get("/blocking").should().contain("OK")).start();
-
-    range(1, 1000).parallel().forEach(i -> get("/non_blocking").should().contain("Hello World"));
   }
 }
