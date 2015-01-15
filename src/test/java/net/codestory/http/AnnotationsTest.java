@@ -140,6 +140,20 @@ public class AnnotationsTest extends AbstractProdWebServerTest {
     get("/injection/first/second").should().contain("first/second/Context/SimpleRequest/SimpleResponse/SimpleCookies");
   }
 
+  @Test
+  public void query_params() {
+    configure(routes -> routes
+            .add(new Object() {
+              @Get("/test?param1=:param1&param2=:param2&param3=:param3&param4=:param4")
+              public String test(String param1, int param2, boolean param3, long param4) {
+                return String.join(", ", "param1:" + param1, "param2:" + param2, "param3:" + param3, "param4:" + param4);
+              }
+            })
+    );
+
+    get("/test?param1=param&param2=42&param3=true&param4=1337").should().contain("param1:param, param2:42, param3:true, param4:1337");
+  }
+
   public static class TestResource {
     @Get("/hello")
     public String hello() {
