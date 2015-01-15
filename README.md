@@ -633,7 +633,10 @@ public class AllProducts {
 
 ### With Spring
 
-Nothing here for now, it will in the future, if you're on a hurry we gladly accept pull requests ;)
+We support Spring injected bean in exactly the same manner as with guice.
+check the [SpringAdapter](https://github.com/CodeStory/fluent-http/blob/master/src/main/java/net/codestory/http/injection/SpringAdapter.java) class, which work the same way as its guice counterparts.
+
+Look at the [SpringAdapterTest](https://github.com/CodeStory/fluent-http/blob/master/src/test/java/net/codestory/http/injection/SpringAdapterTest.java) we wrote for a working example.
 
 ## Markdown extensions
 
