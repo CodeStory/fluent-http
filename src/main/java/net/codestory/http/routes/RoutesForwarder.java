@@ -18,6 +18,7 @@ package net.codestory.http.routes;
 import net.codestory.http.extensions.Extensions;
 import net.codestory.http.filters.*;
 import net.codestory.http.injection.*;
+import net.codestory.http.websockets.*;
 
 public class RoutesForwarder implements Routes {
   private final Routes[] routes;
@@ -42,6 +43,14 @@ public class RoutesForwarder implements Routes {
   public Routes setIocAdapter(IocAdapter iocAdapter) {
     for (Routes routes : delegates()) {
       routes.setIocAdapter(iocAdapter);
+    }
+    return this;
+  }
+
+  @Override
+  public Routes setWebSocketHandler(WebSocketHandler handler) {
+    for (Routes routes : delegates()) {
+      routes.setWebSocketHandler(handler);
     }
     return this;
   }

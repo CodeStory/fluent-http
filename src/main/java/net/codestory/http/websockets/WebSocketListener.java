@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http;
+package net.codestory.http.websockets;
 
-import net.codestory.http.filters.log.*;
-import net.codestory.http.internal.*;
-import net.codestory.http.websockets.*;
+import java.util.function.*;
 
-public class WebServer extends AbstractWebServer<WebServer> {
-  public static void main(String[] args) {
-    new WebServer()
-      .configure(routes -> routes.filter(new LogRequestFilter()))
-      .start();
+import net.codestory.http.*;
+
+@FunctionalInterface
+public interface WebSocketListener {
+  void onFrame(WebSocketSession session, Request request, Response response, String type, Supplier<String> textSupplier);
+
+  default void onError(WebSocketSession session, Request request, Response response, Exception cause) {
+    // Do nothing
   }
 
-  @Override
-  protected HttpServerWrapper createHttpServer(Handler httpHandler, WebSocketHandler webSocketHandler) throws Exception {
-    return new SimpleServerWrapper(httpHandler, webSocketHandler);
+  default void onClose(WebSocketSession session, Request request, Response response, int code, String reason) {
+    // Do nothing
   }
 }

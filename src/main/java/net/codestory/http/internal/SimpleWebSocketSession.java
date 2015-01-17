@@ -13,21 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http;
+package net.codestory.http.internal;
 
-import net.codestory.http.filters.log.*;
-import net.codestory.http.internal.*;
+import java.io.*;
+
 import net.codestory.http.websockets.*;
 
-public class WebServer extends AbstractWebServer<WebServer> {
-  public static void main(String[] args) {
-    new WebServer()
-      .configure(routes -> routes.filter(new LogRequestFilter()))
-      .start();
+import org.simpleframework.http.socket.*;
+
+class SimpleWebSocketSession implements WebSocketSession, Unwrappable {
+  private final Session session;
+
+  SimpleWebSocketSession(Session session) {
+    this.session = session;
+  }
+
+  public void send(String message) throws IOException {
+    session.getChannel().send(message);
+  }
+
+  public void send(byte[] message) throws IOException {
+    session.getChannel().send(message);
   }
 
   @Override
-  protected HttpServerWrapper createHttpServer(Handler httpHandler, WebSocketHandler webSocketHandler) throws Exception {
-    return new SimpleServerWrapper(httpHandler, webSocketHandler);
+  public <T> T unwrap(Class<T> type) {
+    return type.isInstance(session) ? (T) session : null;
   }
 }

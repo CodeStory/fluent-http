@@ -33,6 +33,7 @@ import net.codestory.http.payload.*;
 import net.codestory.http.reload.*;
 import net.codestory.http.routes.*;
 import net.codestory.http.ssl.*;
+import net.codestory.http.websockets.*;
 
 import javax.net.ssl.*;
 
@@ -47,12 +48,12 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     this.env = createEnv();
   }
 
-  protected abstract HttpServerWrapper createHttpServer(Handler handler) throws Exception;
+  protected abstract HttpServerWrapper createHttpServer(Handler httpHandler, WebSocketHandler webSocketHandler) throws Exception;
 
   public T configure(Configuration configuration) {
     this.routesProvider = env.prodMode()
-      ? RoutesProvider.fixed(env, configuration)
-      : RoutesProvider.reloading(env, configuration);
+        ? RoutesProvider.fixed(env, configuration)
+        : RoutesProvider.reloading(env, configuration);
     return (T) this;
   }
 
@@ -107,7 +108,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
 
   protected T startWithContext(int port, SSLContext context, boolean authReq) {
     try {
-      server = createHttpServer(this::handle);
+      server = createHttpServer(this::handleHttp, this::handleWebSocket);
     } catch (Exception e) {
       throw new IllegalStateException("Unable to create http server", e);
     }
@@ -152,7 +153,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     }
   }
 
-  protected void handle(Request request, Response response) {
+  protected void handleHttp(Request request, Response response) {
     // We need to make sure that these two lines cannot fail
     // Otherwise no response is made to the client
     //
@@ -171,6 +172,13 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     } catch (Exception e) {
       handleServerError(payloadWriter, e);
     }
+  }
+
+  protected WebSocketListener handleWebSocket(Request request, Response response) {
+    // TODO: Error handling?
+    RouteCollection routes = routesProvider.get();
+//    Context context = routes.createContext(request, response);
+    return routes.handleWebSocket(request, response);
   }
 
   protected void handleServerError(PayloadWriter payloadWriter, Exception e) {

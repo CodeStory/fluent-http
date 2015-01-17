@@ -20,11 +20,14 @@ import java.io.*;
 import net.codestory.http.extensions.Extensions;
 import net.codestory.http.filters.*;
 import net.codestory.http.injection.*;
+import net.codestory.http.websockets.*;
 
 public interface Routes extends Serializable {
   Routes setExtensions(Extensions extensions);
 
   Routes setIocAdapter(IocAdapter iocAdapter);
+
+  Routes setWebSocketHandler(WebSocketHandler handler);
 
   Routes filter(Class<? extends Filter> filterClass);
 

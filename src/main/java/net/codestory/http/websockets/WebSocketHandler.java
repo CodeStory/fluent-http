@@ -13,21 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http;
+package net.codestory.http.websockets;
 
-import net.codestory.http.filters.log.*;
-import net.codestory.http.internal.*;
-import net.codestory.http.websockets.*;
+import net.codestory.http.*;
 
-public class WebServer extends AbstractWebServer<WebServer> {
-  public static void main(String[] args) {
-    new WebServer()
-      .configure(routes -> routes.filter(new LogRequestFilter()))
-      .start();
-  }
+@FunctionalInterface
+public interface WebSocketHandler {
+  WebSocketHandler NOT_SUPPORTED = (request, response) -> {
+    throw new UnsupportedOperationException();
+  };
 
-  @Override
-  protected HttpServerWrapper createHttpServer(Handler httpHandler, WebSocketHandler webSocketHandler) throws Exception {
-    return new SimpleServerWrapper(httpHandler, webSocketHandler);
-  }
+  WebSocketListener create(Request request, Response response);
 }

@@ -31,6 +31,7 @@ import net.codestory.http.misc.Env;
 import net.codestory.http.payload.Payload;
 import net.codestory.http.payload.PayloadWriter;
 import net.codestory.http.templating.Site;
+import net.codestory.http.websockets.*;
 
 import java.lang.reflect.Method;
 import java.util.Deque;
@@ -53,6 +54,7 @@ public class RouteCollection implements Routes {
   protected IocAdapter iocAdapter;
   protected Extensions extensions;
   protected Route[] sortedRoutes;
+  protected WebSocketHandler webSocketHandler;
 
   public RouteCollection(Env env) {
     this.env = env;
@@ -63,6 +65,7 @@ public class RouteCollection implements Routes {
     this.filters = new LinkedList<>();
     this.iocAdapter = new Singletons();
     this.extensions = Extensions.DEFAULT;
+    this.webSocketHandler = WebSocketHandler.NOT_SUPPORTED;
   }
 
   public void configure(Configuration configuration) {
@@ -105,6 +108,12 @@ public class RouteCollection implements Routes {
   public RouteCollection setIocAdapter(IocAdapter iocAdapter) {
     this.iocAdapter = iocAdapter;
     return this;
+  }
+
+  @Override
+  public Routes setWebSocketHandler(WebSocketHandler handler) {
+    this.webSocketHandler = handler;
+    return null;
   }
 
   @Override
@@ -417,6 +426,10 @@ public class RouteCollection implements Routes {
   protected RouteCollection add(String method, String uriPattern, AnyRoute route) {
     routes.addUserRoute(new RouteWithPattern(method, uriPattern, route));
     return this;
+  }
+
+  public WebSocketListener handleWebSocket(Request request, Response response) {
+    return webSocketHandler.create(request, response);
   }
 
   public Payload apply(Context context) throws Exception {
