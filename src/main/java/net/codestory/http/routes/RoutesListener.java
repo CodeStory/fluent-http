@@ -32,7 +32,7 @@ public class RoutesListener implements Routes {
   }
 
   @Override
-  public Routes setWebSocketHandler(WebSocketHandler handler) {
+  public Routes setWebSocketListenerFactory(WebSocketListenerFactory factory) {
     return this;
   }
 

@@ -48,9 +48,9 @@ public class RoutesForwarder implements Routes {
   }
 
   @Override
-  public Routes setWebSocketHandler(WebSocketHandler handler) {
+  public Routes setWebSocketListenerFactory(WebSocketListenerFactory factory) {
     for (Routes routes : delegates()) {
-      routes.setWebSocketHandler(handler);
+      routes.setWebSocketListenerFactory(factory);
     }
     return this;
   }

@@ -19,9 +19,5 @@ import net.codestory.http.*;
 
 @FunctionalInterface
 public interface WebSocketHandler {
-  WebSocketHandler NOT_SUPPORTED = (request, response) -> {
-    throw new UnsupportedOperationException();
-  };
-
   WebSocketListener create(Request request, Response response);
 }

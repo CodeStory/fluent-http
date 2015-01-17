@@ -27,7 +27,7 @@ public interface Routes extends Serializable {
 
   Routes setIocAdapter(IocAdapter iocAdapter);
 
-  Routes setWebSocketHandler(WebSocketHandler handler);
+  Routes setWebSocketListenerFactory(WebSocketListenerFactory factory);
 
   Routes filter(Class<? extends Filter> filterClass);
 

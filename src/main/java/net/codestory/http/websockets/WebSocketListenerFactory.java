@@ -15,17 +15,13 @@
  */
 package net.codestory.http.websockets;
 
-import java.util.function.*;
+import net.codestory.http.*;
 
 @FunctionalInterface
-public interface WebSocketListener {
-  void onFrame(WebSocketSession session, String type, Supplier<String> textSupplier);
+public interface WebSocketListenerFactory {
+  WebSocketListenerFactory NOT_SUPPORTED = (context) -> {
+    throw new UnsupportedOperationException();
+  };
 
-  default void onError(WebSocketSession session, Exception cause) {
-    // Do nothing
-  }
-
-  default void onClose(WebSocketSession session, int code, String reason) {
-    // Do nothing
-  }
+  WebSocketListener create(Context context);
 }

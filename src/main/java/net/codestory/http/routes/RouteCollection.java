@@ -54,7 +54,7 @@ public class RouteCollection implements Routes {
   protected IocAdapter iocAdapter;
   protected Extensions extensions;
   protected Route[] sortedRoutes;
-  protected WebSocketHandler webSocketHandler;
+  protected WebSocketListenerFactory webSocketListenerFactory;
 
   public RouteCollection(Env env) {
     this.env = env;
@@ -65,7 +65,7 @@ public class RouteCollection implements Routes {
     this.filters = new LinkedList<>();
     this.iocAdapter = new Singletons();
     this.extensions = Extensions.DEFAULT;
-    this.webSocketHandler = WebSocketHandler.NOT_SUPPORTED;
+    this.webSocketListenerFactory = WebSocketListenerFactory.NOT_SUPPORTED;
   }
 
   public void configure(Configuration configuration) {
@@ -111,8 +111,8 @@ public class RouteCollection implements Routes {
   }
 
   @Override
-  public Routes setWebSocketHandler(WebSocketHandler handler) {
-    this.webSocketHandler = handler;
+  public Routes setWebSocketListenerFactory(WebSocketListenerFactory webSocketListenerFactory) {
+    this.webSocketListenerFactory = webSocketListenerFactory;
     return null;
   }
 
@@ -428,8 +428,8 @@ public class RouteCollection implements Routes {
     return this;
   }
 
-  public WebSocketListener handleWebSocket(Request request, Response response) {
-    return webSocketHandler.create(request, response);
+  public WebSocketListener createWebSocketListener(Context context) {
+    return webSocketListenerFactory.create(context);
   }
 
   public Payload apply(Context context) throws Exception {
