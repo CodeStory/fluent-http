@@ -1,24 +1,39 @@
-# Fluent-Http
+# Fluent-http
 
-This is the simplest fastest full fledged web server we could come up with.
+*This is the simplest fastest full fledged web server we could come up with.*
 
-# Build status
+Fluent-http is a very capable web stack based on
+[SimpleFramework](https://github.com/ngallagher/simpleframework) HTTP server.
 
-Linux: [![Build Status](https://api.travis-ci.org/CodeStory/fluent-http.png)](https://travis-ci.org/CodeStory/fluent-http)
+It's goal is to provide everything a java web developer needs to build
+modern web sites with REST back-ends and HTML5 front-ends.
 
-Windows: [![Build status](https://ci.appveyor.com/api/projects/status/bv4lnbafr0dnrckx/branch/master)](https://ci.appveyor.com/project/dgageot/fluent-http)
+## Our rules
 
-# Environment
+Simple rules are used to develop fluent-http and we believe it's what
+makes it a pleasure to use:
+
++ Starting a web server should be a one-liner
++ It should start at the speed of light
++ It should use a robust fast http server
++ Using fluent-http should not imply using dozens of plugins and dependencies
++ Web standards should be baked-in
+
+# Let's use it!
+
+## Build status
+
+- Linux: [![Build Status](https://api.travis-ci.org/CodeStory/fluent-http.png)](https://travis-ci.org/CodeStory/fluent-http)
+
+- Windows: [![Build status](https://ci.appveyor.com/api/projects/status/bv4lnbafr0dnrckx/branch/master)](https://ci.appveyor.com/project/dgageot/fluent-http)
+
+## Environment
 
 - `java-1.8`
 
-# Usage
-
-One of our goals was to make it as easy as possible to start with.
-
 ## Maven
 
-Release versions are deployed on Maven Central:
+A single dependency is what it takes. Release versions are deployed on Maven Central:
 
 ```xml
 <dependency>
@@ -28,9 +43,7 @@ Release versions are deployed on Maven Central:
 </dependency>
 ```
 
-## Sample projects
-
-Sample projects can be found [here](https://github.com/CodeStory/fluent-samples).
+# Show me some code!
 
 ## Hello World
 
@@ -46,13 +59,25 @@ public class HelloWorld {
 }
 ```
 
-Adding more routes is not hard either:
+What this code does :
+
+- It starts a web server that on port `8080`
+- To every `GET` requests on `/`, it will respond `Hello World`
+as `text/html`
+- To every other request it will respond a nice `404` error
+- It serves everything in `$CURRENT_DIR/app` folder as static resources
+
+Not too bad for a one-liner, right?
+
+## More routes
+
+Adding more routes is not hard either. It's based on Java 8 Lambdas.
 
 ```java
 new WebServer().configure(routes -> routes.
     get("/", "Hello World").
     get("/Test", "Test").
-    get("/OtherTest", "Other Test")
+    get("/OtherTest", (context) -> "Other Test")
 ).start();
 ```
 
@@ -61,29 +86,35 @@ new WebServer().configure(routes -> routes.
 Routes can have path parameters:
 
 ```java
-routes.get("/hello/:who", (context, name) -> "Hello " + name));
+routes.get("/hello/:who", (context, who) -> "Hello " + who));
 routes.get("/add/:first/to/:second", (context, first, second) -> Integer.parseInt(first) + Integer.parseInt(second));
 ```
 
-Notice that path parameters have to be of type `String`.
-
 ## Query Parameters
 
-Routes can have query parameters:
+Routes can also have query parameters:
 
 ```java
 routes.get("/hello?who=:who", (who) -> "Hello " + who));
 routes.get("/hello?to=:to&from=:from", (to, from) -> "Hello " + to + " from " + from));
 ```
-Notice that query parameters can be issued in any order.
+
+## Lambda routes limitations
+
+Notice that path and query parameters have to be of type `String`.
+To overcome this limitation, fluent-http can be configured with
+`Resource classes` instead of simple lambdas.
+
+- The simpler syntax (`lambdas`) is very easy to read but comes with limitaions.
+- The more complex syntax (`Resource classes`) has no such limitation
+and is very natural to people used to `Spring MVC` or `Jersey`.
 
 ## Resources
 
-The notation with lambdas is very compact but cannot support path parameters of type other than `String`. So we've added
-the notion of Resource, in a way similar to jaxb.
-
 ```java
+...
 routes.add(new CalculationResource());
+...
 
 public class CalculationResource {
   @Get("/add/:first/to/:second")
@@ -104,10 +135,17 @@ and recursively inject dependencies as singletons. It's a kind of poor's man DI 
 routes.add(CalculationResource.class);
 ```
 
+## Sample projects
+
+Before we take an in-depth look at fluent-http, you can go take a look
+at samples [here](https://github.com/CodeStory/fluent-samples)
+if it's how you prefer to learn.
+
 ## Static pages
 
 When a web server is started, it automatically treats files found in `app` folder as static pages. The `app` folder
-is searched first on the classpath and then in the working directory.
+is searched first on the classpath (think `src/main/resources/app`) and then in the working directory.
+
 So the simplest way to start a web server is in fact:
 
 ```java
@@ -122,7 +160,8 @@ public class HelloWorld {
 
 ## Random port
 
-Instead of relying on the default port, you can specify the port yourself...
+Instead of relying on the default port, you can specify a port yourself.
+(Not sure anyone does this anymore thanks to Docker conteners.)
 
 ```java
 new WebServer().start(4242);
@@ -134,7 +173,7 @@ new WebServer().start(4242);
 int port = new WebServer().startOnRandomPort().port();
 ```
 
-This is specially helpful for integration tests running in parallel. Not that the way it finds a port available is
+This is specially helpful for integration tests running in parallel. Note that the way it finds a port available is
 bulletproof on every OS. It chooses a random port, tries to start the web server and retries with a different port
 in case of error. This is much more reliable than the usual technique that relies on:
 
@@ -144,25 +183,28 @@ int port = serverSocket.getLocalPort();
 serverSocket.close();
 ```
 
-## NOHTML (Not Only HTML)
+## Not Only HTML
 
 The web server recognizes html files but not only. It is also able to transform more user-friendly file formats on the fly:
 
  + Html (`.html`)
- + Markdown (`.md` or `.markdown`) -> Html
+ + Markdown (`.md` or `.markdown`) -> Compiled to .html
  + Xml (`.xml`)
  + Json (`.json`)
  + Css (`.css`)
- + Less (`.less`) -> Css
+ + Less (`.less`) -> Compiled to .css
  + Javascript (`.js`)
- + Coffeescript (`.coffee` or `litcoffee`) -> Javascript
+ + Coffeescript (`.coffee` or `litcoffee`) -> Compiled to .js
  + Zip (`.zip`)
  + Gz (`.gz`)
  + Pdf (`.pdf`)
  + Gif (`.gif`)
  + Jpeg (`.jpeg` or `jpg`)
  + Png (`.png`)
- + All other files are treated as plain text.
+
+All those file formats are served without additional configuration.
+Files are served with automatic content-type, etag and last-modified
+headers.
 
 ## Yaml Front Matter
 
@@ -182,6 +224,9 @@ Will be rendered as:
 ```html
 <p>Hello World</p>
 ```
+
+Take a look at `Jekyll` to understand the full power of `Yaml Front Matter`.
+It makes it very easy to build static pages without duplication.
 
 ## Handlebars
 
@@ -209,10 +254,19 @@ Will be rendered as:
 </ul>
 ```
 
+`Handlebars` nottion can be used in `.html` or `.md` files. You can
+use the [built-in helpers](http://jknack.github.io/handlebars.java/helpers.html) or add
+your own helpers.
+
+Note that because our stack is meant to be used with js frameworks like
+AngularJs, we couldn't stick with standard `{{}}` notation of handlebars.
+We use the `[[]]` syntax that makes it possible to mix server-side templates
+with client-side templates on the same page.
+
 ## Layouting
 
 Like in [Jekyll](http://jekyllrb.com/), pages can be decorated with a layout. The name of the layout should be configured
-in the Yaml Front Matter section.
+in the `Yaml Front Matter` section.
 
 For example, given this `app/_layouts/default.html` file:
 
@@ -246,7 +300,7 @@ A request to `/` will give this result:
 ```
 
 A layout file can be a `.html`, `.md`, `.markdown` or `.txt` file. It should be put in `app/_layouts` folder.
-The layout name used in the Yaml Front Matter section can omit the layout file extension.
+The layout name used in the `Yaml Front Matter` section can omit the layout file extension.
 Layouts are recursive, ie a layout file can have a layout.
 
 A layout can use variables defined in the rendered file. Here's an example with an html title:
@@ -299,8 +353,8 @@ In addition to the variables defined in the Yaml Front Matter section, some site
 
 ## Webjars
 
-We also support [WebJars](http://www.webjars.org/) to server static assets.
-Just add a maven dependency to a WebJar and reference the static resource in your pages with the `/webjars/` prefix.
+We support [WebJars](http://www.webjars.org/) to server static assets.
+Just add a maven dependency to a `WebJar` and reference the static resource in your pages with the `/webjars/` prefix.
 
 Here's an example with Bootstrap:
 
@@ -326,8 +380,8 @@ Here's an example with Bootstrap:
 
 ## Dynamic pages
 
-Ok, so its easy to mimic the behavior of a static website generated with Jekyll. But what about dynamic pages? Turns
-out it's heasy too.
+Ok, so its easy to mimic the behaviour of a static website generated with
+Jekyll. But what about dynamic pages? Turns it's easy too.
 
 Let's create a `hello.md` page with an unbound variable.
 
@@ -352,9 +406,9 @@ it will *just work*, but the view can of course be overridden:
 routes.get("/hello/:whom", (context, whom) -> ModelAndView.of("greeting", "name", whom));
 ```
 
-## Return types
+## Content-type right out of the box
 
-A route can return any Object, the server will try to guess what to do with it:
+A route can return any `Object`, the server will try to guess what to do with it:
 
  - `java.lang.String` is interpreted as inline html with content type `text/html;charset=UTF-8`.
  - `byte[]` is interpreted as `application/octet-stream`.
@@ -491,7 +545,7 @@ routes.get("/products", () -> Arrays.asList(new Product(...), new Product(...)))
 This route serves the Products serialized as json using [Jackson](http://jackson.codehaus.org/).
 The content type will be `application/json;charset=UTF-8`.
 
-## ObjectMapper customization
+## ObjectMapper Customization
 
 When fluent-http talks json, the [jackson json processor](http://jackson.codehaus.org/) is not far.
 Sometimes (meaning: Always in any decent sized project), you want to  provide your own home-cooked `ObjectMapper`.
@@ -521,7 +575,7 @@ TODO
 
 ## Filters
 
-Cross-cutting behaviors can be implemented with filters. For example, one can log every request to the server
+Cross-cutting behaviours can be implemented with filters. For example, one can log every request to the server
 with this filter:
 
 ```java
@@ -538,7 +592,7 @@ routes.filter(LogRequestFilter.class);
 
 public class LogRequestFilter implements Filter {
   @Override
-  public Payload apply(String uri, Context context, PayloadSupplier next) throws IOException {
+  public Payload apply(String uri, Context context, PayloadSupplier next) throws Exception {
     System.out.println(uri);
     return next.get();
   }
@@ -567,7 +621,7 @@ public class BasicAuthFilter implements Filter {
   }
 
   @Override
-  public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws IOException {
+  public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws Exception {
     if (!uri.startsWith(uriPrefix)) {
       return nextFilter.get(); // Ignore
     }
@@ -691,29 +745,36 @@ Note that we provide quite a few helper by default like the [StringHelper](https
 
 ## Etag
 
+Etag headers computation is automatic on every request.
+
 TODO
 
-## Production Mode vs Developement mode
+## Production Mode vs Development mode
 
-By default, fluent-http runs in "developement mode".
-* recreate the routes configuration to each changes in `/app/` directory
-* actively reload the static files assets
-* provides .map for javascript files
+By default, fluent-http runs in `developement mode`.
 
-In production mode
-* don't do the three task cited above
-* aggresively cache each static files, loaded once and never look again
+- It reloads the routes each time something changes in `app` folder
+- It provides `.map` and `.source` for coffee and less files
+
+In production mode:
+
+- Stops looking for changes in `app` folder
+- Doesn't serve `.map` and `.source` files
+- It caches static resources as much as possible in memory
+- It activates gzip compression on every request
 
 We encourage you to use production mode whenever you deploy you website in real life and *not* activate it in dev mode.
-To activate production mode you should add the `-DPROD_MODE=true` in your VM options.
+To activate production mode, start the JVM with `-DPROD_MODE=true`.
 
 ## Caching
 
-fluent-http uses a disk cache to store css and js files produced from less or coffeescript.
-This directory is by default stored in your "user home" in a .code-story directory.
+fluent-http uses a disk cache to store `.css` and `.js` files produced from `.less` or .`coffee` files.
+This directory is by default stored in your "user home" in a `.code-story` directory.
 
 If you don't want it to be here you can `-Duser.home=/foo/bar` as you see fit.
 If you're paranoid and run fluent-http under `nobody` user make sure `nobody` can read/write this directory.
+
+# Participate to the project
 
 ## Generate missing licenses
 
@@ -721,20 +782,13 @@ If you're paranoid and run fluent-http under `nobody` user make sure `nobody` ca
 mvn license:format
 ```
 
-## TODO
-
-+ Change `app` folder name
-+ include file not in _includes
-+ Merge static resources
-
-
-# Build
+## Build
 
 ```bash
 mvn clean verify
 ```
 
-# Deploy on Maven Central
+## Deploy on Maven Central
 
 Build the release:
 
