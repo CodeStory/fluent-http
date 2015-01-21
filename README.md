@@ -161,7 +161,7 @@ public class HelloWorld {
 ## Random port
 
 Instead of relying on the default port, you can specify a port yourself.
-(Not sure anyone does this anymore thanks to Docker conteners.)
+(Not sure anyone does this anymore thanks to Docker containers.)
 
 ```java
 new WebServer().start(4242);
