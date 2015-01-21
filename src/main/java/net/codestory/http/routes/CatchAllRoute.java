@@ -18,10 +18,20 @@ package net.codestory.http.routes;
 import net.codestory.http.*;
 
 class CatchAllRoute implements Route {
+  private final String method;
   private final AnyRoute route;
 
   CatchAllRoute(AnyRoute route) {
+    this("ANY", route);
+  }
+
+  CatchAllRoute(String method, AnyRoute route) {
+    this.method = method;
     this.route = route;
+  }
+
+  public String getMethod() {
+    return method;
   }
 
   @Override
@@ -31,7 +41,7 @@ class CatchAllRoute implements Route {
 
   @Override
   public boolean matchMethod(String method) {
-    return true;
+    return ("ANY".equals(this.method)) || (method.equals(this.method));
   }
 
   @Override

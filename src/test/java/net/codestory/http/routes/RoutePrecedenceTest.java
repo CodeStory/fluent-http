@@ -78,16 +78,18 @@ public class RoutePrecedenceTest extends AbstractProdWebServerTest {
   }
 
   @Test
-  public void catchall_is_always_last() {
+  public void catch_all_is_always_last() {
     configure(routes -> routes
         .get("/:param", (context, param) -> "One")
         .get("/foo", "Two")
-        .catchAll("last")
+        .catchAll((context) -> "last")
+        .catchAllGet((context) -> "antepenultimate")
     );
 
     get("/foo").should().contain("Two");
     get("/bar").should().contain("One");
-    get("/catch/all").should().contain("last");
-    get("/random/any").should().contain("last");
+    get("/catch/all/get").should().contain("antepenultimate");
+    post("/catch/all").should().contain("last");
+    put("/catch/all").should().contain("last");
   }
 }

@@ -119,9 +119,17 @@ public interface Routes extends Serializable {
 
   Routes delete(String uriPattern, FourParamsRoute route);
 
-  Routes catchAll(Object payload);
+  Routes catchAllGet(NoParamRouteWithContext route);
 
-  Routes catchAll(NoParamRoute route);
+  Routes catchAllHead(NoParamRouteWithContext route);
+
+  Routes catchAllPost(NoParamRouteWithContext route);
+
+  Routes catchAllPut(NoParamRouteWithContext route);
+
+  Routes catchAllOptions(NoParamRouteWithContext route);
+
+  Routes catchAllDelete(NoParamRouteWithContext route);
 
   Routes catchAll(NoParamRouteWithContext route);
 

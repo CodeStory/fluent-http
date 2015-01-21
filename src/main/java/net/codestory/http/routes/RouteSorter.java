@@ -21,7 +21,7 @@ import java.util.List;
 
 public class RouteSorter {
   private final List<RouteWithPattern> userRoutes;
-  private final List<Route> catchAllRoutes;
+  private final List<CatchAllRoute> catchAllRoutes;
   private final List<Route> staticRoutes;
 
   public RouteSorter() {
@@ -47,7 +47,7 @@ public class RouteSorter {
 
     userRoutes.stream().sorted((left, right) -> left.uriParser().compareTo(right.uriParser())).forEach(route -> sorted.add(route));
     staticRoutes.forEach(route -> sorted.add(route));
-    catchAllRoutes.forEach(route -> sorted.add(route));
+    catchAllRoutes.stream().sorted((left, right) -> right.getMethod().compareTo(left.getMethod())).forEach(route -> sorted.add(route));
 
     return sorted.toArray(new Route[sorted.size()]);
   }
