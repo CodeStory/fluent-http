@@ -24,7 +24,7 @@ public class CatchAllTest extends AbstractProdWebServerTest {
   @Test
   public void catch_all_get() {
     configure(routes -> routes
-        .catchAllGet((context) -> "Hello")
+        .anyGet((context) -> "Hello")
     );
 
     get("/").should().contain("Hello");
@@ -35,7 +35,7 @@ public class CatchAllTest extends AbstractProdWebServerTest {
   @Test
   public void catch_all_head() {
     configure(routes -> routes
-        .catchAllHead((context) -> Payload.ok())
+        .anyHead((context) -> Payload.ok())
     );
 
     head("/").should().respond(200);
@@ -46,7 +46,7 @@ public class CatchAllTest extends AbstractProdWebServerTest {
   @Test
   public void catch_all_post() {
     configure(routes -> routes
-        .catchAllPost((context) -> "Hello")
+        .anyPost((context) -> "Hello")
     );
 
     post("/").should().contain("Hello");
@@ -57,7 +57,7 @@ public class CatchAllTest extends AbstractProdWebServerTest {
   @Test
   public void catch_all_put() {
     configure(routes -> routes
-        .catchAllPut((context) -> "Hello")
+        .anyPut((context) -> "Hello")
     );
 
     put("/").should().contain("Hello");
@@ -68,7 +68,7 @@ public class CatchAllTest extends AbstractProdWebServerTest {
   @Test
   public void catch_all_options() {
     configure(routes -> routes
-        .catchAllOptions((context) -> "Hello")
+        .anyOptions((context) -> "Hello")
     );
 
     options("/").should().contain("Hello");
@@ -79,7 +79,7 @@ public class CatchAllTest extends AbstractProdWebServerTest {
   @Test
   public void catch_all_delete() {
     configure(routes -> routes
-        .catchAllDelete((context) -> "Hello")
+        .anyDelete((context) -> "Hello")
     );
 
     delete("/").should().contain("Hello");

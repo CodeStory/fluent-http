@@ -401,43 +401,43 @@ public class RouteCollection implements Routes {
   }
 
   @Override
-  public Routes catchAllGet(NoParamRouteWithContext route) {
+  public Routes anyGet(NoParamRouteWithContext route) {
     routes.addCatchAllRoute(new CatchAllRoute(GET, route));
     return this;
   }
 
   @Override
-  public Routes catchAllHead(NoParamRouteWithContext route) {
+  public Routes anyHead(NoParamRouteWithContext route) {
     routes.addCatchAllRoute(new CatchAllRoute(HEAD, route));
     return this;
   }
 
   @Override
-  public Routes catchAllPost(NoParamRouteWithContext route) {
+  public Routes anyPost(NoParamRouteWithContext route) {
     routes.addCatchAllRoute(new CatchAllRoute(POST, route));
     return this;
   }
 
   @Override
-  public Routes catchAllPut(NoParamRouteWithContext route) {
+  public Routes anyPut(NoParamRouteWithContext route) {
     routes.addCatchAllRoute(new CatchAllRoute(PUT, route));
     return this;
   }
 
   @Override
-  public Routes catchAllOptions(NoParamRouteWithContext route) {
+  public Routes anyOptions(NoParamRouteWithContext route) {
     routes.addCatchAllRoute(new CatchAllRoute(OPTIONS, route));
     return this;
   }
 
   @Override
-  public Routes catchAllDelete(NoParamRouteWithContext route) {
+  public Routes anyDelete(NoParamRouteWithContext route) {
     routes.addCatchAllRoute(new CatchAllRoute(DELETE, route));
     return this;
   }
 
   @Override
-  public RouteCollection catchAll(NoParamRouteWithContext route) {
+  public RouteCollection any(NoParamRouteWithContext route) {
     routes.addCatchAllRoute(new CatchAllRoute(route));
     return this;
   }

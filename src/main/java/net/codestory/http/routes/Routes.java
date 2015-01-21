@@ -41,6 +41,10 @@ public interface Routes extends Serializable {
 
   Routes add(String urlPrefix, Object resource);
 
+  Routes any(NoParamRouteWithContext route);
+
+  Routes anyGet(NoParamRouteWithContext route);
+
   Routes get(String uriPattern, Object payload);
 
   Routes get(String uriPattern, NoParamRoute route);
@@ -54,6 +58,8 @@ public interface Routes extends Serializable {
   Routes get(String uriPattern, ThreeParamsRoute route);
 
   Routes get(String uriPattern, FourParamsRoute route);
+
+  Routes anyHead(NoParamRouteWithContext route);
 
   Routes head(String uriPattern, Object payload);
 
@@ -69,6 +75,8 @@ public interface Routes extends Serializable {
 
   Routes head(String uriPattern, FourParamsRoute route);
 
+  Routes anyPost(NoParamRouteWithContext route);
+
   Routes post(String uriPattern, NoParamRoute route);
 
   Routes post(String uriPattern, NoParamRouteWithContext route);
@@ -81,6 +89,8 @@ public interface Routes extends Serializable {
 
   Routes post(String uriPattern, FourParamsRoute route);
 
+  Routes anyPut(NoParamRouteWithContext route);
+
   Routes put(String uriPattern, NoParamRoute route);
 
   Routes put(String uriPattern, NoParamRouteWithContext route);
@@ -92,6 +102,8 @@ public interface Routes extends Serializable {
   Routes put(String uriPattern, ThreeParamsRoute route);
 
   Routes put(String uriPattern, FourParamsRoute route);
+
+  Routes anyOptions(NoParamRouteWithContext route);
 
   Routes options(String uriPattern, Object payload);
 
@@ -107,6 +119,8 @@ public interface Routes extends Serializable {
 
   Routes options(String uriPattern, FourParamsRoute route);
 
+  Routes anyDelete(NoParamRouteWithContext route);
+
   Routes delete(String uriPattern, NoParamRoute route);
 
   Routes delete(String uriPattern, NoParamRouteWithContext route);
@@ -118,20 +132,6 @@ public interface Routes extends Serializable {
   Routes delete(String uriPattern, ThreeParamsRoute route);
 
   Routes delete(String uriPattern, FourParamsRoute route);
-
-  Routes catchAllGet(NoParamRouteWithContext route);
-
-  Routes catchAllHead(NoParamRouteWithContext route);
-
-  Routes catchAllPost(NoParamRouteWithContext route);
-
-  Routes catchAllPut(NoParamRouteWithContext route);
-
-  Routes catchAllOptions(NoParamRouteWithContext route);
-
-  Routes catchAllDelete(NoParamRouteWithContext route);
-
-  Routes catchAll(NoParamRouteWithContext route);
 
   RoutesWithPattern url(String uriPattern);
 }

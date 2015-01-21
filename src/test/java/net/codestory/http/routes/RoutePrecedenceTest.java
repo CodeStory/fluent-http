@@ -82,8 +82,8 @@ public class RoutePrecedenceTest extends AbstractProdWebServerTest {
     configure(routes -> routes
         .get("/:param", (context, param) -> "One")
         .get("/foo", "Two")
-        .catchAll((context) -> "last")
-        .catchAllGet((context) -> "antepenultimate")
+        .any((context) -> "last")
+        .anyGet((context) -> "antepenultimate")
     );
 
     get("/foo").should().contain("Two");
