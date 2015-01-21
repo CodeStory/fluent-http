@@ -277,7 +277,7 @@ public class RoutesListener implements Routes {
   }
 
   @Override
-  public RoutesWithPattern with(String uriPattern) {
+  public RoutesWithPattern url(String uriPattern) {
     throw new UnsupportedOperationException();
   }
 }

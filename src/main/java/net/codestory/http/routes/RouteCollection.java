@@ -419,7 +419,7 @@ public class RouteCollection implements Routes {
   }
 
   @Override
-  public RoutesWithPattern with(String uriPattern) {
+  public RoutesWithPattern url(String uriPattern) {
     return new RoutesWithPattern(this, uriPattern);
   }
 

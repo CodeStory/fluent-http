@@ -41,10 +41,10 @@ public class RoutePrecedenceTest extends AbstractProdWebServerTest {
   @Test
   public void multiple_routes_same_uri() {
     configure(routes -> routes
-        .with("/").
+        .url("/").
           get(() -> "Index GET").
           post(() -> "Index POST")
-        .with("/action").
+        .url("/action").
           get(() -> "Action GET").
           post(() -> "Action POST")
     );

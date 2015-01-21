@@ -17,11 +17,15 @@ package net.codestory.http.routes;
 
 public class RoutesWithPattern {
   private final Routes routes;
-  private String currentUriPattern;
+  private final String currentUriPattern;
 
   public RoutesWithPattern(Routes routes, String currentUriPattern) {
     this.routes = routes;
     this.currentUriPattern = currentUriPattern;
+  }
+
+  public RoutesWithPattern url(String uriPattern) {
+    return new RoutesWithPattern(routes, uriPattern);
   }
 
   public RoutesWithPattern get(Object payload) {
@@ -216,11 +220,6 @@ public class RoutesWithPattern {
 
   public RoutesWithPattern delete(FourParamsRoute route) {
     routes.delete(currentUriPattern, route);
-    return this;
-  }
-
-  public RoutesWithPattern with(String uriPattern) {
-    this.currentUriPattern = uriPattern;
     return this;
   }
 }

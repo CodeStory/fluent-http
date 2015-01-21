@@ -34,7 +34,7 @@ public class RoutesWithPatternTest {
       .collect(toList());
 
     List<Method> methodsWithImplicitUri = of(RoutesWithPattern.class.getDeclaredMethods())
-      .filter(method -> !method.getName().equals("with"))
+      .filter(method -> !method.getName().equals("url"))
       .collect(toList());
 
     assertThat(methodsWithExplicitUri).hasSameSizeAs(methodsWithImplicitUri);

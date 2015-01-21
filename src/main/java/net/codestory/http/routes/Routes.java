@@ -125,5 +125,5 @@ public interface Routes extends Serializable {
 
   Routes catchAll(NoParamRouteWithContext route);
 
-  RoutesWithPattern with(String uriPattern);
+  RoutesWithPattern url(String uriPattern);
 }
