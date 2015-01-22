@@ -93,6 +93,10 @@ public class Context {
     return currentUser;
   }
 
+  public <T> T extract(Class<T> type) throws IOException {
+    return (T) extract((Type) type);
+  }
+
   public Object extract(Type type) throws IOException {
     if (type instanceof Class) {
       Class<?> clazz = (Class<?>) type;

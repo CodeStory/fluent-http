@@ -27,6 +27,8 @@ import net.codestory.http.templating.*;
 
 import org.junit.*;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 public class ContextTest {
   Request request = mock(Request.class);
   Response response = mock(Response.class);
@@ -67,6 +69,7 @@ public class ContextTest {
     assertThat(context.extract(Cookies.class)).isSameAs(cookies);
     assertThat(context.extract(Query.class)).isSameAs(query);
     assertThat(context.extract(Site.class)).isSameAs(site);
+    assertThat(context.extract(new TypeReference<Site>(){}.getType())).isSameAs(site);
   }
 
   static class Service {
