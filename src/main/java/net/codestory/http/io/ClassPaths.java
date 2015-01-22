@@ -15,22 +15,37 @@
  */
 package net.codestory.http.io;
 
-import static java.nio.charset.StandardCharsets.*;
-import static java.nio.file.Files.*;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.Files.walkFileTree;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.of;
-import static net.codestory.http.io.FileVisitor.*;
+import static net.codestory.http.io.FileVisitor.onFile;
 
-import java.io.*;
-import java.net.*;
-import java.nio.file.*;
-import java.util.*;
-import java.util.jar.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.JarURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.net.URLConnection;
+import java.net.URLDecoder;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.jar.JarFile;
 
 public class ClassPaths {
   private ClassPaths() {
     // Utility class
+  }
+
+  public static List<Path> classpathFolders() {
+    URL[] urls = getUrls(Thread.currentThread().getContextClassLoader());
+    return of(urls).map(url -> Paths.get(toUri(url))).collect(toList());
   }
 
   public static URL[] getUrls(ClassLoader parent) {
@@ -149,5 +164,13 @@ public class ClassPaths {
     List<String> files = new ArrayList<>();
     walkFileTree(parent, onFile(path -> files.add(Resources.relativePath(parent, path))));
     return files;
+  }
+
+  private static URI toUri(URL url) {
+    try {
+      return url.toURI();
+    } catch (URISyntaxException e) {
+      throw new IllegalArgumentException("Unable to convert URL to URI: " + url, e);
+    }
   }
 }

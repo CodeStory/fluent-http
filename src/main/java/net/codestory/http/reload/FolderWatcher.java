@@ -22,17 +22,17 @@ import static net.codestory.http.io.FileVisitor.*;
 
 import java.io.*;
 import java.nio.file.*;
-import java.util.function.*;
 
-class FolderWatcher {
+public class FolderWatcher {
   private final Path folder;
-  private final Consumer<WatchEvent<?>> action;
+  private final FolderChangeListener listener;
 
   private boolean started;
+  // TODO: stop
 
-  FolderWatcher(Path folder, Consumer<WatchEvent<?>> action) {
+  public FolderWatcher(Path folder, FolderChangeListener listener) {
     this.folder = folder;
-    this.action = action;
+    this.listener = listener;
   }
 
   public void ensureStarted() {
@@ -66,8 +66,16 @@ class FolderWatcher {
     while (true) {
       try {
         WatchKey take = watcher.take();
-        // consume all events of this shitty API
-        take.pollEvents().forEach(action);
+
+        boolean changed = false;
+        for (WatchEvent<?> event : take.pollEvents()) {
+          // consume all events of this shitty API
+          changed = true;
+        }
+        if (changed) {
+          listener.onChange();
+        }
+
         take.reset();
       } catch (InterruptedException e) {
         // Ignore
