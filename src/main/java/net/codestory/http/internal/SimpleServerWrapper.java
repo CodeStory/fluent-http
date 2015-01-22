@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 
 import net.codestory.http.websockets.WebSocketHandler;
-import net.codestory.http.websockets.WebSocketListener;
 
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
@@ -74,7 +73,7 @@ public class SimpleServerWrapper implements HttpServerWrapper, Container, Servic
     SimpleRequest request = createRequest(session.getRequest());
     SimpleResponse response = createResponse(session.getResponse());
 
-    webSocketHandler.handle(webSocketSession, request, response);
+    webSocketHandler.connect(webSocketSession, request, response);
   }
 
   protected SimpleRequest createRequest(Request request) {

@@ -20,5 +20,5 @@ import net.codestory.http.Response;
 
 @FunctionalInterface
 public interface WebSocketHandler {
-  void handle(WebSocketSession session, Request request, Response response);
+  void connect(WebSocketSession session, Request request, Response response);
 }

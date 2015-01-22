@@ -104,7 +104,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
 
   protected T startWithContext(int port, SSLContext context, boolean authReq) {
     try {
-      server = createHttpServer(this::handleHttp, this::handleWebSocket);
+      server = createHttpServer(this::handleHttp, this::connectWebSocket);
     } catch (Exception e) {
       throw new IllegalStateException("Unable to create http server", e);
     }
@@ -170,7 +170,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     }
   }
 
-  protected void handleWebSocket(WebSocketSession session, Request request, Response response) {
+  protected void connectWebSocket(WebSocketSession session, Request request, Response response) {
     RouteCollection routes = routesProvider.get();
 
     try {
