@@ -15,8 +15,27 @@
  */
 package net.codestory.http.reload;
 
-public interface WatchServiceFacade {
-  void onChange(FolderChangeListener listener);
+import java.nio.file.Path;
 
-  void stop();
+import net.codestory.http.osxwatcher.Watcher;
+
+public class OsxWatchService implements WatchServiceFacade {
+  private final Path folder;
+
+  private Watcher watcher;
+
+  public OsxWatchService(Path folder) {
+    this.folder = folder;
+  }
+
+  @Override
+  public void onChange(FolderChangeListener listener) {
+    watcher = new Watcher(folder.toFile(), () -> listener.onChange());
+    watcher.start();
+  }
+
+  @Override
+  public void stop() {
+    watcher.stop();
+  }
 }

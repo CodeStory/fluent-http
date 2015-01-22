@@ -13,10 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.reload;
+package net.codestory.http.misc;
 
-public interface WatchServiceFacade {
-  void onChange(FolderChangeListener listener);
+import java.io.IOException;
 
-  void stop();
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+
+public class PreCompileTest {
+  @Rule
+  public TemporaryFolder source = new TemporaryFolder();
+
+  @Rule
+  public TemporaryFolder target = new TemporaryFolder();
+
+  @Test
+  public void preCompile() throws IOException {
+    Env prod = new Env(source.getRoot(), true, true, false, false);
+
+    PreCompile preCompile = new PreCompile(prod);
+    preCompile.run(target.getRoot().getAbsolutePath());
+  }
 }

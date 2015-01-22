@@ -28,11 +28,15 @@ import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class NativeWatchService implements WatchServiceFacade {
   private final WatchService watcher;
+  private final AtomicBoolean run;
 
   public NativeWatchService(Path folder) {
+    this.run = new AtomicBoolean(false);
+
     try {
       watcher = folder.getFileSystem().newWatchService();
 
@@ -43,27 +47,38 @@ public class NativeWatchService implements WatchServiceFacade {
   }
 
   @Override
+  public void stop() {
+    run.set(false);
+  }
+
+  @Override
   public void onChange(FolderChangeListener listener) {
-    try {
-      WatchKey take = watcher.take();
+    new Thread(() -> {
+      run.set(true);
 
-      boolean changed = false;
-      for (WatchEvent<?> event : take.pollEvents()) {
-        if (event.kind() == OVERFLOW) {
-          continue;
+      while (run.get()) {
+        try {
+          WatchKey take = watcher.take();
+
+          boolean changed = false;
+          for (WatchEvent<?> event : take.pollEvents()) {
+            if (event.kind() == OVERFLOW) {
+              continue;
+            }
+
+            // consume all events of this shitty API
+            changed = true;
+          }
+
+          if (changed) {
+            listener.onChange();
+          }
+
+          take.reset();
+        } catch (InterruptedException e) {
+          // Ignore
         }
-
-        // consume all events of this shitty API
-        changed = true;
       }
-
-      if (changed) {
-        listener.onChange();
-      }
-
-      take.reset();
-    } catch (InterruptedException e) {
-      // Ignore
-    }
+    }).start();
   }
 }

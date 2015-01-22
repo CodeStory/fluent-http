@@ -16,19 +16,17 @@
 package net.codestory.http.reload;
 
 import java.nio.file.Path;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FolderWatcher {
   private final Path folder;
   private final FolderChangeListener listener;
-  private final AtomicBoolean run;
+  private WatchServiceFacade watcher;
 
   private boolean started;
 
   public FolderWatcher(Path folder, FolderChangeListener listener) {
     this.folder = folder;
     this.listener = listener;
-    this.run = new AtomicBoolean(false);
   }
 
   public void ensureStarted() {
@@ -40,28 +38,23 @@ public class FolderWatcher {
       return;
     }
 
-    WatchServiceFacade watcher = createWatcher();
-    run.set(true);
-    new Thread(() -> onChange(watcher)).start();
+    if (isMac()) {
+      watcher = new OsxWatchService(folder);
+    } else {
+      watcher = new NativeWatchService(folder);
+    }
+    watcher.onChange(listener);
 
     started = true;
   }
 
   public void stop() {
-    run.set(false);
-  }
-
-  private WatchServiceFacade createWatcher() {
-    return isMac() ? new NativeWatchService(folder) : new NativeWatchService(folder);
+    if (watcher != null) {
+      watcher.stop();
+    }
   }
 
   private static boolean isMac() {
     return System.getProperty("os.name").startsWith("Mac OS X");
-  }
-
-  private void onChange(WatchServiceFacade watcher) {
-    while (run.get()) {
-      watcher.onChange(listener);
-    }
   }
 }

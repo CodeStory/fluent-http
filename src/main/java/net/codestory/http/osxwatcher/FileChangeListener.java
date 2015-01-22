@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.reload;
+package net.codestory.http.osxwatcher;
 
-public interface WatchServiceFacade {
-  void onChange(FolderChangeListener listener);
-
-  void stop();
+@FunctionalInterface
+public interface FileChangeListener {
+	public void onChange();
 }
