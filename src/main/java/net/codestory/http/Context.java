@@ -20,6 +20,7 @@ import java.lang.reflect.*;
 import java.util.*;
 
 import net.codestory.http.injection.*;
+import net.codestory.http.misc.Env;
 import net.codestory.http.security.*;
 import net.codestory.http.templating.*;
 
@@ -27,13 +28,15 @@ public class Context {
   private final Request request;
   private final Response response;
   private final IocAdapter iocAdapter;
+  private final Env env;
   private final Site site;
   private User currentUser;
 
-  public Context(Request request, Response response, IocAdapter iocAdapter, Site site) {
+  public Context(Request request, Response response, IocAdapter iocAdapter, Env env, Site site) {
     this.request = request;
     this.response = response;
     this.iocAdapter = iocAdapter;
+    this.env = env;
     this.site = site;
   }
 
@@ -43,6 +46,10 @@ public class Context {
 
   public Response response() {
     return response;
+  }
+
+  public Env env() {
+    return env;
   }
 
   public Site site() {

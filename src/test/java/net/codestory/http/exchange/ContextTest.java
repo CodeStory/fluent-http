@@ -22,6 +22,7 @@ import java.io.*;
 
 import net.codestory.http.*;
 import net.codestory.http.injection.*;
+import net.codestory.http.misc.Env;
 import net.codestory.http.security.*;
 import net.codestory.http.templating.*;
 
@@ -33,9 +34,10 @@ public class ContextTest {
   Request request = mock(Request.class);
   Response response = mock(Response.class);
   IocAdapter iocAdapter = mock(IocAdapter.class);
+  Env env = mock(Env.class);
   Site site = mock(Site.class);
 
-  Context context = new Context(request, response, iocAdapter, site);
+  Context context = new Context(request, response, iocAdapter, env, site);
 
   @Test
   public void create_bean() {

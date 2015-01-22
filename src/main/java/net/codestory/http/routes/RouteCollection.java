@@ -95,7 +95,7 @@ public class RouteCollection implements Routes {
   }
 
   public Context createContext(Request request, Response response) {
-    return extensions.createContext(request, response, iocAdapter, site);
+    return extensions.createContext(request, response, iocAdapter, env, site);
   }
 
   @Override

@@ -49,8 +49,8 @@ public interface Extensions extends Serializable {
   /**
    * Called each request.
    */
-  default Context createContext(Request request, Response response, IocAdapter iocAdapter, Site site) {
-    return new Context(request, response, iocAdapter, site);
+  default Context createContext(Request request, Response response, IocAdapter iocAdapter, Env env, Site site) {
+    return new Context(request, response, iocAdapter, env, site);
   }
 
   /**
