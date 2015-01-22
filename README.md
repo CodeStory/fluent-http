@@ -59,7 +59,7 @@ public class HelloWorld {
 }
 ```
 
-What this code does :
+What this code does:
 
 - It starts a web server that on port `8080`
 - To every `GET` requests on `/`, it will respond `Hello World`
@@ -74,10 +74,25 @@ Not too bad for a one-liner, right?
 Adding more routes is not hard either. It's based on Java 8 Lambdas.
 
 ```java
-new WebServer().configure(routes -> routes.
-    get("/", "Hello World").
-    get("/Test", "Test").
-    get("/OtherTest", (context) -> "Other Test")
+new WebServer().configure(routes -> routes
+    .get("/", "Hello World")
+    .get("/Test", (context) -> "Other Test")
+
+    .url("/person")
+      .get((context) -> new Person())
+      .post((context) -> {
+        Person person = context.extract(Person.class);
+        // Do something
+        return Payload.created();
+      })
+
+    .url("/company")
+      .get((context) -> new Company())
+      .post((context) -> {
+        Company company = context.extract(Company.class);
+        // Do something
+        return Payload.created();
+      })
 ).start();
 ```
 
@@ -113,7 +128,8 @@ and is very natural to people used to `Spring MVC` or `Jersey`.
 
 ```java
 ...
-routes.add(new CalculationResource());
+routes.add("calculation", new CalculationResource());
+routes.add(new PersonResource());
 ...
 
 public class CalculationResource {
@@ -122,11 +138,32 @@ public class CalculationResource {
     return first + second;
   }
 }
+
+@Prefix("/person")
+public class CalculationResource {
+  @Post("/")
+  public void create(Person person) {
+    // Do something
+  }
+
+  @Put("/:id")
+  public void update(String id, Person person) {
+    // Do something
+  }
+
+  @Get("/:id")
+  public Person find(String id, Context context, Headers headers, Request request, Response response, Cookies cookies, Query query, User user) {
+    Person person = ...
+    return NotFoundException.notFoundIfNull(person);
+  }
+}
 ```
 
-Each method annotated with `@Get` is a route. The method can have any name. The parameters must match the uri
-pattern. Parameters names are not important but it's a good practice to match the uri placeholders. The conversion between
-path parameters and method parameters is done with [Jackson](http://jackson.codehaus.org/).
+Each method annotated with `@Get`, `@Head`, `@Post`, `@Put`, `@Options` or `@Delete` is a route.
+The method can have any name. The parameters must match the uri pattern.
+Parameters names are not important but it's a good practice to match the uri placeholders.
+The conversion between path parameters and method parameters is done with
+[Jackson](http://jackson.codehaus.org/).
 
 We can also let the web server take care of the resource instantiation. It will create a singleton for each resource,
 and recursively inject dependencies as singletons. It's a kind of poor's man DI framework.
@@ -552,7 +589,7 @@ Sometimes (meaning: Always in any decent sized project), you want to  provide yo
 You can do this by configuring or replacing the ObjectMapper through the `Extensions` interface.
 
 Like the example below, for instance let's say someone, let's name it Cedric, wants to map objects using the "new" jdk8
- date api. He can do so by using :
+ date api. He can do so by using:
 
 ```java
 routes.setExtensions(new Extensions() {
