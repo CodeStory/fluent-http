@@ -57,10 +57,6 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     return (T) this;
   }
 
-  public T configure(Class<? extends Configuration> configuration) {
-    return configure(new ConfigurationReloadingProxy(configuration));
-  }
-
   public T startOnRandomPort() {
     Random random = new Random();
     for (int i = 0; i < 30; i++) {
