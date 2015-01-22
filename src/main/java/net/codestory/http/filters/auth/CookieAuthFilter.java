@@ -96,7 +96,7 @@ public class CookieAuthFilter implements Filter {
     }
 
     return seeOther("/auth/login")
-      .withCookie(authCookie(null));
+      .withCookie(authCookie(buildCookie(null, uri)));
   }
 
   private Payload signin(Context context) {
@@ -143,9 +143,11 @@ public class CookieAuthFilter implements Filter {
 
   private String buildCookie(User user, String redirectUrl) {
     AuthData cookie = new AuthData();
-    cookie.login = user.login();
-    cookie.roles = user.roles();
-    cookie.sessionId = newSessionId(user.login());
+    if (user != null){
+      cookie.login = user.login();
+      cookie.roles = user.roles();
+      cookie.sessionId = newSessionId(user.login());
+    }
     cookie.redirectAfterLogin = redirectUrl;
 
     return TypeConvert.toJson(cookie);
