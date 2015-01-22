@@ -15,18 +15,7 @@
  */
 package net.codestory.http.reload;
 
-import static com.sun.nio.file.SensitivityWatchEventModifier.HIGH;
-import static java.nio.file.Files.walkFileTree;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
-import static net.codestory.http.io.FileVisitor.onDirectory;
-
-import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FolderWatcher {
@@ -51,8 +40,7 @@ public class FolderWatcher {
       return;
     }
 
-    final WatchService watcher = createWatcher();
-
+    WatchServiceFacade watcher = createWatcher();
     run.set(true);
     new Thread(() -> onChange(watcher)).start();
 
@@ -63,36 +51,17 @@ public class FolderWatcher {
     run.set(false);
   }
 
-  private WatchService createWatcher() {
-    try {
-      WatchService watcher = folder.getFileSystem().newWatchService();
-
-      walkFileTree(folder, onDirectory(dir -> dir.register(watcher, new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE}, HIGH)));
-
-      return watcher;
-    } catch (IOException e) {
-      throw new IllegalStateException("Unable to watch folder " + folder, e);
-    }
+  private WatchServiceFacade createWatcher() {
+    return isMac() ? new NativeWatchService(folder) : new NativeWatchService(folder);
   }
 
-  private void onChange(WatchService watcher) {
+  private static boolean isMac() {
+    return System.getProperty("os.name").startsWith("Mac OS X");
+  }
+
+  private void onChange(WatchServiceFacade watcher) {
     while (run.get()) {
-      try {
-        WatchKey take = watcher.take();
-
-        boolean changed = false;
-        for (WatchEvent<?> event : take.pollEvents()) {
-          // consume all events of this shitty API
-          changed = true;
-        }
-        if (changed) {
-          listener.onChange();
-        }
-
-        take.reset();
-      } catch (InterruptedException e) {
-        // Ignore
-      }
+      watcher.onChange(listener);
     }
   }
 }

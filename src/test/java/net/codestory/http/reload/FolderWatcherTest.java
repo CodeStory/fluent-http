@@ -40,9 +40,8 @@ public class FolderWatcherTest {
     FolderWatcher watcher = new FolderWatcher(folder.toPath(), listener);
     watcher.ensureStarted();
 
-    new File(parent, "file").createNewFile();
+    new File(folder, "file").createNewFile();
 
-
-    verify(listener, timeout(1000)).onChange();
+    verify(listener, timeout(5000)).onChange();
   }
 }
