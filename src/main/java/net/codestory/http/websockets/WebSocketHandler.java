@@ -15,9 +15,10 @@
  */
 package net.codestory.http.websockets;
 
-import net.codestory.http.*;
+import net.codestory.http.Request;
+import net.codestory.http.Response;
 
 @FunctionalInterface
 public interface WebSocketHandler {
-  WebSocketListener create(WebSocketSession session, Request request, Response response);
+  void handle(WebSocketSession session, Request request, Response response);
 }

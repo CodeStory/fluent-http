@@ -25,10 +25,6 @@ import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import org.simpleframework.http.core.Container;
 import org.simpleframework.http.core.ContainerSocketProcessor;
-import org.simpleframework.http.socket.Frame;
-import org.simpleframework.http.socket.FrameListener;
-import org.simpleframework.http.socket.FrameType;
-import org.simpleframework.http.socket.Reason;
 import org.simpleframework.http.socket.Session;
 import org.simpleframework.http.socket.service.DirectRouter;
 import org.simpleframework.http.socket.service.RouterContainer;
@@ -78,50 +74,14 @@ public class SimpleServerWrapper implements HttpServerWrapper, Container, Servic
     SimpleRequest request = createRequest(session.getRequest());
     SimpleResponse response = createResponse(session.getResponse());
 
-    WebSocketListener delegate = webSocketHandler.create(webSocketSession, request, response);
-
-    try {
-      session.getChannel().register(new FrameListener() {
-        @Override
-        public void onFrame(Session session, Frame frame) {
-          FrameType type = frame.getType();
-          if (!type.isPing() && !type.isPong()) {
-            try {
-              delegate.onFrame(webSocketSession, type.name(), () -> frame.getText());
-            } catch (IOException e) {
-              throw new RuntimeException("Unable to handle frame", e);
-            }
-          }
-        }
-
-        @Override
-        public void onError(Session session, Exception cause) {
-          try {
-            delegate.onError(webSocketSession, cause);
-          } catch (IOException e) {
-            throw new RuntimeException("Unable to handle error", e);
-          }
-        }
-
-        @Override
-        public void onClose(Session session, Reason reason) {
-          try {
-            delegate.onClose(webSocketSession, reason.getCode().code, reason.getText());
-          } catch (IOException e) {
-            throw new RuntimeException("Unable to handle close", e);
-          }
-        }
-      });
-    } catch (IOException e) {
-      throw new RuntimeException("WebSocket error", e);
-    }
+    webSocketHandler.handle(webSocketSession, request, response);
   }
 
-  private SimpleRequest createRequest(Request request) {
+  protected SimpleRequest createRequest(Request request) {
     return new SimpleRequest(request);
   }
 
-  private SimpleResponse createResponse(Response response) {
+  protected SimpleResponse createResponse(Response response) {
     return new SimpleResponse(response);
   }
 

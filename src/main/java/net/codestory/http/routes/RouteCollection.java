@@ -111,8 +111,8 @@ public class RouteCollection implements Routes {
   }
 
   @Override
-  public Routes setWebSocketListenerFactory(WebSocketListenerFactory webSocketListenerFactory) {
-    this.webSocketListenerFactory = webSocketListenerFactory;
+  public Routes setWebSocketListenerFactory(WebSocketListenerFactory factory) {
+    this.webSocketListenerFactory = factory;
     return null;
   }
 

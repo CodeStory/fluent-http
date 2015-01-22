@@ -13,19 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.websockets;
+package net.codestory.http.internal;
 
-import java.io.IOException;
+import net.codestory.http.websockets.Frame;
 
-@FunctionalInterface
-public interface WebSocketListener {
-  void onFrame(Frame frame) throws IOException;
+class SimpleFrame implements Frame, Unwrappable {
+  private final org.simpleframework.http.socket.Frame frame;
 
-  default void onError(Exception cause) throws IOException {
-    // Do nothing
+  SimpleFrame(org.simpleframework.http.socket.Frame frame) {
+    this.frame = frame;
   }
 
-  default void onClose(int code, String reason) throws IOException {
-    // Do nothing
+  @Override
+  public String type() {
+    return frame.getType().name();
+  }
+
+  @Override
+  public String text() {
+    return frame.getText();
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public <T> T unwrap(Class<T> type) {
+    return type.isInstance(frame) ? (T) frame : null;
   }
 }

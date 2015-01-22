@@ -15,17 +15,14 @@
  */
 package net.codestory.http.websockets;
 
-import java.io.IOException;
+import net.codestory.http.convert.TypeConvert;
 
-@FunctionalInterface
-public interface WebSocketListener {
-  void onFrame(Frame frame) throws IOException;
+public interface Frame {
+  String type();
 
-  default void onError(Exception cause) throws IOException {
-    // Do nothing
-  }
+  String text();
 
-  default void onClose(int code, String reason) throws IOException {
-    // Do nothing
+  default <T> T as(Class<T> type) {
+    return TypeConvert.fromJson(text(), type);
   }
 }

@@ -16,11 +16,16 @@
 package net.codestory.http.internal;
 
 import java.io.IOException;
+import java.util.Map;
 
+import net.codestory.http.websockets.WebSocketListener;
 import net.codestory.http.websockets.WebSocketSession;
 
 import org.simpleframework.http.socket.CloseCode;
 import org.simpleframework.http.socket.DataFrame;
+import org.simpleframework.http.socket.Frame;
+import org.simpleframework.http.socket.FrameChannel;
+import org.simpleframework.http.socket.FrameListener;
 import org.simpleframework.http.socket.FrameType;
 import org.simpleframework.http.socket.Reason;
 import org.simpleframework.http.socket.Session;
@@ -32,21 +37,77 @@ class SimpleWebSocketSession implements WebSocketSession, Unwrappable {
     this.session = session;
   }
 
-  public void send(String type, String message) throws IOException {
-    session.getChannel().send(new DataFrame(FrameType.valueOf(type), message));
+  private FrameChannel channel() {
+    return session.getChannel();
   }
 
+  @Override
+  public void remove(WebSocketListener listener) {
+    throw new UnsupportedOperationException("remove");
+  }
+
+  @Override
+  public Map getAttributes() {
+    return session.getAttributes();
+  }
+
+  @Override
+  public Object getAttribute(Object key) {
+    return session.getAttribute(key);
+  }
+
+  @Override
+  public void register(WebSocketListener listener) throws IOException {
+    channel().register(new FrameListener() {
+      @Override
+      public void onFrame(Session session, Frame frame) {
+        FrameType type = frame.getType();
+        if (!type.isPing() && !type.isPong()) {
+          try {
+            listener.onFrame(new SimpleFrame(frame));
+          } catch (IOException e) {
+            throw new RuntimeException("Unable to handle frame", e);
+          }
+        }
+      }
+
+      @Override
+      public void onError(Session session, Exception cause) {
+        try {
+          listener.onError(cause);
+        } catch (IOException e) {
+          throw new RuntimeException("Unable to handle error", e);
+        }
+      }
+
+      @Override
+      public void onClose(Session session, Reason reason) {
+        try {
+          listener.onClose(reason.getCode().code, reason.getText());
+        } catch (IOException e) {
+          throw new RuntimeException("Unable to handle close", e);
+        }
+      }
+    });
+  }
+
+  @Override
+  public void send(String type, String message) throws IOException {
+    channel().send(new DataFrame(FrameType.valueOf(type), message));
+  }
+
+  @Override
   public void send(String type, byte[] message) throws IOException {
-    session.getChannel().send(new DataFrame(FrameType.valueOf(type), message));
+    channel().send(new DataFrame(FrameType.valueOf(type), message));
   }
 
   @Override
   public void close() throws IOException {
-    session.getChannel().close();
+    channel().close();
   }
 
   public void close(String code, String reason) throws IOException {
-    session.getChannel().close(new Reason(CloseCode.valueOf(code), reason));
+    channel().close(new Reason(CloseCode.valueOf(code), reason));
   }
 
   @Override

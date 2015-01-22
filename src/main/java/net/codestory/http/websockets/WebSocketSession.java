@@ -18,11 +18,24 @@ package net.codestory.http.websockets;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;
+import java.util.Map;
 
 import net.codestory.http.convert.TypeConvert;
 
 public interface WebSocketSession {
+  void register(WebSocketListener listener) throws IOException;
+
+  void remove(WebSocketListener listener) throws IOException;
+
+  void close() throws IOException;
+
+  void close(String code, String reason) throws IOException;
+
   void send(String type, byte[] message) throws IOException;
+
+  Map getAttributes();
+
+  Object getAttribute(Object key);
 
   default void send(String type, String message) throws IOException {
     send(type, message.getBytes(UTF_8));
@@ -31,8 +44,4 @@ public interface WebSocketSession {
   default void send(String type, Object object) throws IOException {
     send(type, TypeConvert.toByteArray(object));
   }
-
-  void close() throws IOException;
-
-  void close(String code, String reason) throws IOException;
 }
