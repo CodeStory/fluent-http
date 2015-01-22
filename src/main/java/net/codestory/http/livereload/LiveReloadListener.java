@@ -17,13 +17,9 @@ package net.codestory.http.livereload;
 
 import static java.util.Arrays.asList;
 import static net.codestory.http.constants.FrameTypes.TEXT;
-import static net.codestory.http.livereload.LiveReload.VERSION_7;
 
 import java.io.IOException;
 
-import net.codestory.http.livereload.messages.IncomingHelloMessage;
-import net.codestory.http.livereload.messages.OutgoingHelloMessage;
-import net.codestory.http.livereload.messages.OutgoingReloadMessage;
 import net.codestory.http.misc.Env;
 import net.codestory.http.reload.MultiFolderWatcher;
 import net.codestory.http.websockets.Frame;
@@ -31,6 +27,8 @@ import net.codestory.http.websockets.WebSocketListener;
 import net.codestory.http.websockets.WebSocketSession;
 
 public class LiveReloadListener implements WebSocketListener {
+  public static final String VERSION_7 = "http://livereload.com/protocols/official-7";
+
   private final WebSocketSession session;
   private final MultiFolderWatcher watcher;
 

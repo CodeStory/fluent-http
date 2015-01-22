@@ -13,18 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.livereload.messages;
+package net.codestory.http.livereload;
 
-import java.util.List;
+class OutgoingReloadMessage {
+  final String command;
+  final String path;
+  final boolean liveCSS;
 
-public class OutgoingHelloMessage {
-  public final String command;
-  public final String serverName;
-  public final List<String> protocols;
-
-  public OutgoingHelloMessage(String serverName, List<String> protocols) {
-    this.command = "hello";
-    this.serverName = serverName;
-    this.protocols = protocols;
+  OutgoingReloadMessage(String path, boolean liveCSS) {
+    this.command = "reload";
+    this.path = path;
+    this.liveCSS = liveCSS;
   }
 }

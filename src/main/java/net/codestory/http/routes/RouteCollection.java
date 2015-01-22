@@ -26,7 +26,9 @@ import net.codestory.http.filters.Filter;
 import net.codestory.http.filters.PayloadSupplier;
 import net.codestory.http.injection.IocAdapter;
 import net.codestory.http.injection.Singletons;
+import net.codestory.http.io.ClassPaths;
 import net.codestory.http.io.Resources;
+import net.codestory.http.livereload.LiveReloadListener;
 import net.codestory.http.misc.Env;
 import net.codestory.http.payload.Payload;
 import net.codestory.http.payload.PayloadWriter;
@@ -87,6 +89,10 @@ public class RouteCollection implements Routes {
     if (!prodMode) {
       routes.addStaticRoute(new SourceMapRoute(resources, compilers));
       routes.addStaticRoute(new SourceRoute(resources));
+
+      // Live reload
+      get("/livereload.js", ClassPaths.getResource("livereload/livereload.js"));
+      setWebSocketListenerFactory((session, context) -> new LiveReloadListener(session, context.env()));
     }
   }
 

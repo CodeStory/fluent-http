@@ -15,19 +15,9 @@
  */
 package net.codestory.http.livereload;
 
-import net.codestory.http.Configuration;
-import net.codestory.http.io.ClassPaths;
-import net.codestory.http.routes.Routes;
+import java.util.List;
 
-// TODO: Web Socket connections MUST use /livereload as the path to connect
-//
-public class LiveReload implements Configuration {
-  public static final String VERSION_7 = "http://livereload.com/protocols/official-7";
-
-  @Override
-  public void configure(Routes routes) {
-    routes
-      .get("/livereload.js", ClassPaths.getResource("livereload/livereload.js"))
-      .setWebSocketListenerFactory((session, context) -> new LiveReloadListener(session, context.env()));
-  }
+class IncomingHelloMessage {
+  String command;
+  List<String> protocols;
 }

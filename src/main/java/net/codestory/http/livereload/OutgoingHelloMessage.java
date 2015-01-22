@@ -13,11 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.livereload.messages;
+package net.codestory.http.livereload;
 
 import java.util.List;
 
-public class IncomingHelloMessage {
-  public String command;
-  public List<String> protocols;
+class OutgoingHelloMessage {
+  final String command;
+  final String serverName;
+  final List<String> protocols;
+
+  OutgoingHelloMessage(String serverName, List<String> protocols) {
+    this.command = "hello";
+    this.serverName = serverName;
+    this.protocols = protocols;
+  }
 }
