@@ -33,9 +33,11 @@ public interface WebSocketSession {
 
   void send(String type, byte[] message) throws IOException;
 
-  Map getAttributes();
+  Map<Object, Object> getAttributes();
 
-  Object getAttribute(Object key);
+  default Object getAttribute(Object key) {
+    return getAttributes().get(key);
+  }
 
   default void send(String type, String message) throws IOException {
     send(type, message.getBytes(UTF_8));

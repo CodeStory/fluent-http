@@ -47,7 +47,7 @@ class SimpleWebSocketSession implements WebSocketSession, Unwrappable {
   }
 
   @Override
-  public Map getAttributes() {
+  public Map<Object, Object> getAttributes() {
     return session.getAttributes();
   }
 
