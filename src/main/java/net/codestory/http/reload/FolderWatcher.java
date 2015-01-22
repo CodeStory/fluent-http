@@ -15,24 +15,31 @@
  */
 package net.codestory.http.reload;
 
-import static com.sun.nio.file.SensitivityWatchEventModifier.*;
-import static java.nio.file.Files.*;
-import static java.nio.file.StandardWatchEventKinds.*;
-import static net.codestory.http.io.FileVisitor.*;
+import static com.sun.nio.file.SensitivityWatchEventModifier.HIGH;
+import static java.nio.file.Files.walkFileTree;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+import static net.codestory.http.io.FileVisitor.onDirectory;
 
-import java.io.*;
-import java.nio.file.*;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FolderWatcher {
   private final Path folder;
   private final FolderChangeListener listener;
+  private final AtomicBoolean run;
 
   private boolean started;
-  // TODO: stop
 
   public FolderWatcher(Path folder, FolderChangeListener listener) {
     this.folder = folder;
     this.listener = listener;
+    this.run = new AtomicBoolean(false);
   }
 
   public void ensureStarted() {
@@ -45,9 +52,15 @@ public class FolderWatcher {
     }
 
     final WatchService watcher = createWatcher();
+
+    run.set(true);
     new Thread(() -> onChange(watcher)).start();
 
     started = true;
+  }
+
+  public void stop() {
+    run.set(false);
   }
 
   private WatchService createWatcher() {
@@ -63,7 +76,7 @@ public class FolderWatcher {
   }
 
   private void onChange(WatchService watcher) {
-    while (true) {
+    while (run.get()) {
       try {
         WatchKey take = watcher.take();
 

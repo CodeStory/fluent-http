@@ -15,8 +15,12 @@
  */
 package net.codestory.http.misc;
 
+import static net.codestory.http.io.ClassPaths.classpathFolders;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Env {
   public static final String DEFAULT_APP_FOLDER = "app";
@@ -53,12 +57,25 @@ public class Env {
     return new Env(DEFAULT_APP_FOLDER, false, false, false, true);
   }
 
+  //
+
   public Path appPath() {
     return Paths.get(appFolder());
   }
 
   public String appFolder() {
     return appFolder;
+  }
+
+  public List<Path> foldersToWatch() {
+    List<Path> folders = new ArrayList<>();
+    if (!disableClassPath()) {
+      folders.addAll(classpathFolders());
+    }
+    if (!disableFilesystem()) {
+      folders.add(appPath());
+    }
+    return folders;
   }
 
   public boolean prodMode() {

@@ -19,5 +19,5 @@ import net.codestory.http.*;
 
 @FunctionalInterface
 public interface WebSocketHandler {
-  WebSocketListener create(Request request, Response response);
+  WebSocketListener create(WebSocketSession session, Request request, Response response);
 }

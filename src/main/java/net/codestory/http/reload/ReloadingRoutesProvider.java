@@ -15,11 +15,6 @@
  */
 package net.codestory.http.reload;
 
-import static net.codestory.http.io.ClassPaths.classpathFolders;
-
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import net.codestory.http.Configuration;
@@ -51,12 +46,9 @@ class ReloadingRoutesProvider implements RoutesProvider {
         routes.configure(configuration);
 
         if (fileWatcher == null) {
-          List<Path> all = new ArrayList<>();
-          all.addAll(classpathFolders());
-          all.add(env.appPath());
-
-          this.fileWatcher = new MultiFolderWatcher(all, () -> dirty.set(true));
+          fileWatcher = new MultiFolderWatcher(env.foldersToWatch(), () -> dirty.set(true));
         }
+
         fileWatcher.ensureStarted();
       } catch (Exception e) {
         Logs.unableToConfigureRoutes(e);

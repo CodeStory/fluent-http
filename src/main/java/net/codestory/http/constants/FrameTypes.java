@@ -13,26 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.websockets;
+package net.codestory.http.constants;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+public abstract class FrameTypes {
+  public static final String CONTINUATION = "CONTINUATION";
+  public static final String TEXT = "TEXT";
+  public static final String BINARY = "BINARY";
+  public static final String CLOSE = "CLOSE";
+  public static final String PING = "PING";
+  public static final String PONG = "PONG";
 
-import java.io.IOException;
-
-import net.codestory.http.convert.TypeConvert;
-
-public interface WebSocketSession {
-  void send(String type, byte[] message) throws IOException;
-
-  default void send(String type, String message) throws IOException {
-    send(type, message.getBytes(UTF_8));
+  private FrameTypes() {
+    // Do not allow subclassing
   }
-
-  default void send(String type, Object object) throws IOException {
-    send(type, TypeConvert.toByteArray(object));
-  }
-
-  void close() throws IOException;
-
-  void close(String code, String reason) throws IOException;
 }

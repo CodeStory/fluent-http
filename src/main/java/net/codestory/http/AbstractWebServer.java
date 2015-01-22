@@ -170,11 +170,11 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     }
   }
 
-  protected WebSocketListener handleWebSocket(Request request, Response response) {
+  protected WebSocketListener handleWebSocket(WebSocketSession session, Request request, Response response) {
     // TODO: Error handling?
     RouteCollection routes = routesProvider.get();
     Context context = routes.createContext(request, response);
-    return routes.createWebSocketListener(context);
+    return routes.createWebSocketListener(session, context);
   }
 
   protected void handleServerError(PayloadWriter payloadWriter, Exception e) {

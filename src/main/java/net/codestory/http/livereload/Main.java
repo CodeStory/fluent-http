@@ -13,26 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.websockets;
+package net.codestory.http.livereload;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import net.codestory.http.WebServer;
 
-import java.io.IOException;
-
-import net.codestory.http.convert.TypeConvert;
-
-public interface WebSocketSession {
-  void send(String type, byte[] message) throws IOException;
-
-  default void send(String type, String message) throws IOException {
-    send(type, message.getBytes(UTF_8));
+public class Main {
+  public static void main(String[] args) {
+    new WebServer().configure(new LiveReload()).start(35729);
   }
-
-  default void send(String type, Object object) throws IOException {
-    send(type, TypeConvert.toByteArray(object));
-  }
-
-  void close() throws IOException;
-
-  void close(String code, String reason) throws IOException;
 }

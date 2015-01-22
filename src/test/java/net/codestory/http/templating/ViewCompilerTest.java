@@ -86,7 +86,7 @@ public class ViewCompilerTest {
 
   @Test
   public void default_layout() {
-    String html = render("minimal.html");
+    String html = render("minimal.html", singletonMap("env", Env.prod()));
 
     assertThat(ignoreLineEndings(html)).isEqualTo("" +
         "<!DOCTYPE html>" +
@@ -109,7 +109,7 @@ public class ViewCompilerTest {
 
   @Test
   public void standard_head_fields() {
-    String html = render("full_header");
+    String html = render("full_header", singletonMap("env", Env.dev()));
 
     assertThat(ignoreLineEndings(html)).isEqualTo("<!DOCTYPE html>" +
         "<html lang=\"FR\" ng-app=\"app\">" +
@@ -130,6 +130,7 @@ public class ViewCompilerTest {
         "</body>" +
         "<script src=\"angular.js\"></script>" +
         "<script src=\"app.js\"></script>" +
+        "<script src=\"livereload.js\"></script>" +
         "</html>");
   }
 

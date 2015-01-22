@@ -15,20 +15,29 @@
  */
 package net.codestory.http.internal;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.net.InetSocketAddress;
 
-import net.codestory.http.websockets.*;
+import net.codestory.http.websockets.WebSocketHandler;
+import net.codestory.http.websockets.WebSocketListener;
 
-import org.simpleframework.http.*;
-import org.simpleframework.http.core.*;
-import org.simpleframework.http.socket.*;
-import org.simpleframework.http.socket.service.*;
+import org.simpleframework.http.Request;
+import org.simpleframework.http.Response;
+import org.simpleframework.http.core.Container;
+import org.simpleframework.http.core.ContainerSocketProcessor;
+import org.simpleframework.http.socket.Frame;
+import org.simpleframework.http.socket.FrameListener;
+import org.simpleframework.http.socket.FrameType;
+import org.simpleframework.http.socket.Reason;
+import org.simpleframework.http.socket.Session;
+import org.simpleframework.http.socket.service.DirectRouter;
+import org.simpleframework.http.socket.service.RouterContainer;
+import org.simpleframework.http.socket.service.Service;
 import org.simpleframework.transport.Socket;
-import org.simpleframework.transport.*;
-import org.simpleframework.transport.connect.*;
+import org.simpleframework.transport.SocketProcessor;
+import org.simpleframework.transport.connect.SocketConnection;
 
-import javax.net.ssl.*;
+import javax.net.ssl.SSLContext;
 
 public class SimpleServerWrapper implements HttpServerWrapper, Container, Service {
   private final Handler httpHandler;
@@ -65,8 +74,11 @@ public class SimpleServerWrapper implements HttpServerWrapper, Container, Servic
 
   @Override
   public void connect(Session session) {
-    WebSocketListener delegate = webSocketHandler.create(createRequest(session.getRequest()), createResponse(session.getResponse()));
     SimpleWebSocketSession webSocketSession = new SimpleWebSocketSession(session);
+    SimpleRequest request = createRequest(session.getRequest());
+    SimpleResponse response = createResponse(session.getResponse());
+
+    WebSocketListener delegate = webSocketHandler.create(webSocketSession, request, response);
 
     try {
       session.getChannel().register(new FrameListener() {
@@ -74,18 +86,30 @@ public class SimpleServerWrapper implements HttpServerWrapper, Container, Servic
         public void onFrame(Session session, Frame frame) {
           FrameType type = frame.getType();
           if (!type.isPing() && !type.isPong()) {
-            delegate.onFrame(webSocketSession, type.name(), () -> frame.getText());
+            try {
+              delegate.onFrame(webSocketSession, type.name(), () -> frame.getText());
+            } catch (IOException e) {
+              throw new RuntimeException("Unable to handle frame", e);
+            }
           }
         }
 
         @Override
         public void onError(Session session, Exception cause) {
-          delegate.onError(webSocketSession, cause);
+          try {
+            delegate.onError(webSocketSession, cause);
+          } catch (IOException e) {
+            throw new RuntimeException("Unable to handle error", e);
+          }
         }
 
         @Override
         public void onClose(Session session, Reason reason) {
-          delegate.onClose(webSocketSession, reason.getCode().code, reason.getText());
+          try {
+            delegate.onClose(webSocketSession, reason.getCode().code, reason.getText());
+          } catch (IOException e) {
+            throw new RuntimeException("Unable to handle close", e);
+          }
         }
       });
     } catch (IOException e) {

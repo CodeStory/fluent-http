@@ -15,11 +15,15 @@
  */
 package net.codestory.http.internal;
 
-import java.io.*;
+import java.io.IOException;
 
-import net.codestory.http.websockets.*;
+import net.codestory.http.websockets.WebSocketSession;
 
-import org.simpleframework.http.socket.*;
+import org.simpleframework.http.socket.CloseCode;
+import org.simpleframework.http.socket.DataFrame;
+import org.simpleframework.http.socket.FrameType;
+import org.simpleframework.http.socket.Reason;
+import org.simpleframework.http.socket.Session;
 
 class SimpleWebSocketSession implements WebSocketSession, Unwrappable {
   private final Session session;
@@ -28,12 +32,21 @@ class SimpleWebSocketSession implements WebSocketSession, Unwrappable {
     this.session = session;
   }
 
-  public void send(String message) throws IOException {
-    session.getChannel().send(message);
+  public void send(String type, String message) throws IOException {
+    session.getChannel().send(new DataFrame(FrameType.valueOf(type), message));
   }
 
-  public void send(byte[] message) throws IOException {
-    session.getChannel().send(message);
+  public void send(String type, byte[] message) throws IOException {
+    session.getChannel().send(new DataFrame(FrameType.valueOf(type), message));
+  }
+
+  @Override
+  public void close() throws IOException {
+    session.getChannel().close();
+  }
+
+  public void close(String code, String reason) throws IOException {
+    session.getChannel().close(new Reason(CloseCode.valueOf(code), reason));
   }
 
   @Override

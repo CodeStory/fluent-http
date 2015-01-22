@@ -15,17 +15,18 @@
  */
 package net.codestory.http.websockets;
 
-import java.util.function.*;
+import java.io.IOException;
+import java.util.function.Supplier;
 
 @FunctionalInterface
 public interface WebSocketListener {
-  void onFrame(WebSocketSession session, String type, Supplier<String> textSupplier);
+  void onFrame(WebSocketSession session, String type, Supplier<String> textSupplier) throws IOException;
 
-  default void onError(WebSocketSession session, Exception cause) {
+  default void onError(WebSocketSession session, Exception cause) throws IOException {
     // Do nothing
   }
 
-  default void onClose(WebSocketSession session, int code, String reason) {
+  default void onClose(WebSocketSession session, int code, String reason) throws IOException {
     // Do nothing
   }
 }

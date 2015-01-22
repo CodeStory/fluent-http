@@ -13,26 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.websockets;
+package net.codestory.http.livereload.messages;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+public class OutgoingReloadMessage {
+  public final String command;
+  public final String path;
+  public final boolean liveCSS;
 
-import java.io.IOException;
-
-import net.codestory.http.convert.TypeConvert;
-
-public interface WebSocketSession {
-  void send(String type, byte[] message) throws IOException;
-
-  default void send(String type, String message) throws IOException {
-    send(type, message.getBytes(UTF_8));
+  public OutgoingReloadMessage(String path, boolean liveCSS) {
+    this.command = "reload";
+    this.path = path;
+    this.liveCSS = liveCSS;
   }
-
-  default void send(String type, Object object) throws IOException {
-    send(type, TypeConvert.toByteArray(object));
-  }
-
-  void close() throws IOException;
-
-  void close(String code, String reason) throws IOException;
 }

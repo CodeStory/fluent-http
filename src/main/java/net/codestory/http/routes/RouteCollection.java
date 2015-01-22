@@ -452,8 +452,8 @@ public class RouteCollection implements Routes {
     return this;
   }
 
-  public WebSocketListener createWebSocketListener(Context context) {
-    return webSocketListenerFactory.create(context);
+  public WebSocketListener createWebSocketListener(WebSocketSession session, Context context) {
+    return webSocketListenerFactory.create(session, context);
   }
 
   public Payload apply(Context context) throws Exception {

@@ -28,6 +28,10 @@ public class MultiFolderWatcher {
   }
 
   public void ensureStarted() {
-    classesWatchers.forEach(FolderWatcher::ensureStarted);
+    classesWatchers.forEach(watcher -> watcher.ensureStarted());
+  }
+
+  public void stop() {
+    classesWatchers.forEach(watcher -> watcher.stop());
   }
 }
