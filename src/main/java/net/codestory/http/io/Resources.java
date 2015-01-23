@@ -29,14 +29,10 @@ import net.codestory.http.misc.*;
 public class Resources {
   private static final String[] TEMPLATE_EXTENSIONS = {"", ".html", ".md", ".markdown", ".txt"};
 
-  private final String root;
+  private final Env env;
 
   public Resources(Env env) {
-    this(env.appFolder());
-  }
-
-  public Resources(String root) {
-    this.root = root;
+    this.env = env;
   }
 
   public SourceFile sourceFile(Path path) throws IOException {
@@ -72,12 +68,12 @@ public class Resources {
 
   public String read(Path path, Charset charset) throws IOException {
     String pathWithPrefix = withPrefix(path);
-    return existsInFileSystem(pathWithPrefix) ? readFile(pathWithPrefix, charset) : readClasspath(pathWithPrefix, charset);
+    return existsInFileSystem(pathWithPrefix) ? readFile(file(pathWithPrefix), charset) : readClasspath(pathWithPrefix, charset);
   }
 
   public byte[] readBytes(Path path) throws IOException {
     String pathWithPrefix = withPrefix(path);
-    return existsInFileSystem(pathWithPrefix) ? readFileBytes(pathWithPrefix) : readClasspathBytes(pathWithPrefix);
+    return existsInFileSystem(pathWithPrefix) ? readFileBytes(file(pathWithPrefix)) : readClasspathBytes(pathWithPrefix);
   }
 
   // static
@@ -93,7 +89,7 @@ public class Resources {
   // private
 
   private String withPrefix(Path path) {
-    return toUnixString(Paths.get(root, path.toString()));
+    return toUnixString(Paths.get(env.appFolder(), path.toString()));
   }
 
   private boolean existsInClassPath(String path) {
@@ -114,10 +110,7 @@ public class Resources {
 
     File file = fileForClasspath(url);
     if (file != null) {
-      if (!file.isFile()) {
-        throw new IllegalArgumentException("Invalid file classpath: " + path);
-      }
-      return readFile(file.getAbsolutePath(), charset);
+      return readFile(file, charset);
     }
 
     try (InputStream from = url.openStream()) {
@@ -136,7 +129,7 @@ public class Resources {
       if (!file.isFile()) {
         throw new IllegalArgumentException("Invalid file classpath: " + path);
       }
-      return readFileBytes(file.getAbsolutePath());
+      return readFileBytes(file);
     }
 
     try (InputStream from = url.openStream()) {
@@ -155,7 +148,7 @@ public class Resources {
       String path = URLDecoder.decode(filename, "US-ASCII");
 
       // Search for file in sources instead of target to speed up live reload
-      String sourcePath = Paths.get("src/main/resources/", root, Strings.substringAfter(path, '/' + root + '/')).toString();
+      String sourcePath = Paths.get("src/main/resources/", env.appFolder(), Strings.substringAfter(path, '/' + env.appFolder() + '/')).toString();
       File file = new File(sourcePath);
       if (file.exists()) {
         return file;
@@ -167,26 +160,30 @@ public class Resources {
     }
   }
 
-  private static boolean existsInFileSystem(String path) {
-    return new File(path).isFile();
+  private File file(String path) {
+    return new File(env.workingDir(), path);
   }
 
-  private static String readFile(String path, Charset charset) throws IOException {
-    if (!new File(path).isFile()) {
-      throw new IllegalArgumentException("Invalid file path: " + path);
+  private boolean existsInFileSystem(String path) {
+    return file(path).isFile();
+  }
+
+  private String readFile(File file, Charset charset) throws IOException {
+    if (!file.isFile()) {
+      throw new IllegalArgumentException("Invalid file path: " + file);
     }
 
-    try (InputStream from = new FileInputStream(path)) {
+    try (InputStream from = new FileInputStream(file)) {
       return InputStreams.readString(from, charset);
     }
   }
 
-  private static byte[] readFileBytes(String path) throws IOException {
-    if (!new File(path).isFile()) {
-      throw new IllegalArgumentException("Invalid file path: " + path);
+  private byte[] readFileBytes(File file) throws IOException {
+    if (!file.isFile()) {
+      throw new IllegalArgumentException("Invalid file path: " + file);
     }
 
-    try (InputStream from = new FileInputStream(path)) {
+    try (InputStream from = new FileInputStream(file)) {
       return InputStreams.readBytes(from);
     }
   }
