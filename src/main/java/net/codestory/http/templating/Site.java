@@ -73,20 +73,21 @@ public class Site {
       return pagesPerTag;
     });
 
-    categories = memoize(() -> getPages().stream().collect(Collectors.groupingBy(page -> Site.category(page), TreeMap::new, toList())));
+    categories = memoize(() -> getPages().stream().collect(Collectors.groupingBy((Map<String, Object> page) -> Site.category(page), TreeMap::new, toList())));
   }
 
   private static Set<String> list(Env env) {
     Set<String> paths = new TreeSet<>();
 
-    Path rootPath = env.appPath();
 
     try {
       if (!env.disableClassPath()) {
+        Path rootPath = Paths.get(env.appFolder());
         new ClasspathScanner().getResources(rootPath).forEach(resource -> paths.add(relativePath(rootPath, Paths.get(resource))));
       }
 
       if (!env.disableFilesystem()) {
+        Path rootPath = new File(env.workingDir(), env.appFolder()).toPath();
         walkFileTree(rootPath, onFile(path -> paths.add(relativePath(rootPath, path))));
       }
     } catch (IOException e) {

@@ -17,30 +17,28 @@ package net.codestory.http.misc;
 
 import static net.codestory.http.io.ClassPaths.classpathFolders;
 
+import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Env {
-  public static final String DEFAULT_APP_FOLDER = "app";
-
-  private final String appFolder;
+  private final File workingDir;
   private final boolean prodMode;
   private final boolean disableClassPath;
   private final boolean disableFilesystem;
   private final boolean disableGzip;
 
   public Env() {
-    this.appFolder = getString("APP_FOLDER", DEFAULT_APP_FOLDER);
+    this.workingDir = new File(".");
     this.prodMode = getBoolean("PROD_MODE", false);
     this.disableClassPath = getBoolean("http.disable.classpath", false);
     this.disableFilesystem = getBoolean("http.disable.filesystem", false);
     this.disableGzip = getBoolean("http.disable.gzip", false);
   }
 
-  public Env(String appFolder, boolean prodMode, boolean disableClassPath, boolean disableFilesystem, boolean disableGzip) {
-    this.appFolder = appFolder;
+  public Env(File workingDir, boolean prodMode, boolean disableClassPath, boolean disableFilesystem, boolean disableGzip) {
+    this.workingDir = workingDir;
     this.prodMode = prodMode;
     this.disableClassPath = disableClassPath;
     this.disableFilesystem = disableFilesystem;
@@ -50,21 +48,21 @@ public class Env {
   // helper factories
 
   public static Env prod() {
-    return new Env(DEFAULT_APP_FOLDER, true, false, false, false);
+    return new Env(new File("."), true, false, false, false);
   }
 
   public static Env dev() {
-    return new Env(DEFAULT_APP_FOLDER, false, false, false, true);
+    return new Env(new File("."), false, false, false, true);
   }
 
   //
 
-  public Path appPath() {
-    return Paths.get(appFolder());
+  public File workingDir() {
+    return workingDir;
   }
 
   public String appFolder() {
-    return appFolder;
+    return "app";
   }
 
   public List<Path> foldersToWatch() {
@@ -73,7 +71,7 @@ public class Env {
       folders.addAll(classpathFolders());
     }
     if (!disableFilesystem()) {
-      folders.add(appPath());
+      folders.add(new File(workingDir, appFolder()).toPath());
     }
     return folders;
   }
@@ -101,11 +99,6 @@ public class Env {
   private static String get(String propertyName) {
     String env = System.getenv(propertyName);
     return (env != null) ? env : System.getProperty(propertyName);
-  }
-
-  private static String getString(String propertyName, String defaultValue) {
-    String value = get(propertyName);
-    return (value == null) ? defaultValue : value;
   }
 
   private static boolean getBoolean(String propertyName, boolean defaultValue) {

@@ -16,7 +16,6 @@
 package net.codestory.http.templating;
 
 import static java.util.Arrays.*;
-import static net.codestory.http.misc.Env.DEFAULT_APP_FOLDER;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
