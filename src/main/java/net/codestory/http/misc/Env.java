@@ -48,11 +48,19 @@ public class Env {
   // helper factories
 
   public static Env prod() {
-    return new Env(new File("."), true, false, false, false);
+    return prod(new File("."));
   }
 
   public static Env dev() {
-    return new Env(new File("."), false, false, false, true);
+    return dev(new File("."));
+  }
+
+  public static Env prod(File workingDir) {
+    return new Env(workingDir, true, false, false, false);
+  }
+
+  public static Env dev(File workingDir) {
+    return new Env(workingDir, false, false, false, true);
   }
 
   //
