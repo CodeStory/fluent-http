@@ -1,15 +1,3 @@
-# Use docker-based build environment
-sudo: false
-
-os:
-  - linux
-
-language:
-  - java
-
+language: java
 jdk:
   - oraclejdk8
-
-cache:
-  directories:
-    - '$HOME/.m2/repository'
