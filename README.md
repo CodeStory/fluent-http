@@ -792,6 +792,7 @@ By default, fluent-http runs in `developement mode`.
 
 - It reloads the routes each time something changes in `app` folder
 - It provides `.map` and `.source` for coffee and less files
+- It serves [livereload](http://livereload.com/) protocol to refresh the browser on each static file change
 
 In production mode:
 
