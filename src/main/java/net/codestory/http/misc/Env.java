@@ -25,42 +25,54 @@ import java.util.List;
 public class Env {
   private final File workingDir;
   private final boolean prodMode;
-  private final boolean disableClassPath;
-  private final boolean disableFilesystem;
-  private final boolean disableGzip;
+  private final boolean classPath;
+  private final boolean filesystem;
+  private final boolean gzip;
 
   public Env() {
     this.workingDir = new File(".");
     this.prodMode = getBoolean("PROD_MODE", false);
-    this.disableClassPath = getBoolean("http.disable.classpath", false);
-    this.disableFilesystem = getBoolean("http.disable.filesystem", false);
-    this.disableGzip = getBoolean("http.disable.gzip", false);
+    this.classPath = !getBoolean("http.disable.classpath", false);
+    this.filesystem = !getBoolean("http.disable.filesystem", false);
+    this.gzip = !getBoolean("http.disable.gzip", false);
   }
 
-  public Env(File workingDir, boolean prodMode, boolean disableClassPath, boolean disableFilesystem, boolean disableGzip) {
+  private Env(File workingDir, boolean prodMode, boolean classPath, boolean filesystem, boolean gzip) {
     this.workingDir = workingDir;
     this.prodMode = prodMode;
-    this.disableClassPath = disableClassPath;
-    this.disableFilesystem = disableFilesystem;
-    this.disableGzip = disableGzip;
+    this.classPath = classPath;
+    this.filesystem = filesystem;
+    this.gzip = gzip;
   }
 
   // helper factories
 
   public static Env prod() {
-    return prod(new File("."));
+    return new Env(new File("."), true, true, true, true);
   }
 
   public static Env dev() {
-    return dev(new File("."));
+    return new Env(new File("."), false, true, true, false);
   }
 
-  public static Env prod(File workingDir) {
-    return new Env(workingDir, true, false, false, false);
+  public Env withWorkingDir(File newWorkingDir) {
+    return new Env(newWorkingDir, prodMode, classPath, filesystem, gzip);
   }
 
-  public static Env dev(File workingDir) {
-    return new Env(workingDir, false, false, false, true);
+  public Env withProdMode(boolean newProdMode) {
+    return new Env(workingDir, newProdMode, classPath, filesystem, gzip);
+  }
+
+  public Env withClassPath(boolean scanCassPath) {
+    return new Env(workingDir, prodMode, scanCassPath, filesystem, gzip);
+  }
+
+  public Env withFilesystem(boolean scanFilesystem) {
+    return new Env(workingDir, prodMode, classPath, scanFilesystem, gzip);
+  }
+
+  public Env withGzip(boolean gzipResponse) {
+    return new Env(workingDir, prodMode, classPath, filesystem, gzipResponse);
   }
 
   //
@@ -75,10 +87,10 @@ public class Env {
 
   public List<Path> foldersToWatch() {
     List<Path> folders = new ArrayList<>();
-    if (!disableClassPath()) {
+    if (classPath) {
       folders.addAll(classpathFolders());
     }
-    if (!disableFilesystem()) {
+    if (filesystem) {
       folders.add(new File(workingDir, appFolder()).toPath());
     }
     return folders;
@@ -92,16 +104,16 @@ public class Env {
     return getInt("PORT", port);
   }
 
-  public boolean disableClassPath() {
-    return disableClassPath;
+  public boolean classPath() {
+    return classPath;
   }
 
-  public boolean disableFilesystem() {
-    return disableFilesystem;
+  public boolean filesystem() {
+    return filesystem;
   }
 
-  public boolean disableGzip() {
-    return disableGzip;
+  public boolean gzip() {
+    return gzip;
   }
 
   private static String get(String propertyName) {

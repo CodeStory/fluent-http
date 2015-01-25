@@ -211,7 +211,7 @@ public class PayloadWriter {
   }
 
   protected boolean shouldGzip() {
-    return !env.disableGzip() && env.prodMode() && request.header(ACCEPT_ENCODING, "").contains(GZIP);
+    return env.gzip() && env.prodMode() && request.header(ACCEPT_ENCODING, "").contains(GZIP);
   }
 
   protected boolean shouldIgnoreError(IOException e) {

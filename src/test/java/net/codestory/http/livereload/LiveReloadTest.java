@@ -42,7 +42,7 @@ public class LiveReloadTest extends SeleniumTest {
     webServer = new WebServer() {
       @Override
       protected Env createEnv() {
-        return Env.dev(temp.getRoot());
+        return Env.dev().withWorkingDir(temp.getRoot());
       }
     }.startOnRandomPort();
   }

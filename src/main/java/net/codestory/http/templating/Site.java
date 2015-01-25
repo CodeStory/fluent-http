@@ -81,12 +81,12 @@ public class Site {
 
 
     try {
-      if (!env.disableClassPath()) {
+      if (env.classPath()) {
         Path rootPath = Paths.get(env.appFolder());
         new ClasspathScanner().getResources(rootPath).forEach(resource -> paths.add(relativePath(rootPath, Paths.get(resource))));
       }
 
-      if (!env.disableFilesystem()) {
+      if (env.filesystem()) {
         Path rootPath = new File(env.workingDir(), env.appFolder()).toPath();
         walkFileTree(rootPath, onFile(path -> paths.add(relativePath(rootPath, path))));
       }

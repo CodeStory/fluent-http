@@ -15,11 +15,17 @@
  */
 package net.codestory.http.misc;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.File;
 import java.io.IOException;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import com.google.common.io.Files;
 
 public class PreCompileTest {
   @Rule
@@ -30,9 +36,17 @@ public class PreCompileTest {
 
   @Test
   public void preCompile() throws IOException {
-    Env prod = new Env(source.getRoot(), true, true, false, false);
+    File app = source.newFolder("app");
+    File coffee = new File(app, "test.coffee");
+    Files.write("console.log 'Hello'", coffee, UTF_8);
+    File less = new File(app, "test.less");
+    Files.write("body{h1{color:red}}", less, UTF_8);
 
+    Env prod = Env.prod().withWorkingDir(source.getRoot()).withClassPath(false);
     PreCompile preCompile = new PreCompile(prod);
     preCompile.run(target.getRoot().getAbsolutePath());
+
+    assertThat(new File(target.getRoot(), "test.js")).exists().hasContent("console.log('Hello');");
+    assertThat(new File(target.getRoot(), "test.css")).exists().hasContent("body h1 {\n  color: red;\n}");
   }
 }
