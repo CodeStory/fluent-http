@@ -43,5 +43,7 @@ public class FolderWatcherTest {
     new File(folder, "file").createNewFile();
 
     verify(listener, timeout(5000)).onChange();
+
+    watcher.stop();
   }
 }
