@@ -15,21 +15,20 @@
  */
 package net.codestory.http.livereload;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import net.codestory.http.WebServer;
+import net.codestory.http.misc.Env;
+import net.codestory.simplelenium.SeleniumTest;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-import net.codestory.http.WebServer;
-import net.codestory.http.misc.Env;
-import net.codestory.simplelenium.SeleniumTest;
-
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class LiveReloadTest extends SeleniumTest {
   WebServer webServer;
@@ -45,6 +44,13 @@ public class LiveReloadTest extends SeleniumTest {
         return Env.dev().withWorkingDir(temp.getRoot());
       }
     }.startOnRandomPort();
+  }
+
+  @After
+  public void tearDown() {
+    if (webServer != null) {
+      webServer.stop();
+    }
   }
 
   @Override
@@ -63,19 +69,6 @@ public class LiveReloadTest extends SeleniumTest {
 
     write(index, "---\nlayout: default\n---\n\n<h1>Changed</h1>");
     goTo("/changing.html");
-    find("h1").should().contain("Changed");
-  }
-
-  @Test
-  @Ignore("Phantomjs doesn't support websockets")
-  public void change_file_and_auto_refresh() throws IOException {
-    File app = temp.newFolder("app");
-    File index = new File(app, "changing.html");
-
-    write(index, "---\nlayout: default\n---\n\n<h1>Hello</h1>");
-    goTo("/changing.html");
-
-    write(index, "---\nlayout: default\n---\n\n<h1>Changed</h1>");
     find("h1").should().contain("Changed");
   }
 

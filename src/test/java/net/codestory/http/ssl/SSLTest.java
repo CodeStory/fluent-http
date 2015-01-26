@@ -15,26 +15,37 @@
  */
 package net.codestory.http.ssl;
 
-import static java.util.Arrays.*;
-import static org.assertj.core.api.Assertions.*;
-
-import java.io.*;
-import java.net.*;
-import java.nio.file.*;
-import java.security.*;
-import java.security.cert.Certificate;
-import java.security.cert.*;
-import java.util.*;
-
-import net.codestory.http.*;
-import net.codestory.http.io.*;
-
-import org.junit.*;
+import net.codestory.http.WebServer;
+import net.codestory.http.io.ClassPaths;
+import org.junit.After;
+import org.junit.Test;
 
 import javax.net.ssl.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.KeyStore;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.util.Random;
+
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class SSLTest {
-  static WebServer webServer = new WebServer();
+  WebServer webServer = new WebServer();
+
+  @After
+  public void tearDown() {
+    if (webServer != null) {
+      webServer.stop();
+    }
+  }
 
   @Test
   public void start_server() throws URISyntaxException {
@@ -132,6 +143,6 @@ public class SSLTest {
 
   private static Certificate getCertificateFromPath(Path certPath) throws CertificateException, IOException {
     return CertificateFactory.getInstance("X.509").generateCertificate(
-        new ByteArrayInputStream(Files.readAllBytes(certPath)));
+      new ByteArrayInputStream(Files.readAllBytes(certPath)));
   }
 }
