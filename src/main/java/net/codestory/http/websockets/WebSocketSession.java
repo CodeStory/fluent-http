@@ -15,14 +15,18 @@
  */
 package net.codestory.http.websockets;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.Map;
 
-import net.codestory.http.convert.TypeConvert;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public interface WebSocketSession {
+  ObjectMapper OBJECT_MAPPER = new ObjectMapper().setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+
   void register(WebSocketListener listener) throws IOException;
 
   void remove(WebSocketListener listener) throws IOException;
@@ -44,6 +48,6 @@ public interface WebSocketSession {
   }
 
   default void send(String type, Object object) throws IOException {
-    send(type, TypeConvert.toByteArray(object));
+    send(type, OBJECT_MAPPER.writer().writeValueAsBytes(object));
   }
 }
