@@ -358,7 +358,7 @@
     <dependency>
       <groupId>net.code-story</groupId>
       <artifactId>simplelenium</artifactId>
-      <version>1.29</version>
+      <version>1.30</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
