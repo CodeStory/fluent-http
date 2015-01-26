@@ -39,7 +39,7 @@ A single dependency is what it takes. Release versions are deployed on Maven Cen
 <dependency>
   <groupId>net.code-story</groupId>
   <artifactId>http</artifactId>
-  <version>2.56</version>
+  <version>2.57</version>
 </dependency>
 ```
 
