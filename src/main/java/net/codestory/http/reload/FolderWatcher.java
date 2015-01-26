@@ -41,7 +41,7 @@ public class FolderWatcher {
     if (isMac()) {
       watcher = new OsxWatchService(folder);
     } else {
-      watcher = new NativeWatchService(folder);
+      watcher = new JdkWatchService(folder);
     }
     watcher.onChange(listener);
 

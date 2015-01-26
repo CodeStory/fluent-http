@@ -30,11 +30,11 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class NativeWatchService implements WatchServiceFacade {
+public class JdkWatchService implements WatchServiceFacade {
   private final WatchService watcher;
   private final AtomicBoolean run;
 
-  public NativeWatchService(Path folder) {
+  public JdkWatchService(Path folder) {
     this.run = new AtomicBoolean(false);
 
     try {
