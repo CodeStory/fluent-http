@@ -17,6 +17,7 @@ package net.codestory.http.websockets;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -25,7 +26,9 @@ import java.util.Map;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public interface WebSocketSession {
-  ObjectMapper OBJECT_MAPPER = new ObjectMapper().setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+  ObjectMapper OBJECT_MAPPER = new ObjectMapper()
+    .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
+    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
   void register(WebSocketListener listener) throws IOException;
 
