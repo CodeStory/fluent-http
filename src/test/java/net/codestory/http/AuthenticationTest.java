@@ -28,7 +28,7 @@ public class AuthenticationTest extends AbstractProdWebServerTest {
   @Test
   public void public_page() {
     configure(routes -> routes
-        .filter(new BasicAuthFilter("/secure", "codestory", singletonMap("jl", "polka")))
+        .filter(new BasicAuthFilter("/secure", "codestory", Users.forMap(singletonMap("jl", "polka"))))
         .get("/", "Public")
     );
 
@@ -38,7 +38,7 @@ public class AuthenticationTest extends AbstractProdWebServerTest {
   @Test
   public void unauthorized() {
     configure(routes -> routes
-        .filter(new BasicAuthFilter("/secure", "codestory", singletonMap("jl", "polka")))
+        .filter(new BasicAuthFilter("/secure", "codestory", Users.forMap(singletonMap("jl", "polka"))))
         .get("/secure", "Private")
     );
 
@@ -48,7 +48,7 @@ public class AuthenticationTest extends AbstractProdWebServerTest {
   @Test
   public void secured() {
     configure(routes -> routes
-        .filter(new BasicAuthFilter("/secure", "codestory", singletonMap("jl", "polka")))
+        .filter(new BasicAuthFilter("/secure", "codestory", Users.forMap(singletonMap("jl", "polka"))))
         .get("/secure", "Private")
     );
 
@@ -58,7 +58,7 @@ public class AuthenticationTest extends AbstractProdWebServerTest {
   @Test
   public void wrong_password() {
     configure(routes -> routes
-        .filter(new BasicAuthFilter("/secure", "codestory", singletonMap("jl", "polka")))
+        .filter(new BasicAuthFilter("/secure", "codestory", Users.forMap(singletonMap("jl", "polka"))))
         .get("/secure", "Private")
     );
 
@@ -68,7 +68,7 @@ public class AuthenticationTest extends AbstractProdWebServerTest {
   @Test
   public void get_user_id() {
     configure(routes -> routes
-        .filter(new BasicAuthFilter("/secure", "codestory", singletonMap("Dave", "pwd")))
+        .filter(new BasicAuthFilter("/secure", "codestory", Users.forMap(singletonMap("Dave", "pwd"))))
         .get("/secure", context -> "Hello " + context.currentUser().login())
     );
 

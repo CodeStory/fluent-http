@@ -37,10 +37,6 @@ public class BasicAuthFilter implements Filter {
     this.users = users;
   }
 
-  public BasicAuthFilter(String uriPrefix, String realm, Map<String, String> users) {
-    this(uriPrefix, realm, Users.forMap(users));
-  }
-
   @Override
   public boolean matches(String uri, Context context) {
     return uri.startsWith(uriPrefix);
