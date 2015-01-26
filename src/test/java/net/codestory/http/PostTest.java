@@ -52,6 +52,24 @@ public class PostTest extends AbstractProdWebServerTest {
   }
 
   @Test
+  public void post_body_as_json() {
+    configure(routes -> routes
+        .post("/post", (context) -> "Hello " + context.request().contentAs(Human.class).firstName)
+    );
+
+    post("/post", "{\"firstName\":\"Bob\", \"lastName\":\"Doe\"}").should().contain("Hello Bob");
+  }
+
+  @Test
+  public void post_body_as_json_with_shorter_syntax() {
+    configure(routes -> routes
+        .post("/post", (context) -> "Hello " + context.extract(Human.class).firstName)
+    );
+
+    post("/post", "{\"firstName\":\"Bob\", \"lastName\":\"Doe\"}").should().contain("Hello Bob");
+  }
+
+  @Test
   public void annotated_resource() {
     configure(routes -> routes
         .add(new Object() {
