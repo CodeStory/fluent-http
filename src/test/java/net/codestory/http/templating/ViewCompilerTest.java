@@ -130,7 +130,7 @@ public class ViewCompilerTest {
         "</body>" +
         "<script src=\"angular.js\"></script>" +
         "<script src=\"app.js\"></script>" +
-        "<script src=\"livereload.js\"></script>" +
+        "<script src=\"/livereload.js\"></script>" +
         "</html>");
   }
 
