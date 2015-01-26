@@ -15,7 +15,6 @@
  */
 package net.codestory.http.filters.twitter;
 
-import java.io.*;
 import java.net.*;
 
 import net.codestory.http.*;

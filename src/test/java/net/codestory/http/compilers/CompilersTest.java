@@ -16,7 +16,6 @@
 package net.codestory.http.compilers;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 import java.io.*;
 import java.nio.file.*;

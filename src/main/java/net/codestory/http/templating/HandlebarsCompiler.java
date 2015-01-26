@@ -19,7 +19,6 @@ import static java.util.Arrays.*;
 
 import java.io.*;
 import java.nio.file.*;
-import java.util.ArrayList;
 import java.util.*;
 import java.util.function.*;
 
