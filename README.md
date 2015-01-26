@@ -777,8 +777,12 @@ You are able to use your own helper in any of your template like this example fo
 ```html
 <a href="[[appStoreUrl]]" class="btn_appstore[[appStoreClassSuffix appStoreUrl]]"></a>
 ```
-
-Note that we provide quite a few helper by default like the [StringHelper](https://github.com/jknack/handlebars.java/blob/master/handlebars/src/main/java/com/github/jknack/handlebars/helper/StringHelpers.java) which provides quite a few things already
+### Default provided helpers
+`fluent-http` comes with some build-in handlebars helpers, to make your life easy :
+* `livereload` which provides the livereload client-side js script `[[livereload]]` already injected in the `default` layout.
+* `GoogelAnalytics`which provides client-side injection of the google analytics script. Use it like :`[[google_analytics 'UA-XXXXXX-X']]`
+* `StringHelper` which provides `[[capitalizeFirst]]`, `[[lower]]`, `[[stringFormat ]]` check the [documentation](https://github.com/jknack/handlebars.java/blob/master/handlebars/src/main/java/com/github/jknack/handlebars/helper/StringHelpers.java)
+* TODO: `webjar`, `css`, `script`
 
 ## Etag
 
