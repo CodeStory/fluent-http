@@ -34,11 +34,27 @@ public class FormAuthenticationTest extends AbstractProdWebServerTest {
         .get("/secure", "<h1>Private</h1>")
     );
 
-    new FluentTest("http://localhost:" + port())
+    openBrowser("Open secure url, get redirected to login form and then to the url")
       .goTo("/secure")
       .find("#login").fill("jl")
       .find("#password").fill("polka")
       .find("#submit").click()
       .find("h1").should().contain("Private");
+
+    openBrowser("User is already authenticated")
+      .goTo("/secure")
+      .find("h1").should().contain("Private");
+
+    openBrowser("Sign out and open the secure url again")
+      .goTo("/auth/signout")
+      .goTo("/secure")
+      .find("#login").fill("jl")
+      .find("#password").fill("polka")
+      .find("#submit").click()
+      .find("h1").should().contain("Private");
+  }
+
+  private FluentTest openBrowser(String comment) {
+    return new FluentTest("http://localhost:" + port());
   }
 }
