@@ -71,11 +71,25 @@ public class GetTest extends AbstractProdWebServerTest {
             return keyValues.toString();
           }
         })
+        .add(new Object() {
+          @Get("/queryBoolean")
+          public boolean query(Query query) {
+            return query.getBoolean("name");
+          }
+        })
+        .add(new Object() {
+          @Get("/queryInt")
+          public int query(Query query) {
+            return query.getInteger("name");
+          }
+        })
     );
 
     get("/index?query=useless").should().contain("Hello");
     get("/hello?name=Dave").should().contain("Hello Dave");
     get("/keyValues?key1=value1&key2=value2").should().contain("key2=value2");
+    get("/queryBoolean?name=true").should().contain("true");
+    get("/queryInt?name=42").should().contain("42");
   }
 
   @Test
