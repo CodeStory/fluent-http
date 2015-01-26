@@ -143,7 +143,7 @@ public class CookieAuthFilter implements Filter {
 
   private String buildCookie(User user, String redirectUrl) {
     AuthData cookie = new AuthData();
-    if (user != null){
+    if (user != null) {
       cookie.login = user.login();
       cookie.roles = user.roles();
       cookie.sessionId = newSessionId(user.login());
