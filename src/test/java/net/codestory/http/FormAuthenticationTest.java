@@ -16,27 +16,15 @@
 package net.codestory.http;
 
 import net.codestory.http.filters.auth.CookieAuthFilter;
-import net.codestory.http.misc.Env;
 import net.codestory.http.security.Users;
-import net.codestory.simplelenium.SeleniumTest;
+import net.codestory.http.testhelpers.AbstractProdWebServerTest;
+import net.codestory.simplelenium.FluentTest;
 import org.junit.Test;
 
-public class FormAuthenticationTest extends SeleniumTest {
-  WebServer server = new WebServer() {
-    @Override
-    protected Env createEnv() {
-      return Env.prod();
-    }
-  }.startOnRandomPort();
-
-  @Override
-  protected String getDefaultBaseUrl() {
-    return "http://localhost:" + server.port();
-  }
-
+public class FormAuthenticationTest extends AbstractProdWebServerTest {
   @Test
   public void redirect_after_login() {
-    server.configure(routes -> routes
+    configure(routes -> routes
         .filter(new CookieAuthFilter("/secure", Users.singleUser("jl", "polka")))
         .get("/auth/login", "<form method=\"post\" action=\"/auth/signin\">\n" +
           "    <input name=\"login\" id=\"login\">\n" +
@@ -46,10 +34,11 @@ public class FormAuthenticationTest extends SeleniumTest {
         .get("/secure", "<h1>Private</h1>")
     );
 
-    goTo("/secure");
-    find("#login").fill("jl");
-    find("#password").fill("polka");
-    find("#submit").click();
-    find("h1").should().contain("Private");
+    new FluentTest("http://localhost:" + port())
+      .goTo("/secure")
+      .find("#login").fill("jl")
+      .find("#password").fill("polka")
+      .find("#submit").click()
+      .find("h1").should().contain("Private");
   }
 }
