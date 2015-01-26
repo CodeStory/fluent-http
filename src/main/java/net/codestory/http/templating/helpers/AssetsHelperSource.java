@@ -15,23 +15,26 @@
  */
 package net.codestory.http.templating.helpers;
 
-import static java.util.stream.Collectors.*;
+import com.github.jknack.handlebars.Handlebars.SafeString;
+import net.codestory.http.compilers.CompilerFacade;
+import net.codestory.http.io.Resources;
+import net.codestory.http.misc.Cache;
+import net.codestory.http.misc.Sha1;
+import org.webjars.WebJarAssetLocator;
 
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
-import java.util.function.*;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
 
-import net.codestory.http.compilers.*;
-import net.codestory.http.io.*;
-import net.codestory.http.misc.*;
-
-import com.github.jknack.handlebars.Handlebars.*;
+import static java.util.stream.Collectors.joining;
 
 public class AssetsHelperSource {
   private final Resources resources;
   private final CompilerFacade compilers;
   private final Function<String, String> urlSupplier;
+  private final WebJarAssetLocator webJarAssetLocator;
 
   public AssetsHelperSource(boolean prodMode, Resources resources, CompilerFacade compilers) {
     this.resources = resources;
@@ -41,6 +44,7 @@ public class AssetsHelperSource {
     } else {
       this.urlSupplier = path -> uriWithSha1(path);
     }
+    this.webJarAssetLocator = new WebJarAssetLocator();
   }
 
   public CharSequence script(Object context) {
@@ -49,6 +53,10 @@ public class AssetsHelperSource {
 
   public CharSequence css(Object context) {
     return toString(context, value -> singleCss(value.toString()));
+  }
+
+  public CharSequence webjar(Object context) {
+    return toString(context, value -> singleWebjar(value.toString()));
   }
 
   private static CharSequence toString(Object context, Function<Object, CharSequence> transform) {
@@ -79,6 +87,23 @@ public class AssetsHelperSource {
     String uri = addExtensionIfMissing(context.toString(), ".css");
 
     return "<link rel=\"stylesheet\" href=\"" + urlSupplier.apply(uri) + "\">";
+  }
+
+  private CharSequence singleWebjar(Object context) {
+    String uri = context.toString();
+
+    String fullPath;
+    try {
+      fullPath = webJarAssetLocator.getFullPath(uri).replace("META-INF/resources/webjars/", "/webjars/");
+    } catch (IllegalArgumentException e) {
+      fullPath = uri;
+    }
+
+    if (fullPath.endsWith(".css")) {
+      return "<link rel=\"stylesheet\" href=\"" + fullPath + "\">";
+    } else {
+      return "<script src=\"" + fullPath + "\"></script>";
+    }
   }
 
   private static String addExtensionIfMissing(String uri, String extension) {
