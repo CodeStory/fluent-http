@@ -29,7 +29,7 @@ public class DevWebServerRule extends ExternalResource {
   private static Supplier<WebServer> server = memoize(() -> new WebServer() {
     @Override
     protected Env createEnv() {
-      return Env.dev();
+      return Env.dev().withLiveReloadServer(false);
     }
   }.startOnRandomPort());
 
