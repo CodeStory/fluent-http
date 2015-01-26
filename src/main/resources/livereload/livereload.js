@@ -464,7 +464,7 @@
     function Options() {
       this.host = null;
       //this.port = 35729;
-      this.port = 8080;
+      this.port = window.location.port;
       this.snipver = null;
       this.ext = null;
       this.extver = null;
