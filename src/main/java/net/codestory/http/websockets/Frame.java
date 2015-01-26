@@ -15,7 +15,7 @@
  */
 package net.codestory.http.websockets;
 
-import net.codestory.http.convert.TypeConvert;
+import java.io.IOException;
 
 public interface Frame {
   String type();
@@ -23,6 +23,10 @@ public interface Frame {
   String text();
 
   default <T> T as(Class<T> type) {
-    return TypeConvert.fromJson(text(), type);
+    try {
+      return WebSocketSession.OBJECT_MAPPER.readValue(text(), type);
+    } catch (IOException e) {
+      throw new IllegalArgumentException("Unable to parse json", e);
+    }
   }
 }
