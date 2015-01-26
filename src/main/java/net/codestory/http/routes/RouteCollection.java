@@ -73,7 +73,7 @@ public class RouteCollection implements Routes {
   public void configure(Configuration configuration) {
     configuration.configure(this);
     installExtensions();
-    addStaticRoutes(env.prodMode());
+    addStaticRoutes();
 
     sortedRoutes = routes.getSortedRoutes();
   }
@@ -83,14 +83,15 @@ public class RouteCollection implements Routes {
     extensions.configureCompilers(compilers, env);
   }
 
-  private void addStaticRoutes(boolean prodMode) {
-    routes.addStaticRoute(new WebJarsRoute(prodMode));
-    routes.addStaticRoute(new StaticRoute(prodMode, resources, compilers));
-    if (!prodMode) {
+  private void addStaticRoutes() {
+    routes.addStaticRoute(new WebJarsRoute(env.prodMode()));
+    routes.addStaticRoute(new StaticRoute(env.prodMode(), resources, compilers));
+    if (!env.prodMode()) {
       routes.addStaticRoute(new SourceMapRoute(resources, compilers));
       routes.addStaticRoute(new SourceRoute(resources));
+    }
 
-      // Live reload
+    if (env.liveReloadServer()) {
       get("/livereload.js", ClassPaths.getResource("livereload/livereload.js"));
       setWebSocketListenerFactory((session, context) -> new LiveReloadListener(session, context.env()));
     }

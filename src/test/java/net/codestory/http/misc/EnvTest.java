@@ -15,11 +15,11 @@
  */
 package net.codestory.http.misc;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Test;
 
 import java.io.File;
 
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class EnvTest {
   @Test
@@ -32,6 +32,8 @@ public class EnvTest {
     assertThat(prod.gzip()).isTrue();
     assertThat(prod.workingDir()).isEqualTo(new File("."));
     assertThat(prod.appFolder()).isEqualTo("app");
+    assertThat(prod.injectLiveReloadScript()).isFalse();
+    assertThat(prod.liveReloadServer()).isFalse();
   }
 
   @Test
@@ -44,6 +46,8 @@ public class EnvTest {
     assertThat(dev.gzip()).isFalse();
     assertThat(dev.workingDir()).isEqualTo(new File("."));
     assertThat(dev.appFolder()).isEqualTo("app");
+    assertThat(dev.injectLiveReloadScript()).isTrue();
+    assertThat(dev.liveReloadServer()).isTrue();
   }
 
   @Test
@@ -56,6 +60,8 @@ public class EnvTest {
     assertThat(env.gzip()).isTrue();
     assertThat(env.workingDir()).isEqualTo(new File("web"));
     assertThat(env.appFolder()).isEqualTo("app");
+    assertThat(env.injectLiveReloadScript()).isFalse();
+    assertThat(env.liveReloadServer()).isFalse();
   }
 
   @Test
@@ -68,6 +74,8 @@ public class EnvTest {
     assertThat(env.gzip()).isTrue();
     assertThat(env.workingDir()).isEqualTo(new File("."));
     assertThat(env.appFolder()).isEqualTo("app");
+    assertThat(env.injectLiveReloadScript()).isFalse();
+    assertThat(env.liveReloadServer()).isFalse();
   }
 
   @Test
@@ -80,6 +88,8 @@ public class EnvTest {
     assertThat(env.gzip()).isTrue();
     assertThat(env.workingDir()).isEqualTo(new File("."));
     assertThat(env.appFolder()).isEqualTo("app");
+    assertThat(env.injectLiveReloadScript()).isFalse();
+    assertThat(env.liveReloadServer()).isFalse();
   }
 
   @Test
@@ -92,6 +102,8 @@ public class EnvTest {
     assertThat(env.gzip()).isTrue();
     assertThat(env.workingDir()).isEqualTo(new File("."));
     assertThat(env.appFolder()).isEqualTo("app");
+    assertThat(env.injectLiveReloadScript()).isFalse();
+    assertThat(env.liveReloadServer()).isFalse();
   }
 
   @Test
@@ -104,5 +116,35 @@ public class EnvTest {
     assertThat(env.gzip()).isFalse();
     assertThat(env.workingDir()).isEqualTo(new File("."));
     assertThat(env.appFolder()).isEqualTo("app");
+    assertThat(env.injectLiveReloadScript()).isFalse();
+    assertThat(env.liveReloadServer()).isFalse();
+  }
+
+  @Test
+  public void injectLiveReloadScript() {
+    Env env = Env.prod().withInjectLiveReloadScript(true);
+
+    assertThat(env.prodMode()).isTrue();
+    assertThat(env.classPath()).isTrue();
+    assertThat(env.filesystem()).isTrue();
+    assertThat(env.gzip()).isTrue();
+    assertThat(env.workingDir()).isEqualTo(new File("."));
+    assertThat(env.appFolder()).isEqualTo("app");
+    assertThat(env.injectLiveReloadScript()).isTrue();
+    assertThat(env.liveReloadServer()).isFalse();
+  }
+
+  @Test
+  public void liveReloadServer() {
+    Env env = Env.prod().withLiveReloadServer(true);
+
+    assertThat(env.prodMode()).isTrue();
+    assertThat(env.classPath()).isTrue();
+    assertThat(env.filesystem()).isTrue();
+    assertThat(env.gzip()).isTrue();
+    assertThat(env.workingDir()).isEqualTo(new File("."));
+    assertThat(env.appFolder()).isEqualTo("app");
+    assertThat(env.injectLiveReloadScript()).isFalse();
+    assertThat(env.liveReloadServer()).isTrue();
   }
 }

@@ -16,5 +16,5 @@
 </body>
 [[#each scripts]]
 [[script .]][[/each]]
-[[#unless env.prodMode]][[script 'livereload']][[/unless]]
+[[#if env.injectLiveReloadScript]][[script 'livereload']][[/if]]
 </html>

@@ -15,12 +15,12 @@
  */
 package net.codestory.http.misc;
 
-import static net.codestory.http.io.ClassPaths.classpathFolders;
-
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+
+import static net.codestory.http.io.ClassPaths.classpathFolders;
 
 public class Env {
   private final File workingDir;
@@ -28,6 +28,8 @@ public class Env {
   private final boolean classPath;
   private final boolean filesystem;
   private final boolean gzip;
+  private final boolean liveReloadServer;
+  private final boolean injectLiveReloadScript;
 
   public Env() {
     this.workingDir = new File(".");
@@ -35,44 +37,56 @@ public class Env {
     this.classPath = !getBoolean("http.disable.classpath", false);
     this.filesystem = !getBoolean("http.disable.filesystem", false);
     this.gzip = !getBoolean("http.disable.gzip", false);
+    this.liveReloadServer = getBoolean("http.livereload.server", true);
+    this.injectLiveReloadScript = getBoolean("http.livereload.script", true);
   }
 
-  private Env(File workingDir, boolean prodMode, boolean classPath, boolean filesystem, boolean gzip) {
+  private Env(File workingDir, boolean prodMode, boolean classPath, boolean filesystem, boolean gzip, boolean liveReloadServer, boolean injectLiveReloadScript) {
     this.workingDir = workingDir;
     this.prodMode = prodMode;
     this.classPath = classPath;
     this.filesystem = filesystem;
     this.gzip = gzip;
+    this.liveReloadServer = liveReloadServer;
+    this.injectLiveReloadScript = injectLiveReloadScript;
   }
 
   // helper factories
 
   public static Env prod() {
-    return new Env(new File("."), true, true, true, true);
+    return new Env(new File("."), true, true, true, true, false, false);
   }
 
   public static Env dev() {
-    return new Env(new File("."), false, true, true, false);
+    return new Env(new File("."), false, true, true, false, true, true);
   }
 
   public Env withWorkingDir(File newWorkingDir) {
-    return new Env(newWorkingDir, prodMode, classPath, filesystem, gzip);
+    return new Env(newWorkingDir, prodMode, classPath, filesystem, gzip, liveReloadServer, injectLiveReloadScript);
   }
 
   public Env withProdMode(boolean newProdMode) {
-    return new Env(workingDir, newProdMode, classPath, filesystem, gzip);
+    return new Env(workingDir, newProdMode, classPath, filesystem, gzip, liveReloadServer, injectLiveReloadScript);
   }
 
-  public Env withClassPath(boolean scanCassPath) {
-    return new Env(workingDir, prodMode, scanCassPath, filesystem, gzip);
+  public Env withClassPath(boolean shouldScanCassPath) {
+    return new Env(workingDir, prodMode, shouldScanCassPath, filesystem, gzip, liveReloadServer, injectLiveReloadScript);
   }
 
-  public Env withFilesystem(boolean scanFilesystem) {
-    return new Env(workingDir, prodMode, classPath, scanFilesystem, gzip);
+  public Env withFilesystem(boolean shouldScanFilesystem) {
+    return new Env(workingDir, prodMode, classPath, shouldScanFilesystem, gzip, liveReloadServer, injectLiveReloadScript);
   }
 
-  public Env withGzip(boolean gzipResponse) {
-    return new Env(workingDir, prodMode, classPath, filesystem, gzipResponse);
+  public Env withGzip(boolean shouldGzipResponse) {
+    return new Env(workingDir, prodMode, classPath, filesystem, shouldGzipResponse, liveReloadServer, injectLiveReloadScript);
+  }
+
+  public Env withLiveReloadServer(boolean shouldStartLiveReloadServer) {
+    return new Env(workingDir, prodMode, classPath, filesystem, gzip, shouldStartLiveReloadServer, injectLiveReloadScript);
+  }
+
+  public Env withInjectLiveReloadScript(boolean shouldInjectLiveReloadScript) {
+    return new Env(workingDir, prodMode, classPath, filesystem, gzip, liveReloadServer, shouldInjectLiveReloadScript);
   }
 
   //
@@ -113,7 +127,16 @@ public class Env {
   }
 
   public boolean gzip() {
+
     return gzip;
+  }
+
+  public boolean liveReloadServer() {
+    return liveReloadServer;
+  }
+
+  public boolean injectLiveReloadScript() {
+    return injectLiveReloadScript;
   }
 
   private static String get(String propertyName) {
