@@ -15,29 +15,39 @@
  */
 package net.codestory.http.templating;
 
-import static java.util.Collections.*;
-import static org.assertj.core.api.Assertions.*;
-
-import java.util.*;
-
-import net.codestory.http.compilers.*;
+import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.io.Resources;
-import net.codestory.http.misc.*;
+import net.codestory.http.misc.Env;
+import org.junit.Test;
 
-import org.junit.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonMap;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ViewCompilerTest {
-  static Env env = Env.prod();
-  static Resources resources = new Resources(env);
-  static CompilerFacade compilerFacade = new CompilerFacade(env, resources);
-  static ViewCompiler viewCompiler = new ViewCompiler(resources, compilerFacade);
+  String render(String name, Map<String, Object> model, boolean prodMode) {
+    Env env = prodMode ? Env.prod() : Env.dev();
+    Resources resources = new Resources(env);
+    CompilerFacade compilerFacade = new CompilerFacade(env, resources);
+    ViewCompiler viewCompiler = new ViewCompiler(resources, compilerFacade);
 
-  String render(String name, Map<String, Object> model) {
     return viewCompiler.render(name, model);
   }
 
   String render(String name) {
-    return render(name, emptyMap());
+    return render(name, emptyMap(), true);
+  }
+
+  String render(String name, Map<String, Object> model) {
+    return render(name, model, true);
+  }
+
+  String render(String name, boolean prodMode) {
+    return render(name, Collections.emptyMap(), prodMode);
   }
 
   @Test
@@ -86,52 +96,52 @@ public class ViewCompilerTest {
 
   @Test
   public void default_layout() {
-    String html = render("minimal.html", singletonMap("env", Env.prod()));
+    String html = render("minimal.html", true);
 
     assertThat(ignoreLineEndings(html)).isEqualTo("" +
-        "<!DOCTYPE html>" +
-        "<html lang=\"en\">" +
-        "<head>" +
-        "  <meta charset=\"UTF-8\">" +
-        "  <title></title>" +
-        "  " +
-        "  " +
-        "  " +
-        "  " +
-        "  " +
-        "  " +
-        "</head>" +
-        "<body>" +
-        "Hello World" +
-        "</body>" +
-        "</html>");
+      "<!DOCTYPE html>" +
+      "<html lang=\"en\">" +
+      "<head>" +
+      "  <meta charset=\"UTF-8\">" +
+      "  <title></title>" +
+      "  " +
+      "  " +
+      "  " +
+      "  " +
+      "  " +
+      "  " +
+      "</head>" +
+      "<body>" +
+      "Hello World" +
+      "</body>" +
+      "</html>");
   }
 
   @Test
   public void standard_head_fields() {
-    String html = render("full_header", singletonMap("env", Env.dev()));
+    String html = render("full_header", false);
 
     assertThat(ignoreLineEndings(html)).isEqualTo("<!DOCTYPE html>" +
-        "<html lang=\"FR\" ng-app=\"app\">" +
-        "<head>" +
-        "  <meta charset=\"UTF-8\">" +
-        "  <title>TITLE</title>" +
-        "  <meta name=\"viewport\" content=\"viewport\">" +
-        "  <meta name=\"keywords\" content=\"keyword1, keyword2\">" +
-        "  <meta name=\"description\" content=\"description\">" +
-        "  <meta name=\"author\" content=\"author\">" +
-        "  <link rel=\"stylesheet\" href=\"style.css\">" +
-        "  <link rel=\"stylesheet\" href=\"style1.css\">" +
-        "  <link rel=\"stylesheet\" href=\"style2.css\">" +
-        "  " +
-        "</head>" +
-        "<body>" +
-        "Hello World" +
-        "</body>" +
-        "<script src=\"angular.js\"></script>" +
-        "<script src=\"app.js\"></script>" +
-        "<script src=\"/livereload.js\"></script>" +
-        "</html>");
+      "<html lang=\"FR\" ng-app=\"app\">" +
+      "<head>" +
+      "  <meta charset=\"UTF-8\">" +
+      "  <title>TITLE</title>" +
+      "  <meta name=\"viewport\" content=\"viewport\">" +
+      "  <meta name=\"keywords\" content=\"keyword1, keyword2\">" +
+      "  <meta name=\"description\" content=\"description\">" +
+      "  <meta name=\"author\" content=\"author\">" +
+      "  <link rel=\"stylesheet\" href=\"style.css\">" +
+      "  <link rel=\"stylesheet\" href=\"style1.css\">" +
+      "  <link rel=\"stylesheet\" href=\"style2.css\">" +
+      "  " +
+      "</head>" +
+      "<body>" +
+      "Hello World" +
+      "</body>" +
+      "<script src=\"angular.js\"></script>" +
+      "<script src=\"app.js\"></script>" +
+      "<script src=\"/livereload.js\"></script>" +
+      "</html>");
   }
 
   private static String ignoreLineEndings(String text) {
