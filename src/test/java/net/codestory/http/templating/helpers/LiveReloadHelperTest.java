@@ -22,11 +22,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class LiveReloadHelperTest {
   @Test
   public void should_return_nothing_in_prodmode() {
-    assertThat(new LiveReloadHelper(true).livereload(null)).isEmpty();
+    assertThat(new LiveReloadHelper(true).livereload()).isEmpty();
   }
 
   @Test
   public void should_return_livereloadscript_in_devmode() {
-    assertThat(new LiveReloadHelper(false).livereload(null)).contains("<script src=\"/livereload.js\"></script>");
+    assertThat(new LiveReloadHelper(false).livereload()).contains("<script src=\"/livereload.js\"></script>");
   }
 }

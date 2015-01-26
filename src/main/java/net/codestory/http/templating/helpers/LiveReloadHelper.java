@@ -24,7 +24,7 @@ public class LiveReloadHelper {
         this.prodMode = prodMode;
     }
 
-    public CharSequence livereload(Object context) {
+    public CharSequence livereload() {
         if (prodMode) {
             return "";
         }
