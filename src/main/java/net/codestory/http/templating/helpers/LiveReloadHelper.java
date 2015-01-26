@@ -15,8 +15,6 @@
  */
 package net.codestory.http.templating.helpers;
 
-import com.github.jknack.handlebars.Options;
-
 import static com.github.jknack.handlebars.Handlebars.SafeString;
 
 public class LiveReloadHelper {
@@ -26,10 +24,10 @@ public class LiveReloadHelper {
         this.prodMode = prodMode;
     }
 
-    public CharSequence livereload(Object context, Options options) {
+    public CharSequence livereload(Object context) {
         if (prodMode) {
             return "";
         }
-        return new SafeString("<script src=\"/livereload.js\">");
+        return new SafeString("<script src=\"/livereload.js\"></script>");
     }
 }

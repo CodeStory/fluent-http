@@ -20,15 +20,13 @@ import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class LiveReloadHelperTest {
+  @Test
+  public void should_return_nothing_in_prodmode() {
+    assertThat(new LiveReloadHelper(true).livereload(null)).isEmpty();
+  }
 
-    @Test
-    public void should_return_nothing_in_prodmode() {
-        assertThat(new LiveReloadHelper(true).livereload(null,null)).isEmpty();
-    }
-
-    @Test
-    public void should_return_livereloadscript_in_devmode() {
-        assertThat(new LiveReloadHelper(false).livereload(null,null)).contains("/livereload.js");
-    }
-
+  @Test
+  public void should_return_livereloadscript_in_devmode() {
+    assertThat(new LiveReloadHelper(false).livereload(null)).contains("<script src=\"/livereload.js\"></script>");
+  }
 }
