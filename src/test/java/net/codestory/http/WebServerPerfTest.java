@@ -26,12 +26,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class WebServerPerfTest {
   @Test
   public void launch_lots_of_servers_without_port_conflict_nor_thread_leak() {
-    for (int j = 0; j < 5; j++) {
+    for (int j = 0; j < 10; j++) {
       List<WebServer> servers = new ArrayList<>();
 
-      rangeClosed(1, 100).parallel().forEach(i -> servers.add(new WebServer().startOnRandomPort()));
+      rangeClosed(1, 50).parallel().forEach(i -> servers.add(new WebServer().startOnRandomPort()));
 
-      assertThat(servers).hasSize(100);
+      assertThat(servers).hasSize(50);
 
       servers.parallelStream().forEach(server -> server.stop());
     }
