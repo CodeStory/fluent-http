@@ -17,6 +17,8 @@ package net.codestory.http;
 
 import net.codestory.http.annotations.*;
 import net.codestory.http.errors.*;
+import net.codestory.http.filters.basic.BasicAuthFilter;
+import net.codestory.http.security.UsersList;
 import net.codestory.http.templating.*;
 import net.codestory.http.testhelpers.*;
 
@@ -153,6 +155,40 @@ public class AnnotationsTest extends AbstractProdWebServerTest {
 
     get("/test?param1=param&param2=42&param3=true&param4=1337").should().contain("param1:param, param2:42, param3:true, param4:1337");
     get("/test").should().contain("param1:null, param2:0, param3:false, param4:0");
+  }
+
+  @Test
+  public void authorize_roles() {
+    UsersList users = new UsersList.Builder()
+      .addUser("user", "pwd", "USER")
+      .addUser("admin", "pwdpwd", "ADMIN", "USER")
+      .addUser("other", "", "BUSINESS")
+      .build();
+
+    configure(routes -> routes
+          .filter(new BasicAuthFilter("/secure", "realm", users))
+          .add(new Object() {
+            @Roles({"USER", "ADMIN"})
+            @Get("/secure/index")
+            public String secure() {
+              return "Secure";
+            }
+
+            @Roles(value = {"USER", "ADMIN"}, allMatch = true)
+            @Get("/secure/admin")
+            public String superSecure() {
+              return "Secure";
+            }
+          })
+    );
+
+    get("/secure/index").withAuthentication("admin", "pwdpwd").should().contain("Secure");
+    get("/secure/index").withAuthentication("user", "pwd").should().contain("Secure");
+    get("/secure/index").withAuthentication("other", "").should().respond(403);
+
+    get("/secure/admin").withAuthentication("admin", "pwdpwd").should().contain("Secure");
+    get("/secure/admin").withAuthentication("user", "pwd").should().respond(403);
+    get("/secure/admin").withAuthentication("other", "").should().respond(403);
   }
 
   public static class TestResource {

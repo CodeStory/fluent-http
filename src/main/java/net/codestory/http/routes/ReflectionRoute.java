@@ -15,6 +15,8 @@
  */
 package net.codestory.http.routes;
 
+import static java.util.stream.Stream.of;
+
 import java.io.IOException;
 import java.lang.reflect.*;
 import java.util.function.*;
@@ -23,6 +25,7 @@ import net.codestory.http.*;
 import net.codestory.http.annotations.*;
 import net.codestory.http.convert.*;
 import net.codestory.http.payload.*;
+import net.codestory.http.security.User;
 
 class ReflectionRoute implements AnyRoute {
   private final Supplier<Object> resource;
@@ -35,6 +38,10 @@ class ReflectionRoute implements AnyRoute {
 
   @Override
   public Object body(Context context, String[] pathParameters) {
+    if (!isAuthorized(context.currentUser())) {
+      return Payload.forbidden();
+    }
+
     try {
       Object target = resource.get();
 
@@ -51,6 +58,19 @@ class ReflectionRoute implements AnyRoute {
       throw e;
     } catch (Throwable e) {
       throw new IllegalStateException("Unable to apply route", e);
+    }
+  }
+
+  private boolean isAuthorized(User user) {
+    Roles roles = method.getDeclaredAnnotation(Roles.class);
+    if (roles == null) {
+      return true;
+    }
+
+    if (roles.allMatch()) {
+      return of(roles.value()).allMatch(role -> user.isInRole(role));
+    } else {
+      return of(roles.value()).anyMatch(role -> user.isInRole(role));
     }
   }
 

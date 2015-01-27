@@ -15,12 +15,14 @@
  */
 package net.codestory.http.security;
 
-import static java.util.stream.Stream.*;
+import static java.util.stream.Stream.of;
 
-import java.io.*;
+import java.io.Serializable;
 
 public interface User extends Serializable {
-  String name();
+  default String name() {
+    return login();
+  }
 
   String login();
 
@@ -31,6 +33,10 @@ public interface User extends Serializable {
   }
 
   static User forLogin(String login) {
+    return forLoginAndRoles(login);
+  }
+
+  static User forLoginAndRoles(String login, String... roles) {
     return new User() {
       @Override
       public String name() {
@@ -44,7 +50,7 @@ public interface User extends Serializable {
 
       @Override
       public String[] roles() {
-        return new String[0];
+        return roles;
       }
     };
   }
