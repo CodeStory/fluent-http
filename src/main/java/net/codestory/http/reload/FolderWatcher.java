@@ -17,6 +17,8 @@ package net.codestory.http.reload;
 
 import java.nio.file.Path;
 
+import com.google.common.annotations.VisibleForTesting;
+
 public class FolderWatcher {
   private final Path folder;
   private final FolderChangeListener listener;
@@ -54,7 +56,8 @@ public class FolderWatcher {
     }
   }
 
-  private static boolean isMac() {
+  @VisibleForTesting
+  protected boolean isMac() {
     return System.getProperty("os.name").startsWith("Mac OS X");
   }
 }

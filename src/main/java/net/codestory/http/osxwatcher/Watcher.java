@@ -18,66 +18,71 @@ package net.codestory.http.osxwatcher;
 import static com.sun.jna.Pointer.NULL;
 
 import java.io.File;
+import java.util.concurrent.CountDownLatch;
 
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 
 public class Watcher {
-	private final WatcherLoop loop;
+  private final WatcherLoop loop;
 
-	public Watcher(File folder, FileChangeListener listener) {
-		loop = new WatcherLoop(folder, listener);
-	}
+  public Watcher(File folder, FileChangeListener listener) {
+    loop = new WatcherLoop(folder, listener);
+  }
 
-	public void start() {
-		Thread thread = new Thread(loop);
-		thread.setDaemon(true);
-		thread.start();
+  public void start() {
+    Thread thread = new Thread(loop);
+    thread.setDaemon(true);
+    thread.start();
 
-		new Thread(() -> {
-			// Couldn't remove this
-		});
-	}
+    try {
+      loop.started.await();
+    } catch (InterruptedException e) {
+      // Ignore
+    }
+  }
 
-	public void stop() {
-		loop.stop();
-	}
+  public void stop() {
+    loop.stop();
+  }
 
-	static class WatcherLoop implements CarbonAPI.FSEventStreamCallback, Runnable {
-		private final File folder;
-		private final FileChangeListener listener;
+  static class WatcherLoop implements CarbonAPI.FSEventStreamCallback, Runnable {
+    private final File folder;
+    private final FileChangeListener listener;
+    final CountDownLatch started;
 
-		private PointerByReference stream;
-		private PointerByReference runLoop;
+    private PointerByReference stream;
+    private PointerByReference runLoop;
 
-		public WatcherLoop(File folder, FileChangeListener listener) {
-			this.folder = folder;
-			this.listener = listener;
-		}
+    public WatcherLoop(File folder, FileChangeListener listener) {
+      this.folder = folder;
+      this.listener = listener;
+      this.started = new CountDownLatch(1);
+    }
 
-		@Override
-		public void run() {
-			CarbonAPI api = CarbonAPI.INSTANCE;
-			PointerByReference runLoopMode = CarbonAPI.toCFString("kCFRunLoopDefaultMode");
-			PointerByReference path = CarbonAPI.toCFString(folder.getAbsolutePath());
+    @Override
+    public void run() {
+      CarbonAPI api = CarbonAPI.INSTANCE;
 
-			PointerByReference pathsToWatch = api.CFArrayCreate(null, new Pointer[]{path.getPointer()}, new NativeLong(1L), null);
-			stream = api.FSEventStreamCreate(NULL, this, NULL, pathsToWatch, -1, 0.5, 0x00000002);
-			runLoop = api.CFRunLoopGetCurrent();
-			api.FSEventStreamScheduleWithRunLoop(stream, runLoop, runLoopMode);
-			api.FSEventStreamStart(stream);
-			api.CFRunLoopRun();
-		}
+      PointerByReference path = api.CFArrayCreate(null, new Pointer[]{CarbonAPI.toCFString(folder.getAbsolutePath()).getPointer()}, new NativeLong(1L), null);
+      stream = api.FSEventStreamCreate(NULL, this, NULL, path, -1, 0.5, 0x00000002);
+      runLoop = api.CFRunLoopGetCurrent();
+      api.FSEventStreamScheduleWithRunLoop(stream, runLoop, CarbonAPI.toCFString("kCFRunLoopDefaultMode"));
+      api.FSEventStreamStart(stream);
 
-		public void stop() {
-			CarbonAPI.INSTANCE.CFRunLoopStop(runLoop);
-			CarbonAPI.INSTANCE.FSEventStreamStop(stream);
-		}
+      started.countDown();
+      api.CFRunLoopRun();
+    }
 
-		@Override
-		public void invoke(PointerByReference streamRef, Pointer clientCallBackInfo, NativeLong numEvents, Pointer eventPaths, Pointer eventFlags, Pointer eventIds) {
-			listener.onChange();
-		}
-	}
+    public void stop() {
+      CarbonAPI.INSTANCE.CFRunLoopStop(runLoop);
+      CarbonAPI.INSTANCE.FSEventStreamStop(stream);
+    }
+
+    @Override
+    public void invoke(PointerByReference streamRef, Pointer clientCallBackInfo, NativeLong numEvents, Pointer eventPaths, Pointer eventFlags, Pointer eventIds) {
+      listener.onChange();
+    }
+  }
 }

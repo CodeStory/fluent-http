@@ -22,21 +22,28 @@ import static org.mockito.Mockito.verify;
 import java.io.File;
 import java.io.IOException;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 public class FolderWatcherTest {
+  File folder;
+
+  FolderChangeListener listener = mock(FolderChangeListener.class);
+
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
 
-  @Test
-  public void watch_folder() throws IOException {
-    FolderChangeListener listener = mock(FolderChangeListener.class);
-    File folder = temp.newFolder();
+  @Before
+  public void createFolderToWatch() throws IOException {
+    folder = temp.newFolder();
     File parent = new File(folder, "folder");
     parent.mkdirs();
+  }
 
+  @Test
+  public void watch_folder() throws IOException {
     FolderWatcher watcher = new FolderWatcher(folder.toPath(), listener);
     watcher.ensureStarted();
 
@@ -44,6 +51,42 @@ public class FolderWatcherTest {
 
     verify(listener, timeout(5000)).onChange();
 
+    watcher.stop();
+  }
+
+  @Test
+  public void jdk_watch() throws IOException {
+    FolderWatcher watcher = new FolderWatcher(folder.toPath(), listener) {
+      @Override
+      protected boolean isMac() {
+        return false;
+      }
+    };
+    watcher.ensureStarted();
+
+    new File(folder, "file").createNewFile();
+
+    verify(listener, timeout(5000)).onChange();
+
+    watcher.stop();
+  }
+
+  @Test
+  public void dont_start_twice() throws IOException {
+    FolderWatcher watcher = new FolderWatcher(folder.toPath(), listener);
+    watcher.ensureStarted();
+    watcher.ensureStarted();
+
+    new File(folder, "file").createNewFile();
+
+    verify(listener, timeout(5000)).onChange();
+
+    watcher.stop();
+  }
+
+  @Test
+  public void can_be_stopped_before_start() {
+    FolderWatcher watcher = new FolderWatcher(folder.toPath(), listener);
     watcher.stop();
   }
 }
