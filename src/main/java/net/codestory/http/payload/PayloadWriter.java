@@ -261,10 +261,10 @@ public class PayloadWriter {
       return "application/octet-stream";
     }
     if (content instanceof BufferedReader) {
-      return "text/plain";
+      return "text/plain;charset=UTF-8";
     }
     if (content instanceof Stream<?>) {
-      return "text/event-stream";
+      return "text/event-stream;charset=UTF-8";
     }
     if (content instanceof ModelAndView) {
       Path path = resources.findExistingPath(((ModelAndView) content).view());
