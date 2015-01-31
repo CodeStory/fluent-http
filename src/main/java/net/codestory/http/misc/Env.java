@@ -15,12 +15,16 @@
  */
 package net.codestory.http.misc;
 
+import static net.codestory.http.io.ClassPaths.classpathFolders;
+import static net.codestory.http.misc.MemoizingSupplier.memoize;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
-import static net.codestory.http.io.ClassPaths.classpathFolders;
+import net.codestory.http.reload.MasterFolderWatch;
 
 public class Env {
   private final File workingDir;
@@ -30,15 +34,18 @@ public class Env {
   private final boolean gzip;
   private final boolean liveReloadServer;
   private final boolean injectLiveReloadScript;
+  private final Supplier<MasterFolderWatch> folderWatch;
 
   public Env() {
-    this.workingDir = new File(".");
-    this.prodMode = getBoolean("PROD_MODE", false);
-    this.classPath = !getBoolean("http.disable.classpath", false);
-    this.filesystem = !getBoolean("http.disable.filesystem", false);
-    this.gzip = !getBoolean("http.disable.gzip", false);
-    this.liveReloadServer = getBoolean("http.livereload.server", true);
-    this.injectLiveReloadScript = getBoolean("http.livereload.script", true);
+    this(
+      new File("."),
+      getBoolean("PROD_MODE", false),
+      !getBoolean("http.disable.classpath", false),
+      !getBoolean("http.disable.filesystem", false),
+      !getBoolean("http.disable.gzip", false),
+      getBoolean("http.livereload.server", true),
+      getBoolean("http.livereload.script", true)
+    );
   }
 
   private Env(File workingDir, boolean prodMode, boolean classPath, boolean filesystem, boolean gzip, boolean liveReloadServer, boolean injectLiveReloadScript) {
@@ -49,6 +56,7 @@ public class Env {
     this.gzip = gzip;
     this.liveReloadServer = liveReloadServer;
     this.injectLiveReloadScript = injectLiveReloadScript;
+    this.folderWatch = memoize(() -> new MasterFolderWatch(this));
   }
 
   // helper factories
@@ -90,6 +98,10 @@ public class Env {
   }
 
   //
+
+  public MasterFolderWatch folderWatcher() {
+    return folderWatch.get();
+  }
 
   public File workingDir() {
     return workingDir;

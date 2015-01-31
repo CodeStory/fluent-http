@@ -27,8 +27,8 @@ class ReloadingRoutesProvider implements RoutesProvider {
   private final Configuration configuration;
   private final AtomicBoolean dirty;
 
-  private MultiFolderWatcher fileWatcher;
   private RouteCollection routes;
+  private FolderChangeListener folderChangeListener;
 
   ReloadingRoutesProvider(Env env, Configuration configuration) {
     this.env = env;
@@ -44,18 +44,20 @@ class ReloadingRoutesProvider implements RoutesProvider {
       routes = new RouteCollection(env);
       try {
         routes.configure(configuration);
-
-        if (fileWatcher == null) {
-          fileWatcher = new MultiFolderWatcher(env.foldersToWatch(), () -> dirty.set(true));
-        }
-
-        fileWatcher.ensureStarted();
       } catch (Exception e) {
         Logs.unableToConfigureRoutes(e);
       }
 
       dirty.set(false);
+
+      if (folderChangeListener != null) {
+        env.folderWatcher().removeListener(folderChangeListener);
+      }
+      folderChangeListener = () -> dirty.set(true);
+      env.folderWatcher().addListener(folderChangeListener);
     }
+
+    env.folderWatcher().ensureStarted();
 
     return routes;
   }

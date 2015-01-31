@@ -93,7 +93,7 @@ public class RouteCollection implements Routes {
 
     if (env.liveReloadServer()) {
       get("/livereload.js", ClassPaths.getResource("livereload/livereload.js"));
-      setWebSocketListenerFactory((session, context) -> new LiveReloadListener(session, context.env()));
+      setWebSocketListenerFactory((session, context) -> new LiveReloadListener(session, env));
     }
   }
 

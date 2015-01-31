@@ -17,14 +17,18 @@ package net.codestory.http.reload;
 
 import static java.util.stream.Collectors.toList;
 
-import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-public class MultiFolderWatcher {
+import net.codestory.http.misc.Env;
+
+public class MasterFolderWatch {
   private final List<FolderWatcher> classesWatchers;
+  private final List<FolderChangeListener> listeners = new CopyOnWriteArrayList<>();
 
-  public MultiFolderWatcher(List<Path> paths, FolderChangeListener listener) {
-    this.classesWatchers = paths.stream().map(path -> new FolderWatcher(path, listener)).collect(toList());
+  public MasterFolderWatch(Env env) {
+    FolderChangeListener notifyListeners = () -> listeners.forEach(listener -> listener.onChange());
+    this.classesWatchers = env.foldersToWatch().stream().map(path -> new FolderWatcher(path, notifyListeners)).collect(toList());
   }
 
   public void ensureStarted() {
@@ -33,5 +37,13 @@ public class MultiFolderWatcher {
 
   public void stop() {
     classesWatchers.forEach(watcher -> watcher.stop());
+  }
+
+  public void addListener(FolderChangeListener listener) {
+    listeners.add(listener);
+  }
+
+  public void removeListener(FolderChangeListener listener) {
+    listeners.remove(listener);
   }
 }

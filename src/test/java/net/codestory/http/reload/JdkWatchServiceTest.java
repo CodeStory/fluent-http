@@ -27,7 +27,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-public class FolderWatcherTest {
+public class JdkWatchServiceTest {
   File folder;
 
   FolderChangeListener listener = mock(FolderChangeListener.class);
@@ -43,9 +43,9 @@ public class FolderWatcherTest {
   }
 
   @Test
-  public void watch_folder() throws IOException {
-    FolderWatcher watcher = new FolderWatcher(folder.toPath(), listener);
-    watcher.ensureStarted();
+  public void watch_file_creation() throws IOException {
+    JdkWatchService watcher = new JdkWatchService(folder.toPath());
+    watcher.onChange(listener);
 
     new File(folder, "file").createNewFile();
 
@@ -55,16 +55,13 @@ public class FolderWatcherTest {
   }
 
   @Test
-  public void jdk_watch() throws IOException {
-    FolderWatcher watcher = new FolderWatcher(folder.toPath(), listener) {
-      @Override
-      public boolean isMac() {
-        return false;
-      }
-    };
-    watcher.ensureStarted();
-
+  public void watch_file_delete() throws IOException {
     new File(folder, "file").createNewFile();
+
+    JdkWatchService watcher = new JdkWatchService(folder.toPath());
+    watcher.onChange(listener);
+
+    new File(folder, "file").delete();
 
     verify(listener, timeout(5000)).onChange();
 

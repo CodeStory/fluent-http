@@ -47,11 +47,6 @@ public class JdkWatchService implements WatchServiceFacade {
   }
 
   @Override
-  public void stop() {
-    run.set(false);
-  }
-
-  @Override
   public void onChange(FolderChangeListener listener) {
     new Thread(() -> {
       run.set(true);
@@ -81,4 +76,10 @@ public class JdkWatchService implements WatchServiceFacade {
       }
     }).start();
   }
+
+  @Override
+  public void stop() {
+    run.set(false);
+  }
+
 }

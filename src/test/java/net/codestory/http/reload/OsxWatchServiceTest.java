@@ -15,10 +15,14 @@
  */
 package net.codestory.http.reload;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.Files.newBufferedWriter;
+import static org.junit.Assume.assumeTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 
@@ -27,7 +31,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-public class FolderWatcherTest {
+public class OsxWatchServiceTest {
   File folder;
 
   FolderChangeListener listener = mock(FolderChangeListener.class);
@@ -42,31 +46,54 @@ public class FolderWatcherTest {
     parent.mkdirs();
   }
 
+  private static boolean isMac() {
+    return System.getProperty("os.name").startsWith("Mac OS X");
+  }
+
   @Test
-  public void watch_folder() throws IOException {
-    FolderWatcher watcher = new FolderWatcher(folder.toPath(), listener);
-    watcher.ensureStarted();
+  public void watch_file_creation() throws IOException {
+    assumeTrue(isMac());
+
+    OsxWatchService watcher = new OsxWatchService(folder.toPath());
+    watcher.onChange(listener);
 
     new File(folder, "file").createNewFile();
 
-    verify(listener, timeout(5000)).onChange();
+    verify(listener, timeout(2000)).onChange();
 
     watcher.stop();
   }
 
   @Test
-  public void jdk_watch() throws IOException {
-    FolderWatcher watcher = new FolderWatcher(folder.toPath(), listener) {
-      @Override
-      public boolean isMac() {
-        return false;
-      }
-    };
-    watcher.ensureStarted();
+  public void watch_file_delete() throws IOException {
+    assumeTrue(isMac());
 
     new File(folder, "file").createNewFile();
 
-    verify(listener, timeout(5000)).onChange();
+    OsxWatchService watcher = new OsxWatchService(folder.toPath());
+    watcher.onChange(listener);
+
+    new File(folder, "file").delete();
+
+    verify(listener, timeout(2000)).onChange();
+
+    watcher.stop();
+  }
+
+  @Test
+  public void watch_file_modify() throws IOException {
+    assumeTrue(isMac());
+
+    new File(folder, "file").createNewFile();
+
+    OsxWatchService watcher = new OsxWatchService(folder.toPath());
+    watcher.onChange(listener);
+
+    try (BufferedWriter writer = newBufferedWriter(new File(folder, "file").toPath(), UTF_8)) {
+      writer.newLine();
+    }
+
+    verify(listener, timeout(2000)).onChange();
 
     watcher.stop();
   }

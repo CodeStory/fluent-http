@@ -22,9 +22,8 @@ import com.google.common.annotations.VisibleForTesting;
 public class FolderWatcher {
   private final Path folder;
   private final FolderChangeListener listener;
-  private WatchServiceFacade watcher;
 
-  private boolean started;
+  private WatchServiceFacade watcher;
 
   public FolderWatcher(Path folder, FolderChangeListener listener) {
     this.folder = folder;
@@ -32,7 +31,7 @@ public class FolderWatcher {
   }
 
   public void ensureStarted() {
-    if (started) {
+    if (watcher != null) {
       return;
     }
 
@@ -46,8 +45,6 @@ public class FolderWatcher {
       watcher = new JdkWatchService(folder);
     }
     watcher.onChange(listener);
-
-    started = true;
   }
 
   public void stop() {

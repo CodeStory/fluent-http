@@ -143,6 +143,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
 
   public void stop() {
     try {
+      env.folderWatcher().stop();
       server.stop();
     } catch (Exception e) {
       throw new IllegalStateException("Unable to stop the web server", e);

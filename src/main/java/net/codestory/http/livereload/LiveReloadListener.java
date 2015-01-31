@@ -21,7 +21,7 @@ import static net.codestory.http.constants.FrameTypes.TEXT;
 import java.io.IOException;
 
 import net.codestory.http.misc.Env;
-import net.codestory.http.reload.MultiFolderWatcher;
+import net.codestory.http.reload.FolderChangeListener;
 import net.codestory.http.websockets.Frame;
 import net.codestory.http.websockets.WebSocketListener;
 import net.codestory.http.websockets.WebSocketSession;
@@ -29,19 +29,22 @@ import net.codestory.http.websockets.WebSocketSession;
 public class LiveReloadListener implements WebSocketListener {
   public static final String VERSION_7 = "http://livereload.com/protocols/official-7";
 
+  private final Env env;
   private final WebSocketSession session;
-  private final MultiFolderWatcher watcher;
+  private final FolderChangeListener listener;
 
   public LiveReloadListener(WebSocketSession session, Env env) {
+    this.env = env;
     this.session = session;
-    this.watcher = new MultiFolderWatcher(env.foldersToWatch(), () -> {
+    this.listener = () -> {
       try {
         session.send(TEXT, new OutgoingReloadMessage("path", true));
       } catch (IOException e) {
         // Ignore
       }
-    });
-    watcher.ensureStarted();
+    };
+
+    env.folderWatcher().addListener(listener);
   }
 
   @Override
@@ -50,22 +53,22 @@ public class LiveReloadListener implements WebSocketListener {
       IncomingHelloMessage message = frame.as(IncomingHelloMessage.class);
 
       if (message.command.equals("hello")) {
-        if (!message.protocols.contains(VERSION_7)) {
+        if (message.protocols.contains(VERSION_7)) {
+          session.send(TEXT, new OutgoingHelloMessage("Fluent-http", asList(VERSION_7)));
+        } else {
           close();
-          return;
         }
-
-        sendHello();
       }
     }
   }
 
-  private void close() throws IOException {
-    watcher.stop();
-    session.close();
+  @Override
+  public void onClose(int code, String reason) throws IOException {
+    close();
   }
 
-  private void sendHello() throws IOException {
-    session.send(TEXT, new OutgoingHelloMessage("Fluent-http", asList(VERSION_7)));
+  private void close() throws IOException {
+    env.folderWatcher().removeListener(listener);
+    session.close();
   }
 }
