@@ -15,11 +15,18 @@
  */
 package net.codestory.http.internal;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.data.MapEntry.entry;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import org.junit.*;
-import org.simpleframework.http.*;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.junit.Test;
+import org.simpleframework.http.Cookie;
+import org.simpleframework.http.Request;
 
 public class SimpleCookiesTest {
   Request request = mock(Request.class);
@@ -75,6 +82,52 @@ public class SimpleCookiesTest {
 
     assertThat(order.name).isEqualTo("Joe");
     assertThat(order.quantity).isEqualTo(12);
+  }
+
+  @Test
+  public void get_cookie() {
+    when(request.getCookie("name")).thenReturn(new Cookie("name", "{\"name\": \"Joe\", \"quantity\": 12}"));
+
+    SimpleCookie cookie = cookies.get("name");
+
+    assertThat(cookie.name()).isEqualTo("name");
+    assertThat(cookie.value()).isEqualTo("{\"name\": \"Joe\", \"quantity\": 12}");
+  }
+
+  @Test
+  public void unknown_cookie() {
+    SimpleCookie cookie = cookies.get("unknown");
+
+    assertThat(cookie).isNull();
+  }
+
+  @Test
+  public void iterator() {
+    Cookie cookie1 = new Cookie("name1", "value1");
+    Cookie cookie2 = new Cookie("name2", "value2");
+    when(request.getCookies()).thenReturn(asList(cookie1, cookie2));
+
+    Iterator<net.codestory.http.Cookie> iterator = cookies.iterator();
+
+    assertThat(iterator.next().name()).isEqualTo("name1");
+    assertThat(iterator.next().name()).isEqualTo("name2");
+    assertThat(iterator.hasNext()).isFalse();
+  }
+
+  @Test
+  public void key_values() {
+    Cookie cookie1 = new Cookie("name1", "value1");
+    Cookie cookie2 = new Cookie("name2", "value2");
+    when(request.getCookies()).thenReturn(asList(cookie1, cookie2));
+
+    Map<String, String> keyValues = cookies.keyValues();
+
+    assertThat(keyValues).containsOnly(entry("name1", "value1"), entry("name2", "value2"));
+  }
+
+  @Test
+  public void unwrap() {
+    assertThat(cookies.unwrap(Request.class)).isSameAs(request);
   }
 
   static class Order {

@@ -36,7 +36,7 @@ class SimpleCookies implements Cookies {
   }
 
   @Override
-  public Cookie get(String name) {
+  public SimpleCookie get(String name) {
     org.simpleframework.http.Cookie cookie = request.getCookie(name);
     return (cookie == null) ? null : new SimpleCookie(cookie);
   }
