@@ -17,5 +17,5 @@ package net.codestory.http.osxwatcher;
 
 @FunctionalInterface
 public interface FileChangeListener {
-	public void onChange();
+  public void onChange();
 }

@@ -23,33 +23,33 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 
 public interface CarbonAPI extends Library {
-	CarbonAPI INSTANCE = (CarbonAPI) Native.loadLibrary("Carbon", CarbonAPI.class);
+  CarbonAPI INSTANCE = (CarbonAPI) Native.loadLibrary("Carbon", CarbonAPI.class);
 
-	PointerByReference CFArrayCreate(PointerByReference allocator, Pointer[] values, NativeLong numValues, Void ignore);
+  PointerByReference CFArrayCreate(PointerByReference allocator, Pointer[] values, NativeLong numValues, Void ignore);
 
-	PointerByReference CFStringCreateWithCharacters(Void alloc, char[] chars, NativeLong numChars);
+  PointerByReference CFStringCreateWithCharacters(Void alloc, char[] chars, NativeLong numChars);
 
-	PointerByReference FSEventStreamCreate(Pointer v, FSEventStreamCallback callback, Pointer context, PointerByReference pathsToWatch, long sinceWhen, double latency, int flags);
+  PointerByReference FSEventStreamCreate(Pointer v, FSEventStreamCallback callback, Pointer context, PointerByReference pathsToWatch, long sinceWhen, double latency, int flags);
 
-	boolean FSEventStreamStart(PointerByReference streamRef);
+  boolean FSEventStreamStart(PointerByReference streamRef);
 
-	void FSEventStreamStop(PointerByReference streamRef);
+  void FSEventStreamStop(PointerByReference streamRef);
 
-	void FSEventStreamScheduleWithRunLoop(PointerByReference streamRef, PointerByReference runLoop, PointerByReference runLoopMode);
+  void FSEventStreamScheduleWithRunLoop(PointerByReference streamRef, PointerByReference runLoop, PointerByReference runLoopMode);
 
-	PointerByReference CFRunLoopGetCurrent();
+  PointerByReference CFRunLoopGetCurrent();
 
-	void CFRunLoopRun();
+  void CFRunLoopRun();
 
-	void CFRunLoopStop(PointerByReference rl);
+  void CFRunLoopStop(PointerByReference rl);
 
-	static PointerByReference toCFString(String s) {
-		final char[] chars = s.toCharArray();
-		int length = chars.length;
-		return CarbonAPI.INSTANCE.CFStringCreateWithCharacters(null, chars, new NativeLong(length));
-	}
+  static PointerByReference toCFString(String s) {
+    final char[] chars = s.toCharArray();
+    int length = chars.length;
+    return CarbonAPI.INSTANCE.CFStringCreateWithCharacters(null, chars, new NativeLong(length));
+  }
 
-	interface FSEventStreamCallback extends Callback {
-		void invoke(PointerByReference streamRef, Pointer clientCallBackInfo, NativeLong numEvents, Pointer eventPaths, Pointer eventFlags, Pointer eventIds);
-	}
+  interface FSEventStreamCallback extends Callback {
+    void invoke(PointerByReference streamRef, Pointer clientCallBackInfo, NativeLong numEvents, Pointer eventPaths, Pointer eventFlags, Pointer eventIds);
+  }
 }
