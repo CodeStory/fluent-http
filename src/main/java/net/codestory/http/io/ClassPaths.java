@@ -72,15 +72,15 @@ public class ClassPaths {
       }
     }
 
-    try {
-      if ("jar".equals(protocol)) {
+    if ("jar".equals(protocol)) {
+      try {
         List<String> relativePaths = forJarUrl(url);
         if (relativePaths != null) {
           return relativePaths;
         }
+      } catch (Throwable e) {
+        // Ignore
       }
-    } catch (Throwable e) {
-      // Ignore
     }
 
     return emptyList();
