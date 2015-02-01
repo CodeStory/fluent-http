@@ -341,7 +341,7 @@
     <dependency>
       <groupId>net.code-story</groupId>
       <artifactId>fluent-rest-test</artifactId>
-      <version>1.1</version>
+      <version>1.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -359,7 +359,7 @@
     <dependency>
       <groupId>net.code-story</groupId>
       <artifactId>simplelenium</artifactId>
-      <version>1.31</version>
+      <version>1.32</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
