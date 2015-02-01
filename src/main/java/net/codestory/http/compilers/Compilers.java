@@ -40,7 +40,7 @@ public class Compilers {
   public Compilers(Env env, Resources resources) {
     boolean prodMode = env.prodMode();
 
-    diskCache = new DiskCache("V6", prodMode);
+    diskCache = new DiskCache("V7", prodMode);
     register(() -> new LessCompiler(resources, prodMode), ".css", ".less");
     register(() -> new CoffeeCompiler(prodMode), ".js", ".coffee");
     register(() -> new CoffeeCompiler(prodMode), ".js", ".litcoffee");
