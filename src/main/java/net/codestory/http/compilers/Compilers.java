@@ -15,9 +15,9 @@
  */
 package net.codestory.http.compilers;
 
-import net.codestory.http.io.Resources;
-import net.codestory.http.misc.Env;
-import net.codestory.http.misc.Sha1;
+import static java.util.Collections.emptySet;
+import static java.util.Map.Entry;
+import static net.codestory.http.misc.MemoizingSupplier.memoize;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,21 +26,23 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
-import static java.util.Collections.emptySet;
-import static java.util.Map.Entry;
-import static net.codestory.http.misc.MemoizingSupplier.memoize;
+import net.codestory.http.io.Resources;
+import net.codestory.http.misc.Env;
+import net.codestory.http.misc.Sha1;
 
 public class Compilers {
-  private final DiskCache diskCache;
+  private final Env env;
+  private final Supplier<DiskCache> diskCache;
   private final Map<String, Supplier<Compiler>> compilerByExtension = new HashMap<>();
   private final Map<String, Set<String>> extensionsThatCompileTo = new HashMap<>();
   private final Map<String, String> compiledExtensions = new HashMap<>();
   private final Map<String, CacheEntry> cache = new ConcurrentHashMap<>();
 
   public Compilers(Env env, Resources resources) {
-    boolean prodMode = env.prodMode();
+    this.env = env;
 
-    diskCache = new DiskCache("V7", prodMode);
+    boolean prodMode = env.prodMode();
+    diskCache = memoize(() -> new DiskCache("V7", prodMode));
     register(() -> new LessCompiler(resources, prodMode), ".css", ".less");
     register(() -> new CoffeeCompiler(prodMode), ".js", ".coffee");
     register(() -> new CoffeeCompiler(prodMode), ".js", ".litcoffee");
@@ -87,8 +89,12 @@ public class Compilers {
           return CacheEntry.noCache(compiler.get().compile(sourceFile));
         }
 
-        String sha1 = Sha1.of(key);
-        return diskCache.computeIfAbsent(sha1, extension, () -> compiler.get().compile(sourceFile));
+        if (env.diskCache()) {
+          String sha1 = Sha1.of(key);
+          return diskCache.get().computeIfAbsent(sha1, extension, () -> compiler.get().compile(sourceFile));
+        } else {
+          return CacheEntry.fromString(compiler.get().compile(sourceFile));
+        }
       }
 
       throw new IllegalArgumentException("Unable to compile " + sourceFile.getFileName() + ". Unknown extension");
