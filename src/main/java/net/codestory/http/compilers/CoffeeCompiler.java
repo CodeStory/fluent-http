@@ -21,7 +21,7 @@ import static java.util.Collections.singletonMap;
 
 public class CoffeeCompiler implements Compiler {
   private final NashornCompiler nashornCompiler = NashornCompiler.get(
-      "META-INF/resources/webjars/coffee-script/1.8.0/coffee-script.min.js",
+      "META-INF/resources/webjars/coffee-script/1.9.0/coffee-script.min.js",
       "coffee-script/toJs.js");
 
   private final boolean sourceMaps;
