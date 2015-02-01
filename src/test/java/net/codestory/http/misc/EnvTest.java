@@ -34,6 +34,7 @@ public class EnvTest {
     assertThat(prod.appFolder()).isEqualTo("app");
     assertThat(prod.injectLiveReloadScript()).isFalse();
     assertThat(prod.liveReloadServer()).isFalse();
+    assertThat(prod.diskCache()).isTrue();
   }
 
   @Test
@@ -48,6 +49,7 @@ public class EnvTest {
     assertThat(dev.appFolder()).isEqualTo("app");
     assertThat(dev.injectLiveReloadScript()).isTrue();
     assertThat(dev.liveReloadServer()).isTrue();
+    assertThat(dev.diskCache()).isTrue();
   }
 
   @Test
@@ -62,6 +64,7 @@ public class EnvTest {
     assertThat(env.appFolder()).isEqualTo("app");
     assertThat(env.injectLiveReloadScript()).isFalse();
     assertThat(env.liveReloadServer()).isFalse();
+    assertThat(env.diskCache()).isTrue();
   }
 
   @Test
@@ -76,6 +79,7 @@ public class EnvTest {
     assertThat(env.appFolder()).isEqualTo("app");
     assertThat(env.injectLiveReloadScript()).isFalse();
     assertThat(env.liveReloadServer()).isFalse();
+    assertThat(env.diskCache()).isTrue();
   }
 
   @Test
@@ -90,6 +94,7 @@ public class EnvTest {
     assertThat(env.appFolder()).isEqualTo("app");
     assertThat(env.injectLiveReloadScript()).isFalse();
     assertThat(env.liveReloadServer()).isFalse();
+    assertThat(env.diskCache()).isTrue();
   }
 
   @Test
@@ -104,6 +109,7 @@ public class EnvTest {
     assertThat(env.appFolder()).isEqualTo("app");
     assertThat(env.injectLiveReloadScript()).isFalse();
     assertThat(env.liveReloadServer()).isFalse();
+    assertThat(env.diskCache()).isTrue();
   }
 
   @Test
@@ -118,6 +124,7 @@ public class EnvTest {
     assertThat(env.appFolder()).isEqualTo("app");
     assertThat(env.injectLiveReloadScript()).isFalse();
     assertThat(env.liveReloadServer()).isFalse();
+    assertThat(env.diskCache()).isTrue();
   }
 
   @Test
@@ -146,5 +153,21 @@ public class EnvTest {
     assertThat(env.appFolder()).isEqualTo("app");
     assertThat(env.injectLiveReloadScript()).isFalse();
     assertThat(env.liveReloadServer()).isTrue();
+    assertThat(env.diskCache()).isTrue();
+  }
+
+  @Test
+  public void diskCache() {
+    Env env = Env.prod().withDiskCache(false);
+
+    assertThat(env.prodMode()).isTrue();
+    assertThat(env.classPath()).isTrue();
+    assertThat(env.filesystem()).isTrue();
+    assertThat(env.gzip()).isTrue();
+    assertThat(env.workingDir()).isEqualTo(new File("."));
+    assertThat(env.appFolder()).isEqualTo("app");
+    assertThat(env.injectLiveReloadScript()).isFalse();
+    assertThat(env.liveReloadServer()).isFalse();
+    assertThat(env.diskCache()).isFalse();
   }
 }

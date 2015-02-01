@@ -34,6 +34,7 @@ public class Env {
   private final boolean gzip;
   private final boolean liveReloadServer;
   private final boolean injectLiveReloadScript;
+  private final boolean diskCache;
   private final Supplier<MasterFolderWatch> folderWatch;
 
   public Env() {
@@ -44,11 +45,12 @@ public class Env {
       !getBoolean("http.disable.filesystem", false),
       !getBoolean("http.disable.gzip", false),
       getBoolean("http.livereload.server", true),
-      getBoolean("http.livereload.script", true)
+      getBoolean("http.livereload.script", true),
+      getBoolean("http.cache.disk", true)
     );
   }
 
-  private Env(File workingDir, boolean prodMode, boolean classPath, boolean filesystem, boolean gzip, boolean liveReloadServer, boolean injectLiveReloadScript) {
+  private Env(File workingDir, boolean prodMode, boolean classPath, boolean filesystem, boolean gzip, boolean liveReloadServer, boolean injectLiveReloadScript, boolean diskCache) {
     this.workingDir = workingDir;
     this.prodMode = prodMode;
     this.classPath = classPath;
@@ -56,45 +58,50 @@ public class Env {
     this.gzip = gzip;
     this.liveReloadServer = liveReloadServer;
     this.injectLiveReloadScript = injectLiveReloadScript;
+    this.diskCache = diskCache;
     this.folderWatch = memoize(() -> new MasterFolderWatch(this));
   }
 
   // helper factories
 
   public static Env prod() {
-    return new Env(new File("."), true, true, true, true, false, false);
+    return new Env(new File("."), true, true, true, true, false, false, true);
   }
 
   public static Env dev() {
-    return new Env(new File("."), false, true, true, false, true, true);
+    return new Env(new File("."), false, true, true, false, true, true, true);
   }
 
   public Env withWorkingDir(File newWorkingDir) {
-    return new Env(newWorkingDir, prodMode, classPath, filesystem, gzip, liveReloadServer, injectLiveReloadScript);
+    return new Env(newWorkingDir, prodMode, classPath, filesystem, gzip, liveReloadServer, injectLiveReloadScript, diskCache);
   }
 
   public Env withProdMode(boolean newProdMode) {
-    return new Env(workingDir, newProdMode, classPath, filesystem, gzip, liveReloadServer, injectLiveReloadScript);
+    return new Env(workingDir, newProdMode, classPath, filesystem, gzip, liveReloadServer, injectLiveReloadScript, diskCache);
   }
 
   public Env withClassPath(boolean shouldScanCassPath) {
-    return new Env(workingDir, prodMode, shouldScanCassPath, filesystem, gzip, liveReloadServer, injectLiveReloadScript);
+    return new Env(workingDir, prodMode, shouldScanCassPath, filesystem, gzip, liveReloadServer, injectLiveReloadScript, diskCache);
   }
 
   public Env withFilesystem(boolean shouldScanFilesystem) {
-    return new Env(workingDir, prodMode, classPath, shouldScanFilesystem, gzip, liveReloadServer, injectLiveReloadScript);
+    return new Env(workingDir, prodMode, classPath, shouldScanFilesystem, gzip, liveReloadServer, injectLiveReloadScript, diskCache);
   }
 
   public Env withGzip(boolean shouldGzipResponse) {
-    return new Env(workingDir, prodMode, classPath, filesystem, shouldGzipResponse, liveReloadServer, injectLiveReloadScript);
+    return new Env(workingDir, prodMode, classPath, filesystem, shouldGzipResponse, liveReloadServer, injectLiveReloadScript, diskCache);
   }
 
   public Env withLiveReloadServer(boolean shouldStartLiveReloadServer) {
-    return new Env(workingDir, prodMode, classPath, filesystem, gzip, shouldStartLiveReloadServer, injectLiveReloadScript);
+    return new Env(workingDir, prodMode, classPath, filesystem, gzip, shouldStartLiveReloadServer, injectLiveReloadScript, diskCache);
   }
 
   public Env withInjectLiveReloadScript(boolean shouldInjectLiveReloadScript) {
-    return new Env(workingDir, prodMode, classPath, filesystem, gzip, liveReloadServer, shouldInjectLiveReloadScript);
+    return new Env(workingDir, prodMode, classPath, filesystem, gzip, liveReloadServer, shouldInjectLiveReloadScript, diskCache);
+  }
+
+  public Env withDiskCache(boolean shouldUseDiskCache) {
+    return new Env(workingDir, prodMode, classPath, filesystem, gzip, liveReloadServer, injectLiveReloadScript, shouldUseDiskCache);
   }
 
   //
@@ -149,6 +156,10 @@ public class Env {
 
   public boolean injectLiveReloadScript() {
     return injectLiveReloadScript;
+  }
+
+  public boolean diskCache() {
+    return diskCache;
   }
 
   private static String get(String propertyName) {
