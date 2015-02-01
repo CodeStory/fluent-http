@@ -19,6 +19,7 @@ import static net.codestory.http.io.ClassPaths.classpathFolders;
 import static net.codestory.http.misc.MemoizingSupplier.memoize;
 
 import java.io.File;
+import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.function.Supplier;
 
 import net.codestory.http.reload.MasterFolderWatch;
 
-public class Env {
+public class Env implements Serializable {
   private final File workingDir;
   private final boolean prodMode;
   private final boolean classPath;

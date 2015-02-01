@@ -26,7 +26,7 @@ import java.nio.file.*;
 import net.codestory.http.compilers.*;
 import net.codestory.http.misc.*;
 
-public class Resources {
+public class Resources implements Serializable{
   private static final String[] TEMPLATE_EXTENSIONS = {"", ".html", ".md", ".markdown", ".txt"};
 
   private final Env env;
