@@ -17,6 +17,7 @@ package net.codestory.http.templating;
 
 import static java.nio.file.Files.*;
 import static java.util.Collections.emptyMap;
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static net.codestory.http.io.FileVisitor.*;
@@ -73,7 +74,7 @@ public class Site {
       return pagesPerTag;
     });
 
-    categories = memoize(() -> getPages().stream().collect(Collectors.groupingBy((Map<String, Object> page) -> Site.category(page), TreeMap::new, toList())));
+    categories = memoize(() -> getPages().stream().collect(groupingBy((Map<String, Object> page) -> Site.category(page), TreeMap::new, toList())));
   }
 
   private static Set<String> list(Env env) {
