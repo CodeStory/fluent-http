@@ -37,7 +37,7 @@ public class StaticPageInDevTest extends AbstractDevWebServerTest {
     get("/js/script.coffee.map").should().haveType("text/plain")
       .contain("\"file\": \"/js/script.coffee\"")
       .contain("\"sources\": [\n  \"/js/script.coffee.source\"\n ]")
-      .contain("\"mappings\": \"AAAA,OAAO,CAAC,GAAR,CAAa,OAAb,CAAA,CAAA\"");
+      .contain("\"mappings\": \"AAAA,OAAO,CAAC,GAAR,CAAY,OAAZ,CAAA,CAAA\"");
   }
 
   @Test
@@ -45,7 +45,7 @@ public class StaticPageInDevTest extends AbstractDevWebServerTest {
     get("/js/literate.litcoffee.map").should().haveType("text/plain")
       .contain("\"file\": \"/js/literate.litcoffee\"")
       .contain("\"sources\": [\n  \"/js/literate.litcoffee.source\"\n ]")
-      .contain("\"mappings\": \"AAEI,OAAO,CAAC,GAAR,CAAa,OAAb,CAAA,CAAA\"");
+      .contain("\"mappings\": \"AAEI,OAAO,CAAC,GAAR,CAAY,OAAZ,CAAA,CAAA\"");
   }
 
   @Test

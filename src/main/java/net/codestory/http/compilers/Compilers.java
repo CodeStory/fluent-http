@@ -42,7 +42,7 @@ public class Compilers {
     this.env = env;
 
     boolean prodMode = env.prodMode();
-    diskCache = memoize(() -> new DiskCache("V7", prodMode));
+    diskCache = memoize(() -> new DiskCache("V8", prodMode));
     register(() -> new LessCompiler(resources, prodMode), ".css", ".less");
     register(() -> new CoffeeCompiler(prodMode), ".js", ".coffee");
     register(() -> new CoffeeCompiler(prodMode), ".js", ".litcoffee");
