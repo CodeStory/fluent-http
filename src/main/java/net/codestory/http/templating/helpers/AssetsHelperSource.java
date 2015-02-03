@@ -80,7 +80,7 @@ public class AssetsHelperSource {
   private CharSequence singleScript(Object context) {
     String uri = addExtensionIfMissing(context.toString(), ".js");
 
-    return "<script src=\"" + uriWithSha1(uri) + "\"></script>";
+    return "<script src=\"" + urlSupplier.apply(uri) + "\"></script>";
   }
 
   private CharSequence singleCss(Object context) {
