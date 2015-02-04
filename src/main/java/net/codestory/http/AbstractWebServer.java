@@ -180,7 +180,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
       WebSocketListener listener = routes.createWebSocketListener(session, context);
       session.register(listener);
     } catch (Exception e) {
-      throw new RuntimeException("WebSocket error", e); // TODO
+      throw new RuntimeException("WebSocket error", e);
     }
   }
 
