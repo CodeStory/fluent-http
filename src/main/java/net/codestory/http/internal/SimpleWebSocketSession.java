@@ -23,9 +23,7 @@ import net.codestory.http.websockets.WebSocketSession;
 
 import org.simpleframework.http.socket.CloseCode;
 import org.simpleframework.http.socket.DataFrame;
-import org.simpleframework.http.socket.Frame;
 import org.simpleframework.http.socket.FrameChannel;
-import org.simpleframework.http.socket.FrameListener;
 import org.simpleframework.http.socket.FrameType;
 import org.simpleframework.http.socket.Reason;
 import org.simpleframework.http.socket.Session;
@@ -58,37 +56,7 @@ class SimpleWebSocketSession implements WebSocketSession, Unwrappable {
 
   @Override
   public void register(WebSocketListener listener) throws IOException {
-    channel().register(new FrameListener() {
-      @Override
-      public void onFrame(Session session, Frame frame) {
-        FrameType type = frame.getType();
-        if (!type.isPing() && !type.isPong()) {
-          try {
-            listener.onFrame(new SimpleFrame(frame));
-          } catch (IOException e) {
-            throw new IllegalStateException("Unable to handle frame", e);
-          }
-        }
-      }
-
-      @Override
-      public void onError(Session session, Exception cause) {
-        try {
-          listener.onError(cause);
-        } catch (IOException e) {
-          throw new IllegalStateException("Unable to handle error", e);
-        }
-      }
-
-      @Override
-      public void onClose(Session session, Reason reason) {
-        try {
-          listener.onClose(reason.getCode().code, reason.getText());
-        } catch (IOException e) {
-          throw new IllegalStateException("Unable to handle close", e);
-        }
-      }
-    });
+    channel().register(new SimpleWebSocketListener(listener));
   }
 
   @Override
