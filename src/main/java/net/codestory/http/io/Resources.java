@@ -41,7 +41,7 @@ public class Resources implements Serializable{
 
   public boolean isPublic(Path path) {
     for (Path part : path) {
-      if (part.toString().equals("..") || part.toString().startsWith("_")) {
+      if ("..".equals(part.toString()) || part.toString().startsWith("_")) {
         return false;
       }
     }

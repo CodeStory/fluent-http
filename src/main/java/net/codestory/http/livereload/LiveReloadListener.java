@@ -52,7 +52,7 @@ public class LiveReloadListener implements WebSocketListener {
     if (frame.type().equals(TEXT)) {
       IncomingHelloMessage message = frame.as(IncomingHelloMessage.class);
 
-      if (message.command.equals("hello")) {
+      if ("hello".equals(message.command)) {
         if (message.protocols.contains(VERSION_7)) {
           session.send(TEXT, new OutgoingHelloMessage("Fluent-http", asList(VERSION_7)));
         } else {
