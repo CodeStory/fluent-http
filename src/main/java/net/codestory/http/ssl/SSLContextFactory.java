@@ -44,7 +44,7 @@ public class SSLContextFactory {
     keystore.setCertificateEntry("cert-alias", chain[0]);
     keystore.setKeyEntry("key-alias", key, new char[0], chain);
 
-    KeyStore truststore = null;
+    KeyStore trustStore = null;
     if (pathTrustAnchors != null && !pathTrustAnchors.isEmpty()) {
       X509Certificate[] trustAnchors = pathTrustAnchors.stream().map(path -> {
         try {
@@ -54,15 +54,15 @@ public class SSLContextFactory {
         }
       }).toArray(X509Certificate[]::new);
 
-      truststore = KeyStore.getInstance("JKS");
-      truststore.load(null);
+      trustStore = KeyStore.getInstance("JKS");
+      trustStore.load(null);
       for (X509Certificate certificate : trustAnchors) {
-        truststore.setCertificateEntry(Md5.of(certificate.getEncoded()), certificate);
+        trustStore.setCertificateEntry(Md5.of(certificate.getEncoded()), certificate);
       }
     }
 
     SSLContext context = SSLContext.getInstance("TLS");
-    context.init(getKeyManagers(keystore), getTrustManagers(truststore), null);
+    context.init(getKeyManagers(keystore), getTrustManagers(trustStore), null);
 
     return context;
   }
