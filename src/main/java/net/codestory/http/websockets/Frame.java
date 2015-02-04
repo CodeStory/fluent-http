@@ -15,18 +15,12 @@
  */
 package net.codestory.http.websockets;
 
-import java.io.IOException;
-
 public interface Frame {
   String type();
 
   String text();
 
   default <T> T as(Class<T> type) {
-    try {
-      return WebSocketSession.OBJECT_MAPPER.readValue(text(), type);
-    } catch (IOException e) {
-      throw new IllegalArgumentException("Unable to parse json", e);
-    }
+    return WebSocketJsonParser.INSTANCE.as(text(), type);
   }
 }

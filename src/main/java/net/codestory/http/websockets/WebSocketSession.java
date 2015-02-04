@@ -15,21 +15,12 @@
  */
 package net.codestory.http.websockets;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;
 import java.util.Map;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 public interface WebSocketSession {
-  ObjectMapper OBJECT_MAPPER = new ObjectMapper()
-    .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
-    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
   void register(WebSocketListener listener) throws IOException;
 
   void remove(WebSocketListener listener) throws IOException;
@@ -51,6 +42,6 @@ public interface WebSocketSession {
   }
 
   default void send(String type, Object object) throws IOException {
-    send(type, OBJECT_MAPPER.writer().writeValueAsBytes(object));
+    send(type, WebSocketJsonParser.INSTANCE.toJson(object));
   }
 }
