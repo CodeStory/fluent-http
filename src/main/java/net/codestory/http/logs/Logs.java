@@ -45,7 +45,7 @@ public class Logs {
     LOG.error(e.getMessage());
   }
 
-  public static void unableToServerErrorPage(Exception e) {
+  public static void unableToServeErrorPage(Exception e) {
     LOG.error("Unable to serve an error page", e);
   }
 

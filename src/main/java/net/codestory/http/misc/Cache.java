@@ -21,15 +21,15 @@ import java.util.function.*;
 
 public class Cache<K, V> implements Function<K, V> {
   private final Function<K, V> delegate;
-  private final Map<K, V> cache;
+  private final Map<K, V> keyValues;
 
   public Cache(Function<K, V> delegate) {
     this.delegate = delegate;
-    this.cache = new ConcurrentHashMap<>();
+    this.keyValues = new ConcurrentHashMap<>();
   }
 
   @Override
   public V apply(K key) {
-    return cache.computeIfAbsent(key, delegate);
+    return keyValues.computeIfAbsent(key, delegate);
   }
 }

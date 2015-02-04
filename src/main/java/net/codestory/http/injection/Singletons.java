@@ -19,10 +19,10 @@ import java.lang.reflect.*;
 import java.util.*;
 
 public class Singletons implements IocAdapter {
-  private final Map<Class<?>, Object> singletons;
+  private final Map<Class<?>, Object> beansPerType;
 
   public Singletons(Object... beansToRegister) {
-    this.singletons = new HashMap<>();
+    this.beansPerType = new HashMap<>();
 
     register(Singletons.class, this);
     for (Object beanToRegister : beansToRegister) {
@@ -38,7 +38,7 @@ public class Singletons implements IocAdapter {
   }
 
   public <T> Singletons register(Class<? extends T> type, T singleton) {
-    singletons.put(type, singleton);
+    beansPerType.put(type, singleton);
     return this;
   }
 
@@ -46,7 +46,7 @@ public class Singletons implements IocAdapter {
   @Override
   public synchronized <T> T get(Class<T> type) {
     // Fast path
-    Object singleton = singletons.get(type);
+    Object singleton = beansPerType.get(type);
     if (singleton != null) {
       return (T) singleton;
     }
@@ -57,7 +57,7 @@ public class Singletons implements IocAdapter {
 
   @SuppressWarnings("unchecked")
   private <T> T doGget(Class<T> type, int depth) {
-    Object singleton = singletons.get(type);
+    Object singleton = beansPerType.get(type);
     if (singleton != null) {
       return (T) singleton;
     }
@@ -68,7 +68,7 @@ public class Singletons implements IocAdapter {
 
     try {
       T instance = create(type, depth);
-      singletons.put(type, instance);
+      beansPerType.put(type, instance);
       return instance;
     } catch (InvocationTargetException e) {
       throw new IllegalStateException("Unable to create instance of " + type + ". The constructor raised an exception", e.getCause());

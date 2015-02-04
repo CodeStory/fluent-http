@@ -195,7 +195,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
       Payload errorPage = errorPage(e).withHeader("reason", e.getMessage());
       payloadWriter.writeAndClose(errorPage);
     } catch (IOException error) {
-      Logs.unableToServerErrorPage(error);
+      Logs.unableToServeErrorPage(error);
     }
   }
 

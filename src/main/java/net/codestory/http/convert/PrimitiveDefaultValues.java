@@ -20,7 +20,7 @@ import java.util.*;
 public enum PrimitiveDefaultValues {
   INSTANCE;
 
-  private final Map<Class<?>, Object> DEFAULTS;
+  private final Map<Class<?>, Object> defaults;
 
   PrimitiveDefaultValues() {
     Map<Class<?>, Object> map = new HashMap<>();
@@ -32,7 +32,7 @@ public enum PrimitiveDefaultValues {
     put(map, long.class, 0L);
     put(map, float.class, 0f);
     put(map, double.class, 0d);
-    DEFAULTS = Collections.unmodifiableMap(map);
+    defaults = Collections.unmodifiableMap(map);
   }
 
   private <T> void put(Map<Class<?>, Object> map, Class<T> type, T value) {
@@ -40,6 +40,6 @@ public enum PrimitiveDefaultValues {
   }
 
   public <T> T get(Class<T> type) {
-    return (T) DEFAULTS.get(type);
+    return (T) defaults.get(type);
   }
 }
