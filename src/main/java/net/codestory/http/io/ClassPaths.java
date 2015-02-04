@@ -67,7 +67,7 @@ public class ClassPaths {
       try {
         File file = getFile(url);
         return name.contains(".jar") ? forJarFile(new JarFile(file)) : forSystemDir(file);
-      } catch (Throwable e) {
+      } catch (Exception e) {
         // Ignore
       }
     }
@@ -78,7 +78,7 @@ public class ClassPaths {
         if (relativePaths != null) {
           return relativePaths;
         }
-      } catch (Throwable e) {
+      } catch (Exception e) {
         // Ignore
       }
     }
@@ -139,7 +139,7 @@ public class ClassPaths {
       if (urlConnection instanceof JarURLConnection) {
         return forJarFile(((JarURLConnection) urlConnection).getJarFile());
       }
-    } catch (Throwable e) {
+    } catch (Exception e) {
       // Ignore
     }
 
