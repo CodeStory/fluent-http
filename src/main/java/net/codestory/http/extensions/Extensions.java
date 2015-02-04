@@ -15,7 +15,8 @@
  */
 package net.codestory.http.extensions;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.Serializable;
+
 import net.codestory.http.Context;
 import net.codestory.http.Request;
 import net.codestory.http.Response;
@@ -27,12 +28,9 @@ import net.codestory.http.misc.Env;
 import net.codestory.http.payload.PayloadWriter;
 import net.codestory.http.templating.Site;
 
-import java.io.Serializable;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public interface Extensions extends Serializable {
-  Extensions DEFAULT = new Extensions() {
-  };
-
   /**
    * Called each time routes are loaded.
    */

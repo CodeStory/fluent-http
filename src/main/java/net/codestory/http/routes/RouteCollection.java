@@ -66,8 +66,12 @@ public class RouteCollection implements Routes {
     this.routes = new RouteSorter();
     this.filters = new LinkedList<>();
     this.iocAdapter = new Singletons();
-    this.extensions = Extensions.DEFAULT;
-    this.webSocketListenerFactory = WebSocketListenerFactory.NOT_SUPPORTED;
+    this.extensions = new Extensions() {
+      // No extension
+    };
+    this.webSocketListenerFactory = (session, context) -> {
+      throw new UnsupportedOperationException();
+    };
   }
 
   public void configure(Configuration configuration) {

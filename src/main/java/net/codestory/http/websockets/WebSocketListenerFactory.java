@@ -19,9 +19,5 @@ import net.codestory.http.Context;
 
 @FunctionalInterface
 public interface WebSocketListenerFactory {
-  WebSocketListenerFactory NOT_SUPPORTED = (session, context) -> {
-    throw new UnsupportedOperationException();
-  };
-
   WebSocketListener create(WebSocketSession session, Context context);
 }
