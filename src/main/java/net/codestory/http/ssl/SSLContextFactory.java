@@ -50,7 +50,7 @@ public class SSLContextFactory {
         try {
           return generateCertificateFromDER(Files.readAllBytes(path));
         } catch (Exception e) {
-          throw new RuntimeException(e);
+          throw new IllegalStateException("Unable to generate certificate" , e);
         }
       }).toArray(X509Certificate[]::new);
 

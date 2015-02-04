@@ -66,7 +66,7 @@ class SimpleWebSocketSession implements WebSocketSession, Unwrappable {
           try {
             listener.onFrame(new SimpleFrame(frame));
           } catch (IOException e) {
-            throw new RuntimeException("Unable to handle frame", e);
+            throw new IllegalStateException("Unable to handle frame", e);
           }
         }
       }
@@ -76,7 +76,7 @@ class SimpleWebSocketSession implements WebSocketSession, Unwrappable {
         try {
           listener.onError(cause);
         } catch (IOException e) {
-          throw new RuntimeException("Unable to handle error", e);
+          throw new IllegalStateException("Unable to handle error", e);
         }
       }
 
@@ -85,7 +85,7 @@ class SimpleWebSocketSession implements WebSocketSession, Unwrappable {
         try {
           listener.onClose(reason.getCode().code, reason.getText());
         } catch (IOException e) {
-          throw new RuntimeException("Unable to handle close", e);
+          throw new IllegalStateException("Unable to handle close", e);
         }
       }
     });
