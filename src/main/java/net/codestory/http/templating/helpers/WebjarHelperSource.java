@@ -15,18 +15,11 @@
  */
 package net.codestory.http.templating.helpers;
 
-import static java.util.stream.Collectors.joining;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.function.Function;
 
 import net.codestory.http.misc.Cache;
 
 import org.webjars.WebJarAssetLocator;
-
-import com.github.jknack.handlebars.Handlebars.SafeString;
 
 public class WebjarHelperSource {
   private final WebJarAssetLocator webJarAssetLocator;
@@ -40,7 +33,7 @@ public class WebjarHelperSource {
   // Handler entry point
 
   public CharSequence webjar(Object context) {
-    return toString(context, value -> webJarForUri.apply(value.toString()));
+    return HelperTools.toString(context, value -> webJarForUri.apply(value.toString()));
   }
 
   // Internal
@@ -58,19 +51,5 @@ public class WebjarHelperSource {
     } else {
       return "<script src=\"" + fullPath + "\"></script>";
     }
-  }
-
-  private static CharSequence toString(Object context, Function<Object, CharSequence> transform) {
-    return new SafeString(contextAsList(context).stream().map(transform).collect(joining("\n")));
-  }
-
-  private static List<Object> contextAsList(Object context) {
-    if (context instanceof Iterable<?>) {
-      List<Object> list = new ArrayList<>();
-      ((Iterable<?>) context).forEach(value -> list.add(value));
-      return list;
-    }
-
-    return Collections.singletonList(context);
   }
 }

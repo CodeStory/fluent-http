@@ -15,21 +15,14 @@
  */
 package net.codestory.http.templating.helpers;
 
-import static java.util.stream.Collectors.joining;
-
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.function.Function;
 
 import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.io.Resources;
 import net.codestory.http.misc.Cache;
 import net.codestory.http.misc.Sha1;
-
-import com.github.jknack.handlebars.Handlebars.SafeString;
 
 public class AssetsHelperSource {
   private final Resources resources;
@@ -45,11 +38,11 @@ public class AssetsHelperSource {
   // Handler entry points
 
   public CharSequence script(Object context) {
-    return toString(context, value -> singleScript(value.toString()));
+    return HelperTools.toString(context, value -> singleScript(value.toString()));
   }
 
   public CharSequence css(Object context) {
-    return toString(context, value -> singleCss(value.toString()));
+    return HelperTools.toString(context, value -> singleCss(value.toString()));
   }
 
   // Internal
@@ -70,20 +63,6 @@ public class AssetsHelperSource {
     }
 
     return uri;
-  }
-
-  private static CharSequence toString(Object context, Function<Object, CharSequence> transform) {
-    return new SafeString(contextAsList(context).stream().map(transform).collect(joining("\n")));
-  }
-
-  private static List<Object> contextAsList(Object context) {
-    if (context instanceof Iterable<?>) {
-      List<Object> list = new ArrayList<>();
-      ((Iterable<?>) context).forEach(value -> list.add(value));
-      return list;
-    }
-
-    return Collections.singletonList(context);
   }
 
   private CharSequence singleScript(String path) {
