@@ -39,10 +39,10 @@ public class SSLContextFactory {
 
     RSAPrivateKey key = generatePrivateKeyFromDER(pathPrivateKey);
 
-    KeyStore keystore = KeyStore.getInstance("JKS");
-    keystore.load(null);
-    keystore.setCertificateEntry("cert-alias", chain[0]);
-    keystore.setKeyEntry("key-alias", key, new char[0], chain);
+    KeyStore keyStore = KeyStore.getInstance("JKS");
+    keyStore.load(null);
+    keyStore.setCertificateEntry("cert-alias", chain[0]);
+    keyStore.setKeyEntry("key-alias", key, new char[0], chain);
 
     KeyStore trustStore = null;
     if (pathTrustAnchors != null && !pathTrustAnchors.isEmpty()) {
@@ -62,7 +62,7 @@ public class SSLContextFactory {
     }
 
     SSLContext context = SSLContext.getInstance("TLS");
-    context.init(getKeyManagers(keystore), getTrustManagers(trustStore), null);
+    context.init(getKeyManagers(keyStore), getTrustManagers(trustStore), null);
 
     return context;
   }
