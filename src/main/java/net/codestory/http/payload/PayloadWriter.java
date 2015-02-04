@@ -99,7 +99,7 @@ public class PayloadWriter {
     response.setHeader(CONTENT_TYPE, contentTypeHeader);
     response.setStatus(code);
 
-    if (HEAD.equals(request.method()) || (code == NO_CONTENT) || (code == NOT_MODIFIED) || ((code >= 100) && (code < OK))) {
+    if (HEAD.equals(request.method()) || (code == NO_CONTENT) || (code == NOT_MODIFIED) || ((code >= CONTINUE) && (code < OK))) {
       return;
     }
 

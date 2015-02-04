@@ -16,6 +16,10 @@
 package net.codestory.http.constants;
 
 public abstract class HttpStatus {
+  public static final int SUCCESS_UPPER_CODE = 299;
+  public static final int ERROR_UPPER_CODE = 599;
+
+  public static final int CONTINUE = 100;
   public static final int OK = 200;
   public static final int CREATED = 201;
   public static final int ACCEPTED = 202;

@@ -25,6 +25,9 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 
 public class Watcher {
+  private static final double LATENCY_S = 0.5;
+  private static final int FLAGS = 0x00000002;
+
   private final WatcherLoop loop;
 
   public Watcher(File folder, FileChangeListener listener) {
@@ -66,7 +69,7 @@ public class Watcher {
       CarbonAPI api = CarbonAPI.INSTANCE;
 
       PointerByReference path = api.CFArrayCreate(null, new Pointer[]{CarbonAPI.toCFString(folder.getAbsolutePath()).getPointer()}, new NativeLong(1L), null);
-      stream = api.FSEventStreamCreate(NULL, this, NULL, path, -1, 0.5, 0x00000002);
+      stream = api.FSEventStreamCreate(NULL, this, NULL, path, -1, LATENCY_S, FLAGS);
       runLoop = api.CFRunLoopGetCurrent();
       api.FSEventStreamScheduleWithRunLoop(stream, runLoop, CarbonAPI.toCFString("kCFRunLoopDefaultMode"));
       api.FSEventStreamStart(stream);

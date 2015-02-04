@@ -38,6 +38,11 @@ import net.codestory.http.websockets.*;
 import javax.net.ssl.*;
 
 public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
+  private static final int PORT_8080 = 8080;
+  private static final int RANDOM_PORT_START_RETRY = 30;
+  private static final int RANDOM_PORTS_LOWER_BOUND = 8183;
+  private static final int RANDOM_PORTS_COUNT = 50000;
+
   protected final Env env;
 
   protected HttpServerWrapper server;
@@ -59,9 +64,9 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
 
   public T startOnRandomPort() {
     Random random = new Random();
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < RANDOM_PORT_START_RETRY; i++) {
       try {
-        int randomPort = 8183 + random.nextInt(50000);
+        int randomPort = RANDOM_PORTS_LOWER_BOUND + random.nextInt(RANDOM_PORTS_COUNT);
         return start(randomPort);
       } catch (IllegalStateException e) {
         if (!e.getMessage().contains("Port already in use")) {
@@ -76,7 +81,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
   }
 
   public T start() {
-    return start(8080);
+    return start(PORT_8080);
   }
 
   public T start(int port) {

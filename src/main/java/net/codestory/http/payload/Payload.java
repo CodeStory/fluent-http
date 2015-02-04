@@ -165,11 +165,11 @@ public class Payload {
   }
 
   public boolean isSuccess() {
-    return (code >= 200) && (code <= 299);
+    return (code >= OK) && (code <= SUCCESS_UPPER_CODE);
   }
 
   public boolean isError() {
-    return (code >= 400) && (code <= 599);
+    return (code >= BAD_REQUEST) && (code <= ERROR_UPPER_CODE);
   }
 
   public static Payload ok() {

@@ -35,28 +35,34 @@ import org.simpleframework.transport.connect.SocketConnection;
 import javax.net.ssl.SSLContext;
 
 public class SimpleServerWrapper implements HttpServerWrapper, Container, Service {
+  private static final int DEFAULT_SELECT_THREADS = 1;
+  private static final int DEFAULT_COUNT_THREADS = 8;
+  private static final int DEFAULT_WEBSOCKET_THREADS = 10;
+
   private final Handler httpHandler;
   private final WebSocketHandler webSocketHandler;
   private final int count;
   private final int select;
+  private final int webSocketThreads;
 
   private SocketConnection socketConnection;
 
   public SimpleServerWrapper(Handler httpHandler, WebSocketHandler webSocketHandler) {
-    this(httpHandler, webSocketHandler, 8, 1);
+    this(httpHandler, webSocketHandler, DEFAULT_COUNT_THREADS, DEFAULT_SELECT_THREADS, DEFAULT_WEBSOCKET_THREADS);
   }
 
-  public SimpleServerWrapper(Handler httpHandler, WebSocketHandler webSocketHandler, int count, int select) {
+  public SimpleServerWrapper(Handler httpHandler, WebSocketHandler webSocketHandler, int count, int select, int webSocketThreads) {
     this.httpHandler = httpHandler;
     this.webSocketHandler = webSocketHandler;
     this.count = count;
     this.select = select;
+    this.webSocketThreads = webSocketThreads;
   }
 
   @Override
   public void start(int port, SSLContext context, boolean authReq) throws IOException {
     DirectRouter router = new DirectRouter(this);
-    RouterContainer routerContainer = new RouterContainer(this, router, 10);
+    RouterContainer routerContainer = new RouterContainer(this, router, webSocketThreads);
     ContainerSocketProcessor server = new ContainerSocketProcessor(routerContainer, count, select);
     socketConnection = new SocketConnection(authReq ? new AuthRequiredServer(server) : server);
     socketConnection.connect(new InetSocketAddress(port), context);

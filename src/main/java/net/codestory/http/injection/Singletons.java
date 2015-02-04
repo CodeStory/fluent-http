@@ -15,10 +15,14 @@
  */
 package net.codestory.http.injection;
 
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Singletons implements IocAdapter {
+  private static final int MAX_DEPTH = 100;
+
   private final Map<Class<?>, Object> beansPerType;
 
   public Singletons(Object... beansToRegister) {
@@ -62,7 +66,7 @@ public class Singletons implements IocAdapter {
       return (T) singleton;
     }
 
-    if (depth > 100) {
+    if (depth > MAX_DEPTH) {
       throw new IllegalStateException("Cycle in dependencies for " + type);
     }
 
