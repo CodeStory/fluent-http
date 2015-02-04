@@ -98,14 +98,12 @@ public class Singletons implements IocAdapter {
     try {
       return type.getDeclaredConstructor();
     } catch (NoSuchMethodException e) {
-      // Ignore
-    }
+      Constructor[] constructors = type.getConstructors();
+      if (constructors.length != 1) {
+        throw new IllegalStateException("Class " + type + " should have a single public constructor");
+      }
 
-    Constructor[] constructors = type.getConstructors();
-    if (constructors.length != 1) {
-      throw new IllegalStateException("Class " + type + " should have a single public constructor");
+      return constructors[0];
     }
-
-    return constructors[0];
   }
 }
