@@ -89,23 +89,11 @@ public class Payload {
     return withHeader(ACCESS_CONTROL_ALLOW_METHODS, String.join(", ", allowedMethods));
   }
 
-  public Payload withAllowMethods(List<String> allowedMethods) {
-    return withHeader(ACCESS_CONTROL_ALLOW_METHODS, String.join(", ", allowedMethods));
-  }
-
   public Payload withAllowHeaders(String... allowedHeaders) {
     return withHeader(ACCESS_CONTROL_ALLOW_HEADERS, String.join(", ", allowedHeaders));
   }
 
   public Payload withExposeHeaders(String... allowedHeaders) {
-    return withHeader(ACCESS_CONTROL_EXPOSE_HEADERS, String.join(", ", allowedHeaders));
-  }
-
-  public Payload withAllowHeaders(List<String> allowedHeaders) {
-    return withHeader(ACCESS_CONTROL_ALLOW_HEADERS, String.join(", ", allowedHeaders));
-  }
-
-  public Payload withExposeHeaders(List<String> allowedHeaders) {
     return withHeader(ACCESS_CONTROL_EXPOSE_HEADERS, String.join(", ", allowedHeaders));
   }
 
