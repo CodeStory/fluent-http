@@ -75,29 +75,31 @@ public class Compilers {
   public CacheEntry compile(SourceFile sourceFile) {
     String key = sourceFile.getFileName() + ';' + sourceFile.getSource();
 
-    return cache.computeIfAbsent(key, ignore -> {
-      for (Entry<String, Supplier<Compiler>> entry : compilerByExtension.entrySet()) {
-        String extension = entry.getKey();
-        if (!sourceFile.hasExtension(extension)) {
-          continue;
-        }
+    return cache.computeIfAbsent(key, ignore -> doCompile(sourceFile, key));
+  }
 
-        Supplier<Compiler> compiler = entry.getValue();
-
-        // Hack until I find something better
-        if (".less".equals(extension) && sourceFile.getSource().contains("@import")) {
-          return CacheEntry.noCache(compiler.get().compile(sourceFile));
-        }
-
-        if (env.diskCache()) {
-          String sha1 = Sha1.of(key);
-          return diskCache.get().computeIfAbsent(sha1, extension, () -> compiler.get().compile(sourceFile));
-        } else {
-          return CacheEntry.fromString(compiler.get().compile(sourceFile));
-        }
+  private CacheEntry doCompile(SourceFile sourceFile, String key) {
+    for (Entry<String, Supplier<Compiler>> entry : compilerByExtension.entrySet()) {
+      String extension = entry.getKey();
+      if (!sourceFile.hasExtension(extension)) {
+        continue;
       }
 
-      throw new IllegalArgumentException("Unable to compile " + sourceFile.getFileName() + ". Unknown extension");
-    });
+      Supplier<Compiler> compiler = entry.getValue();
+
+      // Hack until I find something better
+      if (".less".equals(extension) && sourceFile.getSource().contains("@import")) {
+        return CacheEntry.noCache(compiler.get().compile(sourceFile));
+      }
+
+      if (env.diskCache()) {
+        String sha1 = Sha1.of(key);
+        return diskCache.get().computeIfAbsent(sha1, extension, () -> compiler.get().compile(sourceFile));
+      } else {
+        return CacheEntry.fromString(compiler.get().compile(sourceFile));
+      }
+    }
+
+    throw new IllegalArgumentException("Unable to compile " + sourceFile.getFileName() + ". Unknown extension");
   }
 }
