@@ -52,29 +52,33 @@ public class JdkWatchService implements WatchServiceFacade {
       run.set(true);
 
       while (run.get()) {
-        try {
-          WatchKey take = watcher.take();
-
-          boolean changed = false;
-          for (WatchEvent<?> event : take.pollEvents()) {
-            if (event.kind() == OVERFLOW) {
-              continue;
-            }
-
-            // consume all events of this shitty API
-            changed = true;
-          }
-
-          if (changed) {
-            listener.onChange();
-          }
-
-          take.reset();
-        } catch (InterruptedException e) {
-          // Ignore
-        }
+        notifyOnFileChange(listener);
       }
     }).start();
+  }
+
+  private void notifyOnFileChange(FolderChangeListener listener) {
+    try {
+      WatchKey take = watcher.take();
+
+      boolean changed = false;
+      for (WatchEvent<?> event : take.pollEvents()) {
+        if (event.kind() == OVERFLOW) {
+          continue;
+        }
+
+        // consume all events of this shitty API
+        changed = true;
+      }
+
+      if (changed) {
+        listener.onChange();
+      }
+
+      take.reset();
+    } catch (InterruptedException e) {
+      // Ignore
+    }
   }
 
   @Override
