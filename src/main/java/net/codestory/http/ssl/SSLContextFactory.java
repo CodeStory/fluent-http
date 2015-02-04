@@ -15,27 +15,33 @@
  */
 package net.codestory.http.ssl;
 
-import java.io.*;
-import java.nio.file.*;
-import java.security.*;
-import java.security.cert.*;
-import java.security.interfaces.*;
-import java.security.spec.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
+import java.security.KeyStore;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.List;
 
-import net.codestory.http.misc.*;
+import net.codestory.http.misc.Md5;
 
-import javax.net.ssl.*;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 
 public class SSLContextFactory {
   public SSLContext create(List<Path> pathCertificates, Path pathPrivateKey, List<Path> pathTrustAnchors) throws GeneralSecurityException, IOException {
-    X509Certificate[] chain = pathCertificates.stream().map(path -> {
-      try {
-        return generateCertificateFromDER(path);
-      } catch (Exception e) {
-        throw new RuntimeException(e);
-      }
-    }).toArray(X509Certificate[]::new);
+    X509Certificate[] chain = pathCertificates
+      .stream()
+      .map(path -> generateCertificateFromDER(path))
+      .toArray(X509Certificate[]::new);
 
     RSAPrivateKey key = generatePrivateKeyFromDER(pathPrivateKey);
 
@@ -44,19 +50,15 @@ public class SSLContextFactory {
     keyStore.setCertificateEntry("cert-alias", chain[0]);
     keyStore.setKeyEntry("key-alias", key, new char[0], chain);
 
-    KeyStore trustStore = null;
-    if (pathTrustAnchors != null && !pathTrustAnchors.isEmpty()) {
-      X509Certificate[] trustAnchors = pathTrustAnchors.stream().map(path -> {
-        try {
-          return generateCertificateFromDER(Files.readAllBytes(path));
-        } catch (Exception e) {
-          throw new IllegalStateException("Unable to generate certificate" , e);
-        }
-      }).toArray(X509Certificate[]::new);
-
+    KeyStore trustStore;
+    if (pathTrustAnchors == null || pathTrustAnchors.isEmpty()) {
+      trustStore = null;
+    } else {
       trustStore = KeyStore.getInstance("JKS");
       trustStore.load(null);
-      for (X509Certificate certificate : trustAnchors) {
+
+      for (Path path : pathTrustAnchors) {
+        X509Certificate certificate = generateCertificateFromDER(path);
         trustStore.setCertificateEntry(Md5.of(certificate.getEncoded()), certificate);
       }
     }
@@ -73,10 +75,6 @@ public class SSLContextFactory {
     return kmf.getKeyManagers();
   }
 
-  private static X509Certificate generateCertificateFromDER(Path path) throws GeneralSecurityException, IOException {
-    return generateCertificateFromDER(Files.readAllBytes(path));
-  }
-
   private static TrustManager[] getTrustManagers(KeyStore trustStore) throws GeneralSecurityException {
     if (trustStore == null) {
       return null;
@@ -86,15 +84,19 @@ public class SSLContextFactory {
     return tmf.getTrustManagers();
   }
 
-  private static X509Certificate generateCertificateFromDER(byte[] data) throws GeneralSecurityException {
-    return (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate(new ByteArrayInputStream(data));
+  private static X509Certificate generateCertificateFromDER(Path path) {
+    try {
+      return (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate(new ByteArrayInputStream(Files.readAllBytes(path)));
+    } catch (GeneralSecurityException | IOException e) {
+      throw new IllegalStateException("Unable to generate certificate", e);
+    }
   }
 
-  private static RSAPrivateKey generatePrivateKeyFromDER(Path path) throws GeneralSecurityException, IOException {
-    return generatePrivateKeyFromDER(Files.readAllBytes(path));
-  }
-
-  private static RSAPrivateKey generatePrivateKeyFromDER(byte[] data) throws GeneralSecurityException {
-    return (RSAPrivateKey) KeyFactory.getInstance("RSA").generatePrivate(new PKCS8EncodedKeySpec(data));
+  private static RSAPrivateKey generatePrivateKeyFromDER(Path path) {
+    try {
+      return (RSAPrivateKey) KeyFactory.getInstance("RSA").generatePrivate(new PKCS8EncodedKeySpec(Files.readAllBytes(path)));
+    } catch (GeneralSecurityException | IOException e) {
+      throw new IllegalStateException("Unable to generate private key", e);
+    }
   }
 }
