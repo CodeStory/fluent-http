@@ -45,6 +45,10 @@ public class Logs {
     LOG.error(e.getMessage());
   }
 
+  public static void unexpectedError(Exception e) {
+    LOG.error(e.getMessage());
+  }
+
   public static void unableToServeErrorPage(Exception e) {
     LOG.error("Unable to serve an error page", e);
   }

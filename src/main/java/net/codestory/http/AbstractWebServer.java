@@ -189,7 +189,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
       if (e instanceof CompilerException) {
         Logs.compilerError(e);
       } else if (!(e instanceof HttpException) && !(e instanceof NoSuchElementException)) {
-        e.printStackTrace();
+        Logs.unexpectedError(e);
       }
 
       Payload errorPage = errorPage(e).withHeader("reason", e.getMessage());
