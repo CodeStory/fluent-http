@@ -64,7 +64,7 @@ public class Strings {
     if (text == null) {
       return null;
     }
-    if (text.length() < 2) {
+    if (text.length() <= 1) {
       return text;
     }
     if ((text.charAt(0) == '"') && (text.charAt(text.length() - 1) == '"')) {
