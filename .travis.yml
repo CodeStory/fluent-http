@@ -1,3 +1,10 @@
 language: java
 jdk:
   - oraclejdk8
+
+# Download phantomJS (used for tests) manually because it
+# seems to fail randomly on travis.ci
+#
+before_install:
+  - mkdir ${HOME}/.phantomjstest
+  - wget "https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2" -O ${HOME}/.phantomjstest/phantomjs-1.9.8-linux-x86_64.tar.bz2
