@@ -28,7 +28,6 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.Collectors;
 
 import net.codestory.http.convert.*;
 import net.codestory.http.io.*;
