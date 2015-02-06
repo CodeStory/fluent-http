@@ -16,38 +16,40 @@
 package net.codestory.http.routes;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class RouteSorter {
-  private final List<RouteWithPattern> userRoutes;
+  private final Map<RouteWithPattern, RouteWithPattern> userRoutes;
+  private final Map<CatchAllRoute, CatchAllRoute> catchAllRoutes;
   private final List<Route> staticRoutes;
-  private final List<CatchAllRoute> catchAllRoutes;
 
   public RouteSorter() {
-    this.userRoutes = new LinkedList<>();
+    this.userRoutes = new HashMap<>();
+    this.catchAllRoutes = new HashMap<>();
     this.staticRoutes = new LinkedList<>();
-    this.catchAllRoutes = new LinkedList<>();
   }
 
   public void addUserRoute(RouteWithPattern route) {
-    userRoutes.add(route);
+    userRoutes.put(route, route);
+  }
+
+  public void addCatchAllRoute(CatchAllRoute route) {
+    catchAllRoutes.put(route, route);
   }
 
   public void addStaticRoute(Route route) {
     staticRoutes.add(route);
   }
 
-  public void addCatchAllRoute(CatchAllRoute route) {
-    catchAllRoutes.add(route);
-  }
-
   public Route[] getSortedRoutes() {
     List<Route> sorted = new ArrayList<>();
 
-    userRoutes.stream().sorted((left, right) -> left.uriParser().compareTo(right.uriParser())).forEach(route -> sorted.add(route));
+    userRoutes.values().stream().sorted((left, right) -> left.uriParser().compareTo(right.uriParser())).forEach(route -> sorted.add(route));
     staticRoutes.forEach(route -> sorted.add(route));
-    catchAllRoutes.stream().sorted((left, right) -> right.getMethod().compareTo(left.getMethod())).forEach(route -> sorted.add(route));
+    catchAllRoutes.values().stream().sorted((left, right) -> right.getMethod().compareTo(left.getMethod())).forEach(route -> sorted.add(route));
 
     return sorted.toArray(new Route[sorted.size()]);
   }

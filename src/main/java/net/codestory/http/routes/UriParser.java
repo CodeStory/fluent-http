@@ -21,14 +21,20 @@ import net.codestory.http.*;
 import net.codestory.http.io.*;
 
 public class UriParser implements Comparable<UriParser> {
+  private final String uriPattern;
   private final String[] patternParts;
   private final String[] queryParamsParts;
   private final int paramsCount;
 
   public UriParser(String uriPattern) {
+    this.uriPattern = uriPattern;
     this.patternParts = parts(stripQueryParams(uriPattern));
     this.queryParamsParts = queryParamsParts(extractQueryParams(uriPattern));
     this.paramsCount = paramsCount(uriPattern);
+  }
+
+  public String uriPattern() {
+    return uriPattern;
   }
 
   public String[] params(String uri, Query query) {
@@ -94,16 +100,14 @@ public class UriParser implements Comparable<UriParser> {
     if (obj instanceof UriParser) {
       UriParser other = (UriParser) obj;
 
-      return Arrays.equals(patternParts, other.patternParts) &&
-        Arrays.equals(queryParamsParts, other.queryParamsParts) &&
-        (paramsCount == other.paramsCount);
+      return Objects.equals(uriPattern, other.uriPattern);
     }
     return false;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(patternParts, queryParamsParts, paramsCount);
+    return uriPattern.hashCode();
   }
 
   @Override

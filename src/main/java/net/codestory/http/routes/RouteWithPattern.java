@@ -15,9 +15,13 @@
  */
 package net.codestory.http.routes;
 
-import static net.codestory.http.constants.Methods.*;
+import static net.codestory.http.constants.Methods.GET;
+import static net.codestory.http.constants.Methods.HEAD;
 
-import net.codestory.http.*;
+import java.util.Arrays;
+import java.util.Objects;
+
+import net.codestory.http.Context;
 
 class RouteWithPattern implements Route {
   private final String method;
@@ -28,6 +32,10 @@ class RouteWithPattern implements Route {
     this.method = method;
     this.uriParser = new UriParser(uriPattern);
     this.route = route;
+  }
+
+  public UriParser uriParser() {
+    return uriParser;
   }
 
   @Override
@@ -46,7 +54,24 @@ class RouteWithPattern implements Route {
     return route.body(context, parameters);
   }
 
-  UriParser uriParser() {
-    return uriParser;
+  @Override
+  public String toString() {
+    return "RouteWithPattern: (" + method + ") " + uriParser.uriPattern();
+  }
+
+  @Override
+  public int hashCode() {
+    return Arrays.hashCode(new Object[]{method, uriParser});
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof RouteWithPattern) {
+      RouteWithPattern other = (RouteWithPattern) obj;
+
+      return Objects.equals(method, other.method) && uriParser.equals(other.uriParser);
+    }
+
+    return false;
   }
 }

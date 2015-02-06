@@ -29,13 +29,13 @@ public class RoutePrecedenceTest extends AbstractProdWebServerTest {
   }
 
   @Test
-  public void first_route_is_served_first() {
+  public void routes_can_be_overriden() {
     configure(routes -> routes
         .get("/", "FIRST")
         .get("/", "SECOND")
     );
 
-    get("/").should().contain("FIRST");
+    get("/").should().contain("SECOND");
   }
 
   @Test

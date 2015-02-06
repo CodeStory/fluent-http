@@ -17,12 +17,10 @@ package net.codestory.http;
 
 import net.codestory.http.testhelpers.AbstractProdWebServerTest;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
-public class AdvancedConfigurationTest extends AbstractProdWebServerTest {
+public class ConfigurationOverrideTest extends AbstractProdWebServerTest {
   @Test
-  @Ignore("Bug")
   public void override_configuration() {
     Configuration configuration = routes -> routes.get("/", "configuration");
     Configuration overriden = routes -> routes.get("/", "overriden");
