@@ -16,7 +16,6 @@
 package net.codestory.http.routes;
 
 import net.codestory.http.Configuration;
-import net.codestory.http.injection.Singletons;
 
 public class ConfigurationOverride {
   private final Configuration configuration;
@@ -29,13 +28,6 @@ public class ConfigurationOverride {
     return routes -> {
       configuration.configure(routes);
       override.configure(routes);
-    };
-  }
-
-  public <T> Configuration withBean(Class<T> type, T bean) {
-    return routes -> {
-      configuration.configure(routes);
-      routes.setIocAdapter(new Singletons().register(type, bean));
     };
   }
 }
