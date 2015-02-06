@@ -21,25 +21,25 @@ import java.util.List;
 
 public class RouteSorter {
   private final List<RouteWithPattern> userRoutes;
-  private final List<CatchAllRoute> catchAllRoutes;
   private final List<Route> staticRoutes;
+  private final List<CatchAllRoute> catchAllRoutes;
 
   public RouteSorter() {
     this.userRoutes = new LinkedList<>();
-    this.catchAllRoutes = new LinkedList<>();
     this.staticRoutes = new LinkedList<>();
+    this.catchAllRoutes = new LinkedList<>();
   }
 
   public void addUserRoute(RouteWithPattern route) {
     userRoutes.add(route);
   }
 
-  public void addCatchAllRoute(CatchAllRoute route) {
-    catchAllRoutes.add(route);
-  }
-
   public void addStaticRoute(Route route) {
     staticRoutes.add(route);
+  }
+
+  public void addCatchAllRoute(CatchAllRoute route) {
+    catchAllRoutes.add(route);
   }
 
   public Route[] getSortedRoutes() {
