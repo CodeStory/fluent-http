@@ -399,7 +399,7 @@ Here's an example with Bootstrap:
 <dependency>
   <groupId>org.webjars</groupId>
   <artifactId>bootstrap</artifactId>
-  <version>3.0.3</version>
+  <version>3.3.2</version>
 </dependency>
 ```
 
@@ -407,7 +407,29 @@ Here's an example with Bootstrap:
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="stylesheet" href="/webjars/bootstrap/3.0.3/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/webjars/bootstrap/3.3.2/css/bootstrap.min.css">
+  <script src="/webjars/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+  <p>Hello World</p>
+</body>
+</html>
+```
+
+Or better yet, with the webjar HandleBar to set the version dynamically (useful when you change the version) :
+
+```html
+---
+bootstrapAssets: [
+  bootstrap.min.css,
+  bootstrap.min.js
+]
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  [[#each bootstrapAssets]]
+  [[webjar .]][[/each]]
 </head>
 <body>
   <p>Hello World</p>
