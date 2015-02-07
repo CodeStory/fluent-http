@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import com.github.jknack.handlebars.Handlebars;
+import com.github.jknack.handlebars.Options;
 
 public class HelperTools {
   private HelperTools() {
@@ -41,5 +42,18 @@ public class HelperTools {
     }
 
     return Collections.singletonList(context);
+  }
+
+  public static String hashAsString(Options options) {
+    if ((options == null) || (options.hash == null) || (options.hash.isEmpty())) {
+      return "";
+    }
+
+    StringBuilder str = new StringBuilder();
+    options.hash.forEach((key, value) -> {
+      str.append(' ').append(key).append('=').append('"').append(value).append('"');
+    });
+
+    return str.toString();
   }
 }

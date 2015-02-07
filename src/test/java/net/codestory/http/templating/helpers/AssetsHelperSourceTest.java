@@ -15,7 +15,9 @@
  */
 package net.codestory.http.templating.helpers;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 import java.util.*;
 
@@ -24,6 +26,12 @@ import net.codestory.http.io.*;
 import net.codestory.http.misc.*;
 
 import org.junit.*;
+
+import com.github.jknack.handlebars.Context;
+import com.github.jknack.handlebars.Handlebars;
+import com.github.jknack.handlebars.Options;
+import com.github.jknack.handlebars.TagType;
+import com.github.jknack.handlebars.Template;
 
 public class AssetsHelperSourceTest {
   static Env env = Env.prod();
@@ -69,49 +77,60 @@ public class AssetsHelperSourceTest {
 
   @Test
   public void multiple_scripts() {
-    CharSequence script = assetsHelper.script(Arrays.asList("js/script", "js/anotherscript"));
+    CharSequence script = assetsHelper.script(asList("js/script", "js/anotherscript"));
 
     assertThat(script.toString()).isEqualTo(
-        "<script src=\"js/script.js?1ae2bed766fa2ed618a9b9048ba41fe094d3f117\"></script>\n" +
+      "<script src=\"js/script.js?1ae2bed766fa2ed618a9b9048ba41fe094d3f117\"></script>\n" +
         "<script src=\"js/anotherscript.js?a72b9bd02a15f1307e6f60ac502675a8a24e8581\"></script>"
     );
   }
 
   @Test
   public void css() {
-    CharSequence css = assetsHelper.css("assets/style.css");
+    CharSequence css = assetsHelper.css("assets/style.css", null);
 
     assertThat(css.toString()).isEqualTo("<link rel=\"stylesheet\" href=\"assets/style.css?80fa881ffa6af083a80845467622c6185949a47b\">");
   }
 
   @Test
   public void css_without_extension() {
-    CharSequence css = assetsHelper.css("assets/style");
+    CharSequence css = assetsHelper.css("assets/style", null);
 
     assertThat(css.toString()).isEqualTo("<link rel=\"stylesheet\" href=\"assets/style.css?80fa881ffa6af083a80845467622c6185949a47b\">");
   }
 
   @Test
+  public void css_with_media_tag() {
+    CharSequence css = assetsHelper.css("assets/style.css", options(Collections.singletonMap("media", "screen")));
+
+    assertThat(css.toString()).isEqualTo("<link rel=\"stylesheet\" href=\"assets/style.css?80fa881ffa6af083a80845467622c6185949a47b\" media=\"screen\">");
+  }
+
+  @Test
   public void less() {
-    CharSequence css = assetsHelper.css("assets/anotherstyle");
+    CharSequence css = assetsHelper.css("assets/anotherstyle", null);
 
     assertThat(css.toString()).isEqualTo("<link rel=\"stylesheet\" href=\"assets/anotherstyle.css?dcec144afa669dc921a4c9069d4c7d96fe28a833\">");
   }
 
   @Test
   public void unknown_css() {
-    CharSequence script = assetsHelper.css("unknown.css");
+    CharSequence script = assetsHelper.css("unknown.css", null);
 
     assertThat(script.toString()).isEqualTo("<link rel=\"stylesheet\" href=\"unknown.css\">");
   }
 
   @Test
   public void multiple_css() {
-    CharSequence css = assetsHelper.css(Arrays.asList("assets/style", "assets/anotherstyle"));
+    CharSequence css = assetsHelper.css(asList("assets/style", "assets/anotherstyle"), null);
 
     assertThat(css.toString()).isEqualTo(
-        "<link rel=\"stylesheet\" href=\"assets/style.css?80fa881ffa6af083a80845467622c6185949a47b\">\n" +
+      "<link rel=\"stylesheet\" href=\"assets/style.css?80fa881ffa6af083a80845467622c6185949a47b\">\n" +
         "<link rel=\"stylesheet\" href=\"assets/anotherstyle.css?dcec144afa669dc921a4c9069d4c7d96fe28a833\">"
     );
+  }
+
+  static Options options(Map<String, Object> hash) {
+    return new Options.Builder(mock(Handlebars.class), "tag", TagType.SECTION, mock(Context.class), mock(Template.class)).setHash(hash).build();
   }
 }

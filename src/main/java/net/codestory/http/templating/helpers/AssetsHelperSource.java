@@ -24,6 +24,8 @@ import net.codestory.http.io.Resources;
 import net.codestory.http.misc.Cache;
 import net.codestory.http.misc.Sha1;
 
+import com.github.jknack.handlebars.Options;
+
 public class AssetsHelperSource {
   private final Resources resources;
   private final CompilerFacade compilers;
@@ -41,8 +43,10 @@ public class AssetsHelperSource {
     return HelperTools.toString(context, value -> singleScript(value.toString()));
   }
 
-  public CharSequence css(Object context) {
-    return HelperTools.toString(context, value -> singleCss(value.toString()));
+  public CharSequence css(Object context, Options options) {
+    String attributes = HelperTools.hashAsString(options);
+
+    return HelperTools.toString(context, value -> singleCss(value.toString(), attributes));
   }
 
   // Internal
@@ -71,10 +75,10 @@ public class AssetsHelperSource {
     return "<script src=\"" + urlSupplier.apply(uri) + "\"></script>";
   }
 
-  private CharSequence singleCss(String path) {
+  private CharSequence singleCss(String path, String attributes) {
     String uri = addExtensionIfMissing(path, ".css");
 
-    return "<link rel=\"stylesheet\" href=\"" + urlSupplier.apply(uri) + "\">";
+    return "<link rel=\"stylesheet\" href=\"" + urlSupplier.apply(uri) + "\"" + attributes + ">";
   }
 
   private static String addExtensionIfMissing(String uri, String extension) {
