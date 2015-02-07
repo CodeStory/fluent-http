@@ -21,35 +21,46 @@ import net.codestory.http.misc.Cache;
 
 import org.webjars.WebJarAssetLocator;
 
+import com.github.jknack.handlebars.Options;
+
 public class WebjarHelperSource {
   private final WebJarAssetLocator webJarAssetLocator;
-  private final Function<String, String> webJarForUri;
+  private final Function<String, String> fullPathForUri;
 
   public WebjarHelperSource(boolean prodMode) {
     this.webJarAssetLocator = new WebJarAssetLocator();
-    this.webJarForUri = prodMode ? new Cache<>(uri -> webjar(uri)) : uri -> webjar(uri);
+    this.fullPathForUri = prodMode ? new Cache<>(uri -> fullPathForUri(uri)) : uri -> fullPathForUri(uri);
   }
 
   // Handler entry point
 
-  public CharSequence webjar(Object context) {
-    return HelperTools.toString(context, value -> webJarForUri.apply(value.toString()));
+  public CharSequence webjar(Object context, Options options) {
+    String attributes = HelperTools.hashAsString(options);
+
+    return HelperTools.toString(context, value -> single_webjar(value, attributes));
   }
 
   // Internal
 
-  private String webjar(String uri) {
-    String fullPath;
-    try {
-      fullPath = webJarAssetLocator.getFullPath(uri).replace("META-INF/resources/webjars/", "/webjars/");
-    } catch (IllegalArgumentException e) {
-      fullPath = uri;
-    }
+  private String single_webjar(Object value, String attributes) {
+    String fullPath = fullPathForUri.apply(value.toString());
+    return tag(fullPath, attributes);
+  }
 
+
+  private String fullPathForUri(String uri) {
+    try {
+      return webJarAssetLocator.getFullPath(uri).replace("META-INF/resources/webjars/", "/webjars/");
+    } catch (IllegalArgumentException e) {
+      return uri;
+    }
+  }
+
+  private String tag(String fullPath, String attributes) {
     if (fullPath.endsWith(".css")) {
-      return "<link rel=\"stylesheet\" href=\"" + fullPath + "\">";
+      return "<link rel=\"stylesheet\" href=\"" + fullPath + "\"" + attributes + ">";
     } else {
-      return "<script src=\"" + fullPath + "\"></script>";
+      return "<script src=\"" + fullPath + "\"" + attributes + "></script>";
     }
   }
 }

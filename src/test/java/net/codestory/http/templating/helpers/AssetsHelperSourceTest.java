@@ -16,16 +16,15 @@
 package net.codestory.http.templating.helpers;
 
 import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.*;
+import static java.util.Collections.singletonMap;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-import java.util.*;
+import net.codestory.http.compilers.CompilerFacade;
+import net.codestory.http.io.Resources;
+import net.codestory.http.misc.Env;
 
-import net.codestory.http.compilers.*;
-import net.codestory.http.io.*;
-import net.codestory.http.misc.*;
-
-import org.junit.*;
+import org.junit.Test;
 
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Handlebars;
@@ -42,42 +41,56 @@ public class AssetsHelperSourceTest {
 
   @Test
   public void script() {
-    CharSequence script = assetsHelper.script("js/script.js");
+    CharSequence script = assetsHelper.script("js/script.js", null);
 
     assertThat(script.toString()).isEqualTo("<script src=\"js/script.js?1ae2bed766fa2ed618a9b9048ba41fe094d3f117\"></script>");
   }
 
   @Test
   public void script_without_extension() {
-    CharSequence script = assetsHelper.script("js/script");
+    CharSequence script = assetsHelper.script("js/script", null);
 
     assertThat(script.toString()).isEqualTo("<script src=\"js/script.js?1ae2bed766fa2ed618a9b9048ba41fe094d3f117\"></script>");
   }
 
   @Test
+  public void script_with_async_tag() {
+    CharSequence script = assetsHelper.script("js/script.js", options("async", null));
+
+    assertThat(script.toString()).isEqualTo("<script src=\"js/script.js?1ae2bed766fa2ed618a9b9048ba41fe094d3f117\" async></script>");
+  }
+
+  @Test
+  public void script_with_defer_tag() {
+    CharSequence script = assetsHelper.script("js/script.js", options("defer", null));
+
+    assertThat(script.toString()).isEqualTo("<script src=\"js/script.js?1ae2bed766fa2ed618a9b9048ba41fe094d3f117\" defer></script>");
+  }
+
+  @Test
   public void coffee_script() {
-    CharSequence script = assetsHelper.script("js/anotherscript");
+    CharSequence script = assetsHelper.script("js/anotherscript", null);
 
     assertThat(script.toString()).isEqualTo("<script src=\"js/anotherscript.js?a72b9bd02a15f1307e6f60ac502675a8a24e8581\"></script>");
   }
 
   @Test
   public void literate_coffee_script() {
-    CharSequence script = assetsHelper.script("js/literate");
+    CharSequence script = assetsHelper.script("js/literate", null);
 
     assertThat(script.toString()).isEqualTo("<script src=\"js/literate.js?186398dc8855a3a68030391d7c81e9aa683d478b\"></script>");
   }
 
   @Test
   public void unknown_script() {
-    CharSequence script = assetsHelper.script("unknown.js");
+    CharSequence script = assetsHelper.script("unknown.js", null);
 
     assertThat(script.toString()).isEqualTo("<script src=\"unknown.js\"></script>");
   }
 
   @Test
   public void multiple_scripts() {
-    CharSequence script = assetsHelper.script(asList("js/script", "js/anotherscript"));
+    CharSequence script = assetsHelper.script(asList("js/script", "js/anotherscript"), null);
 
     assertThat(script.toString()).isEqualTo(
       "<script src=\"js/script.js?1ae2bed766fa2ed618a9b9048ba41fe094d3f117\"></script>\n" +
@@ -101,7 +114,7 @@ public class AssetsHelperSourceTest {
 
   @Test
   public void css_with_media_tag() {
-    CharSequence css = assetsHelper.css("assets/style.css", options(Collections.singletonMap("media", "screen")));
+    CharSequence css = assetsHelper.css("assets/style.css", options("media", "screen"));
 
     assertThat(css.toString()).isEqualTo("<link rel=\"stylesheet\" href=\"assets/style.css?80fa881ffa6af083a80845467622c6185949a47b\" media=\"screen\">");
   }
@@ -130,7 +143,9 @@ public class AssetsHelperSourceTest {
     );
   }
 
-  static Options options(Map<String, Object> hash) {
-    return new Options.Builder(mock(Handlebars.class), "tag", TagType.SECTION, mock(Context.class), mock(Template.class)).setHash(hash).build();
+  static Options options(String key, String value) {
+    return new Options.Builder(mock(Handlebars.class), "tag", TagType.SECTION, mock(Context.class), mock(Template.class))
+      .setHash(singletonMap(key, value))
+      .build();
   }
 }

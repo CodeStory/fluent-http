@@ -51,7 +51,10 @@ public class HelperTools {
 
     StringBuilder str = new StringBuilder();
     options.hash.forEach((key, value) -> {
-      str.append(' ').append(key).append('=').append('"').append(value).append('"');
+      str.append(' ').append(key);
+      if (value != null) {
+        str.append('=').append('"').append(value).append('"');
+      }
     });
 
     return str.toString();

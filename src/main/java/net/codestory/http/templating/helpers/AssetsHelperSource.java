@@ -39,8 +39,10 @@ public class AssetsHelperSource {
 
   // Handler entry points
 
-  public CharSequence script(Object context) {
-    return HelperTools.toString(context, value -> singleScript(value.toString()));
+  public CharSequence script(Object context, Options options) {
+    String attributes = HelperTools.hashAsString(options);
+
+    return HelperTools.toString(context, value -> singleScript(value.toString(), attributes));
   }
 
   public CharSequence css(Object context, Options options) {
@@ -69,10 +71,10 @@ public class AssetsHelperSource {
     return uri;
   }
 
-  private CharSequence singleScript(String path) {
+  private CharSequence singleScript(String path, String attributes) {
     String uri = addExtensionIfMissing(path, ".js");
 
-    return "<script src=\"" + urlSupplier.apply(uri) + "\"></script>";
+    return "<script src=\"" + urlSupplier.apply(uri) + "\"" + attributes + "></script>";
   }
 
   private CharSequence singleCss(String path, String attributes) {
