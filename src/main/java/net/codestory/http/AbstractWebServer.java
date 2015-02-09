@@ -15,15 +15,6 @@
  */
 package net.codestory.http;
 
-import static java.util.Arrays.*;
-import static net.codestory.http.Configuration.*;
-import static net.codestory.http.constants.HttpStatus.*;
-
-import java.io.*;
-import java.net.*;
-import java.nio.file.*;
-import java.util.*;
-
 import net.codestory.http.compilers.*;
 import net.codestory.http.errors.*;
 import net.codestory.http.internal.*;
@@ -36,6 +27,15 @@ import net.codestory.http.ssl.*;
 import net.codestory.http.websockets.*;
 
 import javax.net.ssl.*;
+import java.io.*;
+import java.net.*;
+import java.nio.file.*;
+import java.util.*;
+import java.util.concurrent.*;
+
+import static java.util.Arrays.*;
+import static net.codestory.http.Configuration.*;
+import static net.codestory.http.constants.HttpStatus.*;
 
 public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
   private static final int PORT_8080 = 8080;
@@ -57,8 +57,8 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
 
   public T configure(Configuration configuration) {
     this.routesProvider = env.prodMode()
-        ? RoutesProvider.fixed(env, configuration)
-        : RoutesProvider.reloading(env, configuration);
+      ? RoutesProvider.fixed(env, configuration)
+      : RoutesProvider.reloading(env, configuration);
     return (T) this;
   }
 
@@ -170,7 +170,11 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
         payload = errorPage(payload);
       }
 
-      payloadWriter.writeAndClose(payload);
+      final CompletionStage completable = payloadWriter.writeAndClose(payload);
+      completable.exceptionally((e) -> {
+        handleServerError(payloadWriter, (Throwable) e);
+        return null;
+      });
     } catch (Exception e) {
       handleServerError(payloadWriter, e);
     }
@@ -189,7 +193,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     }
   }
 
-  protected void handleServerError(PayloadWriter payloadWriter, Exception e) {
+  protected void handleServerError(PayloadWriter payloadWriter, Throwable e) {
     try {
       if (e instanceof CompilerException) {
         Logs.compilerError(e);
@@ -208,7 +212,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     return errorPage(payload, null);
   }
 
-  protected Payload errorPage(Exception e) {
+  protected Payload errorPage(Throwable e) {
     int code = INTERNAL_SERVER_ERROR;
     if (e instanceof HttpException) {
       code = ((HttpException) e).code();
@@ -219,8 +223,8 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     return errorPage(new Payload(code), e);
   }
 
-  protected Payload errorPage(Payload payload, Exception e) {
-    Exception shownError = env.prodMode() ? null : e;
+  protected Payload errorPage(Payload payload, Throwable e) {
+    Throwable shownError = env.prodMode() ? null : e;
     return new ErrorPage(payload, shownError).payload();
   }
 

@@ -15,12 +15,13 @@
  */
 package net.codestory.http.logs;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.util.Collection;
+
 import static net.codestory.http.io.Strings.*;
-
-import java.io.*;
-import java.util.*;
-
-import org.slf4j.*;
 
 public class Logs {
   private static final LogsImplementation LOG = Boolean.getBoolean("PROD_MODE") ? new Slf4jLogs() : new ConsoleLogs();
@@ -41,15 +42,15 @@ public class Logs {
     LOG.info("Server started on port {}", port);
   }
 
-  public static void compilerError(Exception e) {
+  public static void compilerError(Throwable e) {
     LOG.error(e.getMessage());
   }
 
-  public static void unexpectedError(Exception e) {
+  public static void unexpectedError(Throwable e) {
     LOG.error(e.getMessage());
   }
 
-  public static void unableToServeErrorPage(Exception e) {
+  public static void unableToServeErrorPage(Throwable e) {
     LOG.error("Unable to serve an error page", e);
   }
 

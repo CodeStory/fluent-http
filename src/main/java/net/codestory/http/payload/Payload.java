@@ -15,14 +15,14 @@
  */
 package net.codestory.http.payload;
 
-import static net.codestory.http.constants.Headers.*;
-import static net.codestory.http.constants.HttpStatus.*;
+import net.codestory.http.*;
+import net.codestory.http.convert.*;
 
 import java.net.*;
 import java.util.*;
 
-import net.codestory.http.*;
-import net.codestory.http.convert.*;
+import static net.codestory.http.constants.Headers.*;
+import static net.codestory.http.constants.HttpStatus.*;
 
 public class Payload {
   private final String contentType;
