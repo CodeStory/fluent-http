@@ -133,7 +133,7 @@ public interface Routes extends Serializable {
 
   Routes delete(String uriPattern, FourParamsRoute route);
 
-  Routes autoDiscover(String packageToSCan);
+  Routes autoDiscover(String packageToScan);
 
   RoutesWithPattern url(String uriPattern);
 }
