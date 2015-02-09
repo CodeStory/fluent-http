@@ -23,7 +23,6 @@ import java.io.*;
 import java.net.*;
 import java.nio.file.*;
 import java.util.*;
-import java.util.concurrent.CompletionStage;
 
 import net.codestory.http.compilers.*;
 import net.codestory.http.errors.*;
@@ -171,11 +170,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
         payload = errorPage(payload);
       }
 
-      CompletionStage<Void> completable = payloadWriter.writeAndClose(payload);
-      completable.exceptionally(e -> {
-        handleServerError(payloadWriter, (Throwable) e);
-        return null;
-      });
+      payloadWriter.writeAndClose(payload, e -> handleServerError(payloadWriter, e));
     } catch (Exception e) {
       handleServerError(payloadWriter, e);
     }
@@ -203,7 +198,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
       }
 
       Payload errorPage = errorPage(e).withHeader("reason", e.getMessage());
-      payloadWriter.writeAndClose(errorPage);
+      payloadWriter.writeAndCloseSync(errorPage);
     } catch (IOException error) {
       Logs.unableToServeErrorPage(error);
     }

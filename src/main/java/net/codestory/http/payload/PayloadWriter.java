@@ -28,7 +28,7 @@ import java.net.URL;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
+import java.util.function.Consumer;
 import java.util.stream.*;
 import java.util.zip.*;
 
@@ -57,32 +57,34 @@ public class PayloadWriter {
     this.compilers = compilers;
   }
 
-  public CompletionStage<Void> writeAndClose(Payload payload) throws IOException {
+  public void writeAndClose(Payload payload, Consumer<Throwable> onError) throws IOException {
     if (isAsync(payload)) {
-      return writeAndCloseAsync(payload);
+      writeAndCloseAsync(payload, onError);
+    } else {
+      writeAndCloseSync(payload);
     }
-
-    writeAndCloseSync(payload);
-    return CompletableFuture.completedFuture(null);
   }
 
-  protected CompletableFuture<Void> writeAndCloseAsync(Payload payload) {
+  public void writeAndCloseSync(Payload payload) throws IOException {
+    write(payload);
+    if (!isStream(payload.rawContent())) {
+      close();
+    }
+  }
+
+  protected CompletableFuture<Void> writeAndCloseAsync(Payload payload, Consumer<Throwable> onError) {
     CompletableFuture<?> future = (CompletableFuture<?>) payload.rawContent();
 
     return future.thenAccept(content -> {
       try {
         writeAndCloseSync(new Payload(content));
-      } catch (IOException e) {
-        throw new RuntimeException(e);
+      } catch (Exception e) {
+        onError.accept(e);
       }
+    }).exceptionally(e -> {
+      onError.accept(e);
+      return null;
     });
-  }
-
-  protected void writeAndCloseSync(Payload payload) throws IOException {
-    write(payload);
-    if (!isStream(payload.rawContent())) {
-      close();
-    }
   }
 
   protected boolean isAsync(Payload payload) {
