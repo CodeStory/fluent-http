@@ -57,14 +57,14 @@ public class PayloadWriter {
     this.compilers = compilers;
   }
 
-  public CompletionStage writeAndClose(Payload payload) throws IOException {
+  public CompletionStage<Void> writeAndClose(Payload payload) throws IOException {
     if (isAsync(payload)) {
       return writeAndCloseAsync(payload);
     }
     return writeAndCloseSync(payload);
   }
 
-  private CompletableFuture writeAndCloseAsync(Payload payload) {
+  private CompletableFuture<Void> writeAndCloseAsync(Payload payload) {
     CompletableFuture<?> future = (CompletableFuture<?>) payload.rawContent();
     return future.thenAccept(content -> {
       try {
@@ -75,7 +75,7 @@ public class PayloadWriter {
     });
   }
 
-  private CompletableFuture writeAndCloseSync(Payload payload) throws IOException {
+  private CompletableFuture<Void> writeAndCloseSync(Payload payload) throws IOException {
     write(payload);
     if (!isStream(payload.rawContent())) {
       close();

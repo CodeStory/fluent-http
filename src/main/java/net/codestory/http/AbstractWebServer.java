@@ -171,7 +171,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
         payload = errorPage(payload);
       }
 
-      CompletionStage completable = payloadWriter.writeAndClose(payload);
+      CompletionStage<Void> completable = payloadWriter.writeAndClose(payload);
       completable.exceptionally(e -> {
         handleServerError(payloadWriter, (Throwable) e);
         return null;
