@@ -29,10 +29,10 @@ class ReflectionRoute implements AnyRoute {
   private final Method method;
   private final MethodAnnotations annotations;
 
-  ReflectionRoute(Supplier<Object> resource, Method method) {
+  ReflectionRoute(Supplier<Object> resource, Method method, MethodAnnotations annotations) {
     this.resource = resource;
     this.method = method;
-    this.annotations = new MethodAnnotationsFactory().forMethod(method);
+    this.annotations = annotations;
   }
 
   @Override

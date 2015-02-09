@@ -19,6 +19,7 @@ import net.codestory.http.Configuration;
 import net.codestory.http.Context;
 import net.codestory.http.Request;
 import net.codestory.http.Response;
+import net.codestory.http.annotations.MethodAnnotationsFactory;
 import net.codestory.http.annotations.Resource;
 import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.convert.TypeConvert;
@@ -175,7 +176,7 @@ public class RouteCollection implements Routes {
       throw new IllegalArgumentException("Expected at least" + uriParamsCount + " parameters in " + uriPattern);
     }
 
-    add(httpMethod, uriPattern, new ReflectionRoute(resource, method));
+    add(httpMethod, uriPattern, new ReflectionRoute(resource, method, new MethodAnnotationsFactory().forMethod(method)));
   }
 
   @Override
