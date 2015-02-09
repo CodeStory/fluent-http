@@ -54,17 +54,14 @@ public class RouteCollectionTest {
     assertThat(routeCollection.routes.getSortedRoutes()).hasSize(1);
     assertThat(routeCollection.routes.getSortedRoutes()[0].matchMethod("GET")).isTrue();
     assertThat(routeCollection.routes.getSortedRoutes()[0].matchUri("/test")).isTrue();
-
   }
 
   @SuppressWarnings("UnusedDeclaration")
   @Resource
   public static class StubResource {
-
     @Get("/test")
     public String get() {
       return "hello";
     }
-
   }
 }
