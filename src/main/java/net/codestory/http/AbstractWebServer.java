@@ -15,27 +15,30 @@
  */
 package net.codestory.http;
 
+import net.codestory.http.compilers.CompilerException;
+import net.codestory.http.errors.ErrorPage;
+import net.codestory.http.errors.HttpException;
+import net.codestory.http.internal.Handler;
+import net.codestory.http.internal.HttpServerWrapper;
+import net.codestory.http.logs.Logs;
+import net.codestory.http.misc.Env;
+import net.codestory.http.payload.Payload;
+import net.codestory.http.payload.PayloadWriter;
+import net.codestory.http.reload.RoutesProvider;
+import net.codestory.http.routes.RouteCollection;
+import net.codestory.http.ssl.SSLContextFactory;
+import net.codestory.http.websockets.*;
+
+import javax.net.ssl.SSLContext;
+import java.io.IOException;
+import java.net.BindException;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.concurrent.CompletionStage;
+
 import static java.util.Arrays.*;
 import static net.codestory.http.Configuration.*;
 import static net.codestory.http.constants.HttpStatus.*;
-
-import java.io.*;
-import java.net.*;
-import java.nio.file.*;
-import java.util.*;
-
-import net.codestory.http.compilers.*;
-import net.codestory.http.errors.*;
-import net.codestory.http.internal.*;
-import net.codestory.http.logs.*;
-import net.codestory.http.misc.*;
-import net.codestory.http.payload.*;
-import net.codestory.http.reload.*;
-import net.codestory.http.routes.*;
-import net.codestory.http.ssl.*;
-import net.codestory.http.websockets.*;
-
-import javax.net.ssl.*;
 
 public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
   private static final int PORT_8080 = 8080;
@@ -170,7 +173,11 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
         payload = errorPage(payload);
       }
 
-      payloadWriter.writeAndClose(payload);
+      final CompletionStage completable = payloadWriter.writeAndClose(payload);
+      completable.exceptionally((e) -> {
+        handleServerError(payloadWriter, (Throwable) e);
+        return null;
+      });
     } catch (Exception e) {
       handleServerError(payloadWriter, e);
     }
@@ -189,7 +196,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     }
   }
 
-  protected void handleServerError(PayloadWriter payloadWriter, Exception e) {
+  protected void handleServerError(PayloadWriter payloadWriter, Throwable e) {
     try {
       if (e instanceof CompilerException) {
         Logs.compilerError(e);
@@ -208,7 +215,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     return errorPage(payload, null);
   }
 
-  protected Payload errorPage(Exception e) {
+  protected Payload errorPage(Throwable e) {
     int code = INTERNAL_SERVER_ERROR;
     if (e instanceof HttpException) {
       code = ((HttpException) e).code();
@@ -219,8 +226,8 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     return errorPage(new Payload(code), e);
   }
 
-  protected Payload errorPage(Payload payload, Exception e) {
-    Exception shownError = env.prodMode() ? null : e;
+  protected Payload errorPage(Payload payload, Throwable e) {
+    Throwable shownError = env.prodMode() ? null : e;
     return new ErrorPage(payload, shownError).payload();
   }
 

@@ -15,14 +15,15 @@
  */
 package net.codestory.http.internal;
 
-import java.io.*;
-import java.text.*;
-import java.util.*;
-
 import net.codestory.http.Cookie;
 import net.codestory.http.Response;
+import org.simpleframework.http.Status;
 
-import org.simpleframework.http.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 class SimpleResponse implements Response {
   private final org.simpleframework.http.Response response;

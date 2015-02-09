@@ -15,6 +15,26 @@
  */
 package net.codestory.http.payload;
 
+import net.codestory.http.Request;
+import net.codestory.http.Response;
+import net.codestory.http.compilers.*;
+import net.codestory.http.convert.TypeConvert;
+import net.codestory.http.io.InputStreams;
+import net.codestory.http.io.Resources;
+import net.codestory.http.misc.*;
+import net.codestory.http.templating.*;
+import net.codestory.http.types.ContentTypes;
+
+import java.io.*;
+import java.net.URL;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+import java.util.stream.Stream;
+import java.util.zip.GZIPOutputStream;
+
 import static java.nio.charset.StandardCharsets.*;
 import static java.util.Objects.*;
 import static net.codestory.http.constants.Encodings.*;
@@ -22,21 +42,6 @@ import static net.codestory.http.constants.Headers.*;
 import static net.codestory.http.constants.HttpStatus.*;
 import static net.codestory.http.constants.Methods.*;
 import static net.codestory.http.io.Strings.*;
-
-import java.io.*;
-import java.net.URL;
-import java.nio.file.*;
-import java.util.*;
-import java.util.stream.*;
-import java.util.zip.*;
-
-import net.codestory.http.*;
-import net.codestory.http.compilers.*;
-import net.codestory.http.convert.*;
-import net.codestory.http.io.*;
-import net.codestory.http.misc.*;
-import net.codestory.http.templating.*;
-import net.codestory.http.types.*;
 
 public class PayloadWriter {
   protected final Request request;
@@ -55,11 +60,34 @@ public class PayloadWriter {
     this.compilers = compilers;
   }
 
-  public void writeAndClose(Payload payload) throws IOException {
+  public CompletionStage writeAndClose(Payload payload) throws IOException {
+    if(isAsync(payload)) {
+      return writeAndCloseAsync(payload);
+    }
+    return writeAndCloseSync(payload);
+  }
+
+  private CompletableFuture writeAndCloseAsync(Payload payload) {
+    CompletableFuture<?> future = (CompletableFuture<?>) payload.rawContent();
+    return future.thenAccept(content -> {
+      try {
+        writeAndClose(new Payload(content));
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    });
+  }
+
+  private CompletableFuture writeAndCloseSync(Payload payload) throws IOException {
     write(payload);
     if (!isStream(payload.rawContent())) {
       close();
     }
+    return CompletableFuture.completedFuture(null);
+  }
+
+  private boolean isAsync(Payload payload) {
+    return payload.rawContent() instanceof CompletableFuture<?>;
   }
 
   protected void close() {
@@ -71,6 +99,7 @@ public class PayloadWriter {
   }
 
   protected void write(Payload payload) throws IOException {
+
     response.setHeaders(payload.headers());
     response.setCookies(payload.cookies());
 
