@@ -39,34 +39,6 @@ public class CustomAnnotations {
     registerStandardAnnotations();
   }
 
-  private void registerStandardAnnotations() {
-    byPassOperations.add(context -> isAuthorized(context.currentUser()) ? null : Payload.forbidden());
-    enrichOperations.add(payload -> {
-      AllowOrigin origin = method.getDeclaredAnnotation(AllowOrigin.class);
-      return (origin != null) ? payload.withAllowOrigin(origin.value()) : payload;
-    });
-    enrichOperations.add(payload -> {
-      AllowMethods methods = method.getDeclaredAnnotation(AllowMethods.class);
-      return (methods != null) ? payload.withAllowMethods(methods.value()) : payload;
-    });
-    enrichOperations.add(payload -> {
-      AllowCredentials credentials = method.getDeclaredAnnotation(AllowCredentials.class);
-      return (credentials != null) ? payload.withAllowCredentials(credentials.value()) : payload;
-    });
-    enrichOperations.add(payload -> {
-      AllowHeaders allowedHeaders = method.getDeclaredAnnotation(AllowHeaders.class);
-      return (allowedHeaders != null) ? payload.withAllowHeaders(allowedHeaders.value()) : payload;
-    });
-    enrichOperations.add(payload -> {
-      ExposeHeaders exposedHeaders = method.getDeclaredAnnotation(ExposeHeaders.class);
-      return (exposedHeaders != null) ? payload.withExposeHeaders(exposedHeaders.value()) : payload;
-    });
-    enrichOperations.add(payload -> {
-      MaxAge maxAge = method.getDeclaredAnnotation(MaxAge.class);
-      return (maxAge != null) ? payload.withMaxAge(maxAge.value()) : payload;
-    });
-  }
-
   public Payload byPass(Context context) {
     for (Function<Context, Payload> operation : byPassOperations) {
       Payload payload = operation.apply(context);
@@ -84,6 +56,40 @@ public class CustomAnnotations {
     }
 
     return payload;
+  }
+
+  private void registerStandardAnnotations() {
+    byPassOperations.add(context -> isAuthorized(context.currentUser()) ? null : Payload.forbidden());
+
+    AllowOrigin origin = method.getDeclaredAnnotation(AllowOrigin.class);
+    if (origin != null) {
+      enrichOperations.add(payload -> payload.withAllowOrigin(origin.value()));
+    }
+
+    AllowMethods methods = method.getDeclaredAnnotation(AllowMethods.class);
+    if (methods != null) {
+      enrichOperations.add(payload -> payload.withAllowMethods(methods.value()));
+    }
+
+    AllowCredentials credentials = method.getDeclaredAnnotation(AllowCredentials.class);
+    if (credentials != null) {
+      enrichOperations.add(payload -> payload.withAllowCredentials(credentials.value()));
+    }
+
+    AllowHeaders allowedHeaders = method.getDeclaredAnnotation(AllowHeaders.class);
+    if (allowedHeaders != null) {
+      enrichOperations.add(payload -> payload.withAllowHeaders(allowedHeaders.value()));
+    }
+
+    ExposeHeaders exposedHeaders = method.getDeclaredAnnotation(ExposeHeaders.class);
+    if (exposedHeaders != null) {
+      enrichOperations.add(payload -> payload.withExposeHeaders(exposedHeaders.value()));
+    }
+
+    MaxAge maxAge = method.getDeclaredAnnotation(MaxAge.class);
+    if (maxAge != null) {
+      enrichOperations.add(payload -> payload.withMaxAge(maxAge.value()));
+    }
   }
 
   private boolean isAuthorized(User user) {
