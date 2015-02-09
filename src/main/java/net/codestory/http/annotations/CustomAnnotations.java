@@ -59,7 +59,10 @@ public class CustomAnnotations {
   }
 
   private void registerStandardAnnotations() {
-    byPassOperations.add(context -> isAuthorized(context.currentUser()) ? null : Payload.forbidden());
+    Roles roles = method.getDeclaredAnnotation(Roles.class);
+    if (roles != null) {
+      byPassOperations.add(context -> isAuthorized(roles, context.currentUser()) ? null : Payload.forbidden());
+    }
 
     AllowOrigin origin = method.getDeclaredAnnotation(AllowOrigin.class);
     if (origin != null) {
@@ -92,12 +95,7 @@ public class CustomAnnotations {
     }
   }
 
-  private boolean isAuthorized(User user) {
-    Roles roles = method.getDeclaredAnnotation(Roles.class);
-    if (roles == null) {
-      return true;
-    }
-
+  private boolean isAuthorized(Roles roles, User user) {
     if (roles.allMatch()) {
       return of(roles.value()).allMatch(role -> user.isInRole(role));
     } else {
