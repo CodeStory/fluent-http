@@ -26,6 +26,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 public class CustomAnnotationsTest extends AbstractProdWebServerTest {
@@ -56,7 +57,7 @@ public class CustomAnnotationsTest extends AbstractProdWebServerTest {
     get("/").should().contain("Hello").haveHeader("theHeader", "theValue");
   }
 
-  @Target(METHOD)
+  @Target(TYPE)
   @Retention(RUNTIME)
   static @interface DummyShallNotPass {
   }
@@ -69,8 +70,8 @@ public class CustomAnnotationsTest extends AbstractProdWebServerTest {
     String value();
   }
 
+  @DummyShallNotPass
   static class MyResource {
-    @DummyShallNotPass
     @Header(key = "theHeader", value = "theValue")
     @Get("/")
     public String hello() {

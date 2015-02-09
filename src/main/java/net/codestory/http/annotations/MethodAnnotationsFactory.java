@@ -52,7 +52,7 @@ public class MethodAnnotationsFactory {
 
   @SuppressWarnings("unchecked")
   private <T extends Annotation> void addByPassOperationIdNecessary(Class<T> annotationType, ApplyByPassAnnotation<? extends Annotation> apply, Method method, MethodAnnotations methodAnnotations) {
-    T annotation = method.getDeclaredAnnotation(annotationType);
+    T annotation = findAnnotationOnMethodOrClass(annotationType, method);
     if (annotation != null) {
       methodAnnotations.addByPassOperation(context -> ((ApplyByPassAnnotation<T>) apply).apply(context, annotation));
     }
@@ -60,12 +60,13 @@ public class MethodAnnotationsFactory {
 
   @SuppressWarnings("unchecked")
   private <T extends Annotation> void addEnrichOperationIdNecessary(Class<T> annotationType, ApplyEnrichAnnotation<? extends Annotation> apply, Method method, MethodAnnotations methodAnnotations) {
-    T annotation = method.getDeclaredAnnotation(annotationType);
+    T annotation = findAnnotationOnMethodOrClass(annotationType, method);
     if (annotation != null) {
       methodAnnotations.addEnrichOperation(context -> ((ApplyEnrichAnnotation<T>) apply).apply(context, annotation));
     }
   }
 
+  // TODO: move to a less-internal class
   private void registerStandardAnnotations() {
     registerByPassAnnotation(Roles.class, (context, roles) -> isAuthorized(roles, context.currentUser()) ? null : Payload.forbidden());
     registerEnrichAnnotation(AllowOrigin.class, (payload, origin) -> payload.withAllowOrigin(origin.value()));
@@ -76,11 +77,26 @@ public class MethodAnnotationsFactory {
     registerEnrichAnnotation(MaxAge.class, (payload, maxAge) -> payload.withMaxAge(maxAge.value()));
   }
 
+  // TODO: move to a less-internal class
   private boolean isAuthorized(Roles roles, User user) {
     if (roles.allMatch()) {
       return of(roles.value()).allMatch(role -> user.isInRole(role));
     } else {
       return of(roles.value()).anyMatch(role -> user.isInRole(role));
     }
+  }
+
+  private <T extends Annotation> T findAnnotationOnMethodOrClass(Class<T> annotationType, Method method) {
+    T annotation = method.getDeclaredAnnotation(annotationType);
+    if (annotation != null) {
+      return annotation;
+    }
+
+    annotation = method.getDeclaringClass().getDeclaredAnnotation(annotationType);
+    if (annotation != null) {
+      return annotation;
+    }
+
+    return null;
   }
 }
