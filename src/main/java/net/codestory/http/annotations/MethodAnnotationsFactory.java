@@ -15,7 +15,6 @@
  */
 package net.codestory.http.annotations;
 
-import net.codestory.http.Context;
 import net.codestory.http.payload.Payload;
 import net.codestory.http.security.User;
 
@@ -83,15 +82,5 @@ public class MethodAnnotationsFactory {
     } else {
       return of(roles.value()).anyMatch(role -> user.isInRole(role));
     }
-  }
-
-  @FunctionalInterface
-  static interface ApplyByPassAnnotation<T extends Annotation> {
-    Payload apply(Context context, T annotation);
-  }
-
-  @FunctionalInterface
-  static interface ApplyEnrichAnnotation<T extends Annotation> {
-    Payload apply(Payload payload, T annotation);
   }
 }

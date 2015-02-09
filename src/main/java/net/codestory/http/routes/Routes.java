@@ -15,12 +15,18 @@
  */
 package net.codestory.http.routes;
 
+import net.codestory.http.Context;
+import net.codestory.http.annotations.ApplyByPassAnnotation;
+import net.codestory.http.annotations.ApplyEnrichAnnotation;
 import net.codestory.http.extensions.Extensions;
 import net.codestory.http.filters.Filter;
 import net.codestory.http.injection.IocAdapter;
+import net.codestory.http.payload.Payload;
 import net.codestory.http.websockets.WebSocketListenerFactory;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
+import java.util.function.Function;
 
 public interface Routes extends Serializable {
   Routes setExtensions(Extensions extensions);
@@ -134,6 +140,10 @@ public interface Routes extends Serializable {
   Routes delete(String uriPattern, FourParamsRoute route);
 
   Routes autoDiscover(String packageToScan);
+
+  <T extends Annotation> Routes registerByPassAnnotation(Class<T> annotationType, ApplyByPassAnnotation<T> apply);
+
+  <T extends Annotation> Routes registerEnrichAnnotation(Class<T> annotationType, ApplyEnrichAnnotation<T> apply);
 
   RoutesWithPattern url(String uriPattern);
 }

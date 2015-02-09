@@ -19,6 +19,8 @@ import net.codestory.http.Configuration;
 import net.codestory.http.Context;
 import net.codestory.http.Request;
 import net.codestory.http.Response;
+import net.codestory.http.annotations.ApplyByPassAnnotation;
+import net.codestory.http.annotations.ApplyEnrichAnnotation;
 import net.codestory.http.annotations.MethodAnnotationsFactory;
 import net.codestory.http.annotations.Resource;
 import net.codestory.http.compilers.CompilerFacade;
@@ -38,6 +40,7 @@ import net.codestory.http.payload.PayloadWriter;
 import net.codestory.http.templating.Site;
 import net.codestory.http.websockets.*;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Supplier;
@@ -461,6 +464,18 @@ public class RouteCollection implements Routes {
   public RouteCollection autoDiscover(String packageToScan) {
     Set<Class<?>> resources = new ClasspathScanner().getTypesAnnotatedWith(packageToScan, Resource.class);
     resources.forEach(this::add);
+    return this;
+  }
+
+  @Override
+  public <T extends Annotation> Routes registerByPassAnnotation(Class<T> annotationType, ApplyByPassAnnotation<T> apply) {
+    methodAnnotationsFactory.registerByPassAnnotation(annotationType, apply);
+    return this;
+  }
+
+  @Override
+  public <T extends Annotation> Routes registerEnrichAnnotation(Class<T> annotationType, ApplyEnrichAnnotation<T> apply) {
+    methodAnnotationsFactory.registerEnrichAnnotation(annotationType, apply);
     return this;
   }
 
