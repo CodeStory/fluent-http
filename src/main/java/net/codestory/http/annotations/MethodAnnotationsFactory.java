@@ -15,55 +15,66 @@
  */
 package net.codestory.http.annotations;
 
+import net.codestory.http.Context;
 import net.codestory.http.payload.Payload;
 import net.codestory.http.security.User;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static java.util.stream.Stream.of;
 
 public class MethodAnnotationsFactory {
+  private final Map<Class<? extends Annotation>, ApplyByPassAnnotation<? extends Annotation>> byPassAnnotations;
+  private final Map<Class<? extends Annotation>, ApplyEnrichAnnotation<? extends Annotation>> enrichAnnotations;
+
+  public MethodAnnotationsFactory() {
+    this.byPassAnnotations = new LinkedHashMap<>();
+    this.enrichAnnotations = new LinkedHashMap<>();
+    registerStandardAnnotations();
+  }
+
+  public <T extends Annotation> void registerByPassAnnotation(Class<T> type, ApplyByPassAnnotation<T> apply) {
+    byPassAnnotations.put(type, apply);
+  }
+
+  public <T extends Annotation> void registerEnrichAnnotation(Class<T> type, ApplyEnrichAnnotation<T> apply) {
+    enrichAnnotations.put(type, apply);
+  }
+
   public MethodAnnotations forMethod(Method method) {
     MethodAnnotations methodAnnotations = new MethodAnnotations();
-    registerStandardAnnotations(method, methodAnnotations);
+    byPassAnnotations.forEach((annotationType, apply) -> addByPassOperationIdNecessary(annotationType, apply, method, methodAnnotations));
+    enrichAnnotations.forEach((annotationType, apply) -> addEnrichOperationIdNecessary(annotationType, apply, method, methodAnnotations));
     return methodAnnotations;
   }
 
-  private void registerStandardAnnotations(Method method, MethodAnnotations methodAnnotations) {
-    Roles roles = method.getDeclaredAnnotation(Roles.class);
-    if (roles != null) {
-      methodAnnotations.addByPassOperation(context -> isAuthorized(roles, context.currentUser()) ? null : Payload.forbidden());
+  @SuppressWarnings("unchecked")
+  private <T extends Annotation> void addByPassOperationIdNecessary(Class<T> annotationType, ApplyByPassAnnotation<? extends Annotation> apply, Method method, MethodAnnotations methodAnnotations) {
+    T annotation = method.getDeclaredAnnotation(annotationType);
+    if (annotation != null) {
+      methodAnnotations.addByPassOperation(context -> ((ApplyByPassAnnotation<T>) apply).apply(context, annotation));
     }
+  }
 
-    AllowOrigin origin = method.getDeclaredAnnotation(AllowOrigin.class);
-    if (origin != null) {
-      methodAnnotations.addEnrichOperation(payload -> payload.withAllowOrigin(origin.value()));
+  @SuppressWarnings("unchecked")
+  private <T extends Annotation> void addEnrichOperationIdNecessary(Class<T> annotationType, ApplyEnrichAnnotation<? extends Annotation> apply, Method method, MethodAnnotations methodAnnotations) {
+    T annotation = method.getDeclaredAnnotation(annotationType);
+    if (annotation != null) {
+      methodAnnotations.addEnrichOperation(context -> ((ApplyEnrichAnnotation<T>) apply).apply(context, annotation));
     }
+  }
 
-    AllowMethods methods = method.getDeclaredAnnotation(AllowMethods.class);
-    if (methods != null) {
-      methodAnnotations.addEnrichOperation(payload -> payload.withAllowMethods(methods.value()));
-    }
-
-    AllowCredentials credentials = method.getDeclaredAnnotation(AllowCredentials.class);
-    if (credentials != null) {
-      methodAnnotations.addEnrichOperation(payload -> payload.withAllowCredentials(credentials.value()));
-    }
-
-    AllowHeaders allowedHeaders = method.getDeclaredAnnotation(AllowHeaders.class);
-    if (allowedHeaders != null) {
-      methodAnnotations.addEnrichOperation(payload -> payload.withAllowHeaders(allowedHeaders.value()));
-    }
-
-    ExposeHeaders exposedHeaders = method.getDeclaredAnnotation(ExposeHeaders.class);
-    if (exposedHeaders != null) {
-      methodAnnotations.addEnrichOperation(payload -> payload.withExposeHeaders(exposedHeaders.value()));
-    }
-
-    MaxAge maxAge = method.getDeclaredAnnotation(MaxAge.class);
-    if (maxAge != null) {
-      methodAnnotations.addEnrichOperation(payload -> payload.withMaxAge(maxAge.value()));
-    }
+  private void registerStandardAnnotations() {
+    registerByPassAnnotation(Roles.class, (context, roles) -> isAuthorized(roles, context.currentUser()) ? null : Payload.forbidden());
+    registerEnrichAnnotation(AllowOrigin.class, (payload, origin) -> payload.withAllowOrigin(origin.value()));
+    registerEnrichAnnotation(AllowMethods.class, (payload, methods) -> payload.withAllowMethods(methods.value()));
+    registerEnrichAnnotation(AllowCredentials.class, (payload, credentials) -> payload.withAllowCredentials(credentials.value()));
+    registerEnrichAnnotation(AllowHeaders.class, (payload, allowedHeaders) -> payload.withAllowHeaders(allowedHeaders.value()));
+    registerEnrichAnnotation(ExposeHeaders.class, (payload, exposedHeaders) -> payload.withExposeHeaders(exposedHeaders.value()));
+    registerEnrichAnnotation(MaxAge.class, (payload, maxAge) -> payload.withMaxAge(maxAge.value()));
   }
 
   private boolean isAuthorized(Roles roles, User user) {
@@ -72,5 +83,15 @@ public class MethodAnnotationsFactory {
     } else {
       return of(roles.value()).anyMatch(role -> user.isInRole(role));
     }
+  }
+
+  @FunctionalInterface
+  static interface ApplyByPassAnnotation<T extends Annotation> {
+    Payload apply(Context context, T annotation);
+  }
+
+  @FunctionalInterface
+  static interface ApplyEnrichAnnotation<T extends Annotation> {
+    Payload apply(Payload payload, T annotation);
   }
 }
