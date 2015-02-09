@@ -455,14 +455,15 @@ public class RouteCollection implements Routes {
   }
 
   @Override
-  public RoutesWithPattern url(String uriPattern) {
-    return new RoutesWithPattern(this, uriPattern);
+  public RouteCollection autoDiscover(String packageToScan) {
+    Set<Class<?>> resources = new ClasspathScanner().getTypesAnnotatedWith(packageToScan, Resource.class);
+    resources.forEach(this::add);
+    return this;
   }
 
   @Override
-  public void autoDiscover(String packageToScan) {
-    Set<Class<?>> resources = new ClasspathScanner().getTypesAnnotatedWith(packageToScan, Resource.class);
-    resources.forEach(this::add);
+  public RoutesWithPattern url(String uriPattern) {
+    return new RoutesWithPattern(this, uriPattern);
   }
 
   protected RouteCollection add(String method, String uriPattern, AnyRoute route) {
