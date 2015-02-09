@@ -22,7 +22,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class RouteCollectionTest {
@@ -49,16 +48,13 @@ public class RouteCollectionTest {
 
   @Test
   public void scan_annotated_resource() {
+    RouteCollection routeCollection = spy(new RouteCollection(mock(Env.class)));
+
     routeCollection.autoDiscover("net.codestory.http");
 
-    Route[] sortedRoutes = routeCollection.routes.getSortedRoutes();
-
-    assertThat(sortedRoutes).hasSize(1);
-    assertThat(sortedRoutes[0].matchMethod("GET")).isTrue();
-    assertThat(sortedRoutes[0].matchUri("/test")).isTrue();
+    verify(routeCollection).add(StubResource.class);
   }
 
-  @SuppressWarnings("UnusedDeclaration")
   @Resource
   public static class StubResource {
     @Get("/test")
