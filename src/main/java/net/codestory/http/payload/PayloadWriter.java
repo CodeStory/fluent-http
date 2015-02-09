@@ -61,26 +61,28 @@ public class PayloadWriter {
     if (isAsync(payload)) {
       return writeAndCloseAsync(payload);
     }
-    return writeAndCloseSync(payload);
+
+    writeAndCloseSync(payload);
+    return CompletableFuture.completedFuture(null);
   }
 
   protected CompletableFuture<Void> writeAndCloseAsync(Payload payload) {
     CompletableFuture<?> future = (CompletableFuture<?>) payload.rawContent();
+
     return future.thenAccept(content -> {
       try {
-        writeAndClose(new Payload(content));
+        writeAndCloseSync(new Payload(content));
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
     });
   }
 
-  protected CompletableFuture<Void> writeAndCloseSync(Payload payload) throws IOException {
+  protected void writeAndCloseSync(Payload payload) throws IOException {
     write(payload);
     if (!isStream(payload.rawContent())) {
       close();
     }
-    return CompletableFuture.completedFuture(null);
   }
 
   protected boolean isAsync(Payload payload) {
