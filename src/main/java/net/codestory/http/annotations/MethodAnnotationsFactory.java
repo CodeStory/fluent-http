@@ -15,15 +15,10 @@
  */
 package net.codestory.http.annotations;
 
-import net.codestory.http.payload.Payload;
-import net.codestory.http.security.User;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import static java.util.stream.Stream.of;
 
 public class MethodAnnotationsFactory {
   private final Map<Class<? extends Annotation>, ApplyByPassAnnotation<? extends Annotation>> byPassAnnotations;
@@ -32,7 +27,6 @@ public class MethodAnnotationsFactory {
   public MethodAnnotationsFactory() {
     this.byPassAnnotations = new LinkedHashMap<>();
     this.enrichAnnotations = new LinkedHashMap<>();
-    registerStandardAnnotations();
   }
 
   public <T extends Annotation> void registerByPassAnnotation(Class<T> type, ApplyByPassAnnotation<T> apply) {
@@ -63,26 +57,6 @@ public class MethodAnnotationsFactory {
     T annotation = findAnnotationOnMethodOrClass(annotationType, method);
     if (annotation != null) {
       methodAnnotations.addEnrichOperation(context -> ((ApplyEnrichAnnotation<T>) apply).apply(context, annotation));
-    }
-  }
-
-  // TODO: move to a less-internal class
-  private void registerStandardAnnotations() {
-    registerByPassAnnotation(Roles.class, (context, roles) -> isAuthorized(roles, context.currentUser()) ? null : Payload.forbidden());
-    registerEnrichAnnotation(AllowOrigin.class, (payload, origin) -> payload.withAllowOrigin(origin.value()));
-    registerEnrichAnnotation(AllowMethods.class, (payload, methods) -> payload.withAllowMethods(methods.value()));
-    registerEnrichAnnotation(AllowCredentials.class, (payload, credentials) -> payload.withAllowCredentials(credentials.value()));
-    registerEnrichAnnotation(AllowHeaders.class, (payload, allowedHeaders) -> payload.withAllowHeaders(allowedHeaders.value()));
-    registerEnrichAnnotation(ExposeHeaders.class, (payload, exposedHeaders) -> payload.withExposeHeaders(exposedHeaders.value()));
-    registerEnrichAnnotation(MaxAge.class, (payload, maxAge) -> payload.withMaxAge(maxAge.value()));
-  }
-
-  // TODO: move to a less-internal class
-  private boolean isAuthorized(Roles roles, User user) {
-    if (roles.allMatch()) {
-      return of(roles.value()).allMatch(role -> user.isInRole(role));
-    } else {
-      return of(roles.value()).anyMatch(role -> user.isInRole(role));
     }
   }
 

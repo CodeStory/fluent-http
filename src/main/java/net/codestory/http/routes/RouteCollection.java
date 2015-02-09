@@ -19,10 +19,7 @@ import net.codestory.http.Configuration;
 import net.codestory.http.Context;
 import net.codestory.http.Request;
 import net.codestory.http.Response;
-import net.codestory.http.annotations.ApplyByPassAnnotation;
-import net.codestory.http.annotations.ApplyEnrichAnnotation;
-import net.codestory.http.annotations.MethodAnnotationsFactory;
-import net.codestory.http.annotations.Resource;
+import net.codestory.http.annotations.*;
 import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.convert.TypeConvert;
 import net.codestory.http.extensions.Extensions;
@@ -37,6 +34,7 @@ import net.codestory.http.livereload.LiveReloadListener;
 import net.codestory.http.misc.Env;
 import net.codestory.http.payload.Payload;
 import net.codestory.http.payload.PayloadWriter;
+import net.codestory.http.security.User;
 import net.codestory.http.templating.Site;
 import net.codestory.http.websockets.*;
 
@@ -45,6 +43,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Supplier;
 
+import static java.util.stream.Stream.of;
 import static net.codestory.http.annotations.AnnotationHelper.parseAnnotations;
 import static net.codestory.http.constants.Methods.*;
 import static net.codestory.http.payload.Payload.*;
@@ -69,7 +68,7 @@ public class RouteCollection implements Routes {
     this.resources = new Resources(env);
     this.compilers = new CompilerFacade(env, resources);
     this.site = new Site(env, resources);
-    this.methodAnnotationsFactory = new MethodAnnotationsFactory();
+    this.methodAnnotationsFactory = createMethodAnnotationsFactory();
     this.routes = new RouteSorter();
     this.filters = new LinkedList<>();
     this.iocAdapter = new Singletons();
@@ -529,6 +528,28 @@ public class RouteCollection implements Routes {
     }
 
     return payloadSupplier.get();
+  }
+
+  protected MethodAnnotationsFactory createMethodAnnotationsFactory() {
+    MethodAnnotationsFactory factory = new MethodAnnotationsFactory();
+
+    factory.registerByPassAnnotation(Roles.class, (context, roles) -> isAuthorized(roles, context.currentUser()) ? null : Payload.forbidden());
+    factory.registerEnrichAnnotation(AllowOrigin.class, (payload, origin) -> payload.withAllowOrigin(origin.value()));
+    factory.registerEnrichAnnotation(AllowMethods.class, (payload, methods) -> payload.withAllowMethods(methods.value()));
+    factory.registerEnrichAnnotation(AllowCredentials.class, (payload, credentials) -> payload.withAllowCredentials(credentials.value()));
+    factory.registerEnrichAnnotation(AllowHeaders.class, (payload, allowedHeaders) -> payload.withAllowHeaders(allowedHeaders.value()));
+    factory.registerEnrichAnnotation(ExposeHeaders.class, (payload, exposedHeaders) -> payload.withExposeHeaders(exposedHeaders.value()));
+    factory.registerEnrichAnnotation(MaxAge.class, (payload, maxAge) -> payload.withMaxAge(maxAge.value()));
+
+    return factory;
+  }
+
+  protected boolean isAuthorized(Roles roles, User user) {
+    if (roles.allMatch()) {
+      return of(roles.value()).allMatch(role -> user.isInRole(role));
+    } else {
+      return of(roles.value()).anyMatch(role -> user.isInRole(role));
+    }
   }
 
   protected String checkParametersCount(String uriPattern, int count) {
