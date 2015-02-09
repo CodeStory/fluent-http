@@ -52,6 +52,7 @@ public class RouteCollection implements Routes {
   protected final Resources resources;
   protected final CompilerFacade compilers;
   protected final Site site;
+  protected final MethodAnnotationsFactory methodAnnotationsFactory;
   protected final RouteSorter routes;
   protected final Deque<Supplier<Filter>> filters;
 
@@ -65,6 +66,7 @@ public class RouteCollection implements Routes {
     this.resources = new Resources(env);
     this.compilers = new CompilerFacade(env, resources);
     this.site = new Site(env, resources);
+    this.methodAnnotationsFactory = new MethodAnnotationsFactory();
     this.routes = new RouteSorter();
     this.filters = new LinkedList<>();
     this.iocAdapter = new Singletons();
@@ -176,7 +178,7 @@ public class RouteCollection implements Routes {
       throw new IllegalArgumentException("Expected at least" + uriParamsCount + " parameters in " + uriPattern);
     }
 
-    add(httpMethod, uriPattern, new ReflectionRoute(resource, method, new MethodAnnotationsFactory().forMethod(method)));
+    add(httpMethod, uriPattern, new ReflectionRoute(resource, method, methodAnnotationsFactory.forMethod(method)));
   }
 
   @Override
