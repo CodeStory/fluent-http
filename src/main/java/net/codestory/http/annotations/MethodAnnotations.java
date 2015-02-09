@@ -26,12 +26,12 @@ import java.util.function.Function;
 
 import static java.util.stream.Stream.of;
 
-public class CustomAnnotations {
+public class MethodAnnotations {
   private final Method method;
   private final List<Function<Context, Payload>> byPassOperations;
   private final List<Function<Payload, Payload>> enrichOperations;
 
-  public CustomAnnotations(Method method) {
+  public MethodAnnotations(Method method) {
     this.method = method;
     this.byPassOperations = new ArrayList<>();
     this.enrichOperations = new ArrayList<>();

@@ -27,12 +27,12 @@ import net.codestory.http.payload.*;
 class ReflectionRoute implements AnyRoute {
   private final Supplier<Object> resource;
   private final Method method;
-  private final CustomAnnotations annotations;
+  private final MethodAnnotations annotations;
 
   ReflectionRoute(Supplier<Object> resource, Method method) {
     this.resource = resource;
     this.method = method;
-    this.annotations = new CustomAnnotations(method);
+    this.annotations = new MethodAnnotations(method);
   }
 
   @Override
