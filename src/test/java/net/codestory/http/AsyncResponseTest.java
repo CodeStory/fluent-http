@@ -19,43 +19,45 @@ import net.codestory.http.testhelpers.AbstractProdWebServerTest;
 import org.junit.Test;
 
 import java.util.concurrent.*;
+import java.util.function.Supplier;
+
+import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public class AsyncResponseTest extends AbstractProdWebServerTest {
-
   ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+  private <T> CompletableFuture<T> future(Supplier<T> supplier) {
+    return supplyAsync(supplier, executorService);
+  }
 
   @Test
   public void waits_for_completion() {
-    final CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> "test", executorService);
-    configure(routes -> routes.get("/", context -> future));
+    configure(routes -> routes.get("/", () -> future(() -> "test")));
 
     get("/").should().respond(200).contain("test");
   }
 
   @Test
   public void uses_expected_converters() {
-    final CompletableFuture<Pojo> future = CompletableFuture.supplyAsync(() -> new Pojo("coucou"), executorService);
-    configure(routes -> routes.get("/", context -> future));
+    configure(routes -> routes.get("/", () -> future(() -> new Pojo("coucou"))));
 
     get("/").should().respond(200).haveType("application/json").contain("{\"name\":\"coucou\"}");
   }
 
   @Test
-  public void deals_with_error() throws InterruptedException {
-    final CompletableFuture<Object> future = CompletableFuture.supplyAsync(() -> {
+  public void deals_with_error() {
+    configure(routes -> routes.get("/", () -> future(() -> {
       throw new RuntimeException("plop");
-    }, executorService);
-
-    configure(routes -> routes.get("/", context -> future));
+    })));
 
     get("/").should().respond(500);
   }
 
-  public static class Pojo {
-    public Pojo(String name) {
+  static class Pojo {
+    Pojo(String name) {
       this.name = name;
     }
 
-    public String name;
+    String name;
   }
 }
