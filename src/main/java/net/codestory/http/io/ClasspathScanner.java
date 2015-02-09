@@ -22,7 +22,7 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static net.codestory.http.io.Strings.replaceLast;
+import static net.codestory.http.io.Strings.substringBeforeLast;
 
 public class ClasspathScanner {
   public Set<String> getResources(Path root) {
@@ -37,7 +37,7 @@ public class ClasspathScanner {
     Set<Class<?>> classes = new LinkedHashSet<>();
 
     for (String classFile : listPaths(prefix, path -> path.endsWith(".class"))) {
-      String className = replaceLast(classFile.replace('/', '.'), ".class", "");
+      String className = substringBeforeLast(classFile.replace('/', '.'), ".class");
 
       try {
         Class<?> type = Class.forName(className);
