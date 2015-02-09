@@ -23,6 +23,7 @@ import java.io.*;
 import java.net.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.concurrent.CompletionStage;
 
 import net.codestory.http.compilers.*;
 import net.codestory.http.errors.*;
@@ -170,7 +171,11 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
         payload = errorPage(payload);
       }
 
-      payloadWriter.writeAndClose(payload);
+      CompletionStage completable = payloadWriter.writeAndClose(payload);
+      completable.exceptionally((e) -> {
+        handleServerError(payloadWriter, (Throwable) e);
+        return null;
+      });
     } catch (Exception e) {
       handleServerError(payloadWriter, e);
     }
@@ -189,7 +194,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     }
   }
 
-  protected void handleServerError(PayloadWriter payloadWriter, Exception e) {
+  protected void handleServerError(PayloadWriter payloadWriter, Throwable e) {
     try {
       if (e instanceof CompilerException) {
         Logs.compilerError(e);
@@ -208,7 +213,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     return errorPage(payload, null);
   }
 
-  protected Payload errorPage(Exception e) {
+  protected Payload errorPage(Throwable e) {
     int code = INTERNAL_SERVER_ERROR;
     if (e instanceof HttpException) {
       code = ((HttpException) e).code();
@@ -219,8 +224,8 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     return errorPage(new Payload(code), e);
   }
 
-  protected Payload errorPage(Payload payload, Exception e) {
-    Exception shownError = env.prodMode() ? null : e;
+  protected Payload errorPage(Payload payload, Throwable e) {
+    Throwable shownError = env.prodMode() ? null : e;
     return new ErrorPage(payload, shownError).payload();
   }
 

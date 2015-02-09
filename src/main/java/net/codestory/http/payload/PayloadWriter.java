@@ -27,6 +27,8 @@ import java.io.*;
 import java.net.URL;
 import java.nio.file.*;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.stream.*;
 import java.util.zip.*;
 
@@ -55,11 +57,34 @@ public class PayloadWriter {
     this.compilers = compilers;
   }
 
-  public void writeAndClose(Payload payload) throws IOException {
+  public CompletionStage writeAndClose(Payload payload) throws IOException {
+    if (isAsync(payload)) {
+      return writeAndCloseAsync(payload);
+    }
+    return writeAndCloseSync(payload);
+  }
+
+  private CompletableFuture writeAndCloseAsync(Payload payload) {
+    CompletableFuture<?> future = (CompletableFuture<?>) payload.rawContent();
+    return future.thenAccept(content -> {
+      try {
+        writeAndClose(new Payload(content));
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    });
+  }
+
+  private CompletableFuture writeAndCloseSync(Payload payload) throws IOException {
     write(payload);
     if (!isStream(payload.rawContent())) {
       close();
     }
+    return CompletableFuture.completedFuture(null);
+  }
+
+  private boolean isAsync(Payload payload) {
+    return payload.rawContent() instanceof CompletableFuture<?>;
   }
 
   protected void close() {

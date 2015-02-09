@@ -41,15 +41,15 @@ public class Logs {
     LOG.info("Server started on port {}", port);
   }
 
-  public static void compilerError(Exception e) {
+  public static void compilerError(Throwable e) {
     LOG.error(e.getMessage());
   }
 
-  public static void unexpectedError(Exception e) {
+  public static void unexpectedError(Throwable e) {
     LOG.error(e.getMessage());
   }
 
-  public static void unableToServeErrorPage(Exception e) {
+  public static void unableToServeErrorPage(Throwable e) {
     LOG.error("Unable to serve an error page", e);
   }
 
