@@ -51,9 +51,11 @@ public class RouteCollectionTest {
   public void scan_annotated_resource() {
     routeCollection.autoDiscover("net.codestory.http");
 
-    assertThat(routeCollection.routes.getSortedRoutes()).hasSize(1);
-    assertThat(routeCollection.routes.getSortedRoutes()[0].matchMethod("GET")).isTrue();
-    assertThat(routeCollection.routes.getSortedRoutes()[0].matchUri("/test")).isTrue();
+    Route[] sortedRoutes = routeCollection.routes.getSortedRoutes();
+
+    assertThat(sortedRoutes).hasSize(1);
+    assertThat(sortedRoutes[0].matchMethod("GET")).isTrue();
+    assertThat(sortedRoutes[0].matchUri("/test")).isTrue();
   }
 
   @SuppressWarnings("UnusedDeclaration")
