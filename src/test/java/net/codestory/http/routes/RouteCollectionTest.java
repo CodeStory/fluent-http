@@ -48,7 +48,7 @@ public class RouteCollectionTest {
   }
 
   @Test
-  public void scan_annoted_resource() {
+  public void scan_annotated_resource() {
     routeCollection.autoDiscover("net.codestory.http");
 
     assertThat(routeCollection.routes.getSortedRoutes()).hasSize(1);
