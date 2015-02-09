@@ -27,17 +27,17 @@ import net.codestory.http.payload.*;
 class ReflectionRoute implements AnyRoute {
   private final Supplier<Object> resource;
   private final Method method;
-  private final CustomAnnotations customAnnotations;
+  private final CustomAnnotations annotations;
 
   ReflectionRoute(Supplier<Object> resource, Method method) {
     this.resource = resource;
     this.method = method;
-    this.customAnnotations = new CustomAnnotations(method);
+    this.annotations = new CustomAnnotations(method);
   }
 
   @Override
   public Object body(Context context, String[] pathParameters) {
-    Payload byPass = customAnnotations.byPass(context);
+    Payload byPass = annotations.byPass(context);
     if (byPass != null) {
       return byPass;
     }
@@ -51,7 +51,7 @@ class ReflectionRoute implements AnyRoute {
       String contentType = findContentType(method);
 
       Payload payload = new Payload(contentType, body);
-      customAnnotations.enrich(payload);
+      annotations.enrich(payload);
 
       return payload;
     } catch (RuntimeException e) {

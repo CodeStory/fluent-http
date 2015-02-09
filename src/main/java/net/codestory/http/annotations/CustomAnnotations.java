@@ -20,21 +20,70 @@ import net.codestory.http.payload.Payload;
 import net.codestory.http.security.User;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
 
 import static java.util.stream.Stream.of;
 
 public class CustomAnnotations {
   private final Method method;
+  private final List<Function<Context, Payload>> byPassOperations;
+  private final List<Function<Payload, Payload>> enrichOperations;
 
   public CustomAnnotations(Method method) {
     this.method = method;
+    this.byPassOperations = new ArrayList<>();
+    this.enrichOperations = new ArrayList<>();
+
+    registerStandardAnnotations();
+  }
+
+  private void registerStandardAnnotations() {
+    byPassOperations.add(context -> isAuthorized(context.currentUser()) ? null : Payload.forbidden());
+    enrichOperations.add(payload -> {
+      AllowOrigin origin = method.getDeclaredAnnotation(AllowOrigin.class);
+      return (origin != null) ? payload.withAllowOrigin(origin.value()) : payload;
+    });
+    enrichOperations.add(payload -> {
+      AllowMethods methods = method.getDeclaredAnnotation(AllowMethods.class);
+      return (methods != null) ? payload.withAllowMethods(methods.value()) : payload;
+    });
+    enrichOperations.add(payload -> {
+      AllowCredentials credentials = method.getDeclaredAnnotation(AllowCredentials.class);
+      return (credentials != null) ? payload.withAllowCredentials(credentials.value()) : payload;
+    });
+    enrichOperations.add(payload -> {
+      AllowHeaders allowedHeaders = method.getDeclaredAnnotation(AllowHeaders.class);
+      return (allowedHeaders != null) ? payload.withAllowHeaders(allowedHeaders.value()) : payload;
+    });
+    enrichOperations.add(payload -> {
+      ExposeHeaders exposedHeaders = method.getDeclaredAnnotation(ExposeHeaders.class);
+      return (exposedHeaders != null) ? payload.withExposeHeaders(exposedHeaders.value()) : payload;
+    });
+    enrichOperations.add(payload -> {
+      MaxAge maxAge = method.getDeclaredAnnotation(MaxAge.class);
+      return (maxAge != null) ? payload.withMaxAge(maxAge.value()) : payload;
+    });
   }
 
   public Payload byPass(Context context) {
-    if (!isAuthorized(context.currentUser())) {
-      return Payload.forbidden();
+    for (Function<Context, Payload> operation : byPassOperations) {
+      Payload payload = operation.apply(context);
+      if (payload != null) {
+        return payload;
+      }
     }
+
     return null;
+  }
+
+  public Payload enrich(Payload payload) {
+    for (Function<Payload, Payload> operation : enrichOperations) {
+      payload = operation.apply(payload);
+    }
+
+    return payload;
   }
 
   private boolean isAuthorized(User user) {
@@ -48,43 +97,5 @@ public class CustomAnnotations {
     } else {
       return of(roles.value()).anyMatch(role -> user.isInRole(role));
     }
-  }
-
-  public Payload enrich(Payload payload) {
-    return setCorsHeaders(payload);
-  }
-
-  private Payload setCorsHeaders(Payload payload) {
-    AllowOrigin origin = method.getDeclaredAnnotation(AllowOrigin.class);
-    if (origin != null) {
-      payload = payload.withAllowOrigin(origin.value());
-    }
-
-    AllowMethods methods = method.getDeclaredAnnotation(AllowMethods.class);
-    if (methods != null) {
-      payload = payload.withAllowMethods(methods.value());
-    }
-
-    AllowCredentials credentials = method.getDeclaredAnnotation(AllowCredentials.class);
-    if (credentials != null) {
-      payload = payload.withAllowCredentials(credentials.value());
-    }
-
-    AllowHeaders allowedHeaders = method.getDeclaredAnnotation(AllowHeaders.class);
-    if (allowedHeaders != null) {
-      payload = payload.withAllowHeaders(allowedHeaders.value());
-    }
-
-    ExposeHeaders exposedHeaders = method.getDeclaredAnnotation(ExposeHeaders.class);
-    if (exposedHeaders != null) {
-      payload.withExposeHeaders(exposedHeaders.value());
-    }
-
-    MaxAge maxAge = method.getDeclaredAnnotation(MaxAge.class);
-    if (maxAge != null) {
-      payload = payload.withMaxAge(maxAge.value());
-    }
-
-    return payload;
   }
 }
