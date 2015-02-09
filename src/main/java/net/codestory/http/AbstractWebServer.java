@@ -172,7 +172,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
       }
 
       CompletionStage completable = payloadWriter.writeAndClose(payload);
-      completable.exceptionally((e) -> {
+      completable.exceptionally(e -> {
         handleServerError(payloadWriter, (Throwable) e);
         return null;
       });
