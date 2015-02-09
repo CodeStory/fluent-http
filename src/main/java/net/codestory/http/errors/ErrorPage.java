@@ -15,18 +15,18 @@
  */
 package net.codestory.http.errors;
 
-import static net.codestory.http.constants.HttpStatus.*;
+import net.codestory.http.payload.Payload;
+import net.codestory.http.templating.ModelAndView;
 
 import java.io.*;
 
-import net.codestory.http.payload.*;
-import net.codestory.http.templating.*;
+import static net.codestory.http.constants.HttpStatus.*;
 
 public class ErrorPage {
   private final Payload payload;
-  private final Exception exception;
+  private final Throwable exception;
 
-  public ErrorPage(Payload payload, Exception exception) {
+  public ErrorPage(Payload payload, Throwable exception) {
     this.payload = payload;
     this.exception = exception;
   }
@@ -44,7 +44,7 @@ public class ErrorPage {
     return (payload.code() == NOT_FOUND) ? "404.html" : "500.html";
   }
 
-  private static String toString(Exception error) {
+  private static String toString(Throwable error) {
     if (error == null) {
       return "";
     }
