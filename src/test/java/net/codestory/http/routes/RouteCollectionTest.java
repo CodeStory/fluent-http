@@ -15,12 +15,15 @@
  */
 package net.codestory.http.routes;
 
-import static org.mockito.Mockito.*;
-
+import net.codestory.http.annotations.Get;
+import net.codestory.http.annotations.Resource;
 import net.codestory.http.misc.Env;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-import org.junit.*;
-import org.junit.rules.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 public class RouteCollectionTest {
   RouteCollection routeCollection = new RouteCollection(mock(Env.class));
@@ -42,5 +45,26 @@ public class RouteCollectionTest {
     thrown.expectMessage("Expected 2 parameters in /:one/:two/:three");
 
     routeCollection.get("/:one/:two/:three", (context, one, two) -> "");
+  }
+
+  @Test
+  public void scan_annoted_resource() {
+    routeCollection.autoDiscover("net.codestory.http");
+
+    assertThat(routeCollection.routes.getSortedRoutes()).hasSize(1);
+    assertThat(routeCollection.routes.getSortedRoutes()[0].matchMethod("GET")).isTrue();
+    assertThat(routeCollection.routes.getSortedRoutes()[0].matchUri("/test")).isTrue();
+
+  }
+
+  @SuppressWarnings("UnusedDeclaration")
+  @Resource
+  public static class StubResource {
+
+    @Get("/test")
+    public String get() {
+      return "hello";
+    }
+
   }
 }

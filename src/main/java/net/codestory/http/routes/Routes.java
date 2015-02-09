@@ -15,12 +15,12 @@
  */
 package net.codestory.http.routes;
 
-import java.io.*;
-
 import net.codestory.http.extensions.Extensions;
-import net.codestory.http.filters.*;
-import net.codestory.http.injection.*;
-import net.codestory.http.websockets.*;
+import net.codestory.http.filters.Filter;
+import net.codestory.http.injection.IocAdapter;
+import net.codestory.http.websockets.WebSocketListenerFactory;
+
+import java.io.Serializable;
 
 public interface Routes extends Serializable {
   Routes setExtensions(Extensions extensions);
@@ -134,4 +134,6 @@ public interface Routes extends Serializable {
   Routes delete(String uriPattern, FourParamsRoute route);
 
   RoutesWithPattern url(String uriPattern);
+
+  void autoDiscover(String packageToSCan);
 }
