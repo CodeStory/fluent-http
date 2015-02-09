@@ -19,6 +19,7 @@ import net.codestory.http.Configuration;
 import net.codestory.http.Context;
 import net.codestory.http.Request;
 import net.codestory.http.Response;
+import net.codestory.http.annotations.Resource;
 import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.convert.TypeConvert;
 import net.codestory.http.extensions.Extensions;
@@ -34,10 +35,13 @@ import net.codestory.http.payload.Payload;
 import net.codestory.http.payload.PayloadWriter;
 import net.codestory.http.templating.Site;
 import net.codestory.http.websockets.*;
+import org.reflections.Reflections;
+import org.reflections.scanners.TypeAnnotationsScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
 
 import java.lang.reflect.Method;
-import java.util.Deque;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.function.Supplier;
 
 import static net.codestory.http.annotations.AnnotationHelper.parseAnnotations;
@@ -456,6 +460,15 @@ public class RouteCollection implements Routes {
   @Override
   public RoutesWithPattern url(String uriPattern) {
     return new RoutesWithPattern(this, uriPattern);
+  }
+
+  @Override
+  public void autoDiscover(String packageToScan) {
+    final Reflections reflections = new Reflections(new ConfigurationBuilder()
+      .setUrls(ClasspathHelper.forPackage(packageToScan))
+      .addScanners(new TypeAnnotationsScanner()));
+    final Set<Class<?>> resources = reflections.getTypesAnnotatedWith(Resource.class);
+    resources.forEach(this::add);
   }
 
   protected RouteCollection add(String method, String uriPattern, AnyRoute route) {
