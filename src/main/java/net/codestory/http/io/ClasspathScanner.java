@@ -53,18 +53,18 @@ public class ClasspathScanner {
   }
 
   public Set<String> listPaths(String prefix, Predicate<String> filter) {
-    Set<String> resources = new LinkedHashSet<>();
+    Set<String> paths = new LinkedHashSet<>();
 
     for (URL url : urls(prefix)) {
       for (String rawPath : ClassPaths.fromURL(url)) {
         String path = rawPath.replace('\\', '/');
         if (path.startsWith(prefix) && filter.test(path)) {
-          resources.add(path);
+          paths.add(path);
         }
       }
     }
 
-    return resources;
+    return paths;
   }
 
   private static Set<URL> urls(String name) {
