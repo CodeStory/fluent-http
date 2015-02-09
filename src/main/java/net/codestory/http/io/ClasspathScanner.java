@@ -44,7 +44,7 @@ public class ClasspathScanner {
         if (type.isAnnotationPresent(annotation)) {
           classes.add(type);
         }
-      } catch (Exception e) {
+      } catch (Throwable e) {
         // Ignore
       }
     }
