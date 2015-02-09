@@ -64,7 +64,7 @@ public class PayloadWriter {
     return writeAndCloseSync(payload);
   }
 
-  private CompletableFuture<Void> writeAndCloseAsync(Payload payload) {
+  protected CompletableFuture<Void> writeAndCloseAsync(Payload payload) {
     CompletableFuture<?> future = (CompletableFuture<?>) payload.rawContent();
     return future.thenAccept(content -> {
       try {
@@ -75,7 +75,7 @@ public class PayloadWriter {
     });
   }
 
-  private CompletableFuture<Void> writeAndCloseSync(Payload payload) throws IOException {
+  protected CompletableFuture<Void> writeAndCloseSync(Payload payload) throws IOException {
     write(payload);
     if (!isStream(payload.rawContent())) {
       close();
@@ -83,7 +83,7 @@ public class PayloadWriter {
     return CompletableFuture.completedFuture(null);
   }
 
-  private boolean isAsync(Payload payload) {
+  protected boolean isAsync(Payload payload) {
     return payload.rawContent() instanceof CompletableFuture<?>;
   }
 
