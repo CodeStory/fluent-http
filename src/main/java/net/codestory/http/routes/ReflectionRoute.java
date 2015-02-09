@@ -15,8 +15,6 @@
  */
 package net.codestory.http.routes;
 
-import static java.util.stream.Stream.of;
-
 import java.io.IOException;
 import java.lang.reflect.*;
 import java.util.function.*;
@@ -25,21 +23,23 @@ import net.codestory.http.*;
 import net.codestory.http.annotations.*;
 import net.codestory.http.convert.*;
 import net.codestory.http.payload.*;
-import net.codestory.http.security.User;
 
 class ReflectionRoute implements AnyRoute {
   private final Supplier<Object> resource;
   private final Method method;
+  private final CustomAnnotations customAnnotations;
 
   ReflectionRoute(Supplier<Object> resource, Method method) {
     this.resource = resource;
     this.method = method;
+    this.customAnnotations = new CustomAnnotations(method);
   }
 
   @Override
   public Object body(Context context, String[] pathParameters) {
-    if (!isAuthorized(context.currentUser())) {
-      return Payload.forbidden();
+    Payload byPass = customAnnotations.byPass(context);
+    if (byPass != null) {
+      return byPass;
     }
 
     try {
@@ -51,58 +51,13 @@ class ReflectionRoute implements AnyRoute {
       String contentType = findContentType(method);
 
       Payload payload = new Payload(contentType, body);
-      setCorsHeaders(payload);
+      customAnnotations.enrich(payload);
 
       return payload;
     } catch (RuntimeException e) {
       throw e;
     } catch (Throwable e) {
       throw new IllegalStateException("Unable to apply route", e);
-    }
-  }
-
-  private boolean isAuthorized(User user) {
-    Roles roles = method.getDeclaredAnnotation(Roles.class);
-    if (roles == null) {
-      return true;
-    }
-
-    if (roles.allMatch()) {
-      return of(roles.value()).allMatch(role -> user.isInRole(role));
-    } else {
-      return of(roles.value()).anyMatch(role -> user.isInRole(role));
-    }
-  }
-
-  private void setCorsHeaders(Payload finalPayload) {
-    AllowOrigin origin = method.getDeclaredAnnotation(AllowOrigin.class);
-    if (origin != null) {
-      finalPayload.withAllowOrigin(origin.value());
-    }
-
-    AllowMethods methods = method.getDeclaredAnnotation(AllowMethods.class);
-    if (methods != null) {
-      finalPayload.withAllowMethods(methods.value());
-    }
-
-    AllowCredentials credentials = method.getDeclaredAnnotation(AllowCredentials.class);
-    if (credentials != null) {
-      finalPayload.withAllowCredentials(credentials.value());
-    }
-
-    AllowHeaders allowedHeaders = method.getDeclaredAnnotation(AllowHeaders.class);
-    if (allowedHeaders != null) {
-      finalPayload.withAllowHeaders(allowedHeaders.value());
-    }
-
-    ExposeHeaders exposedHeaders = method.getDeclaredAnnotation(ExposeHeaders.class);
-    if (exposedHeaders != null) {
-      finalPayload.withExposeHeaders(exposedHeaders.value());
-    }
-
-    MaxAge maxAge = method.getDeclaredAnnotation(MaxAge.class);
-    if (maxAge != null) {
-      finalPayload.withMaxAge(maxAge.value());
     }
   }
 
