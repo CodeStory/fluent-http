@@ -140,7 +140,7 @@ public class CalculationResource {
 }
 
 @Prefix("/person")
-public class CalculationResource {
+public class PersonResource {
   @Post("/")
   public void create(Person person) {
     // Do something
