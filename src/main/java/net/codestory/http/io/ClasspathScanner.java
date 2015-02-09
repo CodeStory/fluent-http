@@ -16,6 +16,7 @@
 package net.codestory.http.io;
 
 import java.io.*;
+import java.lang.annotation.Annotation;
 import java.net.*;
 import java.nio.file.*;
 import java.util.*;
@@ -36,6 +37,30 @@ public class ClasspathScanner {
     }
 
     return resources;
+  }
+
+  public Set<Class<?>> getTypesAnnotatedWith(String packageToScan, Class<? extends Annotation> annotation) {
+    Set<Class<?>> classes = new LinkedHashSet<>();
+
+    String prefix = packageToScan.replace('.', '/');
+
+    for (URL url : urls(prefix)) {
+      for (String rawPath : ClassPaths.fromURL(url)) {
+        String path = rawPath.replace('\\', '/');
+        if (path.startsWith(prefix) && path.endsWith(".class")) {
+          try {
+            Class<?> type = Class.forName(Strings.replaceLast(path.replace('/', '.'), ".class", ""));
+            if (type.isAnnotationPresent(annotation)) {
+              classes.add(type);
+            }
+          } catch (Exception e) {
+            // Ignore
+          }
+        }
+      }
+    }
+
+    return classes;
   }
 
   private static Set<URL> urls(String name) {

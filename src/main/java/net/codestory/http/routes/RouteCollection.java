@@ -28,6 +28,7 @@ import net.codestory.http.filters.PayloadSupplier;
 import net.codestory.http.injection.IocAdapter;
 import net.codestory.http.injection.Singletons;
 import net.codestory.http.io.ClassPaths;
+import net.codestory.http.io.ClasspathScanner;
 import net.codestory.http.io.Resources;
 import net.codestory.http.livereload.LiveReloadListener;
 import net.codestory.http.misc.Env;
@@ -35,10 +36,6 @@ import net.codestory.http.payload.Payload;
 import net.codestory.http.payload.PayloadWriter;
 import net.codestory.http.templating.Site;
 import net.codestory.http.websockets.*;
-import org.reflections.Reflections;
-import org.reflections.scanners.TypeAnnotationsScanner;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -464,10 +461,7 @@ public class RouteCollection implements Routes {
 
   @Override
   public void autoDiscover(String packageToScan) {
-    final Reflections reflections = new Reflections(new ConfigurationBuilder()
-      .setUrls(ClasspathHelper.forPackage(packageToScan))
-      .addScanners(new TypeAnnotationsScanner()));
-    final Set<Class<?>> resources = reflections.getTypesAnnotatedWith(Resource.class);
+    Set<Class<?>> resources = new ClasspathScanner().getTypesAnnotatedWith(packageToScan, Resource.class);
     resources.forEach(this::add);
   }
 
