@@ -32,7 +32,7 @@ class ReflectionRoute implements AnyRoute {
   ReflectionRoute(Supplier<Object> resource, Method method) {
     this.resource = resource;
     this.method = method;
-    this.annotations = new MethodAnnotations(method);
+    this.annotations = new MethodAnnotationsFactory().forMethod(method);
   }
 
   @Override

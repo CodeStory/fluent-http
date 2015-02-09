@@ -17,26 +17,26 @@ package net.codestory.http.annotations;
 
 import net.codestory.http.Context;
 import net.codestory.http.payload.Payload;
-import net.codestory.http.security.User;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import static java.util.stream.Stream.of;
-
 public class MethodAnnotations {
-  private final Method method;
   private final List<Function<Context, Payload>> byPassOperations;
   private final List<Function<Payload, Payload>> enrichOperations;
 
-  public MethodAnnotations(Method method) {
-    this.method = method;
+  MethodAnnotations() {
     this.byPassOperations = new ArrayList<>();
     this.enrichOperations = new ArrayList<>();
+  }
 
-    registerStandardAnnotations();
+  void addByPassOperation(Function<Context, Payload> operation) {
+    byPassOperations.add(operation);
+  }
+
+  void addEnrichOperation(Function<Payload, Payload> operation) {
+    enrichOperations.add(operation);
   }
 
   public Payload byPass(Context context) {
@@ -56,50 +56,5 @@ public class MethodAnnotations {
     }
 
     return payload;
-  }
-
-  private void registerStandardAnnotations() {
-    Roles roles = method.getDeclaredAnnotation(Roles.class);
-    if (roles != null) {
-      byPassOperations.add(context -> isAuthorized(roles, context.currentUser()) ? null : Payload.forbidden());
-    }
-
-    AllowOrigin origin = method.getDeclaredAnnotation(AllowOrigin.class);
-    if (origin != null) {
-      enrichOperations.add(payload -> payload.withAllowOrigin(origin.value()));
-    }
-
-    AllowMethods methods = method.getDeclaredAnnotation(AllowMethods.class);
-    if (methods != null) {
-      enrichOperations.add(payload -> payload.withAllowMethods(methods.value()));
-    }
-
-    AllowCredentials credentials = method.getDeclaredAnnotation(AllowCredentials.class);
-    if (credentials != null) {
-      enrichOperations.add(payload -> payload.withAllowCredentials(credentials.value()));
-    }
-
-    AllowHeaders allowedHeaders = method.getDeclaredAnnotation(AllowHeaders.class);
-    if (allowedHeaders != null) {
-      enrichOperations.add(payload -> payload.withAllowHeaders(allowedHeaders.value()));
-    }
-
-    ExposeHeaders exposedHeaders = method.getDeclaredAnnotation(ExposeHeaders.class);
-    if (exposedHeaders != null) {
-      enrichOperations.add(payload -> payload.withExposeHeaders(exposedHeaders.value()));
-    }
-
-    MaxAge maxAge = method.getDeclaredAnnotation(MaxAge.class);
-    if (maxAge != null) {
-      enrichOperations.add(payload -> payload.withMaxAge(maxAge.value()));
-    }
-  }
-
-  private boolean isAuthorized(Roles roles, User user) {
-    if (roles.allMatch()) {
-      return of(roles.value()).allMatch(role -> user.isInRole(role));
-    } else {
-      return of(roles.value()).anyMatch(role -> user.isInRole(role));
-    }
   }
 }
