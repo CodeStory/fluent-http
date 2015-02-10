@@ -24,7 +24,6 @@ import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.convert.TypeConvert;
 import net.codestory.http.extensions.Extensions;
 import net.codestory.http.filters.Filter;
-import net.codestory.http.filters.PayloadSupplier;
 import net.codestory.http.injection.IocAdapter;
 import net.codestory.http.injection.Singletons;
 import net.codestory.http.io.ClassPaths;
@@ -36,11 +35,15 @@ import net.codestory.http.payload.Payload;
 import net.codestory.http.payload.PayloadWriter;
 import net.codestory.http.security.User;
 import net.codestory.http.templating.Site;
-import net.codestory.http.websockets.*;
+import net.codestory.http.websockets.WebSocketListener;
+import net.codestory.http.websockets.WebSocketListenerFactory;
+import net.codestory.http.websockets.WebSocketSession;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import static java.util.stream.Stream.of;
@@ -60,8 +63,8 @@ public class RouteCollection implements Routes {
 
   protected IocAdapter iocAdapter;
   protected Extensions extensions;
-  protected Route[] sortedRoutes;
   protected WebSocketListenerFactory webSocketListenerFactory;
+  protected ContextToPayload contextToPayload;
 
   public RouteCollection(Env env) {
     this.env = env;
@@ -85,7 +88,7 @@ public class RouteCollection implements Routes {
     installExtensions();
     addStaticRoutes();
 
-    sortedRoutes = routes.getSortedRoutes();
+    contextToPayload = create(routes.getSortedRoutes(), filters);
   }
 
   private void installExtensions() {
@@ -493,12 +496,14 @@ public class RouteCollection implements Routes {
   }
 
   public Payload apply(Context context) throws Exception {
-    String uri = context.uri();
-    if (uri == null) {
-      return notFound();
+    if (context.uri() == null) {
+      return Payload.notFound();
     }
+    return contextToPayload.get(context.uri(), context);
+  }
 
-    PayloadSupplier payloadSupplier = () -> {
+  private static ContextToPayload create(Route[] sortedRoutes, Deque<Supplier<Filter>> filters) {
+    ContextToPayload payloadSupplier = (uri, context) -> {
       Payload response = notFound();
 
       for (Route route : sortedRoutes) {
@@ -521,13 +526,18 @@ public class RouteCollection implements Routes {
     for (Supplier<Filter> filterSupplier : filters) {
       Filter filter = filterSupplier.get();
 
-      if (filter.matches(uri, context)) {
-        PayloadSupplier nextFilter = payloadSupplier;
-        payloadSupplier = () -> filter.apply(uri, context, nextFilter);
-      }
+      ContextToPayload nextFilter = payloadSupplier;
+
+      payloadSupplier = (uri, context) -> {
+        if (filter.matches(uri, context)) {
+          return filter.apply(uri, context, () -> nextFilter.get(uri, context));
+        } else {
+          return nextFilter.get(uri, context);
+        }
+      };
     }
 
-    return payloadSupplier.get();
+    return payloadSupplier;
   }
 
   protected MethodAnnotationsFactory createMethodAnnotationsFactory() {
