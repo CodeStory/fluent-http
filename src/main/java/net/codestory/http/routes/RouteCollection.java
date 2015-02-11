@@ -88,7 +88,7 @@ public class RouteCollection implements Routes {
     installExtensions();
     addStaticRoutes();
 
-    contextToPayload = create(routes.getSortedRoutes(), filters);
+    contextToPayload = createContextToPayload(routes.getSortedRoutes(), filters);
   }
 
   private void installExtensions() {
@@ -502,7 +502,7 @@ public class RouteCollection implements Routes {
     return contextToPayload.get(context.uri(), context);
   }
 
-  private static ContextToPayload create(Route[] sortedRoutes, Deque<Supplier<Filter>> filters) {
+  private static ContextToPayload createContextToPayload(Route[] sortedRoutes, Deque<Supplier<Filter>> filters) {
     ContextToPayload payloadSupplier = (uri, context) -> {
       Payload response = notFound();
 
