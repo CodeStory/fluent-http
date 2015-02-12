@@ -52,6 +52,7 @@ import static net.codestory.http.constants.Methods.*;
 import static net.codestory.http.payload.Payload.*;
 import static net.codestory.http.routes.UriParser.paramsCount;
 
+// TODO: Move route configuration and route to payload elsewhere
 public class RouteCollection implements Routes {
   protected final Env env;
   protected final Resources resources;
