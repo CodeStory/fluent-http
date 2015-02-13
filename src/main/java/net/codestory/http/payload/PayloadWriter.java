@@ -97,7 +97,12 @@ public class PayloadWriter {
   }
 
   protected void writeAndCloseSync(Payload payload) throws IOException {
+    if (payload.isError()) {
+      payload = errorPage(payload);
+    }
+
     write(payload);
+
     if (!isStream(payload.rawContent())) {
       close();
     }
@@ -456,7 +461,7 @@ public class PayloadWriter {
     return forModelAndView(ModelAndView.of(Resources.toUnixString(path)));
   }
 
-  public Payload errorPage(Payload payload) {
+  protected Payload errorPage(Payload payload) {
     return errorPage(payload, null);
   }
 

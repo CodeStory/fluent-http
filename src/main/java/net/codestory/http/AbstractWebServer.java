@@ -162,11 +162,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
       // TODO: move context creation to RouteCollection
       Context context = routes.createContext(request, response);
 
-      // TODO: move errorPage handling to PayloadWriter
       Payload payload = routes.apply(context);
-      if (payload.isError()) {
-        payload = payloadWriter.errorPage(payload);
-      }
 
       payloadWriter.writeAndClose(payload);
     } catch (Exception e) {
