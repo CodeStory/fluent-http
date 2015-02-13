@@ -15,30 +15,61 @@
  */
 package net.codestory.http.payload;
 
-import static java.nio.charset.StandardCharsets.*;
-import static java.util.Objects.*;
-import static net.codestory.http.constants.Encodings.*;
-import static net.codestory.http.constants.Headers.*;
-import static net.codestory.http.constants.HttpStatus.*;
-import static net.codestory.http.constants.Methods.*;
-import static net.codestory.http.io.Strings.*;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Objects.requireNonNull;
+import static net.codestory.http.constants.Encodings.GZIP;
+import static net.codestory.http.constants.Headers.ACCEPT_ENCODING;
+import static net.codestory.http.constants.Headers.CACHE_CONTROL;
+import static net.codestory.http.constants.Headers.CONNECTION;
+import static net.codestory.http.constants.Headers.CONTENT_ENCODING;
+import static net.codestory.http.constants.Headers.CONTENT_TYPE;
+import static net.codestory.http.constants.Headers.ETAG;
+import static net.codestory.http.constants.Headers.IF_MODIFIED_SINCE;
+import static net.codestory.http.constants.Headers.IF_NONE_MATCH;
+import static net.codestory.http.constants.Headers.LAST_MODIFIED;
+import static net.codestory.http.constants.HttpStatus.CONTINUE;
+import static net.codestory.http.constants.HttpStatus.INTERNAL_SERVER_ERROR;
+import static net.codestory.http.constants.HttpStatus.NOT_FOUND;
+import static net.codestory.http.constants.HttpStatus.NOT_MODIFIED;
+import static net.codestory.http.constants.HttpStatus.NO_CONTENT;
+import static net.codestory.http.constants.HttpStatus.OK;
+import static net.codestory.http.constants.Methods.HEAD;
+import static net.codestory.http.io.Strings.stripQuotes;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.URL;
-import java.nio.file.*;
-import java.util.*;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
-import java.util.stream.*;
-import java.util.zip.*;
+import java.util.stream.Stream;
+import java.util.zip.GZIPOutputStream;
 
-import net.codestory.http.*;
-import net.codestory.http.compilers.*;
-import net.codestory.http.convert.*;
-import net.codestory.http.io.*;
-import net.codestory.http.misc.*;
-import net.codestory.http.templating.*;
-import net.codestory.http.types.*;
+import net.codestory.http.Request;
+import net.codestory.http.Response;
+import net.codestory.http.compilers.CacheEntry;
+import net.codestory.http.compilers.CompilerException;
+import net.codestory.http.compilers.CompilerFacade;
+import net.codestory.http.compilers.SourceFile;
+import net.codestory.http.convert.TypeConvert;
+import net.codestory.http.errors.ErrorPage;
+import net.codestory.http.errors.HttpException;
+import net.codestory.http.io.InputStreams;
+import net.codestory.http.io.Resources;
+import net.codestory.http.logs.Logs;
+import net.codestory.http.misc.Dates;
+import net.codestory.http.misc.Env;
+import net.codestory.http.misc.Md5;
+import net.codestory.http.templating.Model;
+import net.codestory.http.templating.ModelAndView;
+import net.codestory.http.templating.Site;
+import net.codestory.http.types.ContentTypes;
 
 public class PayloadWriter {
   protected final Request request;
@@ -57,38 +88,53 @@ public class PayloadWriter {
     this.compilers = compilers;
   }
 
-  public void writeAndClose(Payload payload, Consumer<Throwable> onError) throws IOException {
+  public void writeAndClose(Payload payload) throws IOException {
     if (isAsync(payload)) {
-      writeAndCloseAsync(payload, onError);
+      writeAndCloseAsync(payload);
     } else {
       writeAndCloseSync(payload);
     }
   }
 
-  public void writeAndCloseSync(Payload payload) throws IOException {
+  protected void writeAndCloseSync(Payload payload) throws IOException {
     write(payload);
     if (!isStream(payload.rawContent())) {
       close();
     }
   }
 
-  protected CompletableFuture<Void> writeAndCloseAsync(Payload payload, Consumer<Throwable> onError) {
+  protected CompletableFuture<Void> writeAndCloseAsync(Payload payload) {
     CompletableFuture<?> future = (CompletableFuture<?>) payload.rawContent();
 
     return future.thenAccept(content -> {
       try {
         writeAndCloseSync(new Payload(content));
       } catch (Exception e) {
-        onError.accept(e);
+        writeErrorPage(e);
       }
     }).exceptionally(e -> {
-      onError.accept(e);
+      writeErrorPage(e);
       return null;
     });
   }
 
   protected boolean isAsync(Payload payload) {
     return payload.rawContent() instanceof CompletableFuture<?>;
+  }
+
+  public void writeErrorPage(Throwable e) {
+    try {
+      if (e instanceof CompilerException) {
+        Logs.compilerError(e);
+      } else if (!(e instanceof HttpException) && !(e instanceof NoSuchElementException)) {
+        Logs.unexpectedError(e);
+      }
+
+      Payload errorPage = errorPage(e).withHeader("reason", e.getMessage());
+      writeAndCloseSync(errorPage);
+    } catch (IOException error) {
+      Logs.unableToServeErrorPage(error);
+    }
   }
 
   protected void close() {
@@ -408,5 +454,25 @@ public class PayloadWriter {
 
   protected byte[] forTemplatePath(Path path) {
     return forModelAndView(ModelAndView.of(Resources.toUnixString(path)));
+  }
+
+  public Payload errorPage(Payload payload) {
+    return errorPage(payload, null);
+  }
+
+  protected Payload errorPage(Throwable e) {
+    int code = INTERNAL_SERVER_ERROR;
+    if (e instanceof HttpException) {
+      code = ((HttpException) e).code();
+    } else if (e instanceof NoSuchElementException) {
+      code = NOT_FOUND;
+    }
+
+    return errorPage(new Payload(code), e);
+  }
+
+  protected Payload errorPage(Payload payload, Throwable e) {
+    Throwable shownError = env.prodMode() ? null : e;
+    return new ErrorPage(payload, shownError).payload();
   }
 }

@@ -17,15 +17,11 @@ package net.codestory.http;
 
 import static java.util.Arrays.*;
 import static net.codestory.http.Configuration.*;
-import static net.codestory.http.constants.HttpStatus.*;
 
-import java.io.*;
 import java.net.*;
 import java.nio.file.*;
 import java.util.*;
 
-import net.codestory.http.compilers.*;
-import net.codestory.http.errors.*;
 import net.codestory.http.internal.*;
 import net.codestory.http.logs.*;
 import net.codestory.http.misc.*;
@@ -169,12 +165,12 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
       // TODO: move errorPage handling to PayloadWriter
       Payload payload = routes.apply(context);
       if (payload.isError()) {
-        payload = errorPage(payload);
+        payload = payloadWriter.errorPage(payload);
       }
 
-      payloadWriter.writeAndClose(payload, e -> handleServerError(payloadWriter, e));
+      payloadWriter.writeAndClose(payload);
     } catch (Exception e) {
-      handleServerError(payloadWriter, e);
+      payloadWriter.writeErrorPage(e);
     }
   }
 
@@ -189,41 +185,6 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     } catch (Exception e) {
       throw new IllegalStateException("WebSocket error", e);
     }
-  }
-
-  protected void handleServerError(PayloadWriter payloadWriter, Throwable e) {
-    try {
-      if (e instanceof CompilerException) {
-        Logs.compilerError(e);
-      } else if (!(e instanceof HttpException) && !(e instanceof NoSuchElementException)) {
-        Logs.unexpectedError(e);
-      }
-
-      Payload errorPage = errorPage(e).withHeader("reason", e.getMessage());
-      payloadWriter.writeAndCloseSync(errorPage);
-    } catch (IOException error) {
-      Logs.unableToServeErrorPage(error);
-    }
-  }
-
-  protected Payload errorPage(Payload payload) {
-    return errorPage(payload, null);
-  }
-
-  protected Payload errorPage(Throwable e) {
-    int code = INTERNAL_SERVER_ERROR;
-    if (e instanceof HttpException) {
-      code = ((HttpException) e).code();
-    } else if (e instanceof NoSuchElementException) {
-      code = NOT_FOUND;
-    }
-
-    return errorPage(new Payload(code), e);
-  }
-
-  protected Payload errorPage(Payload payload, Throwable e) {
-    Throwable shownError = env.prodMode() ? null : e;
-    return new ErrorPage(payload, shownError).payload();
   }
 
   protected Env createEnv() {
