@@ -492,7 +492,9 @@ public class RouteCollection implements Routes {
     return this;
   }
 
-  public WebSocketListener createWebSocketListener(WebSocketSession session, Context context) {
+  public WebSocketListener createWebSocketListener(WebSocketSession session, Request request, Response response) {
+    Context context = createContext(request, response);
+
     return webSocketListenerFactory.create(session, context);
   }
 

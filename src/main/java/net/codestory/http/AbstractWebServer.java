@@ -166,10 +166,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     RouteCollection routes = routesProvider.get();
 
     try {
-      // TODO: move to RouteCollection
-      Context context = routes.createContext(request, response);
-
-      WebSocketListener listener = routes.createWebSocketListener(session, context);
+      WebSocketListener listener = routes.createWebSocketListener(session, request, response);
       session.register(listener);
     } catch (Exception e) {
       throw new IllegalStateException("WebSocket error", e);
