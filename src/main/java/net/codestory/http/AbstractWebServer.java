@@ -51,6 +51,10 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
 
   protected abstract HttpServerWrapper createHttpServer(Handler httpHandler, WebSocketHandler webSocketHandler) throws Exception;
 
+  protected Env createEnv() {
+    return new Env();
+  }
+
   public T configure(Configuration configuration) {
     this.routesProvider = env.prodMode()
         ? RoutesProvider.fixed(env, configuration)
@@ -105,7 +109,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
 
   protected T startWithContext(int port, SSLContext context, boolean authReq) {
     try {
-      server = createHttpServer(this::handleHttp, this::connectWebSocket);
+      server = createHttpServer(this::handleHttp, this::handleWebSocket);
     } catch (Exception e) {
       throw new IllegalStateException("Unable to create http server", e);
     }
@@ -142,15 +146,6 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     return port;
   }
 
-  public void stop() {
-    try {
-      env.folderWatcher().stop();
-      server.stop();
-    } catch (Exception e) {
-      throw new IllegalStateException("Unable to stop the web server", e);
-    }
-  }
-
   protected void handleHttp(Request request, Response response) {
     // We need to make sure that these two lines cannot fail
     // Otherwise no response is made to the client
@@ -167,10 +162,11 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     }
   }
 
-  protected void connectWebSocket(WebSocketSession session, Request request, Response response) {
+  protected void handleWebSocket(WebSocketSession session, Request request, Response response) {
     RouteCollection routes = routesProvider.get();
 
     try {
+      // TODO: move to RouteCollection
       Context context = routes.createContext(request, response);
 
       WebSocketListener listener = routes.createWebSocketListener(session, context);
@@ -180,7 +176,12 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     }
   }
 
-  protected Env createEnv() {
-    return new Env();
+  public void stop() {
+    try {
+      env.folderWatcher().stop();
+      server.stop();
+    } catch (Exception e) {
+      throw new IllegalStateException("Unable to stop the web server", e);
+    }
   }
 }
