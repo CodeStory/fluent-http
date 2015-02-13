@@ -156,17 +156,14 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     // Otherwise no response is made to the client
     //
     RouteCollection routes = routesProvider.get();
-    PayloadWriter payloadWriter = routes.createPayloadWriter(request, response);
 
+    PayloadWriter writer = routes.createPayloadWriter(request, response);
     try {
-      // TODO: move context creation to RouteCollection
-      Context context = routes.createContext(request, response);
+      Payload payload = routes.apply(request, response);
 
-      Payload payload = routes.apply(context);
-
-      payloadWriter.writeAndClose(payload);
+      writer.writeAndClose(payload);
     } catch (Exception e) {
-      payloadWriter.writeErrorPage(e);
+      writer.writeErrorPage(e);
     }
   }
 

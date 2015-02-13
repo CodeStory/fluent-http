@@ -496,10 +496,12 @@ public class RouteCollection implements Routes {
     return webSocketListenerFactory.create(session, context);
   }
 
-  public Payload apply(Context context) throws Exception {
+  public Payload apply(Request request, Response response) throws Exception {
+    Context context = createContext(request, response);
     if (context.uri() == null) {
       return Payload.notFound();
     }
+
     return contextToPayload.get(context.uri(), context);
   }
 
