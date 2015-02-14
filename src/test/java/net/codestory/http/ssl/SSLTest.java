@@ -118,7 +118,7 @@ public class SSLTest {
   }
 
   private static SSLSocketFactory getSocketFactory(Path caCertificate, Path clientCertificate) throws Exception {
-    System.setProperty("https.protocols", "SSLv3");
+//    System.setProperty("https.protocols", "SSLv3");
     SSLContext ctx = SSLContext.getInstance("TLS");
 
     KeyStore ts = KeyStore.getInstance("JKS");
