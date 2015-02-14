@@ -50,13 +50,12 @@ class WebJarsRoute implements Route {
       return false;
     }
 
-    if (!uri.endsWith("/") && (getResource(uri) != null)) {
+    if (getResource(uri) != null) {
       return true;
     }
 
-    if ((!prodMode) && uri.endsWith("/")) {
-      String wantedUri = substringBeforeLast(uri, "/");
-      printKnownWebjars(wantedUri);
+    if (!prodMode) {
+      printKnownWebjars(uri);
     }
 
     return false;
@@ -96,6 +95,9 @@ class WebJarsRoute implements Route {
   }
 
   private static URL getResource(String uri) {
+    if (uri.endsWith("/")) {
+      return null;
+    }
     return ClassPaths.getResource("META-INF/resources" + uri);
   }
 }

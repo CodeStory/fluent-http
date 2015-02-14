@@ -43,13 +43,13 @@ public class RedirectTest extends AbstractProdWebServerTest {
   }
 
   @Test
-  public void can_ignore_leading_slash_in_dynamic_route() {
+  public void cannot_ignore_leading_slash_in_dynamic_route() {
     configure(routes -> routes
         .get("/dynamic/", "Dynamic")
     );
 
     get("/dynamic/").should().haveType("text/html").contain("Dynamic");
-    get("/dynamic").should().haveType("text/html").contain("Dynamic");
+    get("/dynamic").should().respond(404);
   }
 
   @Test

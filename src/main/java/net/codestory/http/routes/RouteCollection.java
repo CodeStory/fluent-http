@@ -517,11 +517,6 @@ public class RouteCollection implements Routes {
             return route.apply(uri, context);
           }
           response = methodNotAllowed();
-        } else if (!uri.endsWith("/") && route.matchUri(uri + '/')) {
-          if (route.matchMethod(context.method())) {
-            return seeOther(uri + '/');
-          }
-          response = methodNotAllowed();
         }
       }
 
