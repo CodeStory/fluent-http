@@ -34,10 +34,10 @@ import net.codestory.http.websockets.*;
 import javax.net.ssl.*;
 
 public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
-  private static final int PORT_8080 = 8080;
-  private static final int RANDOM_PORT_START_RETRY = 30;
-  private static final int RANDOM_PORTS_LOWER_BOUND = 8183;
-  private static final int RANDOM_PORTS_COUNT = 50000;
+  protected static final int PORT_8080 = 8080;
+  protected static final int RANDOM_PORT_START_RETRY = 30;
+  protected static final int RANDOM_PORTS_LOWER_BOUND = 8183;
+  protected static final int RANDOM_PORTS_COUNT = 50000;
 
   protected final Env env;
 
