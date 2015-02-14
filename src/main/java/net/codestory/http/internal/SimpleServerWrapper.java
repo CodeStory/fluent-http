@@ -63,8 +63,8 @@ public class SimpleServerWrapper implements HttpServerWrapper, Container, Servic
   public void start(int port, SSLContext context, boolean authReq) throws IOException {
     DirectRouter router = new DirectRouter(this);
     RouterContainer routerContainer = new RouterContainer(this, router, webSocketThreads);
-    ContainerSocketProcessor server = new ContainerSocketProcessor(routerContainer, count, select);
-    socketConnection = new SocketConnection(authReq ? new AuthRequiredServer(server) : server);
+    ContainerSocketProcessor processor = new ContainerSocketProcessor(routerContainer, count, select);
+    socketConnection = new SocketConnection(authReq ? new AuthRequiredServer(processor) : processor);
     socketConnection.connect(new InetSocketAddress(port), context);
   }
 
