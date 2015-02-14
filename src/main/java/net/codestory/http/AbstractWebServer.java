@@ -39,17 +39,18 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
   protected static final int RANDOM_PORTS_LOWER_BOUND = 8183;
   protected static final int RANDOM_PORTS_COUNT = 50000;
 
+  protected final HttpServerWrapper server;
   protected final Env env;
 
-  protected HttpServerWrapper server;
   protected RoutesProvider routesProvider;
   protected int port = -1;
 
   protected AbstractWebServer() {
+    this.server = createHttpServer(this::handleHttp, this::handleWebSocket);
     this.env = createEnv();
   }
 
-  protected abstract HttpServerWrapper createHttpServer(Handler httpHandler, WebSocketHandler webSocketHandler) throws Exception;
+  protected abstract HttpServerWrapper createHttpServer(Handler httpHandler, WebSocketHandler webSocketHandler);
 
   protected Env createEnv() {
     return new Env();
@@ -108,12 +109,6 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
   }
 
   protected T startWithContext(int port, SSLContext context, boolean authReq) {
-    try {
-      server = createHttpServer(this::handleHttp, this::handleWebSocket);
-    } catch (Exception e) {
-      throw new IllegalStateException("Unable to create http server", e);
-    }
-
     if (routesProvider == null) {
       configure(NO_ROUTE);
     }

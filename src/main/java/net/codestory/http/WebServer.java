@@ -27,7 +27,7 @@ public class WebServer extends AbstractWebServer<WebServer> {
   }
 
   @Override
-  protected HttpServerWrapper createHttpServer(Handler httpHandler, WebSocketHandler webSocketHandler) throws Exception {
+  protected HttpServerWrapper createHttpServer(Handler httpHandler, WebSocketHandler webSocketHandler) {
     return new SimpleServerWrapper(httpHandler, webSocketHandler);
   }
 }
