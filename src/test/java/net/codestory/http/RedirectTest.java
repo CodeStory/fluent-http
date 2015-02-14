@@ -15,10 +15,10 @@
  */
 package net.codestory.http;
 
-import net.codestory.http.payload.*;
-import net.codestory.http.testhelpers.*;
+import net.codestory.http.payload.Payload;
+import net.codestory.http.testhelpers.AbstractProdWebServerTest;
 
-import org.junit.*;
+import org.junit.Test;
 
 public class RedirectTest extends AbstractProdWebServerTest {
   @Test
@@ -32,7 +32,18 @@ public class RedirectTest extends AbstractProdWebServerTest {
   }
 
   @Test
-  public void default_to_route_without_slash() {
+  public void can_ignore_file_extension() {
+    get("/section/index").should().haveType("text/plain").contain("Hello index");
+    get("/section/index.txt").should().haveType("text/plain").contain("Hello index");
+  }
+
+  @Test
+  public void redirect_to_index_if_it_exists() {
+    get("/section/").should().haveType("text/plain").contain("Hello index");
+  }
+
+  @Test
+  public void can_ignore_leading_slash_in_dynamic_route() {
     configure(routes -> routes
         .get("/dynamic/", "Dynamic")
     );
@@ -42,8 +53,7 @@ public class RedirectTest extends AbstractProdWebServerTest {
   }
 
   @Test
-  public void redirect_to_index_if_it_exists() {
-    get("/section/").should().haveType("text/plain").contain("Hello index");
+  public void can_ignore_leading_slash_if_index_is_present() {
     get("/section").should().haveType("text/plain").contain("Hello index");
   }
 }
