@@ -120,7 +120,7 @@ Notice that path and query parameters have to be of type `String`.
 To overcome this limitation, fluent-http can be configured with
 `Resource classes` instead of simple lambdas.
 
-- The simpler syntax (`lambdas`) is very easy to read but comes with limitaions.
+- The simpler syntax (`lambdas`) is very easy to read but comes with limitations.
 - The more complex syntax (`Resource classes`) has no such limitation
 and is very natural to people used to `Spring MVC` or `Jersey`.
 
