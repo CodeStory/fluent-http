@@ -15,7 +15,7 @@ makes it a pleasure to use:
 
 + Starting a web server should be a one-liner
 + It should start at the speed of light
-+ It should use a robust fast http server
++ It should rely on a robust, fast http server
 + Using fluent-http should not imply using dozens of plugins and dependencies
 + Web standards should be baked-in
 
@@ -39,7 +39,7 @@ A single dependency is what it takes. Release versions are deployed on Maven Cen
 <dependency>
   <groupId>net.code-story</groupId>
   <artifactId>http</artifactId>
-  <version>2.73</version>
+  <version>2.74</version>
 </dependency>
 ```
 
@@ -47,7 +47,7 @@ A single dependency is what it takes. Release versions are deployed on Maven Cen
 
 ## Hello World
 
-Starting a web server that responds `Hello World` on `/` uri is as simple as that:
+Starting a web server that responds `Hello World` on `/` uri is as simple as:
 
 ```java
 import net.codestory.http.WebServer;
@@ -61,7 +61,7 @@ public class HelloWorld {
 
 What this code does:
 
-- It starts a web server that on port `8080`
+- It starts a web server on port `8080`
 - To every `GET` requests on `/`, it will respond `Hello World`
 as `text/html`
 - To every other request it will respond a nice `404` error
@@ -120,6 +120,8 @@ Notice that path and query parameters have to be of type `String`.
 To overcome this limitation, fluent-http can be configured with
 `Resource classes` instead of simple lambdas.
 
+To sum up:
+
 - The simpler syntax (`lambdas`) is very easy to read but comes with limitations.
 - The more complex syntax (`Resource classes`) has no such limitation
 and is very natural to people used to `Spring MVC` or `Jersey`.
@@ -128,16 +130,9 @@ and is very natural to people used to `Spring MVC` or `Jersey`.
 
 ```java
 ...
-routes.add("calculation", new CalculationResource());
 routes.add(new PersonResource());
+routes.add("calculation", new CalculationResource());
 ...
-
-public class CalculationResource {
-  @Get("/add/:first/to/:second")
-  public int add(int first, int second) {
-    return first + second;
-  }
-}
 
 @Prefix("/person")
 public class PersonResource {
@@ -157,6 +152,13 @@ public class PersonResource {
     return NotFoundException.notFoundIfNull(person);
   }
 }
+
+public class CalculationResource {
+  @Get("/add/:first/to/:second")
+  public int add(int first, int second) {
+    return first + second;
+  }
+}
 ```
 
 Each method annotated with `@Get`, `@Head`, `@Post`, `@Put`, `@Options` or `@Delete` is a route.
@@ -166,7 +168,8 @@ The conversion between path parameters and method parameters is done with
 [Jackson](http://jackson.codehaus.org/).
 
 We can also let the web server take care of the resource instantiation. It will create a singleton for each resource,
-and recursively inject dependencies as singletons. It's a kind of poor's man DI framework.
+and recursively inject dependencies as singletons. It's a kind of poor's man DI framework, and be assured
+that your favourite DI framework can be plugged in also.
 
 ```java
 routes.add(CalculationResource.class);
@@ -177,6 +180,24 @@ routes.add(CalculationResource.class);
 Before we take an in-depth look at fluent-http, you can go take a look
 at samples [here](https://github.com/CodeStory/fluent-samples)
 if it's how you prefer to learn.
+
+## Production Mode vs Development mode
+
+By default, fluent-http runs in `developement mode`.
+
+- It reloads the routes each time something changes in `app` folder
+- It provides `.map` and `.source` for coffee and less files
+- It serves [livereload](http://livereload.com/) protocol to refresh the browser on each static file change
+
+In production mode:
+
+- Stops looking for changes in `app` folder
+- Doesn't serve `.map` and `.source` files
+- It caches static resources as much as possible in memory
+- It activates gzip compression on every request
+
+We encourage you to use production mode whenever you deploy you website in real life and *not* activate it in dev mode.
+To activate production mode, start the JVM with `-DPROD_MODE=true`.
 
 ## Static pages
 
@@ -222,16 +243,16 @@ serverSocket.close();
 
 ## Not Only HTML
 
-The web server recognizes html files but not only. It is also able to transform more user-friendly file formats on the fly:
+Fluent-http recognizes html files but not only. It is also able to transform more user-friendly file formats on the fly:
 
  + Html (`.html`)
- + Markdown (`.md` or `.markdown`) -> Compiled to .html
+ + Markdown (`.md` or `.markdown`) -> Compiled transparently to .html
  + Xml (`.xml`)
  + Json (`.json`)
  + Css (`.css`)
- + Less (`.less`) -> Compiled to .css
+ + Less (`.less`) -> Compiled transparently to .css
  + Javascript (`.js`)
- + Coffeescript (`.coffee` or `litcoffee`) -> Compiled to .js
+ + Coffeescript (`.coffee` or `litcoffee`) -> Compiled transparently to .js
  + Zip (`.zip`)
  + Gz (`.gz`)
  + Pdf (`.pdf`)
@@ -241,7 +262,64 @@ The web server recognizes html files but not only. It is also able to transform 
 
 All those file formats are served without additional configuration.
 Files are served with automatic content-type, etag and last-modified
-headers.
+headers. And you can override them of course.
+
+## Webjars
+
+Fluent-http supports [WebJars](http://www.webjars.org/) to serve static assets.
+Just add a maven dependency to a `WebJar` and reference the static resource in your pages with the `/webjars/` prefix.
+
+Here's an example with Bootstrap:
+
+```xml
+<dependency>
+  <groupId>org.webjars</groupId>
+  <artifactId>bootstrap</artifactId>
+  <version>3.3.2</version>
+</dependency>
+```
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="/webjars/bootstrap/3.3.2/css/bootstrap.min.css">
+  <script src="/webjars/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+  <p>Hello World</p>
+</body>
+</html>
+```
+
+Or better yet, use the `[[webjar]]` handlebars helper to set the version dynamically:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  [[webjar bootstrap.min.js]]
+</head>
+</html>
+```
+
+The `[[webjar]]` helper also supports a list as parameter:
+
+```html
+---
+bootstrapAssets: [
+  bootstrap.min.css,
+  bootstrap.min.js
+]
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  [[#each bootstrapAssets]]
+  [[webjar .]][[/each]]
+</head>
+</html>
+```
 
 ## Yaml Front Matter
 
@@ -291,13 +369,13 @@ Will be rendered as:
 </ul>
 ```
 
-`Handlebars` nottion can be used in `.html` or `.md` files. You can
+`Handlebars` syntax can be used in `.html` or `.md` files. You can
 use the [built-in helpers](http://jknack.github.io/handlebars.java/helpers.html) or add
 your own helpers.
 
 Note that because our stack is meant to be used with js frameworks like
-AngularJs, we couldn't stick with standard `{{}}` notation of handlebars.
-We use the `[[]]` syntax that makes it possible to mix server-side templates
+AngularJs, we couldn't stick with standard `{{}}` handlebars notation.
+We use the `[[]]` syntax instead, It makes it possible to mix server-side templates
 with client-side templates on the same page.
 
 ## Layouting
@@ -340,7 +418,7 @@ A layout file can be a `.html`, `.md`, `.markdown` or `.txt` file. It should be 
 The layout name used in the `Yaml Front Matter` section can omit the layout file extension.
 Layouts are recursive, ie a layout file can have a layout.
 
-A layout can use variables defined in the rendered file. Here's an example with an html title:
+A decorating layout can use variables defined in the rendered file. Here's an example with an html title:
 
 ```html
 <!DOCTYPE html>
@@ -382,60 +460,11 @@ A request to `/` will give this result:
 
 In addition to the variables defined in the Yaml Front Matter section, some site-wide variables are available.
 
- - All variables defined in the `app/_config.yml` file
- - `site.data` is a map of every file in `app/_data/` parsed and indexed by its file name (without extension)
+ - All variables defined in the `app/_config.yml` file,
+ - The handlebars `site.data` variable is a map of every file in `app/_data/` parsed and indexed by its file name (without extension),
  - `site.pages` is a list of all static pages in `app/`. Each entry is a map containing all variables in the file's YFM section, plus `content`, `path` and `name` variables.
  - `site.tags` is a map of every tag defined in static pages YMF sections. For each tag, there's the list of the pages with this tag. Pages can have multiple tags.
  - `site.categories`is a map of every category defined in static pages YMF sections. For each category, there's the list of the pages with this category. Pages can have one or zero category.
-
-## Webjars
-
-We support [WebJars](http://www.webjars.org/) to serve static assets.
-Just add a maven dependency to a `WebJar` and reference the static resource in your pages with the `/webjars/` prefix.
-
-Here's an example with Bootstrap:
-
-```xml
-<dependency>
-  <groupId>org.webjars</groupId>
-  <artifactId>bootstrap</artifactId>
-  <version>3.3.2</version>
-</dependency>
-```
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <link rel="stylesheet" href="/webjars/bootstrap/3.3.2/css/bootstrap.min.css">
-  <script src="/webjars/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-</head>
-<body>
-  <p>Hello World</p>
-</body>
-</html>
-```
-
-Or better yet, with the webjar HandleBar to set the version dynamically (useful when you change the version) :
-
-```html
----
-bootstrapAssets: [
-  bootstrap.min.css,
-  bootstrap.min.js
-]
----
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  [[#each bootstrapAssets]]
-  [[webjar .]][[/each]]
-</head>
-<body>
-  <p>Hello World</p>
-</body>
-</html>
-```
 
 ## Dynamic pages
 
@@ -448,14 +477,13 @@ Let's create a `hello.md` page with an unbound variable.
 Hello [[name]]
 ```
 
-If we query `/hello`, the name will be replaced with an empty string since nowhere does it say what its value is. The solution
-is to override the default route to `/hello` as is:
+If we query `/hello`, the name will be replaced with an empty string since nowhere does it say what its value is. The solution is to override the default route to `/hello` as is:
 
 ```java
 routes.get("/hello", Model.of("name", "Bob"));
 ```
 
-Now, when the pages is rendered, `[[name]]` will be replaced server-side with `Bob`.
+Now, when the page is rendered, `[[name]]` will be replaced server-side with `Bob`.
 
 If not specified, the name of the page (ie. the view) to render for a given uri is guessed after the uri. Files are
 looked up in this order: `uri`, `uri.html`, `uri.md`, `uri.markdown` then `uri.txt`. Most of the time
@@ -467,7 +495,7 @@ routes.get("/hello/:whom", (context, whom) -> ModelAndView.of("greeting", "name"
 
 ## Content-type right out of the box
 
-A route can return any `Object`, the server will try to guess what to do with it:
+A route can return any `Object`, the server will guess the response's type:
 
  - `java.lang.String` is interpreted as inline html with content type `text/html;charset=UTF-8`.
  - `byte[]` is interpreted as `application/octet-stream`.
@@ -479,17 +507,17 @@ A route can return any `Object`, the server will try to guess what to do with it
  - `ModelAndView` is interpreted as a template with given name, rendered with given variables. The content type is
  guessed from file's extension.
  - `void` is empty content.
- - any other type is serialized to json with content type `application/json;charset=UTF-8`.
+ - any other type is serialized to json, using `Jackson`, with content type `application/json;charset=UTF-8`.
 
 ## POST
 
 Now that the website is dynamic, we might also want to post data. We support `GET`, `POST`, `PUT` and `DELETE` methods.
-Here's how one would post data.
+Here's how one would support posting data:
 
 ```java
 routes.post("/person", context -> {
-  String name = context.get("name");
-  int age = context.getInteger("age");
+  String name = context.query().get("name");
+  int age = context.query().getInteger("age");
 
   Person person = new Person(name, age);
   // do something
@@ -498,11 +526,11 @@ routes.post("/person", context -> {
 });
 ```
 
-It's even easier to let [Jackson](http://jackson.codehaus.org/) do the mapping between form parameters and Java Beans.
+It's much easier to let [Jackson](http://jackson.codehaus.org/) do the mapping between form parameters and Java Beans.
 
 ```java
 routes.post("/person", context -> {
-  Person person = context.contentAs(Person.class);
+  Person person = context.extract(Person.class);
   // do something
 
   return Payload.created();
@@ -520,7 +548,7 @@ public class PersonResource {
 }
 ```
 
-Multiple methods can be used for the same uri:
+Multiple methods can match the same uri:
 
 ```java
 public class PersonResource {
@@ -539,12 +567,11 @@ public class PersonResource {
 Same goes for the lambda syntax:
 
 ```java
-routes.
-  get("/person/:id", (context, id) -> Model.of("person", repository.find(id))).
-  put("/person/:id", (context, id) -> {
-    Person person = context.contentAs(Person.class);
+routes
+  .get("/person/:id", (context, id) -> Model.of("person", repository.find(id)))
+  .put("/person/:id", (context, id) -> {
+    Person person = context.extract(Person.class);
     repository.update(person);
-
     return Payload.created();
   });
 }
@@ -554,12 +581,11 @@ Or to avoid duplication:
 
 ```java
 routes
-  .with("/person/:id").
-    get((context, id) -> Model.of("person", repository.find(id))).
-    put((context, id) -> {
-      Person person = context.contentAs(Person.class);
+  .url("/person/:id")
+    .get((context, id) -> Model.of("person", repository.find(id)))
+    .put((context, id) -> {
+      Person person = context.extract(Person.class);
       repository.update(person);
-
       return Payload.created();
     });
 }
@@ -574,13 +600,13 @@ That's it. No need to import anything in a stupid keystore. It cannot be easier!
 new Webserver().startSSL(9443, Paths.get("server.crt"), Paths.get("server.der"));
 ```
 
-It is also possible to use a TLS certificate chain with intermediate CA certificates
+It is also possible to use a TLS certificate chain with intermediate CA certificates:
 
 ```java
 new Webserver().startSSL(9443, Arrays.asList(Paths.get("server.crt"), Paths.get("subCA.crt")), Paths.get("server.der"));
 ```
 
-When an authentication with a client certificate is required, it is possible to specify a list of accepted trust anchor certificates
+When an authentication with a client certificate is required, it is possible to specify a list of accepted trust anchor certificates:
 
 ```java
 new Webserver().startSSL(9443, Arrays.asList(Paths.get("server.crt"), Paths.get("subCA.crt")), Paths.get("server.der"), Arrays.asList(Paths.get("trustAnchor.crt")));
@@ -588,30 +614,27 @@ new Webserver().startSSL(9443, Arrays.asList(Paths.get("server.crt"), Paths.get(
 
 ## Errors
 
-You have probably noticed, fluent-http comes with pre-rendered kitten ready 404 & 500 error pages.
+You have probably noticed, fluent-http comes with "pre-packaged kitten ready" 404 & 500 error pages.
 
-If you want to customize this pages or are member of the CCC "Comité Contre les Chats" then you'll probably want to override them.
-Just put a 404.html or 500.html at the root of your app folder and they will be served instead of the kitten's one.
+If you want to customize these pages or are member of the CCC "Comité Contre les Chats", just put a 404.html or 500.html at the root of your `app` folder and they will be served instead of the kitten's one.
 
 ## Json support
 
 Json is supported as a first class citizen. Producing json is as easy as this:
 
 ```java
+routes.get("/product", () -> new Product(...));
 routes.get("/products", () -> Arrays.asList(new Product(...), new Product(...)));
 ```
 
-This route serves the Products serialized as json using [Jackson](http://jackson.codehaus.org/).
+These routes serve the Products serialized as json using [Jackson](http://jackson.codehaus.org/).
 The content type will be `application/json;charset=UTF-8`.
 
 ## ObjectMapper Customization
 
-When fluent-http talks json, the [jackson json processor](http://jackson.codehaus.org/) is not far.
-Sometimes (meaning: Always in any decent sized project), you want to  provide your own home-cooked `ObjectMapper`.
+When fluent-http talks json, the [jackson json processor](http://jackson.codehaus.org/) is used.
+Sometimes (meaning: always in any decent sized project), you want to  provide your own home-cooked `ObjectMapper`.
 You can do this by configuring or replacing the ObjectMapper through the `Extensions` interface.
-
-Like the example below, for instance let's say someone, let's name it Cedric, wants to map objects using the "new" jdk8
- date api. He can do so by using:
 
 ```java
 routes.setExtensions(new Extensions() {
@@ -619,6 +642,7 @@ routes.setExtensions(new Extensions() {
   public ObjectMapper configureOrReplaceObjectMapper(ObjectMapper defaultObjectMapper, Env env) {
     defaultObjectMapper.registerModule(new JSR310Module())
     .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+    
     return defaultObjectMapper;
   }
 });
@@ -697,10 +721,6 @@ public class BasicAuthFilter implements Filter {
 
 Both `BasicAuthFilter` and `LogRequestFilter` are pre-packaged filters that you can use in your applications.
 
-## Twitter Auth
-
-TODO
-
 ## Dependency Injection
 
 ### With Guice
@@ -711,7 +731,6 @@ Let's say you got some Guice Module like this.
 
 ```Java
 public class ServiceModule extends AbstractModule {
-
     @Override
     protected void configure() {
         bind(MongoDB.class);
@@ -732,7 +751,7 @@ public void configure(Routes routes) {
 }
 ```
 
-Now you can inject your bean like you would expect
+Now you can inject your beans like you would expect
 
 ```Java
 public class AllProducts {
@@ -747,7 +766,7 @@ public class AllProducts {
 ### With Spring
 
 We support Spring injected bean in exactly the same manner as with guice.
-check the [SpringAdapter](https://github.com/CodeStory/fluent-http/blob/master/src/main/java/net/codestory/http/injection/SpringAdapter.java) class, which work the same way as its guice counterparts.
+Check the [SpringAdapter](https://github.com/CodeStory/fluent-http/blob/master/src/main/java/net/codestory/http/injection/SpringAdapter.java) class, which work the same way as its guice counterparts.
 
 Look at the [SpringAdapterTest](https://github.com/CodeStory/fluent-http/blob/master/src/test/java/net/codestory/http/injection/SpringAdapterTest.java) we wrote for a working example.
 
@@ -757,7 +776,7 @@ TODO (Formulas, Tables, ...)
 
 ## HandleBars extensions
 
-You'll be probably sooner than later wanting to have access to some custom HandleBars [helpers](http://handlebarsjs.com/block_helpers.html) for your Server Side templates.
+You'll probably sooner than later want to add to some custom HandleBars [helpers](http://handlebarsjs.com/block_helpers.html) for your server-side templates.
 
 You first start to write you own helper in Java.
 ```Java
@@ -766,9 +785,7 @@ import com.github.jknack.handlebars.Options;
 .../...
 
 public enum HandleBarHelper implements Helper<Object> {
-
     appStoreClassSuffix {
-
         @Override
         public CharSequence apply(Object context, Options options) throws IOException {
             if (((String) context).contains("google"))
@@ -776,59 +793,44 @@ public enum HandleBarHelper implements Helper<Object> {
             else
                 return "_ios";
         }
-
     },
     .../...
-
 }
 ```
 
-You wire it in, by adding your helper class to the CompilersConfiguration by the way of the Extensions interface.
-As of now, you can only have one class declared here, but as shown above this can be an `enum` so you can declare as many as you want inside one.
+You wire it in by adding your helper class to the `CompilersConfiguration` by the way of the `Extensions` interface.
+
 ```Java
-    routes
-      .setExtensions(new Extensions() {
-        @Override
-        public void configureCompilers(CompilersConfiguration compilers, Env env) {
-          compilers.addHandlebarsHelpers(HandleBarHelper.class);
-        }
-      })
+routes
+  .setExtensions(new Extensions() {
+    @Override
+    public void configureCompilers(CompilersConfiguration compilers, Env env) {
+      compilers.addHandlebarsHelpers(HandleBarHelper.class);
+      compilers.addHandlebarsHelpers(AnotherHelper.class);
+    }
+  })
 ```
 
 You are able to use your own helper in any of your template like this example for the code above.
+
 ```html
 <a href="[[appStoreUrl]]" class="btn_appstore[[appStoreClassSuffix appStoreUrl]]"></a>
 ```
+
 ### Default provided helpers
-`fluent-http` comes with some build-in handlebars helpers, to make your life easy :
-* `livereload` which provides the livereload client-side js script `[[livereload]]` already injected in the `default` layout.
-* `GoogelAnalytics`which provides client-side injection of the google analytics script. Use it like :`[[google_analytics 'UA-XXXXXX-X']]`
+
+`fluent-http` comes with some build-in handlebars helpers, to make your life easier:
+
+* `livereload` which provides the livereload client-side js script. `[[livereload]]` is already injected in the `default` layout.
+* `GoogelAnalytics` which provides client-side injection of the google analytics script. Use it like that: `[[google_analytics 'UA-XXXXXX-X']]`
 * `StringHelper` which provides `[[capitalizeFirst]]`, `[[lower]]`, `[[stringFormat ]]` check the [documentation](https://github.com/jknack/handlebars.java/blob/master/handlebars/src/main/java/com/github/jknack/handlebars/helper/StringHelpers.java)
-* TODO: `webjar`, `css`, `script`
+* TODO: `css`, `script`
 
 ## Etag
 
 Etag headers computation is automatic on every request.
 
 TODO
-
-## Production Mode vs Development mode
-
-By default, fluent-http runs in `developement mode`.
-
-- It reloads the routes each time something changes in `app` folder
-- It provides `.map` and `.source` for coffee and less files
-- It serves [livereload](http://livereload.com/) protocol to refresh the browser on each static file change
-
-In production mode:
-
-- Stops looking for changes in `app` folder
-- Doesn't serve `.map` and `.source` files
-- It caches static resources as much as possible in memory
-- It activates gzip compression on every request
-
-We encourage you to use production mode whenever you deploy you website in real life and *not* activate it in dev mode.
-To activate production mode, start the JVM with `-DPROD_MODE=true`.
 
 ## Caching
 
