@@ -5,7 +5,7 @@
 Fluent-http is a very capable web stack based on
 [SimpleFramework](https://github.com/ngallagher/simpleframework) HTTP server.
 
-It's goal is to provide everything a java web developer needs to build
+Its goal is to provide everything a java web developer needs to build
 modern web sites with REST back-ends and HTML5 front-ends.
 
 ## Our rules
@@ -455,7 +455,7 @@ is to override the default route to `/hello` as is:
 routes.get("/hello", Model.of("name", "Bob"));
 ```
 
-Now, when the pages is rendered, `[[name]]` will be replaced server-side with `Bob`.
+Now, when the page is rendered, `[[name]]` will be replaced server-side with `Bob`.
 
 If not specified, the name of the page (ie. the view) to render for a given uri is guessed after the uri. Files are
 looked up in this order: `uri`, `uri.html`, `uri.md`, `uri.markdown` then `uri.txt`. Most of the time
@@ -472,12 +472,12 @@ A route can return any `Object`, the server will try to guess what to do with it
  - `java.lang.String` is interpreted as inline html with content type `text/html;charset=UTF-8`.
  - `byte[]` is interpreted as `application/octet-stream`.
  - `java.io.InputStream` is interpreted as `application/octet-stream`.
- - `java.io.File` is interpreted as a static file. The content type is guessed from file's extension.
- - `java.nio.file.Path` is interpreted as a static file. The content type is guessed from file's extension.
+ - `java.io.File` is interpreted as a static file. The content type is guessed from the file's extension.
+ - `java.nio.file.Path` is interpreted as a static file. The content type is guessed from the file's extension.
  - `Model` is interpreted as a template which name is guessed, rendered with given variables. The content type is
- guessed from file's extension.
+ guessed from the file's extension.
  - `ModelAndView` is interpreted as a template with given name, rendered with given variables. The content type is
- guessed from file's extension.
+ guessed from the file's extension.
  - `void` is empty content.
  - any other type is serialized to json with content type `application/json;charset=UTF-8`.
 
@@ -588,10 +588,10 @@ new Webserver().startSSL(9443, Arrays.asList(Paths.get("server.crt"), Paths.get(
 
 ## Errors
 
-You have probably noticed, fluent-http comes with pre-rendered kitten ready 404 & 500 error pages.
+You have probably noticed, fluent-http comes with pre-rendered, kitten-ready 404 & 500 error pages.
 
 If you want to customize this pages or are member of the CCC "Comité Contre les Chats" then you'll probably want to override them.
-Just put a 404.html or 500.html at the root of your app folder and they will be served instead of the kitten's one.
+Just put a 404.html or 500.html at the root of your app folder and they will be served instead of the kitten one.
 
 ## Json support
 
@@ -610,7 +610,7 @@ When fluent-http talks json, the [jackson json processor](http://jackson.codehau
 Sometimes (meaning: Always in any decent sized project), you want to  provide your own home-cooked `ObjectMapper`.
 You can do this by configuring or replacing the ObjectMapper through the `Extensions` interface.
 
-Like the example below, for instance let's say someone, let's name it Cedric, wants to map objects using the "new" jdk8
+See the following example. For instance let's say someone, let's name it Cedric, wants to map objects using the "new" jdk8
  date api. He can do so by using:
 
 ```java
@@ -747,7 +747,7 @@ public class AllProducts {
 ### With Spring
 
 We support Spring injected bean in exactly the same manner as with guice.
-check the [SpringAdapter](https://github.com/CodeStory/fluent-http/blob/master/src/main/java/net/codestory/http/injection/SpringAdapter.java) class, which work the same way as its guice counterparts.
+Check the [SpringAdapter](https://github.com/CodeStory/fluent-http/blob/master/src/main/java/net/codestory/http/injection/SpringAdapter.java) class, which works the same way as its Guice counterpart.
 
 Look at the [SpringAdapterTest](https://github.com/CodeStory/fluent-http/blob/master/src/test/java/net/codestory/http/injection/SpringAdapterTest.java) we wrote for a working example.
 
@@ -814,7 +814,7 @@ TODO
 
 ## Production Mode vs Development mode
 
-By default, fluent-http runs in `developement mode`.
+By default, fluent-http runs in `development mode`.
 
 - It reloads the routes each time something changes in `app` folder
 - It provides `.map` and `.source` for coffee and less files
