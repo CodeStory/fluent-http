@@ -390,7 +390,7 @@ In addition to the variables defined in the Yaml Front Matter section, some site
 
 ## Webjars
 
-We support [WebJars](http://www.webjars.org/) to server static assets.
+We support [WebJars](http://www.webjars.org/) to serve static assets.
 Just add a maven dependency to a `WebJar` and reference the static resource in your pages with the `/webjars/` prefix.
 
 Here's an example with Bootstrap:
