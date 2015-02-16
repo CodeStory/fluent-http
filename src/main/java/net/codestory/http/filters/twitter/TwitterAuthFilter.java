@@ -56,6 +56,7 @@ public class TwitterAuthFilter implements Filter {
     return new TwitterAuthenticator(twitterFactory);
   }
 
+  @Override
   public Payload apply(String uri, Context context, PayloadSupplier nextFilter) throws Exception {
     if (uri.equals(uriPrefix + "authenticate")) {
       User user;

@@ -47,6 +47,7 @@ public class NewCookie implements Cookie {
     this.expiry = -1;
   }
 
+  @Override
   public boolean isNew() {
     return created;
   }

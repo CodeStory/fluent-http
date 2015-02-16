@@ -28,6 +28,7 @@ public class GuiceAdapter implements IocAdapter {
     this(Guice.createInjector(modules));
   }
 
+  @Override
   public <T> T get(Class<T> type) {
     return injector.getInstance(type);
   }

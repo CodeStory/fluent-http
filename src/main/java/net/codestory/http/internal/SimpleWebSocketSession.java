@@ -74,6 +74,7 @@ class SimpleWebSocketSession implements WebSocketSession, Unwrappable {
     channel().close();
   }
 
+  @Override
   public void close(String code, String reason) throws IOException {
     channel().close(new Reason(CloseCode.valueOf(code), reason));
   }
