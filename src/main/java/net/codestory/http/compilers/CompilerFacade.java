@@ -35,14 +35,12 @@ import net.codestory.http.templating.*;
 public class CompilerFacade implements CompilersConfiguration {
   protected final Resources resources;
   protected final Supplier<Compilers> compilers;
-  protected final Supplier<HandlebarsCompiler> handlebars;
   protected final Supplier<ViewCompiler> viewCompiler;
 
   public CompilerFacade(Env env, Resources resources) {
     this.resources = resources;
     this.compilers = memoize(() -> new Compilers(env, resources));
-    this.handlebars = memoize(() -> new HandlebarsCompiler(env, resources, this));
-    this.viewCompiler = memoize(() -> new ViewCompiler(resources, this));
+    this.viewCompiler = memoize(() -> new ViewCompiler(env, resources, this));
   }
 
   // Configuration
@@ -54,12 +52,12 @@ public class CompilerFacade implements CompilersConfiguration {
 
   @Override
   public void configureHandlebars(Consumer<Handlebars> action) {
-    handlebars.get().configure(action);
+    viewCompiler.get().configureHandlebars(action);
   }
 
   @Override
   public void addHandlebarsResolver(ValueResolver resolver) {
-    handlebars.get().addResolver(resolver);
+    viewCompiler.get().addHandlebarsResolver(resolver);
   }
 
   // Compilation
@@ -82,10 +80,6 @@ public class CompilerFacade implements CompilersConfiguration {
 
   public CacheEntry compile(SourceFile sourceFile) throws IOException {
     return compilers.get().compile(sourceFile);
-  }
-
-  public String handlebar(String template, Map<String, ?> variables) throws IOException {
-    return handlebars.get().compile(template, variables);
   }
 
   public String renderView(String uri, Map<String, ?> variables) {

@@ -18,18 +18,32 @@ package net.codestory.http.templating;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.function.*;
 
 import net.codestory.http.compilers.*;
 import net.codestory.http.io.*;
 import net.codestory.http.markdown.MarkdownCompiler;
+import net.codestory.http.misc.*;
+
+import com.github.jknack.handlebars.*;
 
 public class ViewCompiler {
-  private final CompilerFacade compilerFacade;
   private final Resources resources;
+  private final HandlebarsCompiler handlebars;
 
-  public ViewCompiler(Resources resources, CompilerFacade compilerFacade) {
-    this.compilerFacade = compilerFacade;
+  public ViewCompiler(Env env, Resources resources, CompilerFacade compilers) {
     this.resources = resources;
+    this.handlebars = new HandlebarsCompiler(env, resources, compilers);
+  }
+
+  // TEMP
+  public void configureHandlebars(Consumer<Handlebars> action) {
+    handlebars.configure(action);
+  }
+
+  // TEMP
+  public void addHandlebarsResolver(ValueResolver resolver) {
+    handlebars.addResolver(resolver);
   }
 
   public String render(String uri, Map<String, ?> keyValues) {
@@ -45,7 +59,7 @@ public class ViewCompiler {
       Map<String, Object> variables = yamlFrontMatter.getVariables();
       Map<String, Object> allKeyValues = merge(variables, keyValues);
 
-      String body = compilerFacade.handlebar(content, allKeyValues);
+      String body = handlebars.compile(content, allKeyValues);
       if (MarkdownCompiler.supports(path)) {
         body = MarkdownCompiler.INSTANCE.compile(body);
       }

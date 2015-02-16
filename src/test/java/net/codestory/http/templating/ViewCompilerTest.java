@@ -33,7 +33,7 @@ public class ViewCompilerTest {
     Env env = prodMode ? Env.prod() : Env.dev();
     Resources resources = new Resources(env);
     CompilerFacade compilerFacade = new CompilerFacade(env, resources);
-    ViewCompiler viewCompiler = new ViewCompiler(resources, compilerFacade);
+    ViewCompiler viewCompiler = new ViewCompiler(env, resources, compilerFacade);
 
     return viewCompiler.render(name, model);
   }
