@@ -28,12 +28,12 @@ import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ViewCompilerTest {
+public class HandlebarsViewCompilerTest {
   String render(String name, Map<String, Object> model, boolean prodMode) {
     Env env = prodMode ? Env.prod() : Env.dev();
     Resources resources = new Resources(env);
     CompilerFacade compilerFacade = new CompilerFacade(env, resources);
-    ViewCompiler viewCompiler = new ViewCompiler(env, resources, compilerFacade);
+    ViewCompiler viewCompiler = new HandlebarsViewCompiler(env, resources, compilerFacade);
 
     return viewCompiler.render(name, model);
   }
