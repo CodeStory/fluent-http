@@ -114,7 +114,7 @@ public class CookieAuthFilter implements Filter {
   }
 
   private Payload signout(Context context) {
-    String sessionId = context.cookies().value("sessionId");
+    String sessionId = readSessionIdInCookie(context);
     if (sessionId != null) {
       sessionIdStore.remove(sessionId);
     }
