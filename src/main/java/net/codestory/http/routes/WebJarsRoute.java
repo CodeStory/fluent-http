@@ -21,7 +21,6 @@ import static java.util.stream.Collectors.toList;
 import static net.codestory.http.constants.Headers.*;
 import static net.codestory.http.constants.Methods.*;
 import static net.codestory.http.io.Strings.extension;
-import static net.codestory.http.io.Strings.substringBeforeLast;
 import static org.webjars.WebJarAssetLocator.WEBJARS_PATH_PREFIX;
 
 import java.net.*;
