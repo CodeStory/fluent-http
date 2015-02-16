@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http;
+package net.codestory.http.filters.auth;
 
-import net.codestory.http.filters.auth.CookieAuthFilter;
 import net.codestory.http.security.Users;
 import net.codestory.http.testhelpers.AbstractProdWebServerTest;
 import net.codestory.simplelenium.FluentTest;

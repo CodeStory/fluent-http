@@ -13,41 +13,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http;
+package net.codestory.http.injection;
 
-import net.codestory.http.injection.*;
+import static org.mockito.Mockito.*;
+
 import net.codestory.http.routes.*;
 
 import net.codestory.http.testhelpers.AbstractProdWebServerTest;
 import net.codestory.rest.FluentRestTest;
 import org.junit.*;
-import org.springframework.beans.factory.*;
-import org.springframework.context.annotation.*;
 
-public class SpringTest extends AbstractProdWebServerTest implements FluentRestTest {
+import com.google.inject.*;
+
+public class GuiceTest extends AbstractProdWebServerTest implements FluentRestTest {
   @Test
   public void configuration() {
-    configure(new SpringConfiguration(App.class));
+    configure(new MyAppConfiguration());
 
     get("/").should().contain("PRODUCTION");
   }
 
-  static class SpringConfiguration extends AbstractSpringConfiguration {
-    protected SpringConfiguration(Class<?>... annotatedClasses) {
-      super(annotatedClasses);
+  @Test
+  public void override_bean() {
+    configure(new MyAppConfiguration(new TestModule()));
+
+    get("/").should().contain("OVERRIDDEN");
+  }
+
+  static class MyAppConfiguration extends AbstractGuiceConfiguration {
+    MyAppConfiguration(Module... modules) {
+      super(modules);
     }
 
     @Override
-    protected void configure(Routes routes, BeanFactory beanFactory) {
-      routes.get("/", () -> beanFactory.getBean(Service.class).hello());
+    protected void configure(Routes routes, Injector injector) {
+      routes.get("/", () -> injector.getInstance(Service.class).hello());
     }
   }
 
-  @org.springframework.context.annotation.Configuration
-  static class App {
-    @Bean
-    public Service getService() {
-      return new Service();
+  static class TestModule extends AbstractModule {
+    @Override
+    protected void configure() {
+      Service service = mock(Service.class);
+      bind(Service.class).toInstance(service);
+      when(service.hello()).thenReturn("OVERRIDDEN");
     }
   }
 

@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http;
+package net.codestory.http.filters.basic;
 
-import net.codestory.http.filters.basic.*;
 import net.codestory.http.filters.mixed.*;
 import net.codestory.http.security.*;
 import net.codestory.http.testhelpers.*;
@@ -24,7 +23,7 @@ import org.junit.*;
 
 import static java.util.Collections.singletonMap;
 
-public class AuthenticationTest extends AbstractProdWebServerTest {
+public class BasicAuthTest extends AbstractProdWebServerTest {
   @Test
   public void public_page() {
     configure(routes -> routes

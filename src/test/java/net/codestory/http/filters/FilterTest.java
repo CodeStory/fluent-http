@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http;
+package net.codestory.http.filters;
 
 import static java.nio.charset.StandardCharsets.*;
 
-import net.codestory.http.filters.*;
+import net.codestory.http.*;
 import net.codestory.http.misc.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.testhelpers.*;

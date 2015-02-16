@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http;
+package net.codestory.http.errors;
 
 import static net.codestory.http.errors.NotFoundException.*;
 
 import java.util.*;
 
-import net.codestory.http.errors.*;
 import net.codestory.http.payload.*;
 import net.codestory.http.testhelpers.*;
 

@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http;
+package net.codestory.http.payload;
 
 import static java.util.Arrays.*;
 
-import net.codestory.http.payload.*;
+import net.codestory.http.*;
 import net.codestory.http.testhelpers.*;
 
 import org.junit.*;

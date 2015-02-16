@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http;
+package net.codestory.http.annotations;
 
-import net.codestory.http.annotations.*;
+import net.codestory.http.*;
 import net.codestory.http.errors.*;
 import net.codestory.http.filters.basic.BasicAuthFilter;
 import net.codestory.http.security.UsersList;
@@ -24,7 +24,7 @@ import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
 
-public class AnnotationsTest extends AbstractProdWebServerTest {
+public class AnnotatedResourceTest extends AbstractProdWebServerTest {
   @Test
   public void annotated_resources() {
     configure(routes -> routes

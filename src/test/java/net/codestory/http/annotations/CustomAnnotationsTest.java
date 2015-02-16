@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http;
+package net.codestory.http.annotations;
 
-import net.codestory.http.annotations.Get;
 import net.codestory.http.filters.basic.BasicAuthFilter;
 import net.codestory.http.payload.Payload;
 import net.codestory.http.security.UsersList;
