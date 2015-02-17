@@ -640,6 +640,29 @@ routes
 }
 ```
 
+## Etag
+
+Etag headers computation is automatic on every query. Each time a non streaming response is made by the server, 
+etag headers are added automatically. It's performed by the default `PayloadWriter` implementation.
+
+Each time a query is made with etag headers, the server can decide whether to return a `302 Not Modified` code
+or not.
+
+If you want to implement a different etag strategy, you have to provide your own implementation of `PayloadWriter`.
+
+```java
+routes.setExtensions(new Extensions() {
+  public PayloadWriter createPayloadWriter(Request request, Response response, Env env, Site site, Resources resources, CompilerFacade compilers) {
+    return new PayloadWriter(request, response, env, site, resources, compilers) {
+      protected String etag(byte[] data) {
+        return Md5.of(data);
+      }
+      
+      ...
+    };
+}));
+```
+
 ## SSL
 
 Starting the web server in SSL mode is very easy. You need a certificate file (`.crt`) and a private key file (`.der`),
@@ -811,10 +834,6 @@ Check the [SpringAdapter](https://github.com/CodeStory/fluent-http/blob/master/s
 
 Look at the [SpringAdapterTest](https://github.com/CodeStory/fluent-http/blob/master/src/test/java/net/codestory/http/injection/SpringAdapterTest.java) we wrote for a working example.
 
-## Markdown extensions
-
-TODO (Formulas, Tables, ...)
-
 ## HandleBars extensions
 
 You'll probably sooner than later want to add to some custom HandleBars [helpers](http://handlebarsjs.com/block_helpers.html) for your server-side templates.
@@ -866,12 +885,6 @@ You are able to use your own helper in any of your template like this example fo
 * `GoogelAnalytics` which provides client-side injection of the google analytics script. Use it like that: `[[google_analytics 'UA-XXXXXX-X']]`
 * `StringHelper` which provides `[[capitalizeFirst]]`, `[[lower]]`, `[[stringFormat ]]` check the [documentation](https://github.com/jknack/handlebars.java/blob/master/handlebars/src/main/java/com/github/jknack/handlebars/helper/StringHelpers.java)
 * TODO: `css`, `script`
-
-## Etag
-
-Etag headers computation is automatic on every request.
-
-TODO
 
 ## Caching
 
