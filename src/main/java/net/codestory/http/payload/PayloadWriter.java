@@ -349,11 +349,14 @@ public class PayloadWriter {
     if (content instanceof CacheEntry) {
       return "text/html;charset=UTF-8";
     }
+    if (content instanceof BufferedReader) {
+      return "text/plain;charset=UTF-8";
+    }
     if (content instanceof InputStream) {
       return "application/octet-stream";
     }
-    if (content instanceof BufferedReader) {
-      return "text/plain;charset=UTF-8";
+    if (content instanceof StreamingOutput) {
+      return "application/octet-stream";
     }
     if (content instanceof Stream<?>) {
       return "text/event-stream;charset=UTF-8";
