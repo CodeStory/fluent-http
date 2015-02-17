@@ -181,7 +181,7 @@ public class RouteCollection implements Routes {
     int methodParamsCount = method.getParameterCount();
     int uriParamsCount = paramsCount(uriPattern);
     if (methodParamsCount < uriParamsCount) {
-      throw new IllegalArgumentException("Expected at least" + uriParamsCount + " parameters in " + uriPattern);
+      throw new IllegalArgumentException("Expected at least " + uriParamsCount + " parameters in " + uriPattern);
     }
 
     add(httpMethod, uriPattern, new ReflectionRoute(resource, method, methodAnnotationsFactory.forMethod(method)));
