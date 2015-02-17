@@ -22,7 +22,7 @@ import net.codestory.http.filters.Filter;
 import net.codestory.http.injection.IocAdapter;
 import net.codestory.http.websockets.WebSocketListenerFactory;
 
-import java.io.Serializable;
+import java.io.*;
 import java.lang.annotation.Annotation;
 
 public interface Routes extends Serializable {
@@ -137,6 +137,8 @@ public interface Routes extends Serializable {
   Routes delete(String uriPattern, FourParamsRoute route);
 
   Routes autoDiscover(String packageToScan);
+
+  Routes bind(String uriRoot, File path);
 
   <T extends Annotation> Routes registerByPassAnnotation(Class<T> annotationType, ApplyByPassAnnotation<T> apply);
 

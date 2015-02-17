@@ -39,6 +39,7 @@ import net.codestory.http.websockets.WebSocketListener;
 import net.codestory.http.websockets.WebSocketListenerFactory;
 import net.codestory.http.websockets.WebSocketSession;
 
+import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Deque;
@@ -467,6 +468,12 @@ public class RouteCollection implements Routes {
   public RouteCollection autoDiscover(String packageToScan) {
     Set<Class<?>> resources = new ClasspathScanner().getTypesAnnotatedWith(packageToScan, Resource.class);
     resources.forEach(this::add);
+    return this;
+  }
+
+  @Override
+  public Routes bind(String uriRoot, File path) {
+    routes.addStaticRoute(new BoundFolderRoute(uriRoot, path));
     return this;
   }
 

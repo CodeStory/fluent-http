@@ -15,6 +15,8 @@
  */
 package net.codestory.http.routes;
 
+import java.io.*;
+
 public class RoutesWithPattern {
   private final Routes routes;
   private final String currentUriPattern;
@@ -220,6 +222,11 @@ public class RoutesWithPattern {
 
   public RoutesWithPattern delete(FourParamsRoute route) {
     routes.delete(currentUriPattern, route);
+    return this;
+  }
+
+  public RoutesWithPattern bind(String uriRoot, File path) {
+    routes.bind(currentUriPattern + uriRoot, path);
     return this;
   }
 }
