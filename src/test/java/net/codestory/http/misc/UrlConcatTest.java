@@ -38,5 +38,8 @@ public class UrlConcatTest {
     assertThat(urlConcat.url("top/", "/prefix/", "url")).isEqualTo("/top/prefix/url");
     assertThat(urlConcat.url("top/", "prefix/", "url")).isEqualTo("/top/prefix/url");
     assertThat(urlConcat.url("top", "prefix/", "url")).isEqualTo("/top/prefix/url");
+    assertThat(urlConcat.url("", "/prefix", "")).isEqualTo("/prefix");
+    assertThat(urlConcat.url("", "/prefix", "/")).isEqualTo("/prefix/");
+    assertThat(urlConcat.url("", "/prefix", "?id=:id")).isEqualTo("/prefix?id=:id");
   }
 }

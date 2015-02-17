@@ -33,7 +33,7 @@ public class UrlConcat {
 
     if ((path.charAt(0) == '/') && endWith(appendTo, '/')) {
       appendTo.append(path, 1, path.length());
-    } else if ((path.charAt(0) != '/') && !endWith(appendTo, '/')) {
+    } else if ((path.charAt(0) != '/') && (path.charAt(0) != '?') && !endWith(appendTo, '/')) {
       appendTo.append('/').append(path);
     } else {
       appendTo.append(path);
