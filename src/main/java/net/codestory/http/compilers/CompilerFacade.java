@@ -33,78 +33,88 @@ import net.codestory.http.misc.*;
 import net.codestory.http.templating.*;
 
 public class CompilerFacade implements CompilersConfiguration {
-  protected final Resources resources;
-  protected final Supplier<Compilers> compilers;
-  protected final Supplier<ViewCompiler> viewCompiler;
+	protected final Resources resources;
+	protected final Supplier<Compilers> compilers;
+	protected final Supplier<TemplatingEngine> templatingEngine;
+	protected final Supplier<ViewCompiler> viewCompiler;
 
-  public CompilerFacade(Env env, Resources resources) {
-    this.resources = resources;
-    this.compilers = memoize(() -> new Compilers(env, resources));
-    this.viewCompiler = memoize(() -> createViewCompiler(env, resources));
-  }
+	public CompilerFacade(Env env, Resources resources) {
+		this.resources = resources;
+		this.compilers = memoize(() -> createCompilers(env, resources));
+		this.templatingEngine = memoize(() -> createHandlebarsCompiler(env, resources));
+		this.viewCompiler = memoize(() -> createViewCompiler(resources));
+	}
 
-  // Creation
+	// Creation
 
-  private ViewCompiler createViewCompiler(Env env, Resources resources) {
-    return new HandlebarsViewCompiler(env, resources, this);
-  }
+	private Compilers createCompilers(Env env, Resources resources) {
+		return new Compilers(env, resources);
+	}
 
-  // Configuration
+	private HandlebarsCompiler createHandlebarsCompiler(Env env, Resources resources) {
+		return new HandlebarsCompiler(env, resources, this);
+	}
 
-  @Override
-  public void registerCompiler(Supplier<Compiler> compilerFactory, String compiledExtension, String sourceExtension) {
-    compilers.get().register(compilerFactory, compiledExtension, sourceExtension);
-  }
+	private ViewCompiler createViewCompiler(Resources resources) {
+		return new ViewCompiler(resources, templatingEngine.get());
+	}
 
-  @Override
-  public void configureHandlebars(Consumer<Handlebars> action) {
-    // TEMP
-    ((HandlebarsViewCompiler) viewCompiler.get()).configureHandlebars(action);
-  }
+	// Configuration
 
-  @Override
-  public void addHandlebarsResolver(ValueResolver resolver) {
-    // TEMP
-    ((HandlebarsViewCompiler) viewCompiler.get()).addHandlebarsResolver(resolver);
-  }
+	@Override
+	public void registerCompiler(Supplier<Compiler> compilerFactory, String compiledExtension, String sourceExtension) {
+		compilers.get().register(compilerFactory, compiledExtension, sourceExtension);
+	}
 
-  // Compilation
+	@Override
+	public void configureHandlebars(Consumer<Handlebars> action) {
+		// TEMP
+		((HandlebarsCompiler) templatingEngine.get()).configure(action);
+	}
 
-  public boolean canCompile(String extension) {
-    return compilers.get().canCompile(extension);
-  }
+	@Override
+	public void addHandlebarsResolver(ValueResolver resolver) {
+		// TEMP
+		((HandlebarsCompiler) templatingEngine.get()).addResolver(resolver);
+	}
 
-  public Set<String> extensionsThatCompileTo(String extension) {
-    return compilers.get().extensionsThatCompileTo(extension);
-  }
+	// Compilation
 
-  public String compiledExtension(String extension) {
-    return compilers.get().compiledExtension(extension);
-  }
+	public boolean canCompile(String extension) {
+		return compilers.get().canCompile(extension);
+	}
 
-  public CacheEntry compile(Path path) throws IOException {
-    return compilers.get().compile(resources.sourceFile(path));
-  }
+	public Set<String> extensionsThatCompileTo(String extension) {
+		return compilers.get().extensionsThatCompileTo(extension);
+	}
 
-  public CacheEntry compile(SourceFile sourceFile) throws IOException {
-    return compilers.get().compile(sourceFile);
-  }
+	public String compiledExtension(String extension) {
+		return compilers.get().compiledExtension(extension);
+	}
 
-  public String renderView(String uri, Map<String, ?> variables) {
-    return viewCompiler.get().render(uri, variables);
-  }
+	public CacheEntry compile(Path path) throws IOException {
+		return compilers.get().compile(resources.sourceFile(path));
+	}
 
-  public Path findPublicSourceFor(String uri) {
-    String extension = extension(uri);
+	public CacheEntry compile(SourceFile sourceFile) throws IOException {
+		return compilers.get().compile(sourceFile);
+	}
 
-    for (String sourceExtension : extensionsThatCompileTo(extension)) {
-      Path sourcePath = Paths.get(replaceLast(uri, extension, sourceExtension));
+	public String renderView(String uri, Map<String, ?> variables) {
+		return viewCompiler.get().render(uri, variables);
+	}
 
-      if (resources.isPublic(sourcePath)) {
-        return sourcePath;
-      }
-    }
+	public Path findPublicSourceFor(String uri) {
+		String extension = extension(uri);
 
-    return null;
-  }
+		for (String sourceExtension : extensionsThatCompileTo(extension)) {
+			Path sourcePath = Paths.get(replaceLast(uri, extension, sourceExtension));
+
+			if (resources.isPublic(sourcePath)) {
+				return sourcePath;
+			}
+		}
+
+		return null;
+	}
 }
