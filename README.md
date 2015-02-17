@@ -500,14 +500,63 @@ A route can return any `Object`, the server will guess the response's type:
  - `java.lang.String` is interpreted as inline html with content type `text/html;charset=UTF-8`.
  - `byte[]` is interpreted as `application/octet-stream`.
  - `java.io.InputStream` is interpreted as `application/octet-stream`.
- - `java.io.File` is interpreted as a static file. The content type is guessed from the file's extension.
- - `java.nio.file.Path` is interpreted as a static file. The content type is guessed from the file's extension.
+ - `java.io.File` and `java.nio.file.Path` are interpreted as a static file. The content type is guessed from the file's extension.
+ - `java.net.URL` is interpreted as a classpath resource. The content type is guessed from the resource's extension.
  - `Model` is interpreted as a template which name is guessed, rendered with given variables. The content type is
  guessed from the file's extension.
  - `ModelAndView` is interpreted as a template with given name, rendered with given variables. The content type is
  guessed from the file's extension.
  - `void` is empty content.
  - any other type is serialized to json, using `Jackson`, with content type `application/json;charset=UTF-8`.
+
+## Payload
+
+For a finer control over the response of a route, one can return a `Payload` object rather than an `Object`.
+Using a payload, one can set headers, cookies, content type and actual response.
+
+```java
+routes.get("/hello", (context) -> Payload.ok());
+routes.get("/hello", (context) -> Payload.seeOther("/anotherUri"));
+routes.get("/hello", (context) -> new Payload("Hello"));
+routes.get("/hello", (context) -> new Payload("text/html", "Hello", 200));
+routes.get("/hello", (context) -> new Payload("text/html", "Hello", 200).withCookie("key", "value"));
+...
+```
+
+## Cookies
+
+Cookies can be read on the request and sent on the response.
+
+To read the cookies, you either ask through the `Context` (mainly for lambda routes).
+
+```java
+routes.get("/hello", (context) -> Payload.cookies().value("name"));
+routes.get("/hello", (context) -> Payload.cookies().value("name", "default"));
+routes.get("/hello", (context) -> Payload.cookies().value("name", 42));
+routes.get("/hello", (context) -> Payload.cookies().value("user", User.class));
+routes.get("/hello", (context) -> Payload.cookies().keyValues());
+```
+
+Or, for annotated resources, directly get an instance of `Cookies` injected.
+
+```java
+public class MyResource {
+  @Post("/uri")
+  public void action(Cookies cookies) {
+    String value = cookies.value("name", "Default value");
+    ...
+  }
+}
+```
+
+To add a cookie to a response, use a `withCookie(...)` method on the `Payload`:
+
+```java
+return new Payload(...).withCookie("key", "value");
+return new Payload(...).withCookie("key", 42);
+return new Payload(...).withCookie("key", new Person(...));
+...
+```
 
 ## POST
 
@@ -647,14 +696,6 @@ routes.setExtensions(new Extensions() {
   }
 });
 ```
-
-## Cookies
-
-TODO
-
-## Payload
-
-TODO
 
 ## Filters
 
