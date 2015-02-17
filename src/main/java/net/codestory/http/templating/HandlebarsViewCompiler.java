@@ -24,64 +24,65 @@ import net.codestory.http.compilers.*;
 import net.codestory.http.io.*;
 import net.codestory.http.markdown.*;
 import net.codestory.http.misc.*;
+import net.codestory.http.templating.yaml.*;
 
 import com.github.jknack.handlebars.*;
 
 public class HandlebarsViewCompiler implements ViewCompiler {
-  private final Resources resources;
-  private final HandlebarsCompiler handlebars;
+	private final Resources resources;
+	private final TemplatingEngine templatingEngine;
 
-  public HandlebarsViewCompiler(Env env, Resources resources, CompilerFacade compilers) {
-    this.resources = resources;
-    this.handlebars = new HandlebarsCompiler(env, resources, compilers);
-  }
+	public HandlebarsViewCompiler(Env env, Resources resources, CompilerFacade compilers) {
+		this.resources = resources;
+		this.templatingEngine = new HandlebarsCompiler(env, resources, compilers);
+	}
 
-  @Override
-  public void configureHandlebars(Consumer<Handlebars> action) {
-    handlebars.configure(action);
-  }
+	public void configureHandlebars(Consumer<Handlebars> action) {
+		// TEMP
+		((HandlebarsCompiler) templatingEngine).configure(action);
+	}
 
-  @Override
-  public void addHandlebarsResolver(ValueResolver resolver) {
-    handlebars.addResolver(resolver);
-  }
+	public void addHandlebarsResolver(ValueResolver resolver) {
+		// TEMP
+		((HandlebarsCompiler) templatingEngine).addResolver(resolver);
+	}
 
-  @Override
-  public String render(String uri, Map<String, ?> keyValues) {
-    Path path = resources.findExistingPath(uri);
-    if (path == null) {
-      throw new IllegalArgumentException("Template not found " + uri);
-    }
+	@Override
+	public String render(String uri, Map<String, ?> keyValues) {
+		Path path = resources.findExistingPath(uri);
+		if (path == null) {
+			throw new IllegalArgumentException("Template not found " + uri);
+		}
 
-    try {
-      YamlFrontMatter yamlFrontMatter = YamlFrontMatter.parse(resources.sourceFile(path));
+		try {
+			YamlFrontMatter yamlFrontMatter = YamlFrontMatter.parse(resources.sourceFile(path));
 
-      String content = yamlFrontMatter.getContent();
-      Map<String, Object> variables = yamlFrontMatter.getVariables();
-      Map<String, Object> allKeyValues = merge(variables, keyValues);
+			String content = yamlFrontMatter.getContent();
+			Map<String, Object> variables = yamlFrontMatter.getVariables();
+			Map<String, Object> allKeyValues = merge(variables, keyValues);
 
-      String body = handlebars.compile(content, allKeyValues);
-      if (MarkdownCompiler.supports(path)) {
-        body = MarkdownCompiler.INSTANCE.compile(body);
-      }
+			String body = templatingEngine.compile(content, allKeyValues);
+			if (MarkdownCompiler.supports(path)) {
+				body = MarkdownCompiler.INSTANCE.compile(body);
+			}
 
-      String layout = (String) variables.get("layout");
-      if (layout == null) {
-        return body;
-      }
+			String layout = (String) variables.get("layout");
+			if (layout == null) {
+				return body;
+			}
 
-      String layoutContent = render("_layouts/" + layout, allKeyValues);
-      return layoutContent.replace("[[body]]", body);
-    } catch (IOException e) {
-      throw new IllegalStateException("Unable to render template", e);
-    }
-  }
+			String layoutContent = render("_layouts/" + layout, allKeyValues);
+			return layoutContent.replace("[[body]]", body);
+		} catch (IOException e) {
+			throw new IllegalStateException("Unable to render template", e);
+		}
+	}
 
-  private static Map<String, Object> merge(Map<String, ?> first, Map<String, ?> second) {
-    Map<String, Object> merged = new HashMap<>();
-    merged.putAll(first);
-    merged.putAll(second);
-    merged.put("body", "[[body]]");
-    return merged;
-  }
+	private static Map<String, Object> merge(Map<String, ?> first, Map<String, ?> second) {
+		Map<String, Object> merged = new HashMap<>();
+		merged.putAll(first);
+		merged.putAll(second);
+		merged.put("body", "[[body]]");
+		return merged;
+	}
 }

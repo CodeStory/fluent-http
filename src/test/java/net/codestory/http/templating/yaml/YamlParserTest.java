@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.templating;
+package net.codestory.http.templating.yaml;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -25,6 +25,8 @@ import net.codestory.http.compilers.SourceFile;
 import net.codestory.http.io.*;
 
 import net.codestory.http.misc.Env;
+import net.codestory.http.templating.yaml.*;
+
 import org.junit.*;
 
 public class YamlParserTest {

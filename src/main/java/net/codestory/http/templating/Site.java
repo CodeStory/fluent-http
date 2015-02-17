@@ -32,6 +32,7 @@ import java.util.function.*;
 import net.codestory.http.convert.*;
 import net.codestory.http.io.*;
 import net.codestory.http.misc.*;
+import net.codestory.http.templating.yaml.*;
 
 import com.github.jknack.handlebars.*;
 

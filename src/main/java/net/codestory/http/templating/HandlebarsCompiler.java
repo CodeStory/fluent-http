@@ -34,7 +34,7 @@ import com.github.jknack.handlebars.context.*;
 import com.github.jknack.handlebars.helper.*;
 import com.github.jknack.handlebars.io.*;
 
-public class HandlebarsCompiler {
+public class HandlebarsCompiler implements TemplatingEngine {
   private final Handlebars handlebars;
   private final List<ValueResolver> resolvers;
 
@@ -49,6 +49,7 @@ public class HandlebarsCompiler {
     ));
   }
 
+	@Override
   public String compile(String template, Map<String, ?> variables) throws IOException {
     return handlebars.compileInline(template).apply(context(variables));
   }

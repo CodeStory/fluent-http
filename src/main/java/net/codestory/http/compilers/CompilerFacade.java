@@ -58,12 +58,14 @@ public class CompilerFacade implements CompilersConfiguration {
 
   @Override
   public void configureHandlebars(Consumer<Handlebars> action) {
-    viewCompiler.get().configureHandlebars(action);
+    // TEMP
+    ((HandlebarsViewCompiler) viewCompiler.get()).configureHandlebars(action);
   }
 
   @Override
   public void addHandlebarsResolver(ValueResolver resolver) {
-    viewCompiler.get().addHandlebarsResolver(resolver);
+    // TEMP
+    ((HandlebarsViewCompiler) viewCompiler.get()).addHandlebarsResolver(resolver);
   }
 
   // Compilation

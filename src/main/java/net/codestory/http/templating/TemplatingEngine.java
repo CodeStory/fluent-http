@@ -15,9 +15,10 @@
  */
 package net.codestory.http.templating;
 
+import java.io.*;
 import java.util.*;
 
 @FunctionalInterface
-public interface ViewCompiler {
-	String render(String uri, Map<String, ?> keyValues);
+public interface TemplatingEngine {
+	String compile(String template, Map<String, ?> variables) throws IOException;
 }
