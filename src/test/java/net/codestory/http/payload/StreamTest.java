@@ -18,7 +18,7 @@ package net.codestory.http.payload;
 import net.codestory.http.testhelpers.AbstractProdWebServerTest;
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
+import java.io.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.stream.IntStream.range;
@@ -46,6 +46,15 @@ public class StreamTest extends AbstractProdWebServerTest {
   public void byte_stream() {
     configure(routes -> routes
         .get("/stream", () -> new ByteArrayInputStream("Hello World".getBytes(UTF_8)))
+    );
+
+    get("/stream").should().contain("Hello World");
+  }
+
+  @Test
+  public void streaming_output() {
+    configure(routes -> routes
+        .get("/stream", () -> (StreamingOutput) output -> output.write("Hello World".getBytes(UTF_8)))
     );
 
     get("/stream").should().contain("Hello World");

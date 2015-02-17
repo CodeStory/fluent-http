@@ -223,6 +223,8 @@ public class PayloadWriter {
       writeBufferedReader(payload);
     } else if (payload.rawContent() instanceof InputStream) {
       writeInputStream(payload);
+    } else if (payload.rawContent() instanceof StreamingOutput) {
+      writeStreamingOutput(payload);
     }
   }
 
@@ -270,6 +272,19 @@ public class PayloadWriter {
     }
   }
 
+  protected void writeStreamingOutput(Payload payload) throws IOException {
+    StreamingOutput stream = (StreamingOutput) payload.rawContent();
+
+    OutputStream outputStream = response.outputStream();
+
+    try {
+      stream.write(outputStream);
+      close();
+    } catch (IOException e) {
+      throw new IllegalStateException("Unable to stream", e);
+    }
+  }
+
   protected void write(byte[] data) throws IOException {
     try {
       if (shouldGzip()) {
@@ -309,7 +324,7 @@ public class PayloadWriter {
   }
 
   protected boolean isStream(Object content) {
-    return (content instanceof Stream<?>) || (content instanceof BufferedReader) || (content instanceof InputStream);
+    return (content instanceof Stream<?>) || (content instanceof BufferedReader) || (content instanceof InputStream) || (content instanceof StreamingOutput);
   }
 
   protected String getContentType(Object content, String uri) {
