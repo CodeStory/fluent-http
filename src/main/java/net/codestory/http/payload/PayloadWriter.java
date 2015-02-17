@@ -249,32 +249,29 @@ public class PayloadWriter {
   protected void writeBufferedReader(Payload payload) throws IOException {
     BufferedReader lines = (BufferedReader) payload.rawContent();
 
-    try (PrintStream outputStream = new PrintStream(response.outputStream(), true)) {
-      String line;
-      while (null != (line = lines.readLine())) {
-        outputStream.println(line);
+    writeStreamingOutput((output) -> {
+      try (PrintStream printStream = new PrintStream(output, true)) {
+        String line;
+        while (null != (line = lines.readLine())) {
+          printStream.println(line);
+        }
       }
-    } catch (IOException e) {
-      throw new IllegalStateException("Unable to stream", e);
-    }
+    });
   }
 
   protected void writeInputStream(Payload payload) throws IOException {
     InputStream stream = (InputStream) payload.rawContent();
 
-    OutputStream outputStream = response.outputStream();
-
-    try {
-      InputStreams.copy(stream, outputStream);
-      close();
-    } catch (IOException e) {
-      throw new IllegalStateException("Unable to stream", e);
-    }
+    writeStreamingOutput((output) -> InputStreams.copy(stream, output));
   }
 
   protected void writeStreamingOutput(Payload payload) throws IOException {
     StreamingOutput stream = (StreamingOutput) payload.rawContent();
 
+    writeStreamingOutput(stream);
+  }
+
+  protected void writeStreamingOutput(StreamingOutput stream) throws IOException {
     OutputStream outputStream = response.outputStream();
 
     try {
