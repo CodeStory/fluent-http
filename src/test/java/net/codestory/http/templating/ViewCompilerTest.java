@@ -17,6 +17,7 @@ package net.codestory.http.templating;
 
 import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.io.Resources;
+import net.codestory.http.markdown.*;
 import net.codestory.http.misc.Env;
 import org.junit.Test;
 
@@ -33,8 +34,9 @@ public class ViewCompilerTest {
     Env env = prodMode ? Env.prod() : Env.dev();
     Resources resources = new Resources(env);
     CompilerFacade compilers = new CompilerFacade(env, resources);
-    TemplatingEngine templatingEngine = new HandlebarsCompiler(env, resources, compilers);
-    ViewCompiler viewCompiler = new ViewCompiler(resources, templatingEngine);
+    MarkdownCompiler markdownCompiler = new MarkdownCompiler();
+    TemplatingEngine templatingEngine = new HandlebarsCompiler(env, resources, compilers, markdownCompiler);
+    ViewCompiler viewCompiler = new ViewCompiler(resources, templatingEngine, markdownCompiler);
 
     return viewCompiler.render(name, model);
   }

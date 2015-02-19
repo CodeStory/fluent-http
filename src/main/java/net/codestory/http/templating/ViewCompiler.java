@@ -26,10 +26,12 @@ import net.codestory.http.templating.yaml.*;
 public class ViewCompiler {
 	private final Resources resources;
 	private final TemplatingEngine templatingEngine;
+	private final MarkdownCompiler markdownCompiler;
 
-	public ViewCompiler(Resources resources, TemplatingEngine templatingEngine) {
+	public ViewCompiler(Resources resources, TemplatingEngine templatingEngine, MarkdownCompiler markdownCompiler) {
 		this.resources = resources;
 		this.templatingEngine = templatingEngine;
+		this.markdownCompiler = markdownCompiler;
 	}
 
 	public String render(String uri, Map<String, ?> keyValues) {
@@ -47,7 +49,7 @@ public class ViewCompiler {
 
 			String body = templatingEngine.compile(content, allKeyValues);
 			if (MarkdownCompiler.supports(path)) {
-				body = MarkdownCompiler.INSTANCE.compile(body);
+				body = markdownCompiler.compile(body);
 			}
 
 			String layout = (String) variables.get("layout");

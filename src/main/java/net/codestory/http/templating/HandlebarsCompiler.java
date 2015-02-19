@@ -38,8 +38,8 @@ public class HandlebarsCompiler implements TemplatingEngine {
   private final Handlebars handlebars;
   private final List<ValueResolver> resolvers;
 
-  public HandlebarsCompiler(Env env, Resources resources, CompilerFacade compilers) {
-    this.handlebars = handlebars(env, resources, compilers);
+  public HandlebarsCompiler(Env env, Resources resources, CompilerFacade compilers, MarkdownCompiler markdownCompiler) {
+    this.handlebars = handlebars(env, resources, compilers, markdownCompiler);
     this.resolvers = new ArrayList<>(asList(
         MapValueResolver.INSTANCE,
         JavaBeanValueResolver.INSTANCE,
@@ -54,7 +54,7 @@ public class HandlebarsCompiler implements TemplatingEngine {
     return handlebars.compileInline(template).apply(context(variables));
   }
 
-  private static Handlebars handlebars(Env env, Resources resources, CompilerFacade compilers) {
+  private static Handlebars handlebars(Env env, Resources resources, CompilerFacade compilers, MarkdownCompiler markdownCompiler) {
     return new Handlebars()
       .startDelimiter("[[")
       .endDelimiter("]]")
@@ -77,7 +77,7 @@ public class HandlebarsCompiler implements TemplatingEngine {
           String body = resources.sourceFile(include).getSource();
 
           if (MarkdownCompiler.supports(include)) {
-            body = MarkdownCompiler.INSTANCE.compile(body);
+            body = markdownCompiler.compile(body);
           }
 
           return new StringTemplateSource(location, body);

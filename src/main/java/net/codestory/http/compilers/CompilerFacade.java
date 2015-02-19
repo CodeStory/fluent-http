@@ -29,6 +29,7 @@ import java.util.function.Supplier;
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.ValueResolver;
 import net.codestory.http.io.Resources;
+import net.codestory.http.markdown.*;
 import net.codestory.http.misc.*;
 import net.codestory.http.templating.*;
 
@@ -37,12 +38,14 @@ public class CompilerFacade implements CompilersConfiguration {
 	protected final Supplier<Compilers> compilers;
 	protected final Supplier<TemplatingEngine> templatingEngine;
 	protected final Supplier<ViewCompiler> viewCompiler;
+	protected final Supplier<MarkdownCompiler> markdownCompiler;
 
 	public CompilerFacade(Env env, Resources resources) {
 		this.resources = resources;
 		this.compilers = memoize(() -> createCompilers(env, resources));
 		this.templatingEngine = memoize(() -> createHandlebarsCompiler(env, resources));
 		this.viewCompiler = memoize(() -> createViewCompiler(resources));
+		this.markdownCompiler = memoize(() -> createMarkdownCompiler());
 	}
 
 	// Creation
@@ -52,11 +55,15 @@ public class CompilerFacade implements CompilersConfiguration {
 	}
 
 	private HandlebarsCompiler createHandlebarsCompiler(Env env, Resources resources) {
-		return new HandlebarsCompiler(env, resources, this);
+		return new HandlebarsCompiler(env, resources, this, markdownCompiler.get());
 	}
 
 	private ViewCompiler createViewCompiler(Resources resources) {
-		return new ViewCompiler(resources, templatingEngine.get());
+		return new ViewCompiler(resources, templatingEngine.get(), markdownCompiler.get());
+	}
+
+	private MarkdownCompiler createMarkdownCompiler() {
+		return new MarkdownCompiler();
 	}
 
 	// Configuration

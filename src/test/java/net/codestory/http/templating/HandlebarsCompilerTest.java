@@ -24,6 +24,7 @@ import java.util.*;
 
 import net.codestory.http.compilers.*;
 import net.codestory.http.io.Resources;
+import net.codestory.http.markdown.*;
 import net.codestory.http.misc.*;
 import net.codestory.http.templating.helpers.*;
 
@@ -34,7 +35,8 @@ import com.github.jknack.handlebars.*;
 public class HandlebarsCompilerTest {
   static Env env = Env.prod();
   static Resources resources = new Resources(env);
-  static HandlebarsCompiler compiler = new HandlebarsCompiler(env, resources, new CompilerFacade(env, resources));
+  static MarkdownCompiler markdownCompiler = new MarkdownCompiler();
+  static HandlebarsCompiler compiler = new HandlebarsCompiler(env, resources, new CompilerFacade(env, resources), markdownCompiler);
 
   private String compile(String content, Map<String, Object> variables) throws IOException {
     return compiler.compile(content, variables);

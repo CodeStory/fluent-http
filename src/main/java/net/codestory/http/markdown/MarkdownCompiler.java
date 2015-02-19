@@ -21,12 +21,10 @@ import org.markdown4j.*;
 
 import java.nio.file.Path;
 
-public enum MarkdownCompiler {
-  INSTANCE;
-
+public class MarkdownCompiler {
   private final Configuration configuration;
 
-  MarkdownCompiler() {
+  public MarkdownCompiler() {
     configuration = Configuration.builder()
       .forceExtentedProfile()
       .registerPlugins(new YumlPlugin(), new WebSequencePlugin(), new IncludePlugin(), new FormulaPlugin(), new TablePlugin())
