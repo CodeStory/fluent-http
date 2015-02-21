@@ -49,13 +49,15 @@ public class Resources implements Serializable{
   }
 
   public Path findExistingPath(String uri) {
-    // Try with extension
-    for (String extension : TEMPLATE_EXTENSIONS) {
-      Path templatePath = Paths.get(uri + extension);
-      if (exists(templatePath)) {
-        return templatePath;
-      }
-    }
+		if (!uri.endsWith("/")) {
+			// Try with extension
+			for (String extension : TEMPLATE_EXTENSIONS) {
+				Path templatePath = Paths.get(uri + extension);
+				if (exists(templatePath)) {
+					return templatePath;
+				}
+			}
+		}
 
     // Try index
     for (String extension : TEMPLATE_EXTENSIONS) {
