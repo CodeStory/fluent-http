@@ -15,6 +15,7 @@
  */
 package net.codestory.http.annotations;
 
+import static java.util.Optional.*;
 import static java.util.stream.Stream.of;
 import static net.codestory.http.constants.Methods.*;
 
@@ -28,16 +29,9 @@ public class AnnotationHelper {
   }
 
   public static void parseAnnotations(String urlPrefix, Class<?> clazz, MethodAnnotationCallback callback) {
-    // Hack to support Mockito Spies
-    Class<?> type;
-    if (clazz.getName().contains("EnhancerByMockito")) {
-      type = clazz.getSuperclass();
-    } else {
-      type = clazz;
-    }
+    Class<?> type = unwrapIfItsAMockType(clazz);
 
-    Prefix prefixAnnotation = type.getAnnotation(Prefix.class);
-    String classPrefix = (prefixAnnotation != null) ? prefixAnnotation.value() : "";
+    String classPrefix = ofNullable(type.getAnnotation(Prefix.class)).map(Prefix::value).orElse("");
 
     for (Method method : type.getMethods()) {
       of(method.getAnnotationsByType(Get.class)).forEach(get -> callback.onMethod(GET, url(urlPrefix, classPrefix, get.value()), method));
@@ -49,7 +43,12 @@ public class AnnotationHelper {
     }
   }
 
-  static String url(String resourcePrefix, String classPrefix, String uri) {
+  // Hack to support Mockito Spies
+  private static Class<?> unwrapIfItsAMockType(Class<?> type) {
+    return type.getName().contains("EnhancerByMockito") ? type.getSuperclass() : type;
+  }
+
+  private static String url(String resourcePrefix, String classPrefix, String uri) {
     return new UrlConcat().url(resourcePrefix, classPrefix, uri);
   }
 
