@@ -124,12 +124,12 @@ public class CookieAuthFilter implements Filter {
   }
 
   private String readSessionIdInCookie(Context context) {
-    AuthData authData = context.cookies().value("auth", AuthData.class);
+    AuthData authData = readAuthCookie(context);
     return (authData == null) ? null : authData.sessionId;
   }
 
-  private String readRedirectUrlInCookie(Context context) {
-    AuthData authData = context.cookies().value("auth", AuthData.class);
+	private String readRedirectUrlInCookie(Context context) {
+    AuthData authData = readAuthCookie(context);
     String redirectUrl = (authData == null) ? null : authData.redirectAfterLogin;
     redirectUrl = (redirectUrl == null) ? "/" : redirectUrl;
     return redirectUrl;
@@ -153,7 +153,16 @@ public class CookieAuthFilter implements Filter {
     return TypeConvert.toJson(cookie);
   }
 
-  private static Cookie authCookie(String authData) {
+	protected AuthData readAuthCookie(Context context) {
+		try {
+			return context.cookies().value("auth", AuthData.class);
+		} catch (Exception e) {
+			// Ignore invalid cookie
+			return null;
+		}
+	}
+
+	protected Cookie authCookie(String authData) {
     NewCookie cookie = new NewCookie("auth", authData, "/", true);
     cookie.setExpiry(ONE_DAY);
     cookie.setDomain(null);
