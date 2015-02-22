@@ -49,33 +49,4 @@ public class ContentTypesTest {
     assertThat(get("favicon.ico")).isEqualTo("image/x-icon");
     assertThat(get("unknown")).isEqualTo("text/plain;charset=UTF-8");
   }
-
-  @Test
-  public void compatibility_with_templating() {
-    assertThat(supportsTemplating("index.html")).isTrue();
-    assertThat(supportsTemplating("data.xml")).isTrue();
-    assertThat(supportsTemplating("data.json")).isTrue();
-    assertThat(supportsTemplating("test.md")).isTrue();
-    assertThat(supportsTemplating("test.markdown")).isTrue();
-    assertThat(supportsTemplating("text.txt")).isTrue();
-    assertThat(supportsTemplating("style.css.map")).isFalse();
-    assertThat(supportsTemplating("style.css")).isFalse();
-    assertThat(supportsTemplating("style.less")).isFalse();
-    assertThat(supportsTemplating("text.zip")).isFalse();
-    assertThat(supportsTemplating("text.gz")).isFalse();
-    assertThat(supportsTemplating("text.pdf")).isFalse();
-    assertThat(supportsTemplating("image.gif")).isFalse();
-    assertThat(supportsTemplating("image.jpeg")).isFalse();
-    assertThat(supportsTemplating("image.jpg")).isFalse();
-    assertThat(supportsTemplating("image.png")).isFalse();
-    assertThat(supportsTemplating("font.svg")).isFalse();
-    assertThat(supportsTemplating("font.eot")).isFalse();
-    assertThat(supportsTemplating("font.ttf")).isFalse();
-    assertThat(supportsTemplating("font.woff")).isFalse();
-    assertThat(supportsTemplating("script.js")).isFalse();
-    assertThat(supportsTemplating("script.coffee")).isFalse();
-    assertThat(supportsTemplating("script.litcoffee")).isFalse();
-    assertThat(supportsTemplating("favicon.ico")).isFalse();
-    assertThat(supportsTemplating("unknown")).isFalse();
-  }
 }

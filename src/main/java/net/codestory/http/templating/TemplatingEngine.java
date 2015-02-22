@@ -16,9 +16,11 @@
 package net.codestory.http.templating;
 
 import java.io.*;
+import java.nio.file.*;
 import java.util.*;
 
-@FunctionalInterface
 public interface TemplatingEngine {
-	String compile(String template, Map<String, ?> variables) throws IOException;
+  boolean supports(Path path);
+
+  String compile(String template, Map<String, Object> variables) throws IOException;
 }

@@ -40,6 +40,7 @@ public class ContentTypes {
       case ".html":
       case ".md":
       case ".markdown":
+      case ".jade":
         return "text/html;charset=UTF-8";
       case ".xml":
         return "application/xml;charset=UTF-8";
@@ -77,20 +78,6 @@ public class ContentTypes {
         return "image/x-icon";
       default:
         return "text/plain;charset=UTF-8";
-    }
-  }
-
-  public static boolean supportsTemplating(String filename) {
-    switch (extension(filename)) {
-      case ".txt":
-      case ".md":
-      case ".markdown":
-      case ".html":
-      case ".xml":
-      case ".json":
-        return true;
-      default:
-        return false;
     }
   }
 }

@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.io.*;
+import java.nio.file.*;
 import java.util.*;
 
 import net.codestory.http.compilers.*;
@@ -221,6 +222,35 @@ public class HandlebarsCompilerTest {
     String result = compile("[[google_analytics]]", new TreeMap<String, Object>());
 
     assertThat(result).contains("OVERRIDEN").doesNotContain("DEFAULT_ID");
+  }
+
+  @Test
+  public void compatibility_with_templating() {
+    assertThat(compiler.supports(Paths.get("index.html"))).isTrue();
+    assertThat(compiler.supports(Paths.get("data.xml"))).isTrue();
+    assertThat(compiler.supports(Paths.get("data.json"))).isTrue();
+    assertThat(compiler.supports(Paths.get("test.md"))).isTrue();
+    assertThat(compiler.supports(Paths.get("test.markdown"))).isTrue();
+    assertThat(compiler.supports(Paths.get("text.txt"))).isTrue();
+    assertThat(compiler.supports(Paths.get("style.css.map"))).isFalse();
+    assertThat(compiler.supports(Paths.get("style.css"))).isFalse();
+    assertThat(compiler.supports(Paths.get("style.less"))).isFalse();
+    assertThat(compiler.supports(Paths.get("text.zip"))).isFalse();
+    assertThat(compiler.supports(Paths.get("text.gz"))).isFalse();
+    assertThat(compiler.supports(Paths.get("text.pdf"))).isFalse();
+    assertThat(compiler.supports(Paths.get("image.gif"))).isFalse();
+    assertThat(compiler.supports(Paths.get("image.jpeg"))).isFalse();
+    assertThat(compiler.supports(Paths.get("image.jpg"))).isFalse();
+    assertThat(compiler.supports(Paths.get("image.png"))).isFalse();
+    assertThat(compiler.supports(Paths.get("font.svg"))).isFalse();
+    assertThat(compiler.supports(Paths.get("font.eot"))).isFalse();
+    assertThat(compiler.supports(Paths.get("font.ttf"))).isFalse();
+    assertThat(compiler.supports(Paths.get("font.woff"))).isFalse();
+    assertThat(compiler.supports(Paths.get("script.js"))).isFalse();
+    assertThat(compiler.supports(Paths.get("script.coffee"))).isFalse();
+    assertThat(compiler.supports(Paths.get("script.litcoffee"))).isFalse();
+    assertThat(compiler.supports(Paths.get("favicon.ico"))).isFalse();
+    assertThat(compiler.supports(Paths.get("unknown"))).isFalse();
   }
 
   private static Map<String, Object> map(String key, Object value) {

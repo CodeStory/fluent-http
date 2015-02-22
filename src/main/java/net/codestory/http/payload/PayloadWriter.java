@@ -456,7 +456,7 @@ public class PayloadWriter {
   }
 
   protected byte[] forPath(Path path) throws IOException {
-    if (ContentTypes.supportsTemplating(path.toString())) {
+    if (compilers.supportsTemplating(path)) {
       return forTemplatePath(path);
     }
 
@@ -465,7 +465,7 @@ public class PayloadWriter {
 
   protected byte[] forSourceFile(SourceFile sourceFile) throws IOException {
     Path path = sourceFile.getPath();
-    if (ContentTypes.supportsTemplating(path.toString())) {
+    if (compilers.supportsTemplating(path)) {
       return forTemplatePath(path);
     }
 

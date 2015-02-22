@@ -111,6 +111,10 @@ public class CompilerFacade implements CompilersConfiguration {
 		return viewCompiler.get().render(uri, variables);
 	}
 
+  public boolean supportsTemplating(Path path) {
+    return templatingEngine.get().supports(path);
+  }
+
 	public Path findPublicSourceFor(String uri) {
 		String extension = extension(uri);
 

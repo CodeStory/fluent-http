@@ -16,6 +16,7 @@
 package net.codestory.http.templating;
 
 import static java.util.Arrays.*;
+import static net.codestory.http.io.Strings.extension;
 
 import java.io.*;
 import java.nio.file.*;
@@ -49,8 +50,23 @@ public class HandlebarsCompiler implements TemplatingEngine {
     ));
   }
 
-	@Override
-  public String compile(String template, Map<String, ?> variables) throws IOException {
+  @Override
+  public boolean supports(Path path) {
+    switch (extension(path.toString())) {
+      case ".txt":
+      case ".md":
+      case ".markdown":
+      case ".html":
+      case ".xml":
+      case ".json":
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  @Override
+  public String compile(String template, Map<String, Object> variables) throws IOException {
     return handlebars.compileInline(template).apply(context(variables));
   }
 
