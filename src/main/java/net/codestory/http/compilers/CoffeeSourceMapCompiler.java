@@ -22,7 +22,7 @@ import static net.codestory.http.io.Strings.replaceLast;
 
 public class CoffeeSourceMapCompiler implements Compiler {
   private final NashornCompiler nashornCompiler = NashornCompiler.get(
-    "META-INF/resources/webjars/coffee-script/1.8.0/coffee-script.min.js",
+    "META-INF/resources/webjars/coffee-script/1.9.1/coffee-script.min.js",
     "coffee-script/toSourceMap.js");
 
   @Override

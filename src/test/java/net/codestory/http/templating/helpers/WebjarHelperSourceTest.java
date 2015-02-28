@@ -42,28 +42,28 @@ public class WebjarHelperSourceTest {
   public void css() {
     CharSequence script = webjarHelper.webjar("bootstrap.css", null);
 
-    assertThat(script.toString()).isEqualTo("<link rel=\"stylesheet\" href=\"/webjars/bootstrap/3.3.2/css/bootstrap.css\">");
+    assertThat(script.toString()).isEqualTo("<link rel=\"stylesheet\" href=\"/webjars/bootstrap/3.3.2-1/css/bootstrap.css\">");
   }
 
   @Test
   public void script() {
     CharSequence script = webjarHelper.webjar("angular.js", null);
 
-    assertThat(script.toString()).isEqualTo("<script src=\"/webjars/angularjs/1.3.11/angular.js\"></script>");
+    assertThat(script.toString()).isEqualTo("<script src=\"/webjars/angularjs/1.3.13/angular.js\"></script>");
   }
 
   @Test
   public void script_with_defer_tag() {
     CharSequence script = webjarHelper.webjar("angular.js", options("defer", null));
 
-    assertThat(script.toString()).isEqualTo("<script src=\"/webjars/angularjs/1.3.11/angular.js\" defer></script>");
+    assertThat(script.toString()).isEqualTo("<script src=\"/webjars/angularjs/1.3.13/angular.js\" defer></script>");
   }
 
   @Test
   public void script_with_async_tag() {
     CharSequence script = webjarHelper.webjar("angular.js", options("async", null));
 
-    assertThat(script.toString()).isEqualTo("<script src=\"/webjars/angularjs/1.3.11/angular.js\" async></script>");
+    assertThat(script.toString()).isEqualTo("<script src=\"/webjars/angularjs/1.3.13/angular.js\" async></script>");
   }
 
   @Test
