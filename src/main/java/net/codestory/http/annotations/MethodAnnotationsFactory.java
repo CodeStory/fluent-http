@@ -22,25 +22,25 @@ import java.util.Map;
 
 public class MethodAnnotationsFactory {
   private final Map<Class<? extends Annotation>, ApplyByPassAnnotation<? extends Annotation>> byPassAnnotations;
-  private final Map<Class<? extends Annotation>, ApplyEnrichAnnotation<? extends Annotation>> enrichAnnotations;
+  private final Map<Class<? extends Annotation>, ApplyAfterAnnotation<? extends Annotation>> afterAnnotations;
 
   public MethodAnnotationsFactory() {
     this.byPassAnnotations = new LinkedHashMap<>();
-    this.enrichAnnotations = new LinkedHashMap<>();
+    this.afterAnnotations = new LinkedHashMap<>();
   }
 
   public <T extends Annotation> void registerByPassAnnotation(Class<T> type, ApplyByPassAnnotation<T> apply) {
     byPassAnnotations.put(type, apply);
   }
 
-  public <T extends Annotation> void registerEnrichAnnotation(Class<T> type, ApplyEnrichAnnotation<T> apply) {
-    enrichAnnotations.put(type, apply);
+  public <T extends Annotation> void registerAfterAnnotation(Class<T> type, ApplyAfterAnnotation<T> apply) {
+    afterAnnotations.put(type, apply);
   }
 
   public MethodAnnotations forMethod(Method method) {
     MethodAnnotations methodAnnotations = new MethodAnnotations();
     byPassAnnotations.forEach((annotationType, apply) -> addByPassOperationIfNecessary(annotationType, apply, method, methodAnnotations));
-    enrichAnnotations.forEach((annotationType, apply) -> addEnrichOperationIfNecessary(annotationType, apply, method, methodAnnotations));
+    afterAnnotations.forEach((annotationType, apply) -> addAfterOperationIfNecessary(annotationType, apply, method, methodAnnotations));
     return methodAnnotations;
   }
 
@@ -53,10 +53,10 @@ public class MethodAnnotationsFactory {
   }
 
   @SuppressWarnings("unchecked")
-  private <T extends Annotation> void addEnrichOperationIfNecessary(Class<T> annotationType, ApplyEnrichAnnotation<? extends Annotation> apply, Method method, MethodAnnotations methodAnnotations) {
+  private <T extends Annotation> void addAfterOperationIfNecessary(Class<T> annotationType, ApplyAfterAnnotation<? extends Annotation> apply, Method method, MethodAnnotations methodAnnotations) {
     T annotation = findAnnotationOnMethodOrClass(annotationType, method);
     if (annotation != null) {
-      methodAnnotations.addEnrichOperation(context -> ((ApplyEnrichAnnotation<T>) apply).apply(context, annotation));
+      methodAnnotations.addAfterOperation(context -> ((ApplyAfterAnnotation<T>) apply).apply(context, annotation));
     }
   }
 

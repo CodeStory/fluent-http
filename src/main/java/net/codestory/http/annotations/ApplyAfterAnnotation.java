@@ -20,6 +20,6 @@ import net.codestory.http.payload.Payload;
 import java.lang.annotation.Annotation;
 
 @FunctionalInterface
-public interface ApplyEnrichAnnotation<T extends Annotation> {
+public interface ApplyAfterAnnotation<T extends Annotation> {
   Payload apply(Payload payload, T annotation);
 }

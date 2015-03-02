@@ -49,7 +49,7 @@ public class CustomAnnotationsTest extends AbstractProdWebServerTest {
   @Test
   public void enrich_annotation() {
     configure(routes -> routes
-        .registerEnrichAnnotation(Header.class, (payload, annotation) -> payload.withHeader(annotation.key(), annotation.value()))
+        .registerAfterAnnotation(Header.class, (payload, annotation) -> payload.withHeader(annotation.key(), annotation.value()))
         .add(new MyResource())
     );
 

@@ -24,19 +24,19 @@ import java.util.function.Function;
 
 public class MethodAnnotations {
   private final List<Function<Context, Payload>> byPassOperations;
-  private final List<Function<Payload, Payload>> enrichOperations;
+  private final List<Function<Payload, Payload>> afterOperations;
 
   MethodAnnotations() {
     this.byPassOperations = new ArrayList<>();
-    this.enrichOperations = new ArrayList<>();
+    this.afterOperations = new ArrayList<>();
   }
 
   void addByPassOperation(Function<Context, Payload> operation) {
     byPassOperations.add(operation);
   }
 
-  void addEnrichOperation(Function<Payload, Payload> operation) {
-    enrichOperations.add(operation);
+  void addAfterOperation(Function<Payload, Payload> operation) {
+    afterOperations.add(operation);
   }
 
   public Payload byPass(Context context) {
@@ -50,8 +50,8 @@ public class MethodAnnotations {
     return null;
   }
 
-  public Payload enrich(Payload payload) {
-    for (Function<Payload, Payload> operation : enrichOperations) {
+  public Payload after(Payload payload) {
+    for (Function<Payload, Payload> operation : afterOperations) {
       payload = operation.apply(payload);
     }
 

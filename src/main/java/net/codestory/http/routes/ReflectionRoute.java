@@ -51,9 +51,8 @@ class ReflectionRoute implements AnyRoute {
       String contentType = findContentType(method);
 
       Payload payload = new Payload(contentType, body);
-      annotations.enrich(payload);
 
-      return payload;
+      return annotations.after(payload);
     } catch (RuntimeException e) {
       throw e;
     } catch (Throwable e) {

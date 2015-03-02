@@ -16,7 +16,7 @@
 package net.codestory.http.routes;
 
 import net.codestory.http.annotations.ApplyByPassAnnotation;
-import net.codestory.http.annotations.ApplyEnrichAnnotation;
+import net.codestory.http.annotations.ApplyAfterAnnotation;
 import net.codestory.http.extensions.Extensions;
 import net.codestory.http.filters.Filter;
 import net.codestory.http.injection.IocAdapter;
@@ -142,7 +142,7 @@ public interface Routes extends Serializable {
 
   <T extends Annotation> Routes registerByPassAnnotation(Class<T> annotationType, ApplyByPassAnnotation<T> apply);
 
-  <T extends Annotation> Routes registerEnrichAnnotation(Class<T> annotationType, ApplyEnrichAnnotation<T> apply);
+  <T extends Annotation> Routes registerAfterAnnotation(Class<T> annotationType, ApplyAfterAnnotation<T> apply);
 
   RoutesWithPattern url(String uriPattern);
 }
