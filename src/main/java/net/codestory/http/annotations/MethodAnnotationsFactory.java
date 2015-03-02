@@ -56,7 +56,7 @@ public class MethodAnnotationsFactory {
   private <T extends Annotation> void addAfterOperationIfNecessary(Class<T> annotationType, ApplyAfterAnnotation<? extends Annotation> apply, Method method, MethodAnnotations methodAnnotations) {
     T annotation = findAnnotationOnMethodOrClass(annotationType, method);
     if (annotation != null) {
-      methodAnnotations.addAfterOperation(context -> ((ApplyAfterAnnotation<T>) apply).apply(context, annotation));
+      methodAnnotations.addAfterOperation((context, payload) -> ((ApplyAfterAnnotation<T>) apply).apply(context, payload, annotation));
     }
   }
 

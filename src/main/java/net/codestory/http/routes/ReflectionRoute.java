@@ -52,7 +52,7 @@ class ReflectionRoute implements AnyRoute {
 
       Payload payload = new Payload(contentType, body);
 
-      return annotations.after(payload);
+      return annotations.after(context, payload);
     } catch (RuntimeException e) {
       throw e;
     } catch (Throwable e) {

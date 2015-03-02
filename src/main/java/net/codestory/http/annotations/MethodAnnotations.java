@@ -20,11 +20,11 @@ import net.codestory.http.payload.Payload;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.*;
 
 public class MethodAnnotations {
   private final List<Function<Context, Payload>> byPassOperations;
-  private final List<Function<Payload, Payload>> afterOperations;
+  private final List<BiFunction<Context, Payload, Payload>> afterOperations;
 
   MethodAnnotations() {
     this.byPassOperations = new ArrayList<>();
@@ -35,7 +35,7 @@ public class MethodAnnotations {
     byPassOperations.add(operation);
   }
 
-  void addAfterOperation(Function<Payload, Payload> operation) {
+  void addAfterOperation(BiFunction<Context, Payload, Payload> operation) {
     afterOperations.add(operation);
   }
 
@@ -50,9 +50,9 @@ public class MethodAnnotations {
     return null;
   }
 
-  public Payload after(Payload payload) {
-    for (Function<Payload, Payload> operation : afterOperations) {
-      payload = operation.apply(payload);
+  public Payload after(Context context, Payload payload) {
+    for (BiFunction<Context, Payload, Payload> operation : afterOperations) {
+      payload = operation.apply(context, payload);
     }
 
     return payload;

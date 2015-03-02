@@ -551,12 +551,12 @@ public class RouteCollection implements Routes {
     MethodAnnotationsFactory factory = new MethodAnnotationsFactory();
 
     factory.registerByPassAnnotation(Roles.class, (context, roles) -> isAuthorized(roles, context.currentUser()) ? null : Payload.forbidden());
-    factory.registerAfterAnnotation(AllowOrigin.class, (payload, origin) -> payload.withAllowOrigin(origin.value()));
-    factory.registerAfterAnnotation(AllowMethods.class, (payload, methods) -> payload.withAllowMethods(methods.value()));
-    factory.registerAfterAnnotation(AllowCredentials.class, (payload, credentials) -> payload.withAllowCredentials(credentials.value()));
-    factory.registerAfterAnnotation(AllowHeaders.class, (payload, allowedHeaders) -> payload.withAllowHeaders(allowedHeaders.value()));
-    factory.registerAfterAnnotation(ExposeHeaders.class, (payload, exposedHeaders) -> payload.withExposeHeaders(exposedHeaders.value()));
-    factory.registerAfterAnnotation(MaxAge.class, (payload, maxAge) -> payload.withMaxAge(maxAge.value()));
+    factory.registerAfterAnnotation(AllowOrigin.class, (context, payload, origin) -> payload.withAllowOrigin(origin.value()));
+    factory.registerAfterAnnotation(AllowMethods.class, (context, payload, methods) -> payload.withAllowMethods(methods.value()));
+    factory.registerAfterAnnotation(AllowCredentials.class, (context, payload, credentials) -> payload.withAllowCredentials(credentials.value()));
+    factory.registerAfterAnnotation(AllowHeaders.class, (context, payload, allowedHeaders) -> payload.withAllowHeaders(allowedHeaders.value()));
+    factory.registerAfterAnnotation(ExposeHeaders.class, (context, payload, exposedHeaders) -> payload.withExposeHeaders(exposedHeaders.value()));
+    factory.registerAfterAnnotation(MaxAge.class, (context, payload, maxAge) -> payload.withMaxAge(maxAge.value()));
 
     return factory;
   }

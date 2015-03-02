@@ -15,11 +15,12 @@
  */
 package net.codestory.http.annotations;
 
+import net.codestory.http.*;
 import net.codestory.http.payload.Payload;
 
 import java.lang.annotation.Annotation;
 
 @FunctionalInterface
 public interface ApplyAfterAnnotation<T extends Annotation> {
-  Payload apply(Payload payload, T annotation);
+  Payload apply(Context context, Payload payload, T annotation);
 }
