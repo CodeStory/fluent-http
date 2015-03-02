@@ -39,13 +39,13 @@ public class MethodAnnotationsFactory {
 
   public MethodAnnotations forMethod(Method method) {
     MethodAnnotations methodAnnotations = new MethodAnnotations();
-    byPassAnnotations.forEach((annotationType, apply) -> addByPassOperationIdNecessary(annotationType, apply, method, methodAnnotations));
-    enrichAnnotations.forEach((annotationType, apply) -> addEnrichOperationIdNecessary(annotationType, apply, method, methodAnnotations));
+    byPassAnnotations.forEach((annotationType, apply) -> addByPassOperationIfNecessary(annotationType, apply, method, methodAnnotations));
+    enrichAnnotations.forEach((annotationType, apply) -> addEnrichOperationIfNecessary(annotationType, apply, method, methodAnnotations));
     return methodAnnotations;
   }
 
   @SuppressWarnings("unchecked")
-  private <T extends Annotation> void addByPassOperationIdNecessary(Class<T> annotationType, ApplyByPassAnnotation<? extends Annotation> apply, Method method, MethodAnnotations methodAnnotations) {
+  private <T extends Annotation> void addByPassOperationIfNecessary(Class<T> annotationType, ApplyByPassAnnotation<? extends Annotation> apply, Method method, MethodAnnotations methodAnnotations) {
     T annotation = findAnnotationOnMethodOrClass(annotationType, method);
     if (annotation != null) {
       methodAnnotations.addByPassOperation(context -> ((ApplyByPassAnnotation<T>) apply).apply(context, annotation));
@@ -53,7 +53,7 @@ public class MethodAnnotationsFactory {
   }
 
   @SuppressWarnings("unchecked")
-  private <T extends Annotation> void addEnrichOperationIdNecessary(Class<T> annotationType, ApplyEnrichAnnotation<? extends Annotation> apply, Method method, MethodAnnotations methodAnnotations) {
+  private <T extends Annotation> void addEnrichOperationIfNecessary(Class<T> annotationType, ApplyEnrichAnnotation<? extends Annotation> apply, Method method, MethodAnnotations methodAnnotations) {
     T annotation = findAnnotationOnMethodOrClass(annotationType, method);
     if (annotation != null) {
       methodAnnotations.addEnrichOperation(context -> ((ApplyEnrichAnnotation<T>) apply).apply(context, annotation));
