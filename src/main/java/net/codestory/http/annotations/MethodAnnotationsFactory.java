@@ -21,16 +21,16 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class MethodAnnotationsFactory {
-  private final Map<Class<? extends Annotation>, ApplyByPassAnnotation<? extends Annotation>> byPassAnnotations;
+  private final Map<Class<? extends Annotation>, ApplyAroundAnnotation<? extends Annotation>> aroundAnnotations;
   private final Map<Class<? extends Annotation>, ApplyAfterAnnotation<? extends Annotation>> afterAnnotations;
 
   public MethodAnnotationsFactory() {
-    this.byPassAnnotations = new LinkedHashMap<>();
+    this.aroundAnnotations = new LinkedHashMap<>();
     this.afterAnnotations = new LinkedHashMap<>();
   }
 
-  public <T extends Annotation> void registerByPassAnnotation(Class<T> type, ApplyByPassAnnotation<T> apply) {
-    byPassAnnotations.put(type, apply);
+  public <T extends Annotation> void registerAroundAnnotation(Class<T> type, ApplyAroundAnnotation<T> apply) {
+    aroundAnnotations.put(type, apply);
   }
 
   public <T extends Annotation> void registerAfterAnnotation(Class<T> type, ApplyAfterAnnotation<T> apply) {
@@ -39,16 +39,16 @@ public class MethodAnnotationsFactory {
 
   public MethodAnnotations forMethod(Method method) {
     MethodAnnotations methodAnnotations = new MethodAnnotations();
-    byPassAnnotations.forEach((annotationType, apply) -> addByPassOperationIfNecessary(annotationType, apply, method, methodAnnotations));
+    aroundAnnotations.forEach((annotationType, apply) -> addAroundOperationIfNecessary(annotationType, apply, method, methodAnnotations));
     afterAnnotations.forEach((annotationType, apply) -> addAfterOperationIfNecessary(annotationType, apply, method, methodAnnotations));
     return methodAnnotations;
   }
 
   @SuppressWarnings("unchecked")
-  private <T extends Annotation> void addByPassOperationIfNecessary(Class<T> annotationType, ApplyByPassAnnotation<? extends Annotation> apply, Method method, MethodAnnotations methodAnnotations) {
+  private <T extends Annotation> void addAroundOperationIfNecessary(Class<T> annotationType, ApplyAroundAnnotation<? extends Annotation> apply, Method method, MethodAnnotations methodAnnotations) {
     T annotation = findAnnotationOnMethodOrClass(annotationType, method);
     if (annotation != null) {
-      methodAnnotations.addByPassOperation(context -> ((ApplyByPassAnnotation<T>) apply).apply(context, annotation));
+      methodAnnotations.addAroundOperation((context, payloadSupplier) -> ((ApplyAroundAnnotation<T>) apply).apply(context, payloadSupplier, annotation));
     }
   }
 

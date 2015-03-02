@@ -30,7 +30,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 public class CustomAnnotationsTest extends AbstractProdWebServerTest {
   @Test
-  public void bypass_annotation() {
+  public void around_annotation() {
     UsersList users = new UsersList.Builder()
       .addUser("user", "pwd")
       .addUser("dummy", "pwd")
@@ -38,7 +38,7 @@ public class CustomAnnotationsTest extends AbstractProdWebServerTest {
 
     configure(routes -> routes
         .filter(new BasicAuthFilter("/", "realm", users))
-        .registerByPassAnnotation(DummyShallNotPass.class, (context, annotation) -> "dummy".equals(context.currentUser().name()) ? Payload.forbidden() : null)
+        .registerAroundAnnotation(DummyShallNotPass.class, (context, payloadSupplier, annotation) -> "dummy".equals(context.currentUser().name()) ? Payload.forbidden() : payloadSupplier.get())
         .add(new MyResource())
     );
 
@@ -47,9 +47,9 @@ public class CustomAnnotationsTest extends AbstractProdWebServerTest {
   }
 
   @Test
-  public void enrich_annotation() {
+  public void after_annotation() {
     configure(routes -> routes
-        .registerAfterAnnotation(Header.class, (payload, annotation) -> payload.withHeader(annotation.key(), annotation.value()))
+        .registerAfterAnnotation(Header.class, (context, payload, annotation) -> payload.withHeader(annotation.key(), annotation.value()))
         .add(new MyResource())
     );
 

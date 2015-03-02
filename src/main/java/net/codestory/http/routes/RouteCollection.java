@@ -478,8 +478,8 @@ public class RouteCollection implements Routes {
   }
 
   @Override
-  public <T extends Annotation> Routes registerByPassAnnotation(Class<T> annotationType, ApplyByPassAnnotation<T> apply) {
-    methodAnnotationsFactory.registerByPassAnnotation(annotationType, apply);
+  public <T extends Annotation> Routes registerAroundAnnotation(Class<T> annotationType, ApplyAroundAnnotation<T> apply) {
+    methodAnnotationsFactory.registerAroundAnnotation(annotationType, apply);
     return this;
   }
 
@@ -550,7 +550,7 @@ public class RouteCollection implements Routes {
   protected MethodAnnotationsFactory createMethodAnnotationsFactory() {
     MethodAnnotationsFactory factory = new MethodAnnotationsFactory();
 
-    factory.registerByPassAnnotation(Roles.class, (context, roles) -> isAuthorized(roles, context.currentUser()) ? null : Payload.forbidden());
+    factory.registerAroundAnnotation(Roles.class, (context, payloadSupplier, roles) -> isAuthorized(roles, context.currentUser()) ? payloadSupplier.get() : Payload.forbidden());
     factory.registerAfterAnnotation(AllowOrigin.class, (context, payload, origin) -> payload.withAllowOrigin(origin.value()));
     factory.registerAfterAnnotation(AllowMethods.class, (context, payload, methods) -> payload.withAllowMethods(methods.value()));
     factory.registerAfterAnnotation(AllowCredentials.class, (context, payload, credentials) -> payload.withAllowCredentials(credentials.value()));

@@ -15,39 +15,38 @@
  */
 package net.codestory.http.annotations;
 
-import net.codestory.http.Context;
-import net.codestory.http.payload.Payload;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.function.*;
 
+import net.codestory.http.*;
+import net.codestory.http.payload.*;
+
 public class MethodAnnotations {
-  private final List<Function<Context, Payload>> byPassOperations;
+  private final List<BiFunction<Context, Supplier<Payload>, Payload>> aroundOperations;
   private final List<BiFunction<Context, Payload, Payload>> afterOperations;
 
   MethodAnnotations() {
-    this.byPassOperations = new ArrayList<>();
+    this.aroundOperations = new ArrayList<>();
     this.afterOperations = new ArrayList<>();
   }
 
-  void addByPassOperation(Function<Context, Payload> operation) {
-    byPassOperations.add(operation);
+  void addAroundOperation(BiFunction<Context, Supplier<Payload>, Payload> operation) {
+    aroundOperations.add(operation);
   }
 
   void addAfterOperation(BiFunction<Context, Payload, Payload> operation) {
     afterOperations.add(operation);
   }
 
-  public Payload byPass(Context context) {
-    for (Function<Context, Payload> operation : byPassOperations) {
-      Payload payload = operation.apply(context);
-      if (payload != null) {
-        return payload;
-      }
+  public Payload around(Context context, Supplier<Payload> payloadSupplier) {
+    Supplier<Payload> current = payloadSupplier;
+
+    for (BiFunction<Context, Supplier<Payload>, Payload> operation : aroundOperations) {
+      Supplier<Payload> last = payloadSupplier;
+      current = () -> operation.apply(context, last);
     }
 
-    return null;
+    return current.get();
   }
 
   public Payload after(Context context, Payload payload) {

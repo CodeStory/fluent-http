@@ -15,7 +15,7 @@
  */
 package net.codestory.http.routes;
 
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.*;
 import java.util.function.*;
 
@@ -37,27 +37,24 @@ class ReflectionRoute implements AnyRoute {
 
   @Override
   public Object body(Context context, String[] pathParameters) {
-    Payload byPass = annotations.byPass(context);
-    if (byPass != null) {
-      return byPass;
-    }
+    Payload payload = annotations.around(context, () -> {
+      try {
+        Object target = resource.get();
 
-    try {
-      Object target = resource.get();
+        Object[] arguments = convert(context, pathParameters, method.getGenericParameterTypes());
+        Object response = invoke(target, method, arguments);
+        Object body = emptyIfNull(response);
+        String contentType = findContentType(method);
 
-      Object[] arguments = convert(context, pathParameters, method.getGenericParameterTypes());
-      Object response = invoke(target, method, arguments);
-      Object body = emptyIfNull(response);
-      String contentType = findContentType(method);
+        return new Payload(contentType, body);
+      } catch (RuntimeException e) {
+        throw e;
+      } catch (Throwable e) {
+        throw new IllegalStateException("Unable to apply route", e);
+      }
+    });
 
-      Payload payload = new Payload(contentType, body);
-
-      return annotations.after(context, payload);
-    } catch (RuntimeException e) {
-      throw e;
-    } catch (Throwable e) {
-      throw new IllegalStateException("Unable to apply route", e);
-    }
+    return annotations.after(context, payload);
   }
 
   static Object[] convert(Context context, String[] pathParameters, Type... types) throws IOException {

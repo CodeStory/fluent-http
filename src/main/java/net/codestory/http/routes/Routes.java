@@ -15,7 +15,7 @@
  */
 package net.codestory.http.routes;
 
-import net.codestory.http.annotations.ApplyByPassAnnotation;
+import net.codestory.http.annotations.ApplyAroundAnnotation;
 import net.codestory.http.annotations.ApplyAfterAnnotation;
 import net.codestory.http.extensions.Extensions;
 import net.codestory.http.filters.Filter;
@@ -140,7 +140,7 @@ public interface Routes extends Serializable {
 
   Routes bind(String uriRoot, File path);
 
-  <T extends Annotation> Routes registerByPassAnnotation(Class<T> annotationType, ApplyByPassAnnotation<T> apply);
+  <T extends Annotation> Routes registerAroundAnnotation(Class<T> annotationType, ApplyAroundAnnotation<T> apply);
 
   <T extends Annotation> Routes registerAfterAnnotation(Class<T> annotationType, ApplyAfterAnnotation<T> apply);
 

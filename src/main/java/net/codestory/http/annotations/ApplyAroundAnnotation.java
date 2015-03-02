@@ -19,8 +19,9 @@ import net.codestory.http.Context;
 import net.codestory.http.payload.Payload;
 
 import java.lang.annotation.Annotation;
+import java.util.function.*;
 
 @FunctionalInterface
-public interface ApplyByPassAnnotation<T extends Annotation> {
-  Payload apply(Context context, T annotation);
+public interface ApplyAroundAnnotation<T extends Annotation> {
+  Payload apply(Context context, Supplier<Payload> payloadSupplier, T annotation);
 }
