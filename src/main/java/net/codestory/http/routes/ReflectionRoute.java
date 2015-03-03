@@ -37,7 +37,7 @@ class ReflectionRoute implements AnyRoute {
 
   @Override
   public Object body(Context context, String[] pathParameters) {
-    Payload payload = annotations.around(context, ctx -> {
+    return annotations.apply(context, ctx -> {
       try {
         Object target = resource.get();
 
@@ -53,8 +53,6 @@ class ReflectionRoute implements AnyRoute {
         throw new IllegalStateException("Unable to apply route", e);
       }
     });
-
-    return annotations.after(context, payload);
   }
 
   static Object[] convert(Context context, String[] pathParameters, Type... types) throws IOException {

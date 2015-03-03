@@ -24,37 +24,27 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class MethodAnnotations {
-  private final List<BiFunction<Context, Function<Context, Payload>, Payload>> aroundOperations;
-  private final List<BiFunction<Context, Payload, Payload>> afterOperations;
+  private final List<BiFunction<Context, Function<Context, Payload>, Payload>> operations;
 
   MethodAnnotations() {
-    this.aroundOperations = new ArrayList<>();
-    this.afterOperations = new ArrayList<>();
+    this.operations = new ArrayList<>();
   }
 
   void addAroundOperation(BiFunction<Context, Function<Context, Payload>, Payload> operation) {
-    aroundOperations.add(operation);
+    operations.add(operation);
   }
 
   void addAfterOperation(BiFunction<Context, Payload, Payload> operation) {
-    afterOperations.add(operation);
+    operations.add((context, payloadSupplier) -> operation.apply(context, payloadSupplier.apply(context)));
   }
 
-  public Payload around(Context context, Function<Context, Payload> payloadSupplier) {
+  public Payload apply(Context context, Function<Context, Payload> payloadSupplier) {
     Function<Context, Payload> current = payloadSupplier;
 
-    for (BiFunction<Context, Function<Context, Payload>, Payload> operation : aroundOperations) {
+    for (BiFunction<Context, Function<Context, Payload>, Payload> operation : operations) {
       current = ctx -> operation.apply(ctx, payloadSupplier);
     }
 
     return current.apply(context);
-  }
-
-  public Payload after(Context context, Payload payload) {
-    for (BiFunction<Context, Payload, Payload> operation : afterOperations) {
-      payload = operation.apply(context, payload);
-    }
-
-    return payload;
   }
 }
