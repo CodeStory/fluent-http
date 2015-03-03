@@ -23,5 +23,5 @@ import java.util.function.*;
 
 @FunctionalInterface
 public interface ApplyAroundAnnotation<T extends Annotation> {
-  Payload apply(Context context, Function<Context, Payload> payloadSupplier, T annotation);
+  Payload apply(T annotation, Context context, Function<Context, Payload> payloadSupplier);
 }

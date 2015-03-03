@@ -22,5 +22,5 @@ import java.lang.annotation.Annotation;
 
 @FunctionalInterface
 public interface ApplyAfterAnnotation<T extends Annotation> {
-  Payload apply(Context context, Payload payload, T annotation);
+  Payload apply(T annotation, Context context, Payload payload);
 }

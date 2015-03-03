@@ -38,7 +38,7 @@ public class CustomAnnotationsTest extends AbstractProdWebServerTest {
 
     configure(routes -> routes
         .filter(new BasicAuthFilter("/", "realm", users))
-        .registerAroundAnnotation(DummyShallNotPass.class, (context, payloadSupplier, annotation) -> "dummy".equals(context.currentUser().name()) ? Payload.forbidden() : payloadSupplier.apply(context))
+        .registerAroundAnnotation(DummyShallNotPass.class, (annotation, context, payloadSupplier) -> "dummy".equals(context.currentUser().name()) ? Payload.forbidden() : payloadSupplier.apply(context))
         .add(new MyResource())
     );
 
@@ -49,7 +49,7 @@ public class CustomAnnotationsTest extends AbstractProdWebServerTest {
   @Test
   public void after_annotation() {
     configure(routes -> routes
-        .registerAfterAnnotation(Header.class, (context, payload, annotation) -> payload.withHeader(annotation.key(), annotation.value()))
+        .registerAfterAnnotation(Header.class, (annotation, context, payload) -> payload.withHeader(annotation.key(), annotation.value()))
         .add(new MyResource())
     );
 

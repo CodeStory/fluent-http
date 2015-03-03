@@ -550,13 +550,13 @@ public class RouteCollection implements Routes {
   protected MethodAnnotationsFactory createMethodAnnotationsFactory() {
     MethodAnnotationsFactory factory = new MethodAnnotationsFactory();
 
-    factory.registerAroundAnnotation(Roles.class, (context, payloadSupplier, roles) -> isAuthorized(roles, context.currentUser()) ? payloadSupplier.apply(context) : Payload.forbidden());
-    factory.registerAfterAnnotation(AllowOrigin.class, (context, payload, origin) -> payload.withAllowOrigin(origin.value()));
-    factory.registerAfterAnnotation(AllowMethods.class, (context, payload, methods) -> payload.withAllowMethods(methods.value()));
-    factory.registerAfterAnnotation(AllowCredentials.class, (context, payload, credentials) -> payload.withAllowCredentials(credentials.value()));
-    factory.registerAfterAnnotation(AllowHeaders.class, (context, payload, allowedHeaders) -> payload.withAllowHeaders(allowedHeaders.value()));
-    factory.registerAfterAnnotation(ExposeHeaders.class, (context, payload, exposedHeaders) -> payload.withExposeHeaders(exposedHeaders.value()));
-    factory.registerAfterAnnotation(MaxAge.class, (context, payload, maxAge) -> payload.withMaxAge(maxAge.value()));
+    factory.registerAroundAnnotation(Roles.class, (roles, context, payloadSupplier) -> isAuthorized(roles, context.currentUser()) ? payloadSupplier.apply(context) : Payload.forbidden());
+    factory.registerAfterAnnotation(AllowOrigin.class, (origin, context, payload) -> payload.withAllowOrigin(origin.value()));
+    factory.registerAfterAnnotation(AllowMethods.class, (methods, context, payload) -> payload.withAllowMethods(methods.value()));
+    factory.registerAfterAnnotation(AllowCredentials.class, (credentials, context, payload) -> payload.withAllowCredentials(credentials.value()));
+    factory.registerAfterAnnotation(AllowHeaders.class, (allowedHeaders, context, payload) -> payload.withAllowHeaders(allowedHeaders.value()));
+    factory.registerAfterAnnotation(ExposeHeaders.class, (exposedHeaders, context, payload) -> payload.withExposeHeaders(exposedHeaders.value()));
+    factory.registerAfterAnnotation(MaxAge.class, (maxAge, context, payload) -> payload.withMaxAge(maxAge.value()));
 
     return factory;
   }

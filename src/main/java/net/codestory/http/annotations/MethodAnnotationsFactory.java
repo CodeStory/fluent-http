@@ -48,7 +48,7 @@ public class MethodAnnotationsFactory {
   private <T extends Annotation> void addAroundOperationIfNecessary(Class<T> annotationType, ApplyAroundAnnotation<? extends Annotation> apply, Method method, MethodAnnotations methodAnnotations) {
     T annotation = findAnnotationOnMethodOrClass(annotationType, method);
     if (annotation != null) {
-      methodAnnotations.addAroundOperation((context, payloadSupplier) -> ((ApplyAroundAnnotation<T>) apply).apply(context, payloadSupplier, annotation));
+      methodAnnotations.addAroundOperation((context, payloadSupplier) -> ((ApplyAroundAnnotation<T>) apply).apply(annotation, context, payloadSupplier));
     }
   }
 
@@ -56,7 +56,7 @@ public class MethodAnnotationsFactory {
   private <T extends Annotation> void addAfterOperationIfNecessary(Class<T> annotationType, ApplyAfterAnnotation<? extends Annotation> apply, Method method, MethodAnnotations methodAnnotations) {
     T annotation = findAnnotationOnMethodOrClass(annotationType, method);
     if (annotation != null) {
-      methodAnnotations.addAfterOperation((context, payload) -> ((ApplyAfterAnnotation<T>) apply).apply(context, payload, annotation));
+      methodAnnotations.addAfterOperation((context, payload) -> ((ApplyAfterAnnotation<T>) apply).apply(annotation, context, payload));
     }
   }
 
