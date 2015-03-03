@@ -15,11 +15,13 @@
  */
 package net.codestory.http.annotations;
 
-import java.util.*;
-import java.util.function.*;
+import net.codestory.http.Context;
+import net.codestory.http.payload.Payload;
 
-import net.codestory.http.*;
-import net.codestory.http.payload.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 public class MethodAnnotations {
   private final List<BiFunction<Context, Supplier<Payload>, Payload>> aroundOperations;
@@ -42,8 +44,7 @@ public class MethodAnnotations {
     Supplier<Payload> current = payloadSupplier;
 
     for (BiFunction<Context, Supplier<Payload>, Payload> operation : aroundOperations) {
-      Supplier<Payload> last = payloadSupplier;
-      current = () -> operation.apply(context, last);
+      current = () -> operation.apply(context, payloadSupplier);
     }
 
     return current.get();
