@@ -37,11 +37,11 @@ class ReflectionRoute implements AnyRoute {
 
   @Override
   public Object body(Context context, String[] pathParameters) {
-    Payload payload = annotations.around(context, () -> {
+    Payload payload = annotations.around(context, ctx -> {
       try {
         Object target = resource.get();
 
-        Object[] arguments = convert(context, pathParameters, method.getGenericParameterTypes());
+        Object[] arguments = convert(ctx, pathParameters, method.getGenericParameterTypes());
         Object response = invoke(target, method, arguments);
         Object body = emptyIfNull(response);
         String contentType = findContentType(method);

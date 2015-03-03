@@ -38,7 +38,7 @@ public class CustomAnnotationsTest extends AbstractProdWebServerTest {
 
     configure(routes -> routes
         .filter(new BasicAuthFilter("/", "realm", users))
-        .registerAroundAnnotation(DummyShallNotPass.class, (context, payloadSupplier, annotation) -> "dummy".equals(context.currentUser().name()) ? Payload.forbidden() : payloadSupplier.get())
+        .registerAroundAnnotation(DummyShallNotPass.class, (context, payloadSupplier, annotation) -> "dummy".equals(context.currentUser().name()) ? Payload.forbidden() : payloadSupplier.apply(context))
         .add(new MyResource())
     );
 

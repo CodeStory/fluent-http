@@ -21,10 +21,10 @@ import net.codestory.http.payload.Payload;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 public class MethodAnnotations {
-  private final List<BiFunction<Context, Supplier<Payload>, Payload>> aroundOperations;
+  private final List<BiFunction<Context, Function<Context, Payload>, Payload>> aroundOperations;
   private final List<BiFunction<Context, Payload, Payload>> afterOperations;
 
   MethodAnnotations() {
@@ -32,7 +32,7 @@ public class MethodAnnotations {
     this.afterOperations = new ArrayList<>();
   }
 
-  void addAroundOperation(BiFunction<Context, Supplier<Payload>, Payload> operation) {
+  void addAroundOperation(BiFunction<Context, Function<Context, Payload>, Payload> operation) {
     aroundOperations.add(operation);
   }
 
@@ -40,14 +40,14 @@ public class MethodAnnotations {
     afterOperations.add(operation);
   }
 
-  public Payload around(Context context, Supplier<Payload> payloadSupplier) {
-    Supplier<Payload> current = payloadSupplier;
+  public Payload around(Context context, Function<Context, Payload> payloadSupplier) {
+    Function<Context, Payload> current = payloadSupplier;
 
-    for (BiFunction<Context, Supplier<Payload>, Payload> operation : aroundOperations) {
-      current = () -> operation.apply(context, payloadSupplier);
+    for (BiFunction<Context, Function<Context, Payload>, Payload> operation : aroundOperations) {
+      current = ctx -> operation.apply(ctx, payloadSupplier);
     }
 
-    return current.get();
+    return current.apply(context);
   }
 
   public Payload after(Context context, Payload payload) {
