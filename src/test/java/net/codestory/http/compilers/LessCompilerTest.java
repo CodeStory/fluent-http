@@ -84,7 +84,9 @@ public class LessCompilerTest {
     thrown.expectMessage(
       "Unable to compile less invalid.less: 3 error(s) occurred:\n" +
         "ERROR 1:6 no viable alternative at input 'body' in ruleset (which started at 1:1)\n" +
+        " 1: body body\n\n" +
         "ERROR 1:6 required (...)+ loop did not match anything at input 'body' in selectors (which started at 1:6)\n" +
+        " 1: body body\n\n" +
         "...");
 
     compile("invalid.less", "body body");
