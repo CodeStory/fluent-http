@@ -93,4 +93,15 @@ public class ErrorPageTest extends AbstractProdWebServerTest {
 
     get("/error").should().respond(500).haveType("text/html").contain("An error occurred on the server").haveHeader("reason", "NASTY BUG");
   }
+
+  @Test
+  public void custom_error_payload() {
+    configure(routes -> routes
+        .get("/not_found", () -> {
+          return new Payload("text/html", "NOT FOUND!!!", 404);
+        })
+    );
+
+    get("/not_found").should().respond(404).haveType("text/html").contain("NOT FOUND!!!");
+  }
 }

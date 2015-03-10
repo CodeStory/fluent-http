@@ -97,8 +97,8 @@ public class PayloadWriter {
   }
 
   protected void writeAndCloseSync(Payload payload) throws IOException {
-    if (payload.isError()) {
-      payload = errorPage(payload);
+    if (payload.isError() && (payload.rawContent() == null)) {
+      payload = errorPage(payload, null);
     }
 
     write(payload);
@@ -476,8 +476,9 @@ public class PayloadWriter {
     return forModelAndView(ModelAndView.of(Resources.toUnixString(path)));
   }
 
-  protected Payload errorPage(Payload payload) {
-    return errorPage(payload, null);
+  protected Payload errorPage(Payload payload, Throwable e) {
+    Throwable shownError = env.prodMode() ? null : e;
+    return new ErrorPage(payload, shownError).payload();
   }
 
   protected Payload errorPage(Throwable e) {
@@ -489,10 +490,5 @@ public class PayloadWriter {
     }
 
     return errorPage(new Payload(code), e);
-  }
-
-  protected Payload errorPage(Payload payload, Throwable e) {
-    Throwable shownError = env.prodMode() ? null : e;
-    return new ErrorPage(payload, shownError).payload();
   }
 }
