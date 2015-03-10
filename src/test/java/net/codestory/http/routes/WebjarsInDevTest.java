@@ -28,12 +28,12 @@ public class WebjarsInDevTest extends AbstractDevWebServerTest {
 
   @Test
   public void webjar_css() {
-    get("/webjars/bootstrap/3.3.2-1/css/bootstrap.min.css").should().respond(200).haveType("text/css").contain("Bootstrap v3.3.2");
+    get("/webjars/bootstrap/3.3.2-2/css/bootstrap.min.css").should().respond(200).haveType("text/css").contain("Bootstrap v3.3.2");
   }
 
   @Test
   public void webjar_js() {
-    get("/webjars/bootstrap/3.3.2-1/js/bootstrap.min.js").should().respond(200).haveType("application/javascript").contain("Bootstrap v3.3.2");
+    get("/webjars/bootstrap/3.3.2-2/js/bootstrap.min.js").should().respond(200).haveType("application/javascript").contain("Bootstrap v3.3.2");
   }
 
   @Test
@@ -49,10 +49,10 @@ public class WebjarsInDevTest extends AbstractDevWebServerTest {
 
     assertThat(stderr.getLog())
       .contains("Found these webjars files with extension: .js")
-      .contains("/webjars/bootstrap/3.3.2-1/js/bootstrap.js")
-      .contains("/webjars/bootstrap/3.3.2-1/js/bootstrap.min.js")
+      .contains("/webjars/bootstrap/3.3.2-2/js/bootstrap.js")
+      .contains("/webjars/bootstrap/3.3.2-2/js/bootstrap.min.js")
       .contains("/webjars/jquery/1.11.1/jquery.js")
-      .doesNotContain("/webjars/bootstrap/3.3.2-1/css/bootstrap.min.css");
+      .doesNotContain("/webjars/bootstrap/3.3.2-2/css/bootstrap.min.css");
   }
 
   @Test

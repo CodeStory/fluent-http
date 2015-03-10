@@ -42,7 +42,7 @@ public class WebjarHelperSourceTest {
   public void css() {
     CharSequence script = webjarHelper.webjar("bootstrap.css", null);
 
-    assertThat(script.toString()).isEqualTo("<link rel=\"stylesheet\" href=\"/webjars/bootstrap/3.3.2-1/css/bootstrap.css\">");
+    assertThat(script.toString()).isEqualTo("<link rel=\"stylesheet\" href=\"/webjars/bootstrap/3.3.2-2/css/bootstrap.css\">");
   }
 
   @Test
