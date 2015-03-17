@@ -15,6 +15,7 @@
  */
 package net.codestory.http.annotations;
 
+import net.codestory.http.*;
 import net.codestory.http.filters.basic.BasicAuthFilter;
 import net.codestory.http.payload.Payload;
 import net.codestory.http.security.UsersList;
@@ -23,6 +24,7 @@ import org.junit.Test;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.util.function.*;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
@@ -54,6 +56,47 @@ public class CustomAnnotationsTest extends AbstractProdWebServerTest {
     );
 
     get("/").should().contain("Hello").haveHeader("theHeader", "theValue");
+  }
+
+  @Test
+  public void around_annotation_class() {
+    UsersList users = new UsersList.Builder()
+      .addUser("user", "pwd")
+      .addUser("dummy", "pwd")
+      .build();
+
+    configure(routes -> routes
+        .filter(new BasicAuthFilter("/", "realm", users))
+        .registerAroundAnnotation(DummyShallNotPass.class, ShallNotPass.class)
+        .add(new MyResource())
+    );
+
+    get("/").withAuthentication("user", "pwd").should().contain("Hello");
+    get("/").withAuthentication("dummy", "pwd").should().respond(403);
+  }
+
+  @Test
+  public void after_annotation_class() {
+    configure(routes -> routes
+        .registerAfterAnnotation(Header.class, AddHeader.class)
+        .add(new MyResource())
+    );
+
+    get("/").should().contain("Hello").haveHeader("theHeader", "theValue");
+  }
+
+  public static class ShallNotPass implements ApplyAroundAnnotation<DummyShallNotPass> {
+    @Override
+    public Payload apply(DummyShallNotPass annotation, Context context, Function<Context, Payload> payloadSupplier) {
+      return "dummy".equals(context.currentUser().name()) ? Payload.forbidden() : payloadSupplier.apply(context);
+    }
+  }
+
+  public static class AddHeader implements ApplyAfterAnnotation<Header> {
+    @Override
+    public Payload apply(Header annotation, Context context, Payload payload) {
+      return payload.withHeader(annotation.key(), annotation.value());
+    }
   }
 
   @Target(TYPE)
