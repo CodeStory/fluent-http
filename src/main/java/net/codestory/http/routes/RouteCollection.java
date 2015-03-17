@@ -486,7 +486,7 @@ public class RouteCollection implements Routes {
   @Override
   public <T extends Annotation> Routes registerAroundAnnotation(Class<T> annotationType, Class<? extends ApplyAroundAnnotation<T>> applyType) {
     methodAnnotationsFactory.registerAroundAnnotation(annotationType, () -> (ApplyAroundAnnotation<T>) iocAdapter.get(applyType));
-    return null;
+    return this;
   }
 
   @Override
@@ -498,7 +498,7 @@ public class RouteCollection implements Routes {
   @Override
   public <T extends Annotation> Routes registerAfterAnnotation(Class<T> annotationType, Class<? extends ApplyAfterAnnotation<T>> applyType) {
     methodAnnotationsFactory.registerAfterAnnotation(annotationType, () -> (ApplyAfterAnnotation<T>) iocAdapter.get(applyType));
-    return null;
+    return this;
   }
 
   @Override
