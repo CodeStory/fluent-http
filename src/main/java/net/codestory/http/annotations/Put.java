@@ -25,5 +25,5 @@ import java.lang.annotation.*;
 @Retention(RUNTIME)
 @Repeatable(Puts.class)
 public @interface Put {
-  String value();
+  String value() default "";
 }

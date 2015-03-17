@@ -25,5 +25,5 @@ import java.lang.annotation.*;
 @Retention(RUNTIME)
 @Repeatable(Deletes.class)
 public @interface Delete {
-  String value();
+  String value() default "";
 }

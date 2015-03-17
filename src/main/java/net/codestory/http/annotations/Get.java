@@ -25,5 +25,5 @@ import java.lang.annotation.*;
 @Retention(RUNTIME)
 @Repeatable(Gets.class)
 public @interface Get {
-  String value();
+  String value() default "";
 }

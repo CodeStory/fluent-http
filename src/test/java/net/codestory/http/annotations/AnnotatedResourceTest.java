@@ -121,6 +121,7 @@ public class AnnotatedResourceTest extends AbstractProdWebServerTest {
 
     get("/prefix/route1").should().contain("Route 1");
     get("/prefix/route2").should().contain("Route 2");
+    get("/prefix").should().contain("Default");
   }
 
   @Test
@@ -208,6 +209,11 @@ public class AnnotatedResourceTest extends AbstractProdWebServerTest {
     @Get("/route2")
     public String route2() {
       return "Route 2";
+    }
+
+    @Get("")
+    public String defaultRoute() {
+      return "Default";
     }
   }
 

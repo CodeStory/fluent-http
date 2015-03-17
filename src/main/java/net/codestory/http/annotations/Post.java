@@ -25,5 +25,5 @@ import java.lang.annotation.*;
 @Retention(RUNTIME)
 @Repeatable(Posts.class)
 public @interface Post {
-  String value();
+  String value() default "";
 }

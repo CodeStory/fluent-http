@@ -25,5 +25,5 @@ import java.lang.annotation.*;
 @Retention(RUNTIME)
 @Repeatable(Heads.class)
 public @interface Head {
-  String value();
+  String value() default "";
 }

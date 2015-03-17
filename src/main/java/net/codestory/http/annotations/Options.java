@@ -25,5 +25,5 @@ import java.lang.annotation.*;
 @Retention(RUNTIME)
 @Repeatable(ManyOptions.class)
 public @interface Options {
-  String value();
+  String value() default "";
 }
