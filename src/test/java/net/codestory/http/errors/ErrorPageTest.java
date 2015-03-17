@@ -19,7 +19,13 @@ import static net.codestory.http.errors.NotFoundException.*;
 
 import java.util.*;
 
+import net.codestory.http.*;
+import net.codestory.http.compilers.*;
+import net.codestory.http.extensions.*;
+import net.codestory.http.io.*;
+import net.codestory.http.misc.*;
 import net.codestory.http.payload.*;
+import net.codestory.http.templating.*;
 import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
@@ -103,5 +109,27 @@ public class ErrorPageTest extends AbstractProdWebServerTest {
     );
 
     get("/not_found").should().respond(404).haveType("text/html").contain("NOT FOUND!!!");
+  }
+
+  @Test
+  public void custom_error_page() {
+    configure(routes -> routes
+        .get("/not_found", () -> {
+          throw new RuntimeException("NASTY BUG");
+        })
+        .setExtensions(new Extensions() {
+          @Override
+          public PayloadWriter createPayloadWriter(Request request, Response response, Env env, Site site, Resources resources, CompilerFacade compilers) {
+            return new PayloadWriter(request, response, env, site, resources, compilers) {
+              @Override
+              protected Payload errorPage(Throwable e) {
+                return new Payload("text/html", "A nice custom error page: " + e.getMessage(), 500);
+              }
+            };
+          }
+        })
+    );
+
+    get("/not_found").should().respond(500).haveType("text/html").contain("A nice custom error page: NASTY BUG");
   }
 }
