@@ -57,8 +57,9 @@ public class NewCookie implements Cookie {
     return version;
   }
 
-  public void setVersion(int version) {
+  public NewCookie setVersion(int version) {
     this.version = version;
+    return this;
   }
 
   @Override
@@ -71,8 +72,9 @@ public class NewCookie implements Cookie {
     return value;
   }
 
-  public void setValue(String value) {
+  public NewCookie setValue(String value) {
     this.value = value;
+    return this;
   }
 
   @Override
@@ -80,8 +82,9 @@ public class NewCookie implements Cookie {
     return secure;
   }
 
-  public void setSecure(boolean secure) {
+  public NewCookie setSecure(boolean secure) {
     this.secure = secure;
+    return this;
   }
 
   @Override
@@ -89,8 +92,9 @@ public class NewCookie implements Cookie {
     return httpOnly;
   }
 
-  public void setHttpOnly(boolean httpOnly) {
+  public NewCookie setHttpOnly(boolean httpOnly) {
     this.httpOnly = httpOnly;
+    return this;
   }
 
   @Override
@@ -98,8 +102,9 @@ public class NewCookie implements Cookie {
     return expiry;
   }
 
-  public void setExpiry(int expiry) {
+  public NewCookie setExpiry(int expiry) {
     this.expiry = expiry;
+    return this;
   }
 
   @Override
@@ -107,8 +112,9 @@ public class NewCookie implements Cookie {
     return path;
   }
 
-  public void setPath(String path) {
+  public NewCookie setPath(String path) {
     this.path = path;
+    return this;
   }
 
   @Override
@@ -116,8 +122,9 @@ public class NewCookie implements Cookie {
     return domain;
   }
 
-  public void setDomain(String domain) {
+  public NewCookie setDomain(String domain) {
     this.domain = domain;
+    return this;
   }
 
   @Override
