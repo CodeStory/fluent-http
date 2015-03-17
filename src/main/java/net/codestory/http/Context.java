@@ -132,6 +132,9 @@ public class Context {
       if (clazz.isAssignableFrom(String.class)) {
         return request.content();
       }
+      if (clazz.isAssignableFrom(InputStream.class)) {
+        return request.inputStream();
+      }
       if (clazz.isAssignableFrom(Site.class)) {
         return site;
       }
