@@ -142,7 +142,11 @@ public interface Routes extends Serializable {
 
   <T extends Annotation> Routes registerAroundAnnotation(Class<T> annotationType, ApplyAroundAnnotation<T> apply);
 
+  <T extends Annotation> Routes registerAroundAnnotation(Class<T> annotationType, Class<ApplyAroundAnnotation<T>> applyType);
+
   <T extends Annotation> Routes registerAfterAnnotation(Class<T> annotationType, ApplyAfterAnnotation<T> apply);
+
+  <T extends Annotation> Routes registerAfterAnnotation(Class<T> annotationType, Class<ApplyAfterAnnotation<T>> applyType);
 
   RoutesWithPattern url(String uriPattern);
 }

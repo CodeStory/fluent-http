@@ -19,21 +19,22 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.*;
 
 public class MethodAnnotationsFactory {
-  private final Map<Class<? extends Annotation>, ApplyAroundAnnotation<? extends Annotation>> aroundAnnotations;
-  private final Map<Class<? extends Annotation>, ApplyAfterAnnotation<? extends Annotation>> afterAnnotations;
+  private final Map<Class<? extends Annotation>, Supplier<? extends ApplyAroundAnnotation<? extends Annotation>>> aroundAnnotations;
+  private final Map<Class<? extends Annotation>, Supplier<? extends ApplyAfterAnnotation<? extends Annotation>>> afterAnnotations;
 
   public MethodAnnotationsFactory() {
     this.aroundAnnotations = new LinkedHashMap<>();
     this.afterAnnotations = new LinkedHashMap<>();
   }
 
-  public <T extends Annotation> void registerAroundAnnotation(Class<T> type, ApplyAroundAnnotation<T> apply) {
+  public <T extends Annotation> void registerAroundAnnotation(Class<T> type, Supplier<? extends ApplyAroundAnnotation<T>> apply) {
     aroundAnnotations.put(type, apply);
   }
 
-  public <T extends Annotation> void registerAfterAnnotation(Class<T> type, ApplyAfterAnnotation<T> apply) {
+  public <T extends Annotation> void registerAfterAnnotation(Class<T> type, Supplier<? extends ApplyAfterAnnotation<T>> apply) {
     afterAnnotations.put(type, apply);
   }
 
@@ -45,18 +46,18 @@ public class MethodAnnotationsFactory {
   }
 
   @SuppressWarnings("unchecked")
-  private <T extends Annotation> void addAroundOperationIfNecessary(Class<T> annotationType, ApplyAroundAnnotation<? extends Annotation> apply, Method method, MethodAnnotations methodAnnotations) {
+  private <T extends Annotation> void addAroundOperationIfNecessary(Class<T> annotationType, Supplier<? extends ApplyAroundAnnotation<? extends Annotation>> apply, Method method, MethodAnnotations methodAnnotations) {
     T annotation = findAnnotationOnMethodOrClass(annotationType, method);
     if (annotation != null) {
-      methodAnnotations.addAroundOperation((context, payloadSupplier) -> ((ApplyAroundAnnotation<T>) apply).apply(annotation, context, payloadSupplier));
+      methodAnnotations.addAroundOperation((context, payloadSupplier) -> ((ApplyAroundAnnotation<T>) apply.get()).apply(annotation, context, payloadSupplier));
     }
   }
 
   @SuppressWarnings("unchecked")
-  private <T extends Annotation> void addAfterOperationIfNecessary(Class<T> annotationType, ApplyAfterAnnotation<? extends Annotation> apply, Method method, MethodAnnotations methodAnnotations) {
+  private <T extends Annotation> void addAfterOperationIfNecessary(Class<T> annotationType, Supplier<? extends ApplyAfterAnnotation<? extends Annotation>> apply, Method method, MethodAnnotations methodAnnotations) {
     T annotation = findAnnotationOnMethodOrClass(annotationType, method);
     if (annotation != null) {
-      methodAnnotations.addAfterOperation((context, payload) -> ((ApplyAfterAnnotation<T>) apply).apply(annotation, context, payload));
+      methodAnnotations.addAfterOperation((context, payload) -> ((ApplyAfterAnnotation<T>) apply.get()).apply(annotation, context, payload));
     }
   }
 
