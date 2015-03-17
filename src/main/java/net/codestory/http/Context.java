@@ -19,6 +19,7 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
 
+import net.codestory.http.forms.*;
 import net.codestory.http.injection.*;
 import net.codestory.http.misc.Env;
 import net.codestory.http.security.*;
@@ -134,6 +135,9 @@ public class Context {
       }
       if (clazz.isAssignableFrom(InputStream.class)) {
         return request.inputStream();
+      }
+      if (clazz.isAssignableFrom(Form.class)) {
+        return new Form(query().keyValues());
       }
       if (clazz.isAssignableFrom(Site.class)) {
         return site;
