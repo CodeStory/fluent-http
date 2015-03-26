@@ -109,7 +109,7 @@ public class CookieAuthFilter implements Filter {
       return seeOther("/auth/login");
     }
 
-    return seeOther(notFavIcon(readRedirectUrlInCookie(context)))
+    return seeOther(validRedirectUrl(readRedirectUrlInCookie(context)))
       .withCookie(authCookie(buildCookie(user, "/")));
   }
 
@@ -170,7 +170,7 @@ public class CookieAuthFilter implements Filter {
     return cookie;
   }
 
-  private static String notFavIcon(String redirectUrl) {
+  protected String validRedirectUrl(String redirectUrl) {
     return redirectUrl.contains("favicon.ico") ? "/" : redirectUrl;
   }
 }
