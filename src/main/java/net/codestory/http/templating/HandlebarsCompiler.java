@@ -81,6 +81,7 @@ public class HandlebarsCompiler implements TemplatingEngine {
       .registerHelpers(new AssetsHelperSource(env.prodMode(), resources, compilers))
       .registerHelpers(new WebjarHelperSource(env.prodMode()))
       .registerHelpers(StringHelpers.class)
+      .infiniteLoops(true)
       .with(new ConcurrentMapTemplateCache())
       .with(new AbstractTemplateLoader() {
         @Override

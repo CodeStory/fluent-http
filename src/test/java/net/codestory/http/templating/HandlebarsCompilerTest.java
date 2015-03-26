@@ -65,6 +65,13 @@ public class HandlebarsCompilerTest {
   }
 
   @Test
+  public void partial_with_loop() throws IOException {
+    String result = compile("[[>partialWithLoop ctx]]", map("ctx", map("terminal", false, "name", map("name", "bob", "terminal", true))));
+
+    assertThat(result).isEqualTo("Hello\n\n  Hello\n\n  bob\n\n\n\n");
+  }
+
+  @Test
   public void find_partial() throws IOException {
     String result = compile("[[>partial]]", map("name", "Bob"));
 
