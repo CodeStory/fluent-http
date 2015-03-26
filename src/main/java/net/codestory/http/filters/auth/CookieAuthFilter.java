@@ -80,11 +80,11 @@ public class CookieAuthFilter implements Filter {
   private Payload authenticationUri(String uri, Context context, PayloadSupplier nextFilter) throws Exception {
     String method = context.method();
 
-    if ("/auth/signin".equals(uri) && POST.equals(method)) {
+    if (uri.startsWith("/auth/signin") && POST.equals(method)) {
       return signin(context);
     }
 
-    if ("/auth/signout".equals(uri) && GET.equals(method)) {
+    if (uri.startsWith("/auth/signout") && GET.equals(method)) {
       return signout(context);
     }
 
