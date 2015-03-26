@@ -15,14 +15,16 @@
  */
 package net.codestory.http.filters.mixed;
 
-import static net.codestory.http.constants.Headers.*;
+import net.codestory.http.Context;
+import net.codestory.http.filters.Filter;
+import net.codestory.http.filters.PayloadSupplier;
+import net.codestory.http.filters.auth.CookieAuthFilter;
+import net.codestory.http.filters.basic.BasicAuthFilter;
+import net.codestory.http.payload.Payload;
+import net.codestory.http.security.SessionIdStore;
+import net.codestory.http.security.Users;
 
-import net.codestory.http.*;
-import net.codestory.http.filters.*;
-import net.codestory.http.filters.auth.*;
-import net.codestory.http.filters.basic.*;
-import net.codestory.http.payload.*;
-import net.codestory.http.security.*;
+import static net.codestory.http.constants.Headers.AUTHORIZATION;
 
 public class MixedAuthFilter implements Filter {
   private final Filter cookieAuthFilter;
@@ -30,6 +32,11 @@ public class MixedAuthFilter implements Filter {
 
   public MixedAuthFilter(String uriPrefix, String realm, Users users, SessionIdStore sessionIdStore) {
     this.cookieAuthFilter = new CookieAuthFilter(uriPrefix, users, sessionIdStore);
+    this.basicAuthFilter = new BasicAuthFilter(uriPrefix, realm, users);
+  }
+
+  public MixedAuthFilter(String uriPrefix, String realm, Users users, SessionIdStore sessionIdStore, String ignoreExtension, String... moreIgnoreExtensions) {
+    this.cookieAuthFilter = new CookieAuthFilter(uriPrefix, users, sessionIdStore, ignoreExtension, moreIgnoreExtensions);
     this.basicAuthFilter = new BasicAuthFilter(uriPrefix, realm, users);
   }
 

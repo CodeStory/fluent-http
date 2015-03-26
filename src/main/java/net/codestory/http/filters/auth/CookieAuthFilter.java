@@ -15,25 +15,33 @@
  */
 package net.codestory.http.filters.auth;
 
-import static java.lang.Long.toHexString;
-import static java.util.stream.Stream.*;
-import static net.codestory.http.constants.Headers.*;
-import static net.codestory.http.constants.Methods.*;
-import static net.codestory.http.payload.Payload.*;
+import net.codestory.http.Context;
+import net.codestory.http.Cookie;
+import net.codestory.http.NewCookie;
+import net.codestory.http.convert.TypeConvert;
+import net.codestory.http.filters.Filter;
+import net.codestory.http.filters.PayloadSupplier;
+import net.codestory.http.payload.Payload;
+import net.codestory.http.security.SessionIdStore;
+import net.codestory.http.security.User;
+import net.codestory.http.security.Users;
 
 import java.util.Random;
-import java.util.concurrent.*;
+import java.util.concurrent.TimeUnit;
 
-import net.codestory.http.*;
-import net.codestory.http.convert.*;
-import net.codestory.http.filters.*;
-import net.codestory.http.payload.*;
-import net.codestory.http.security.*;
+import static java.lang.Long.toHexString;
+import static java.util.stream.Stream.concat;
+import static java.util.stream.Stream.of;
+import static net.codestory.http.constants.Headers.CACHE_CONTROL;
+import static net.codestory.http.constants.Methods.GET;
+import static net.codestory.http.constants.Methods.POST;
+import static net.codestory.http.payload.Payload.seeOther;
 
 public class CookieAuthFilter implements Filter {
+  public static final String[] DEFAULT_EXCLUDE = {".less", ".css", ".map", ".js", ".coffee", ".ico", ".jpeg", ".jpg", ".gif", ".png", ".svg", ".eot", ".ttf", ".woff", ".js", ".coffee", "robots.txt"};
+
   private static final Random RANDOM = new Random();
   private static final int ONE_DAY = (int) TimeUnit.DAYS.toSeconds(1L);
-  private static final String[] DEFAULT_EXCLUDE = {".less", ".css", ".map", ".js", ".coffee", ".ico", ".jpeg", ".jpg", ".gif", ".png", ".svg", ".eot", ".ttf", ".woff", ".js", ".coffee", "robots.txt"};
 
   private final String uriPrefix;
   private final Users users;
@@ -128,7 +136,7 @@ public class CookieAuthFilter implements Filter {
     return (authData == null) ? null : authData.sessionId;
   }
 
-	private String readRedirectUrlInCookie(Context context) {
+  private String readRedirectUrlInCookie(Context context) {
     AuthData authData = readAuthCookie(context);
     String redirectUrl = (authData == null) ? null : authData.redirectAfterLogin;
     redirectUrl = (redirectUrl == null) ? "/" : redirectUrl;
@@ -153,18 +161,26 @@ public class CookieAuthFilter implements Filter {
     return TypeConvert.toJson(cookie);
   }
 
-	protected AuthData readAuthCookie(Context context) {
-		try {
-			return context.cookies().value("auth", AuthData.class);
-		} catch (Exception e) {
-			// Ignore invalid cookie
-			return null;
-		}
-	}
+  protected AuthData readAuthCookie(Context context) {
+    try {
+      return context.cookies().value("auth", AuthData.class);
+    } catch (Exception e) {
+      // Ignore invalid cookie
+      return null;
+    }
+  }
 
-	protected Cookie authCookie(String authData) {
+  protected int expiry() {
+    return ONE_DAY;
+  }
+
+  protected String domain() {
+    return null;
+  }
+
+  protected Cookie authCookie(String authData) {
     NewCookie cookie = new NewCookie("auth", authData, "/", true);
-    cookie.setExpiry(ONE_DAY);
+    cookie.setExpiry(expiry());
     cookie.setDomain(null);
     cookie.setSecure(false);
     return cookie;
