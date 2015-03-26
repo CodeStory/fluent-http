@@ -163,11 +163,15 @@ public class CookieAuthFilter implements Filter {
 
   protected AuthData readAuthCookie(Context context) {
     try {
-      return context.cookies().value("auth", AuthData.class);
+      return context.cookies().value(cookieName(), AuthData.class);
     } catch (Exception e) {
       // Ignore invalid cookie
       return null;
     }
+  }
+
+  protected String cookieName() {
+    return "auth";
   }
 
   protected int expiry() {
@@ -179,7 +183,7 @@ public class CookieAuthFilter implements Filter {
   }
 
   protected Cookie authCookie(String authData) {
-    NewCookie cookie = new NewCookie("auth", authData, "/", true);
+    NewCookie cookie = new NewCookie(cookieName(), authData, "/", true);
     cookie.setExpiry(expiry());
     cookie.setDomain(null);
     cookie.setSecure(false);
