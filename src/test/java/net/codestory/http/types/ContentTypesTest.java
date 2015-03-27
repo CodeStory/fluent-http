@@ -43,6 +43,7 @@ public class ContentTypesTest {
     assertThat(get("font.eot")).isEqualTo("application/vnd.ms-fontobject");
     assertThat(get("font.ttf")).isEqualTo("application/x-font-ttf");
     assertThat(get("font.woff")).isEqualTo("application/x-font-woff");
+    assertThat(get("font.woff2")).isEqualTo("application/x-font-woff");
     assertThat(get("script.js")).isEqualTo("application/javascript;charset=UTF-8");
     assertThat(get("script.coffee")).isEqualTo("application/javascript;charset=UTF-8");
     assertThat(get("script.litcoffee")).isEqualTo("application/javascript;charset=UTF-8");

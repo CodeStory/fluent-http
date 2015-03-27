@@ -253,6 +253,7 @@ public class HandlebarsCompilerTest {
     assertThat(compiler.supports(Paths.get("font.eot"))).isFalse();
     assertThat(compiler.supports(Paths.get("font.ttf"))).isFalse();
     assertThat(compiler.supports(Paths.get("font.woff"))).isFalse();
+    assertThat(compiler.supports(Paths.get("font.woff2"))).isFalse();
     assertThat(compiler.supports(Paths.get("script.js"))).isFalse();
     assertThat(compiler.supports(Paths.get("script.coffee"))).isFalse();
     assertThat(compiler.supports(Paths.get("script.litcoffee"))).isFalse();

@@ -73,6 +73,7 @@ public class ContentTypes {
       case ".ttf":
         return "application/x-font-ttf";
       case ".woff":
+      case ".woff2":
         return "application/x-font-woff";
       case ".ico":
         return "image/x-icon";

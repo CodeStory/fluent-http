@@ -38,7 +38,7 @@ import static net.codestory.http.constants.Methods.POST;
 import static net.codestory.http.payload.Payload.seeOther;
 
 public class CookieAuthFilter implements Filter {
-  public static final String[] DEFAULT_EXCLUDE = {".less", ".css", ".map", ".js", ".coffee", ".ico", ".jpeg", ".jpg", ".gif", ".png", ".svg", ".eot", ".ttf", ".woff", "robots.txt"};
+  public static final String[] DEFAULT_EXCLUDE = {".less", ".css", ".map", ".js", ".coffee", ".ico", ".jpeg", ".jpg", ".gif", ".png", ".svg", ".eot", ".ttf", ".woff", "woff2", "robots.txt"};
 
   private static final Random RANDOM = new Random();
   private static final int ONE_DAY = (int) TimeUnit.DAYS.toSeconds(1L);
