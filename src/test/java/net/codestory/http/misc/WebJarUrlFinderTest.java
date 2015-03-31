@@ -15,54 +15,62 @@
  */
 package net.codestory.http.misc;
 
-import static org.assertj.core.api.Assertions.*;
+import org.junit.Test;
 
-import java.net.*;
+import java.net.URL;
 
-import org.junit.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class WebJarUrlFinderTest {
+  private static WebJarUrlFinder finderInDevMode() {
+    return new WebJarUrlFinder(false);
+  }
+
+  private static WebJarUrlFinder finderInProdMode() {
+    return new WebJarUrlFinder(true);
+  }
+
   @Test
   public void dont_use_minified_asset_in_dev_mode() {
-    WebJarUrlFinder finder = new WebJarUrlFinder(false);
-
-    URL url = finder.url("/webjars/fakewebjar/1.0/framework.min.js");
+    URL url = finderInDevMode().url("/webjars/fakewebjar/1.0/framework.min.js");
     assertThat(url.toString()).endsWith("/META-INF/resources/webjars/fakewebjar/1.0/framework.js");
 
-    url = finder.url("/webjars/fakewebjar/1.0/framework.js");
+    url = finderInDevMode().url("/webjars/fakewebjar/1.0/framework.js");
     assertThat(url.toString()).endsWith("/META-INF/resources/webjars/fakewebjar/1.0/framework.js");
   }
 
   @Test
   public void non_minified_version_doesnt_exists() {
-    WebJarUrlFinder finder = new WebJarUrlFinder(false);
-
-    URL url = finder.url("/webjars/fakewebjar/1.0/only-minified.min.js");
+    URL url = finderInDevMode().url("/webjars/fakewebjar/1.0/only-minified.min.js");
     assertThat(url.toString()).endsWith("/META-INF/resources/webjars/fakewebjar/1.0/only-minified.min.js");
 
-    url = finder.url("/webjars/fakewebjar/1.0/only-minified.js");
+    url = finderInDevMode().url("/webjars/fakewebjar/1.0/only-minified.js");
     assertThat(url.toString()).endsWith("/META-INF/resources/webjars/fakewebjar/1.0/only-minified.min.js");
   }
 
   @Test
   public void use_minified_asset_in_production_mode() {
-    WebJarUrlFinder finder = new WebJarUrlFinder(true);
-
-    URL url = finder.url("/webjars/fakewebjar/1.0/framework.min.js");
+    URL url = finderInProdMode().url("/webjars/fakewebjar/1.0/framework.min.js");
     assertThat(url.toString()).endsWith("/META-INF/resources/webjars/fakewebjar/1.0/framework.min.js");
 
-    url = finder.url("/webjars/fakewebjar/1.0/framework.js");
+    url = finderInProdMode().url("/webjars/fakewebjar/1.0/framework.js");
     assertThat(url.toString()).endsWith("/META-INF/resources/webjars/fakewebjar/1.0/framework.min.js");
   }
 
   @Test
   public void minified_version_doesnt_exists() {
-    WebJarUrlFinder finder = new WebJarUrlFinder(true);
-
-    URL url = finder.url("/webjars/fakewebjar/1.0/fake.min.js");
+    URL url = finderInProdMode().url("/webjars/fakewebjar/1.0/fake.min.js");
     assertThat(url.toString()).endsWith("/META-INF/resources/webjars/fakewebjar/1.0/fake.js");
 
-    url = finder.url("/webjars/fakewebjar/1.0/fake.js");
+    url = finderInProdMode().url("/webjars/fakewebjar/1.0/fake.js");
     assertThat(url.toString()).endsWith("/META-INF/resources/webjars/fakewebjar/1.0/fake.js");
+  }
+
+  @Test
+  public void find_from_short_path() {
+    assertThat(finderInDevMode().url("/framework.js").toString()).endsWith("/META-INF/resources/webjars/fakewebjar/1.0/framework.js");
+    assertThat(finderInDevMode().url("/framework.min.js").toString()).endsWith("/META-INF/resources/webjars/fakewebjar/1.0/framework.js");
+    assertThat(finderInProdMode().url("/framework.js").toString()).endsWith("/META-INF/resources/webjars/fakewebjar/1.0/framework.min.js");
+    assertThat(finderInProdMode().url("/framework.min.js").toString()).endsWith("/META-INF/resources/webjars/fakewebjar/1.0/framework.min.js");
   }
 }

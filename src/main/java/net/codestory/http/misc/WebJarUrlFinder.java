@@ -15,14 +15,17 @@
  */
 package net.codestory.http.misc;
 
-import java.net.*;
+import net.codestory.http.io.ClassPaths;
+import org.webjars.WebJarAssetLocator;
 
-import net.codestory.http.io.*;
+import java.net.URL;
 
 public class WebJarUrlFinder {
+  private final WebJarAssetLocator webJarAssetLocator;
   private final boolean useMinifiedVersions;
 
   public WebJarUrlFinder(boolean useMinifiedVersions) {
+    this.webJarAssetLocator = new WebJarAssetLocator();
     this.useMinifiedVersions = useMinifiedVersions;
   }
 
@@ -37,8 +40,13 @@ public class WebJarUrlFinder {
     }
   }
 
-  private static URL getResource(String uri) {
-    return ClassPaths.getResource("META-INF/resources" + uri);
+  private URL getResource(String uri) {
+    try {
+      String fullPath = webJarAssetLocator.getFullPath(uri);
+      return ClassPaths.getResource(fullPath);
+    } catch (IllegalArgumentException e) {
+      return null;
+    }
   }
 
   private static String minified(String path) {
