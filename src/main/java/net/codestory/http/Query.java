@@ -35,27 +35,47 @@ public interface Query extends Unwrappable {
   }
 
   default int getInteger(String name) {
+    return getInteger(name, 0);
+  }
+
+  default int getInteger(String name, int defaultValue) {
     String value = get(name);
-    return (value != null) ? Integer.parseInt(value) : 0;
+    return (value != null) ? Integer.parseInt(value) : defaultValue;
   }
 
   default long getLong(String name) {
+    return getLong(name, 0L);
+  }
+
+  default long getLong(String name, long defaultValue) {
     String value = get(name);
-    return (value != null) ? Long.parseLong(value) : 0L;
+    return (value != null) ? Long.parseLong(value) : defaultValue;
   }
 
   default float getFloat(String name) {
+    return getFloat(name, 0.0f);
+  }
+
+  default float getFloat(String name, float defaultValue) {
     String value = get(name);
-    return (value != null) ? Float.parseFloat(value) : 0.0f;
+    return (value != null) ? Float.parseFloat(value) : defaultValue;
   }
 
   default double getDouble(String name) {
+    return getDouble(name, 0.0d);
+  }
+
+  default double getDouble(String name, double defaultValue) {
     String value = get(name);
-    return (value != null) ? Double.parseDouble(value) : 0.0d;
+    return (value != null) ? Double.parseDouble(value) : defaultValue;
   }
 
   default boolean getBoolean(String name) {
+    return getBoolean(name, false);
+  }
+
+  default boolean getBoolean(String name, boolean defaultValue) {
     String value = get(name);
-    return (value != null) ? Boolean.valueOf(value) : false;
+    return (value != null) ? Boolean.valueOf(value) : defaultValue;
   }
 }

@@ -57,6 +57,51 @@ public class SimpleQueryTest {
   }
 
   @Test
+  public void integer_value() {
+    when(query.get("key")).thenReturn("42");
+
+    assertThat(simpleQuery.getInteger("key")).isEqualTo(42);
+    assertThat(simpleQuery.getInteger("missing")).isEqualTo(0);
+    assertThat(simpleQuery.getInteger("missing", 42)).isEqualTo(42);
+  }
+
+  @Test
+  public void long_value() {
+    when(query.get("key")).thenReturn("42");
+
+    assertThat(simpleQuery.getLong("key")).isEqualTo(42L);
+    assertThat(simpleQuery.getLong("missing")).isEqualTo(0L);
+    assertThat(simpleQuery.getLong("missing", 1337L)).isEqualTo(1337L);
+  }
+
+  @Test
+  public void float_value() {
+    when(query.get("key")).thenReturn("42.5");
+
+    assertThat(simpleQuery.getFloat("key")).isEqualTo(42.5f);
+    assertThat(simpleQuery.getFloat("missing")).isEqualTo(0f);
+    assertThat(simpleQuery.getFloat("missing", 3.14f)).isEqualTo(3.14f);
+  }
+
+  @Test
+  public void double_value() {
+    when(query.get("key")).thenReturn("42.5");
+
+    assertThat(simpleQuery.getDouble("key")).isEqualTo(42.5d);
+    assertThat(simpleQuery.getDouble("missing")).isEqualTo(0d);
+    assertThat(simpleQuery.getDouble("missing", 3.14d)).isEqualTo(3.14d);
+  }
+
+  @Test
+  public void boolean_value() {
+    when(query.get("key")).thenReturn("true");
+
+    assertThat(simpleQuery.getBoolean("key")).isTrue();
+    assertThat(simpleQuery.getBoolean("missing")).isFalse();
+    assertThat(simpleQuery.getBoolean("missing", true)).isTrue();
+  }
+
+  @Test
   public void unwrap() {
     assertThat(simpleQuery.unwrap(Query.class)).isSameAs(query);
   }
