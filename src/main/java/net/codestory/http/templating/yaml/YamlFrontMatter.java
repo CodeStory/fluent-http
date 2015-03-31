@@ -53,13 +53,17 @@ public class YamlFrontMatter {
   }
 
   public static YamlFrontMatter parse(SourceFile sourceFile) {
-    Matcher matcher = FRONT_MATTER.matcher(sourceFile.getSource());
+    return parse(sourceFile.getPath(), sourceFile.getSource());
+  }
+
+  public static YamlFrontMatter parse(Path path, String source) {
+    Matcher matcher = FRONT_MATTER.matcher(source);
 
     boolean matches = matcher.matches();
     String header = matches ? matcher.group(1) : null;
-    String content = matches ? matcher.group(2) : sourceFile.getSource();
+    String content = matches ? matcher.group(2) : source;
 
-    return new YamlFrontMatter(sourceFile.getPath(), content, parseVariables(header));
+    return new YamlFrontMatter(path, content, parseVariables(header));
   }
 
   @SuppressWarnings("unchecked")
