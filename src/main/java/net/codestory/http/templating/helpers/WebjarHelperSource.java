@@ -15,20 +15,21 @@
  */
 package net.codestory.http.templating.helpers;
 
+import com.github.jknack.handlebars.Options;
+import net.codestory.http.misc.Cache;
+import net.codestory.http.misc.WebJarUrlFinder;
+
+import java.net.URL;
 import java.util.function.Function;
 
-import net.codestory.http.misc.Cache;
-
-import org.webjars.WebJarAssetLocator;
-
-import com.github.jknack.handlebars.Options;
+import static net.codestory.http.io.Strings.substringAfter;
 
 public class WebjarHelperSource {
-  private final WebJarAssetLocator webJarAssetLocator;
+  private final WebJarUrlFinder webJarUrlFinder;
   private final Function<String, String> fullPathForUri;
 
   public WebjarHelperSource(boolean prodMode) {
-    this.webJarAssetLocator = new WebJarAssetLocator();
+    this.webJarUrlFinder = new WebJarUrlFinder(prodMode);
     this.fullPathForUri = prodMode ? new Cache<>(uri -> fullPathForUri(uri)) : uri -> fullPathForUri(uri);
   }
 
@@ -47,13 +48,13 @@ public class WebjarHelperSource {
     return tag(fullPath, attributes);
   }
 
-
   private String fullPathForUri(String uri) {
-    try {
-      return webJarAssetLocator.getFullPath(uri).replace("META-INF/resources/webjars/", "/webjars/");
-    } catch (IllegalArgumentException e) {
-      return uri;
+    URL classpathUrl = webJarUrlFinder.url(uri);
+    if (classpathUrl == null) {
+      return uri; // Not found
     }
+
+    return substringAfter(classpathUrl.toString(), "/META-INF/resources");
   }
 
   private String tag(String fullPath, String attributes) {
