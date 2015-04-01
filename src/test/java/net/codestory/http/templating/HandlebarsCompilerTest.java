@@ -197,7 +197,7 @@ public class HandlebarsCompilerTest {
 
     String result = compile("[[google_analytics]]", new TreeMap<>());
 
-    assertThat(result).startsWith("<script ").contains("ID").endsWith("</script>");
+    assertThat(result).startsWith("<script>").contains("ID").endsWith("</script>");
   }
 
   @Test
@@ -206,7 +206,7 @@ public class HandlebarsCompilerTest {
 
     String result = compile("[[google_analytics UA]]", map("UA", "12345"));
 
-    assertThat(result).startsWith("<script ").contains("12345").endsWith("</script>");
+    assertThat(result).startsWith("<script>").contains("12345").endsWith("</script>");
   }
 
   @Test
