@@ -422,10 +422,10 @@ public class PayloadWriter {
 
     Object content = payload.rawContent();
     if (content instanceof File) {
-      return ((File) content).lastModified();
+      return resources.lastModified(((File) content).toPath());
     }
     if (content instanceof Path) {
-      return ((Path) content).toFile().lastModified();
+      return resources.lastModified((Path) content);
     }
 
     return -1;

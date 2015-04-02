@@ -30,6 +30,7 @@ import org.mockito.ArgumentCaptor;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
@@ -179,7 +180,9 @@ public class PayloadWriterTest {
 
   @Test
   public void last_modified() throws IOException {
-    Payload payload = new Payload(Paths.get("hello.md"));
+    Path path = Paths.get("hello.md");
+
+    Payload payload = new Payload(path);
     writer.write(payload);
 
     verify(response).setHeader(eq("Last-Modified"), anyString());

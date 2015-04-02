@@ -61,13 +61,27 @@ public class Resources implements Serializable{
 
     // Try index
     for (String extension : TEMPLATE_EXTENSIONS) {
-      Path templatePath = Paths.get(uri,  "index" + extension);
+      Path templatePath = Paths.get(uri, "index" + extension);
       if (exists(templatePath)) {
         return templatePath;
       }
     }
 
     return null;
+  }
+
+  public long lastModified(Path path) {
+    String pathWithPrefix = withPrefix(path);
+    if (existsInFileSystem(pathWithPrefix)) {
+      return file(pathWithPrefix).lastModified();
+    }
+
+    File file = fileForClasspath(getResource(pathWithPrefix));
+    if (file != null) {
+      return file.lastModified();
+    }
+
+    return -1;
   }
 
   public boolean exists(Path path) {
