@@ -18,6 +18,7 @@ package net.codestory.http.misc;
 import static java.time.format.DateTimeFormatter.*;
 
 import java.time.*;
+import java.util.TimeZone;
 
 public class Dates {
   private Dates() {
@@ -25,7 +26,7 @@ public class Dates {
   }
 
   public static String toRfc1123(long date) {
-    return RFC_1123_DATE_TIME.format(ZonedDateTime.ofInstant(Instant.ofEpochMilli(date), ZoneOffset.systemDefault()));
+    return RFC_1123_DATE_TIME.format(ZonedDateTime.ofInstant(Instant.ofEpochMilli(date), TimeZone.getTimeZone("GMT").toZoneId()));
   }
 
   public static long parseRfc1123(String date) {

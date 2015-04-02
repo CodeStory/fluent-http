@@ -21,10 +21,12 @@ import org.junit.*;
 
 public class DatesTest {
   @Test
-  public void format_and_parse() {
+  public void format_and_parse_in_gmt() {
     long currentTime = 1392134880000L;
 
     String date = Dates.toRfc1123(currentTime);
+    assertThat(date).endsWith(" GMT");
+
     long time = Dates.parseRfc1123(date);
 
     assertThat(time).isEqualTo(currentTime);
