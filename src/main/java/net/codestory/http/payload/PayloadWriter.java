@@ -155,8 +155,9 @@ public class PayloadWriter {
     response.setCookies(payload.cookies());
 
     long lastModified = getLastModified(payload);
-    if (lastModified >= 0) {
+    if (lastModified > 0) { // 0 is invalid
       String previousLastModified = stripQuotes(request.header(IF_MODIFIED_SINCE));
+
       if ((previousLastModified != null) && (lastModified < Dates.parseRfc1123(previousLastModified))) {
         response.setStatus(NOT_MODIFIED);
         return;
