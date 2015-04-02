@@ -26,7 +26,7 @@ import java.nio.file.*;
 import net.codestory.http.compilers.*;
 import net.codestory.http.misc.*;
 
-public class Resources implements Serializable{
+public class Resources implements Serializable {
   private static final String[] TEMPLATE_EXTENSIONS = {"", ".html", ".md", ".markdown", ".txt"};
 
   private final Env env;
@@ -49,15 +49,15 @@ public class Resources implements Serializable{
   }
 
   public Path findExistingPath(String uri) {
-		if (!uri.endsWith("/")) {
-			// Try with extension
-			for (String extension : TEMPLATE_EXTENSIONS) {
-				Path templatePath = Paths.get(uri + extension);
-				if (exists(templatePath)) {
-					return templatePath;
-				}
-			}
-		}
+    if (!uri.endsWith("/")) {
+      // Try with extension
+      for (String extension : TEMPLATE_EXTENSIONS) {
+        Path templatePath = Paths.get(uri + extension);
+        if (exists(templatePath)) {
+          return templatePath;
+        }
+      }
+    }
 
     // Try index
     for (String extension : TEMPLATE_EXTENSIONS) {
