@@ -29,4 +29,11 @@ public class DatesTest {
 
     assertThat(time).isEqualTo(currentTime);
   }
+
+  @Test
+  public void parse_IE_date() {
+    long time = Dates.parseRfc1123("Thu, 01 Jan 1970 01:02:44 GMT");
+
+    assertThat(time).isEqualTo(3764000);
+  }
 }
