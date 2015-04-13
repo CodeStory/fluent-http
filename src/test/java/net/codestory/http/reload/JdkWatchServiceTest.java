@@ -65,6 +65,13 @@ public class JdkWatchServiceTest {
 
     verify(listener, timeout(5000)).onChange();
 
+    //On windows, they are a race condition or other problem because the test fails randomly with the following message :
+    //folderChangeListener.onChange();
+    //Wanted 1 time:
+    //-> at net.codestory.http.reload.JdkWatchServiceTest.watch_file_delete(JdkWatchServiceTest.java:66)
+    //But was 2 times. Undesired invocation:
+    //-> at net.codestory.http.reload.JdkWatchService.notifyOnFileChange(JdkWatchService.java:75)
+
     watcher.stop();
   }
 }

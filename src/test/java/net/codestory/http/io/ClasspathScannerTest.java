@@ -47,7 +47,8 @@ public class ClasspathScannerTest {
 
   @Test
   public void scan_webjars() {
-    Set<String> resources = classpathScanner.getResources(Paths.get("META-INF/resources/webjars/"));
+    Path root = Paths.get("META-INF/resources/webjars/");
+    Set<String> resources = classpathScanner.getResources(root);
 
     assertThat(resources)
       .contains("META-INF/resources/webjars/fakewebjar/1.0/fake.js")
