@@ -26,7 +26,7 @@ import static net.codestory.http.io.Strings.substringBeforeLast;
 
 public class ClasspathScanner {
   public Set<String> getResources(Path root) {
-    String prefix = root.toString();
+    String prefix = root.toString().replace('\\', '/');
 
     return listPaths(prefix, path -> !path.endsWith(".class"));
   }
@@ -57,7 +57,7 @@ public class ClasspathScanner {
 
     for (URL url : urls(prefix)) {
       for (String rawPath : ClassPaths.fromURL(url)) {
-        String path = rawPath.replace('\\', '/');
+        String path = rawPath;
         if (path.startsWith(prefix) && filter.test(path)) {
           paths.add(path);
         }
@@ -74,7 +74,7 @@ public class ClasspathScanner {
       Enumeration<URL> urls = ClasspathScanner.class.getClassLoader().getResources(name);
       while (urls.hasMoreElements()) {
         URL url = urls.nextElement();
-        String externalForm = url.toExternalForm().replace('\\', '/');
+        String externalForm = url.toExternalForm();
         int index = externalForm.lastIndexOf(name);
         if (index != -1) {
           result.add(new URL(externalForm.substring(0, index)));
