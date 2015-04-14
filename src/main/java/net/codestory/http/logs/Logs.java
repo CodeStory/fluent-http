@@ -115,26 +115,26 @@ public class Logs {
   }
 
   private static class Slf4jLogs implements LogsImplementation {
-    private static final Logger LOG = LoggerFactory.getLogger("Fluent");
+    private final Logger logger = LoggerFactory.getLogger("Fluent");
 
     @Override
     public void info(String message) {
-      LOG.info(message);
+      logger.info(message);
     }
 
     @Override
     public void info(String message, Object argument) {
-      LOG.info(message, argument);
+      logger.info(message, argument);
     }
 
     @Override
     public void error(String message) {
-      LOG.error(message);
+      logger.error(message);
     }
 
     @Override
     public void error(String message, Throwable e) {
-      LOG.error(message, e);
+      logger.error(message, e);
     }
   }
 }
