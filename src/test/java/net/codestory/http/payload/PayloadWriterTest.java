@@ -104,7 +104,6 @@ public class PayloadWriterTest {
     verify(response).setHeader(CONTENT_TYPE, "text/plain");
     verify(response).setHeader(CACHE_CONTROL, "no-cache");
     verify(response).setHeader(CONNECTION, "keep-alive");
-    verify(response, timeout(100)).close();
 
     ArgumentCaptor<byte[]> bytesCaptor = ArgumentCaptor.forClass(byte[].class);
     verify(outputStream).write(bytesCaptor.capture(), eq(0), eq(5));

@@ -102,10 +102,7 @@ public class PayloadWriter {
     }
 
     write(payload);
-
-    if (!isStream(payload.rawContent())) {
-      close();
-    }
+    close();
   }
 
   protected CompletableFuture<Void> writeAndCloseAsync(Payload payload) {
@@ -243,8 +240,6 @@ public class PayloadWriter {
           .flush();
       });
     }
-
-    close();
   }
 
   protected void writeBufferedReader(Payload payload) throws IOException {
@@ -283,7 +278,6 @@ public class PayloadWriter {
       } else {
         stream.write(response.outputStream());
       }
-      close();
     } catch (IOException e) {
       if (!shouldIgnoreError(e)) {
         throw e;
