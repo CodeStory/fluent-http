@@ -33,6 +33,7 @@ import static java.lang.Long.toHexString;
 import static java.util.stream.Stream.concat;
 import static java.util.stream.Stream.of;
 import static net.codestory.http.constants.Headers.CACHE_CONTROL;
+import static net.codestory.http.constants.HttpStatus.UNAUTHORIZED;
 import static net.codestory.http.constants.Methods.GET;
 import static net.codestory.http.constants.Methods.POST;
 import static net.codestory.http.payload.Payload.seeOther;
@@ -107,7 +108,9 @@ public class CookieAuthFilter implements Filter {
     if (redirectToLogin(uri)) {
       return seeOther("/auth/login").withCookie(authCookie(buildCookie(null, uri)));
     }
-    return unauthorized("private");
+
+    // Don't set a realm so that the browser doesn't open an Authentication dialog
+    return new Payload(UNAUTHORIZED);
   }
 
   protected boolean redirectToLogin(String uri) {
