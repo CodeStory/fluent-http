@@ -41,13 +41,13 @@ import static net.codestory.http.payload.Payload.unauthorized;
 public class CookieAuthFilter implements Filter {
   public static final String[] DEFAULT_EXCLUDE = {".less", ".css", ".map", ".js", ".coffee", ".ico", ".jpeg", ".jpg", ".gif", ".png", ".svg", ".eot", ".ttf", ".woff", "woff2", "robots.txt"};
 
-  private static final Random RANDOM = new Random();
-  private static final int ONE_DAY = (int) TimeUnit.DAYS.toSeconds(1L);
+  protected static final Random RANDOM = new Random();
+  protected static final int ONE_DAY = (int) TimeUnit.DAYS.toSeconds(1L);
 
-  private final String uriPrefix;
-  private final Users users;
-  private final SessionIdStore sessionIdStore;
-  private final String[] ignoreExtensions;
+  protected final String uriPrefix;
+  protected final Users users;
+  protected final SessionIdStore sessionIdStore;
+  protected final String[] ignoreExtensions;
 
   public CookieAuthFilter(String uriPrefix, Users users) {
     this(uriPrefix, users, SessionIdStore.inMemory(), DEFAULT_EXCLUDE);
@@ -78,7 +78,7 @@ public class CookieAuthFilter implements Filter {
     return uri.startsWith("/auth/") ? authenticationUri(uri, context, nextFilter) : otherUri(uri, context, nextFilter);
   }
 
-  private Payload authenticationUri(String uri, Context context, PayloadSupplier nextFilter) throws Exception {
+  protected Payload authenticationUri(String uri, Context context, PayloadSupplier nextFilter) throws Exception {
     String method = context.method();
 
     if (uri.startsWith("/auth/signin") && POST.equals(method)) {
@@ -93,7 +93,7 @@ public class CookieAuthFilter implements Filter {
     return nextFilter.get();
   }
 
-  private Payload otherUri(String uri, Context context, PayloadSupplier nextFilter) throws Exception {
+  protected Payload otherUri(String uri, Context context, PayloadSupplier nextFilter) throws Exception {
     String sessionId = readSessionIdInCookie(context);
     if (sessionId != null) {
       String login = sessionIdStore.getLogin(sessionId);
@@ -114,7 +114,7 @@ public class CookieAuthFilter implements Filter {
     return true;
   }
 
-  private Payload signin(Context context) {
+  protected Payload signin(Context context) {
     String login = context.get("login");
     String password = context.get("password");
 
@@ -128,7 +128,7 @@ public class CookieAuthFilter implements Filter {
       .withCookie(authCookie(buildCookie(user, "/")));
   }
 
-  private Payload signout(Context context) {
+  protected Payload signout(Context context) {
     String sessionId = readSessionIdInCookie(context);
     if (sessionId != null) {
       sessionIdStore.remove(sessionId);
@@ -138,25 +138,25 @@ public class CookieAuthFilter implements Filter {
       .withCookie(authCookie(null));
   }
 
-  private String readSessionIdInCookie(Context context) {
+  protected String readSessionIdInCookie(Context context) {
     AuthData authData = readAuthCookie(context);
     return (authData == null) ? null : authData.sessionId;
   }
 
-  private String readRedirectUrlInCookie(Context context) {
+  protected String readRedirectUrlInCookie(Context context) {
     AuthData authData = readAuthCookie(context);
     String redirectUrl = (authData == null) ? null : authData.redirectAfterLogin;
     redirectUrl = (redirectUrl == null) ? "/" : redirectUrl;
     return redirectUrl;
   }
 
-  private String newSessionId(String login) {
+  protected String newSessionId(String login) {
     String sessionId = toHexString(RANDOM.nextLong()) + toHexString(RANDOM.nextLong());
     sessionIdStore.put(sessionId, login);
     return sessionId;
   }
 
-  private String buildCookie(User user, String redirectUrl) {
+  protected String buildCookie(User user, String redirectUrl) {
     AuthData cookie = new AuthData();
     if (user != null) {
       cookie.login = user.login();
