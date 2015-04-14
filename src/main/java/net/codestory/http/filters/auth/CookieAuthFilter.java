@@ -37,7 +37,6 @@ import static net.codestory.http.constants.HttpStatus.UNAUTHORIZED;
 import static net.codestory.http.constants.Methods.GET;
 import static net.codestory.http.constants.Methods.POST;
 import static net.codestory.http.payload.Payload.seeOther;
-import static net.codestory.http.payload.Payload.unauthorized;
 
 public class CookieAuthFilter implements Filter {
   public static final String[] DEFAULT_EXCLUDE = {".less", ".css", ".map", ".js", ".coffee", ".ico", ".jpeg", ".jpg", ".gif", ".png", ".svg", ".eot", ".ttf", ".woff", "woff2", "robots.txt"};
