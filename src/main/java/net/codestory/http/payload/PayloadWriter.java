@@ -273,13 +273,21 @@ public class PayloadWriter {
   }
 
   protected void writeStreamingOutput(StreamingOutput stream) throws IOException {
-    OutputStream outputStream = response.outputStream();
-
     try {
-      stream.write(outputStream);
+      if (shouldGzip()) {
+        response.setHeader(CONTENT_ENCODING, GZIP);
+
+        GZIPOutputStream gzip = new GZIPOutputStream(response.outputStream());
+        stream.write(gzip);
+        gzip.finish();
+      } else {
+        stream.write(response.outputStream());
+      }
       close();
     } catch (IOException e) {
-      throw new IllegalStateException("Unable to stream", e);
+      if (!shouldIgnoreError(e)) {
+        throw e;
+      }
     }
   }
 
