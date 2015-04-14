@@ -78,8 +78,8 @@
               <file>README.md</file>
               <token>(?m)&lt;artifactId&gt;http&lt;/artifactId&gt;\s*&lt;version&gt;(\d|.)*&lt;/version&gt;</token>
               <value>
-                &lt;artifactId&gt;http&lt;/artifactId&gt;
-                &lt;version&gt;${project.rel.net.code-story:http}&lt;/version&gt;</value>
+  &lt;artifactId&gt;http&lt;/artifactId&gt;
+  &lt;version&gt;${project.rel.net.code-story:http}&lt;/version&gt;</value>
             </configuration>
           </plugin>
           <plugin>
