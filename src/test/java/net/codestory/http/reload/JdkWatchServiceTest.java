@@ -49,7 +49,7 @@ public class JdkWatchServiceTest {
 
     new File(folder, "file").createNewFile();
 
-    verify(listener, timeout(5000)).onChange();
+    verify(listener, timeout(5000).atLeastOnce()).onChange();
 
     watcher.stop();
   }
@@ -63,7 +63,7 @@ public class JdkWatchServiceTest {
 
     new File(folder, "file").delete();
 
-    verify(listener, timeout(5000)).onChange();
+    verify(listener, timeout(5000).atLeastOnce()).onChange();
 
     watcher.stop();
   }
