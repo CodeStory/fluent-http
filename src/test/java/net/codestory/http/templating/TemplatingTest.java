@@ -63,8 +63,8 @@ public class TemplatingTest extends AbstractProdWebServerTest {
 
   @Test
   public void google_analytics() {
-    get("/indexGoogleAnalytics.html").should().contain("<body>\n" +
-      "</body>\n" +
+    get("/indexGoogleAnalytics.html").should().contain("<body>" + System.lineSeparator() +
+      "</body>" + System.lineSeparator() +
       "<script>\n" +
       "  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\n" +
       "  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),\n" +
@@ -72,7 +72,7 @@ public class TemplatingTest extends AbstractProdWebServerTest {
       "})(window,document,'script','//www.google-analytics.com/analytics.js','ga');\n" +
       "ga('create', 'UA-12345', 'auto');\n" +
       "ga('send', 'pageview');\n" +
-      "</script>\n" +
+      "</script>" + System.lineSeparator() +
       "</html>");
   }
 
