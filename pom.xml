@@ -193,7 +193,7 @@
         <artifactId>maven-release-plugin</artifactId>
         <configuration>
           <releaseProfiles>release</releaseProfiles>
-          <arguments> -Psonatype-oss-release,readmeVersion</arguments>
+          <arguments>-Psonatype-oss-release,readmeVersion</arguments>
           <completionGoals>properties:read-project-properties replacer:replace scm:checkin</completionGoals>
         </configuration>
       </plugin>
