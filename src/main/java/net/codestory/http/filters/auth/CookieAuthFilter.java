@@ -36,6 +36,7 @@ import static net.codestory.http.constants.Headers.CACHE_CONTROL;
 import static net.codestory.http.constants.Methods.GET;
 import static net.codestory.http.constants.Methods.POST;
 import static net.codestory.http.payload.Payload.seeOther;
+import static net.codestory.http.payload.Payload.unauthorized;
 
 public class CookieAuthFilter implements Filter {
   public static final String[] DEFAULT_EXCLUDE = {".less", ".css", ".map", ".js", ".coffee", ".ico", ".jpeg", ".jpg", ".gif", ".png", ".svg", ".eot", ".ttf", ".woff", "woff2", "robots.txt"};
@@ -103,8 +104,14 @@ public class CookieAuthFilter implements Filter {
       }
     }
 
-    return seeOther("/auth/login")
-      .withCookie(authCookie(buildCookie(null, uri)));
+    if (redirectToLogin(uri)) {
+      return seeOther("/auth/login").withCookie(authCookie(buildCookie(null, uri)));
+    }
+    return unauthorized("private");
+  }
+
+  protected boolean redirectToLogin(String uri) {
+    return true;
   }
 
   private Payload signin(Context context) {
