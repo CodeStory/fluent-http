@@ -245,7 +245,7 @@ public class PayloadWriter {
   protected void writeBufferedReader(Payload payload) throws IOException {
     BufferedReader lines = (BufferedReader) payload.rawContent();
 
-    writeStreamingOutput((output) -> {
+    writeStreamingOutput(output -> {
       try (PrintStream printStream = new PrintStream(output, true)) {
         String line;
         while (null != (line = lines.readLine())) {
@@ -258,7 +258,7 @@ public class PayloadWriter {
   protected void writeInputStream(Payload payload) throws IOException {
     InputStream stream = (InputStream) payload.rawContent();
 
-    writeStreamingOutput((output) -> InputStreams.copy(stream, output));
+    writeStreamingOutput(output -> InputStreams.copy(stream, output));
   }
 
   protected void writeStreamingOutput(Payload payload) throws IOException {
