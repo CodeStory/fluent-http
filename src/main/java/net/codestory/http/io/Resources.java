@@ -61,7 +61,7 @@ public class Resources implements Serializable {
 
     // Try index
     for (String extension : TEMPLATE_EXTENSIONS) {
-      Path templatePath = Paths.get(uri, "index" + extension);
+      Path templatePath = uri.equals("/") ? Paths.get(uri + "index" + extension) : Paths.get(uri, "index" + extension);
       if (exists(templatePath)) {
         return templatePath;
       }
