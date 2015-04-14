@@ -27,7 +27,7 @@ public class ClasspathScannerTest {
 
   @Test
   public void scan_main_resources() {
-    Set<String> resources = classpathScanner.getResources(Paths.get("app"));
+    Set<String> resources = classpathScanner.getResources("app");
 
     assertThat(resources)
       .contains("app/404.html")
@@ -37,7 +37,7 @@ public class ClasspathScannerTest {
 
   @Test
   public void scan_test_resources() {
-    Set<String> resources = classpathScanner.getResources(Paths.get("app"));
+    Set<String> resources = classpathScanner.getResources("app");
 
     assertThat(resources)
       .contains("app/0variable.txt")
@@ -47,7 +47,7 @@ public class ClasspathScannerTest {
 
   @Test
   public void scan_webjars() {
-    Set<String> resources = classpathScanner.getResources(Paths.get("META-INF/resources/webjars/"));
+    Set<String> resources = classpathScanner.getResources("META-INF/resources/webjars/");
 
     assertThat(resources)
       .contains("META-INF/resources/webjars/fakewebjar/1.0/fake.js")

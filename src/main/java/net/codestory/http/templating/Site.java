@@ -84,7 +84,7 @@ public class Site {
     try {
       if (env.classPath()) {
         Path rootPath = Paths.get(env.appFolder());
-        new ClasspathScanner().getResources(rootPath).forEach(resource -> paths.add(relativePath(rootPath, Paths.get(resource))));
+        new ClasspathScanner().getResources(env.appFolder()).forEach(resource -> paths.add(relativePath(rootPath, Paths.get(resource))));
       }
 
       if (env.filesystem()) {

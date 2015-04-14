@@ -64,7 +64,7 @@ class WebJarsRoute implements Route {
     String extension = extension(wantedUri);
 
     List<String> filteredUris = new ClasspathScanner()
-      .getResources(Paths.get(WEBJARS_PATH_PREFIX))
+      .getResources(WEBJARS_PATH_PREFIX)
       .stream()
       .filter(uri -> uri.endsWith(extension))
       .collect(toList());

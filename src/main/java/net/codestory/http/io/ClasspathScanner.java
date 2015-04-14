@@ -25,9 +25,7 @@ import java.util.function.Predicate;
 import static net.codestory.http.io.Strings.substringBeforeLast;
 
 public class ClasspathScanner {
-  public Set<String> getResources(Path root) {
-    String prefix = root.toString();
-
+  public Set<String> getResources(String prefix) {
     return listPaths(prefix, path -> !path.endsWith(".class"));
   }
 
