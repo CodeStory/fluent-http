@@ -42,6 +42,7 @@ public interface Extensions extends Serializable {
    * Called each time routes are loaded.
    */
   default void configureCompilers(CompilersConfiguration compilers, Env env) {
+    // Add some configuration here
   }
 
   /**
