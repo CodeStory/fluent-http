@@ -341,12 +341,6 @@
 
     <!-- Optional dependencies -->
     <dependency>
-      <groupId>org.twitter4j</groupId>
-      <artifactId>twitter4j-core</artifactId>
-      <version>3.0.6</version>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
       <groupId>com.google.inject</groupId>
       <artifactId>guice</artifactId>
       <version>4.0-beta5</version>
