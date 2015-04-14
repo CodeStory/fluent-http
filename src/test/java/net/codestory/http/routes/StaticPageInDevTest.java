@@ -50,7 +50,8 @@ public class StaticPageInDevTest extends AbstractDevWebServerTest {
 
   @Test
   public void less_source() {
-    get("/assets/style.less.source").should().haveType("text/css").contain("body {\n  h1 {\n    color: red;\n  }\n}");
+    String content = String.format("body {%1$s  h1 {%1$s    color: red;%1$s  }%1$s}", System.lineSeparator());
+    get("/assets/style.less.source").should().haveType("text/css").contain(content);
     get("/assets/anotherstyle.less.source").should().haveType("text/css").contain("body { h1 { color: red; } }");
   }
 
