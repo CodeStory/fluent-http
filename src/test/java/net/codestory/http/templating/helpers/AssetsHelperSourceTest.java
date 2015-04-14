@@ -24,6 +24,7 @@ import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.io.Resources;
 import net.codestory.http.misc.Env;
 
+import org.apache.commons.exec.OS;
 import org.junit.Test;
 
 import com.github.jknack.handlebars.Context;
@@ -78,7 +79,12 @@ public class AssetsHelperSourceTest {
   public void literate_coffee_script() {
     CharSequence script = assetsHelper.script("js/literate", null);
 
-    assertThat(script.toString()).isEqualTo("<script src=\"js/literate.js?186398dc8855a3a68030391d7c81e9aa683d478b\"></script>");
+    if (OS.isFamilyWindows()) {
+      //hash change on windows due to lineSeparator ...
+      assertThat(script.toString()).isEqualTo("<script src=\"js/literate.js?bc56bbb1bb06c58c5be78b7a5019da8a4c77489c\"></script>");
+    } else {
+      assertThat(script.toString()).isEqualTo("<script src=\"js/literate.js?186398dc8855a3a68030391d7c81e9aa683d478b\"></script>");
+    }
   }
 
   @Test
