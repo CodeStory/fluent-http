@@ -27,46 +27,46 @@ import net.codestory.http.payload.*;
 import net.codestory.http.types.*;
 
 class BoundFolderRoute implements Route {
-	private final String uriRoot;
-	private final File root;
+  private final String uriRoot;
+  private final File root;
 
-	public BoundFolderRoute(String uriRoot, File root) {
-		this.uriRoot = addLeadingSlash(uriRoot);
-		this.root = root;
-	}
+  public BoundFolderRoute(String uriRoot, File root) {
+    this.uriRoot = addLeadingSlash(uriRoot);
+    this.root = root;
+  }
 
-	@Override
-	public boolean matchUri(String uri) {
-		return uri.startsWith(uriRoot);
-	}
+  @Override
+  public boolean matchUri(String uri) {
+    return uri.startsWith(uriRoot);
+  }
 
-	@Override
-	public boolean matchMethod(String method) {
-		return GET.equalsIgnoreCase(method) || HEAD.equalsIgnoreCase(method);
-	}
+  @Override
+  public boolean matchMethod(String method) {
+    return GET.equalsIgnoreCase(method) || HEAD.equalsIgnoreCase(method);
+  }
 
-	@Override
-	public Payload body(Context context) throws IOException {
-		File file = new File(root, substringAfter(context.uri(), uriRoot));
-		if (!isPublic(file)) {
-			return Payload.notFound();
-		}
+  @Override
+  public Payload body(Context context) throws IOException {
+    File file = new File(root, substringAfter(context.uri(), uriRoot));
+    if (!isPublic(file)) {
+      return Payload.notFound();
+    }
 
-		try (InputStream from = new FileInputStream(file)) {
-			return new Payload(ContentTypes.get(file.getName()), InputStreams.readBytes(from));
-		}
-	}
+    try (InputStream from = new FileInputStream(file)) {
+      return new Payload(ContentTypes.get(file.getName()), InputStreams.readBytes(from));
+    }
+  }
 
-	public boolean isPublic(File file) {
-		for (Path part : file.toPath()) {
-			if ("..".equals(part.toString()) || part.toString().startsWith("_")) {
-				return false;
-			}
-		}
-		return file.exists();
-	}
+  public boolean isPublic(File file) {
+    for (Path part : file.toPath()) {
+      if ("..".equals(part.toString()) || part.toString().startsWith("_")) {
+        return false;
+      }
+    }
+    return file.exists();
+  }
 
-	private static String addLeadingSlash(String uriRoot) {
-		return uriRoot.endsWith("/") ? uriRoot : uriRoot + "/";
-	}
+  private static String addLeadingSlash(String uriRoot) {
+    return uriRoot.endsWith("/") ? uriRoot : uriRoot + "/";
+  }
 }

@@ -19,5 +19,5 @@ import java.io.*;
 
 @FunctionalInterface
 public interface StreamingOutput {
-	void write(OutputStream output) throws IOException;
+  void write(OutputStream output) throws IOException;
 }
