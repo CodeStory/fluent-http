@@ -46,7 +46,7 @@ public class PreCompileTest {
     PreCompile preCompile = new PreCompile(prod);
     preCompile.run(target.getRoot().getAbsolutePath());
 
-    assertThat(new File(target.getRoot(), "test.js")).exists().hasContent("console.log('Hello');");
-    assertThat(new File(target.getRoot(), "test.css")).exists().hasContent("body h1 {\n  color: red;\n}");
+    assertThat(new File(target.getRoot(), "test.js")).hasContent("console.log('Hello');");
+    assertThat(new File(target.getRoot(), "test.css")).hasContent("body h1 {\n  color: red;\n}");
   }
 }
