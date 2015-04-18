@@ -15,12 +15,9 @@
  */
 package net.codestory.http.osxwatcher;
 
-import static com.sun.jna.Pointer.NULL;
-
 import java.io.File;
 import java.util.concurrent.CountDownLatch;
 
-import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -53,6 +50,7 @@ public class Watcher {
   static class WatcherLoop implements CarbonAPI.FSEventStreamCallback, Runnable {
     private final File folder;
     private final FileChangeListener listener;
+    private final CarbonAPI api = CarbonAPI.INSTANCE;
     final CountDownLatch started;
 
     private PointerByReference stream;
@@ -66,10 +64,8 @@ public class Watcher {
 
     @Override
     public void run() {
-      CarbonAPI api = CarbonAPI.INSTANCE;
-
-      PointerByReference path = api.CFArrayCreate(null, new Pointer[]{CarbonAPI.toCFString(folder.getAbsolutePath()).getPointer()}, new NativeLong(1L), null);
-      stream = api.FSEventStreamCreate(NULL, this, NULL, path, -1, LATENCY_S, FLAGS);
+      PointerByReference path = api.CFArrayCreate(null, new PointerByReference[]{CarbonAPI.toCFString(folder.getAbsolutePath())}, 1L, null);
+      stream = api.FSEventStreamCreate(null, this, null, path, -1, LATENCY_S, FLAGS);
       runLoop = api.CFRunLoopGetCurrent();
       api.FSEventStreamScheduleWithRunLoop(stream, runLoop, CarbonAPI.toCFString("kCFRunLoopDefaultMode"));
       api.FSEventStreamStart(stream);
@@ -79,14 +75,14 @@ public class Watcher {
     }
 
     public void stop() {
-      CarbonAPI.INSTANCE.CFRunLoopStop(runLoop);
-      CarbonAPI.INSTANCE.FSEventStreamStop(stream);
-      CarbonAPI.INSTANCE.FSEventStreamInvalidate(stream);
-      CarbonAPI.INSTANCE.FSEventStreamRelease(stream);
+      api.CFRunLoopStop(runLoop);
+      api.FSEventStreamStop(stream);
+      api.FSEventStreamInvalidate(stream);
+      api.FSEventStreamRelease(stream);
     }
 
     @Override
-    public void invoke(PointerByReference streamRef, Pointer clientCallBackInfo, NativeLong numEvents, Pointer eventPaths, Pointer eventFlags, Pointer eventIds) {
+    public void invoke(PointerByReference streamRef, Pointer clientCallBackInfo, long numEvents, Pointer eventPaths, Pointer eventFlags, Pointer eventIds) {
       listener.onChange();
     }
   }
