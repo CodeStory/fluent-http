@@ -73,7 +73,9 @@ class ReflectionRoute implements AnyRoute {
 
   private static Object invoke(Object target, Method method, Object[] arguments) throws Throwable {
     try {
-      method.setAccessible(true);
+      if (!method.isAccessible()) {
+        method.setAccessible(true);
+      }
       return method.invoke(target, arguments);
     } catch (InvocationTargetException e) {
       throw e.getCause();
