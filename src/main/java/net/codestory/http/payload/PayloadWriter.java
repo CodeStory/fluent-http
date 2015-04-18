@@ -342,22 +342,13 @@ public class PayloadWriter {
     if (content instanceof URL) {
       return ContentTypes.get(((URL) content).getFile());
     }
-    if (content instanceof byte[]) {
-      return "application/octet-stream";
-    }
-    if (content instanceof String) {
-      return "text/html;charset=UTF-8";
-    }
-    if (content instanceof CacheEntry) {
+    if ((content instanceof String) || (content instanceof CacheEntry)) {
       return "text/html;charset=UTF-8";
     }
     if (content instanceof BufferedReader) {
       return "text/plain;charset=UTF-8";
     }
-    if (content instanceof InputStream) {
-      return "application/octet-stream";
-    }
-    if (content instanceof StreamingOutput) {
+    if ((content instanceof byte[]) || (content instanceof InputStream) || (content instanceof StreamingOutput)) {
       return "application/octet-stream";
     }
     if (content instanceof Stream<?>) {
