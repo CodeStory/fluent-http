@@ -132,4 +132,27 @@ public class ErrorPageTest extends AbstractProdWebServerTest {
 
     get("/not_found").should().respond(500).haveType("text/html").contain("A nice custom error page: NASTY BUG");
   }
+
+  @Test
+  public void suppress_default_error_pages() {
+    configure(routes -> routes
+        .get("/failure", () -> {
+          throw new RuntimeException("BUG");
+        })
+        .setExtensions(new Extensions() {
+          @Override
+          public PayloadWriter createPayloadWriter(Request request, Response response, Env env, Site site, Resources resources, CompilerFacade compilers) {
+            return new PayloadWriter(request, response, env, site, resources, compilers) {
+              @Override
+              protected Payload errorPage(Payload payload, Throwable e) {
+                return payload;
+              }
+            };
+          }
+        })
+    );
+
+    get("/not_found").should().respond(404).beEmpty();
+    get("/failure").should().respond(500).beEmpty();
+  }
 }
