@@ -100,8 +100,9 @@ public class ClassPaths {
 
     try {
       String path = URLDecoder.decode(url.getPath(), UTF_8.displayName());
-      if (path.contains(".jar!")) {
-        path = path.substring(0, path.lastIndexOf(".jar!") + ".jar".length());
+      int lastIndex = path.lastIndexOf(".jar!");
+      if (lastIndex != -1) {
+        path = path.substring(0, lastIndex + 4);
       }
       if (new File(path).exists()) {
         return new File(path);
@@ -113,12 +114,13 @@ public class ClassPaths {
     try {
       String path = url.toExternalForm();
       if (path.startsWith("jar:")) {
-        path = path.substring("jar:".length());
+        path = path.substring(4);
       } else if (path.startsWith("file:")) {
-        path = path.substring("file:".length());
+        path = path.substring(5);
       }
-      if (path.contains(".jar!")) {
-        path = path.substring(0, path.indexOf(".jar!") + ".jar".length());
+      int jarIndex = path.indexOf(".jar!");
+      if (jarIndex != -1) {
+        path = path.substring(0, jarIndex + 4);
       }
       if (new File(path).exists()) {
         return new File(path);
