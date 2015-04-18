@@ -38,12 +38,12 @@ public class WebjarHelperSource {
   public CharSequence webjar(Object context, Options options) {
     String attributes = HelperTools.hashAsString(options);
 
-    return HelperTools.toString(context, value -> single_webjar(value, attributes));
+    return HelperTools.toString(context, value -> singleWebjar(value, attributes));
   }
 
   // Internal
 
-  private String single_webjar(Object value, String attributes) {
+  private String singleWebjar(Object value, String attributes) {
     String fullPath = fullPathForUri.apply(value.toString());
     return tag(fullPath, attributes);
   }
