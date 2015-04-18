@@ -35,12 +35,12 @@ public class CompilersTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void do_not_compile_plain_file() throws IOException {
+  public void do_not_compile_plain_file() {
     compile("plain.txt", "");
   }
 
   @Test
-  public void register_custom_compiler() throws IOException {
+  public void register_custom_compiler() {
     compilers.register(() -> (sourceFile) -> sourceFile.getSource() + sourceFile.getSource(), ".html", ".copycat");
 
     String source = compile("file.copycat", "Hello");
@@ -49,7 +49,7 @@ public class CompilersTest {
   }
 
   @Test
-  public void supports_file_cache_being_destroyed() throws IOException {
+  public void supports_file_cache_being_destroyed() {
     // Delete cache
     File cacheFile = Paths.get(System.getProperty("user.home"), ".code-story", "cache", "V10", "prod", "coffee", "a74af0f5c2a722faf152cf330ae29c43fc689123").toFile();
     cacheFile.delete();
@@ -68,7 +68,7 @@ public class CompilersTest {
   }
 
   @Test
-  public void compare_cached_coffee_version_with_compiled_version() throws IOException {
+  public void compare_cached_coffee_version_with_compiled_version() {
     String source = "a=42";
 
     String cached = compile("source.coffee", source);
@@ -78,7 +78,7 @@ public class CompilersTest {
   }
 
   @Test
-  public void compare_cached_less_version_with_compiled_version() throws IOException {
+  public void compare_cached_less_version_with_compiled_version() {
     String source = "body { h1 { color: red; } }";
 
     String cached = compile("source.less", source);
