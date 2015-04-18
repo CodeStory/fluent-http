@@ -47,9 +47,14 @@ class ReflectionRoute implements AnyRoute {
         String contentType = findContentType(method);
 
         return new Payload(contentType, body);
+      } catch (InvocationTargetException e) {
+        if (e.getCause() instanceof RuntimeException) {
+          throw (RuntimeException) e.getCause();
+        }
+        throw new IllegalStateException("Unable to apply route", e.getCause());
       } catch (RuntimeException e) {
         throw e;
-      } catch (Throwable e) {
+      } catch (Exception e) {
         throw new IllegalStateException("Unable to apply route", e);
       }
     });
@@ -71,15 +76,11 @@ class ReflectionRoute implements AnyRoute {
     return converted;
   }
 
-  private static Object invoke(Object target, Method method, Object[] arguments) throws Throwable {
-    try {
+  private static Object invoke(Object target, Method method, Object[] arguments) throws InvocationTargetException, IllegalAccessException {
       if (!method.isAccessible()) {
         method.setAccessible(true);
       }
       return method.invoke(target, arguments);
-    } catch (InvocationTargetException e) {
-      throw e.getCause();
-    }
   }
 
   private static Object emptyIfNull(Object payload) {
