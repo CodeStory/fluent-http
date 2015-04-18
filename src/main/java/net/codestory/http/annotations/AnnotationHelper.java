@@ -28,8 +28,8 @@ public class AnnotationHelper {
     // static class
   }
 
-  public static void parseAnnotations(String urlPrefix, Class<?> clazz, MethodAnnotationCallback callback) {
-    Class<?> type = unwrapIfItsAMockType(clazz);
+  public static void parseAnnotations(String urlPrefix, Class<?> resourceType, MethodAnnotationCallback callback) {
+    Class<?> type = unwrapIfItsAMockType(resourceType);
 
     String classPrefix = ofNullable(type.getAnnotation(Prefix.class)).map(Prefix::value).orElse("");
 

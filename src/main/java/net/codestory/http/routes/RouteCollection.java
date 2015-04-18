@@ -173,8 +173,8 @@ public class RouteCollection implements Routes {
     return this;
   }
 
-  protected void addResource(String urlPrefix, Class<?> type, Supplier<Object> resource) {
-    parseAnnotations(urlPrefix, type, (httpMethod, uri, method) -> addResource(httpMethod, method, resource, uri));
+  protected void addResource(String urlPrefix, Class<?> resourceType, Supplier<Object> resource) {
+    parseAnnotations(urlPrefix, resourceType, (httpMethod, uri, method) -> addResource(httpMethod, method, resource, uri));
   }
 
   protected void addResource(String httpMethod, Method method, Supplier<Object> resource, String uriPattern) {
