@@ -20,7 +20,7 @@ import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MarkdownCompilerTest {
-	static MarkdownCompiler markdownCompiler = new MarkdownCompiler();
+  static MarkdownCompiler markdownCompiler = new MarkdownCompiler();
 
   private String compile(String content) {
     return markdownCompiler.compile(content);
