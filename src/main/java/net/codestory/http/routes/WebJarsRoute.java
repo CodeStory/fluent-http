@@ -24,7 +24,6 @@ import static net.codestory.http.io.Strings.extension;
 import static org.webjars.WebJarAssetLocator.WEBJARS_PATH_PREFIX;
 
 import java.net.*;
-import java.nio.file.*;
 import java.util.*;
 
 import net.codestory.http.*;

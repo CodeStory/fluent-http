@@ -18,7 +18,6 @@ package net.codestory.http.io;
 import java.io.*;
 import java.lang.annotation.Annotation;
 import java.net.*;
-import java.nio.file.*;
 import java.util.*;
 import java.util.function.Predicate;
 
