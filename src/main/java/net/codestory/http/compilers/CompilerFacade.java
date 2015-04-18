@@ -103,7 +103,7 @@ public class CompilerFacade implements CompilersConfiguration {
     return compilers.get().compile(resources.sourceFile(path));
   }
 
-  public CacheEntry compile(SourceFile sourceFile) throws IOException {
+  public CacheEntry compile(SourceFile sourceFile) {
     return compilers.get().compile(sourceFile);
   }
 

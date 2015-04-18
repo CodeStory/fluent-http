@@ -30,7 +30,7 @@ public class CompilersTest {
   static Resources resources = new Resources(env);
   static Compilers compilers = new Compilers(env, resources);
 
-  private String compile(String filename, String content) throws IOException {
+  private String compile(String filename, String content) {
     return compilers.compile(new SourceFile(Paths.get(filename), content)).content();
   }
 
