@@ -179,7 +179,7 @@ public class Site {
     return Strings.substringBeforeLast(Paths.get(path).getFileName().toString(), ".");
   }
 
-  static enum SiteValueResolver implements ValueResolver {
+  enum SiteValueResolver implements ValueResolver {
     INSTANCE;
 
     @Override

@@ -15,7 +15,7 @@
  */
 package net.codestory.http.livereload;
 
-import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static net.codestory.http.constants.FrameTypes.TEXT;
 
 import java.io.IOException;
@@ -54,7 +54,7 @@ public class LiveReloadListener implements WebSocketListener {
 
       if ("hello".equals(message.command)) {
         if (message.protocols.contains(VERSION_7)) {
-          session.send(TEXT, new OutgoingHelloMessage("Fluent-http", asList(VERSION_7)));
+          session.send(TEXT, new OutgoingHelloMessage("Fluent-http", singletonList(VERSION_7)));
         } else {
           close();
         }

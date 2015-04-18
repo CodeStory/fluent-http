@@ -15,7 +15,7 @@
  */
 package net.codestory.http;
 
-import static java.util.Arrays.*;
+import static java.util.Collections.singletonList;
 import static net.codestory.http.Configuration.*;
 
 import java.net.*;
@@ -90,7 +90,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
   }
 
   public T startSSL(int port, Path pathCertificate, Path pathPrivateKey) {
-    return startSSL(port, asList(pathCertificate), pathPrivateKey, null);
+    return startSSL(port, singletonList(pathCertificate), pathPrivateKey, null);
   }
 
   public T startSSL(int port, List<Path> pathChain, Path pathPrivateKey) {

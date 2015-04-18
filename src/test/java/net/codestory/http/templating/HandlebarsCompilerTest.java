@@ -226,7 +226,7 @@ public class HandlebarsCompilerTest {
     compiler.configure(hb -> hb.registerHelpers(new GoogleAnalyticsHelper("DEFAULT_ID")));
     compiler.configure(hb -> hb.registerHelpers(new GoogleAnalyticsHelper("OVERRIDEN")));
 
-    String result = compile("[[google_analytics]]", new TreeMap<String, Object>());
+    String result = compile("[[google_analytics]]", new TreeMap<>());
 
     assertThat(result).contains("OVERRIDEN").doesNotContain("DEFAULT_ID");
   }

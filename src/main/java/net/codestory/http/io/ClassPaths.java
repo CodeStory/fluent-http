@@ -66,7 +66,9 @@ public class ClassPaths {
     if ("file".equals(protocol)) {
       try {
         File file = getFile(url);
-        return name.contains(".jar") ? forJarFile(new JarFile(file)) : forSystemDir(file);
+        if (file != null) {
+          return name.contains(".jar") ? forJarFile(new JarFile(file)) : forSystemDir(file);
+        }
       } catch (Exception e) {
         // Ignore
       }
