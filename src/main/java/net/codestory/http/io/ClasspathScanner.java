@@ -24,8 +24,10 @@ import java.util.function.Predicate;
 import static net.codestory.http.io.Strings.substringBeforeLast;
 
 public class ClasspathScanner {
+  private static final String DOT_CLASS = ".class";
+
   public Set<String> getResources(String prefix) {
-    return listPaths(prefix, path -> !path.endsWith(".class"));
+    return listPaths(prefix, path -> !path.endsWith(DOT_CLASS));
   }
 
   public Set<Class<?>> getTypesAnnotatedWith(String packageToScan, Class<? extends Annotation> annotation) {
@@ -33,8 +35,8 @@ public class ClasspathScanner {
 
     Set<Class<?>> classes = new LinkedHashSet<>();
 
-    for (String classFile : listPaths(prefix, path -> path.endsWith(".class"))) {
-      String className = substringBeforeLast(classFile.replace('/', '.'), ".class");
+    for (String classFile : listPaths(prefix, path -> path.endsWith(DOT_CLASS))) {
+      String className = substringBeforeLast(classFile.replace('/', '.'), DOT_CLASS);
 
       try {
         Class<?> type = Class.forName(className);
