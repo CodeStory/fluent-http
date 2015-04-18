@@ -465,8 +465,8 @@ public class RouteCollection implements Routes {
 
   @Override
   public RouteCollection autoDiscover(String packageToScan) {
-    Set<Class<?>> resources = new ClasspathScanner().getTypesAnnotatedWith(packageToScan, Resource.class);
-    resources.forEach(this::add);
+    Set<Class<?>> types = new ClasspathScanner().getTypesAnnotatedWith(packageToScan, Resource.class);
+    types.forEach(this::add);
     return this;
   }
 
