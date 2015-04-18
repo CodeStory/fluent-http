@@ -52,7 +52,7 @@ public class AnnotationHelper {
     return new UrlConcat().url(resourcePrefix, classPrefix, uri);
   }
 
-  public static interface MethodAnnotationCallback {
+  public interface MethodAnnotationCallback {
     void onMethod(String httpMethod, String uri, Method method);
   }
 }

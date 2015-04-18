@@ -101,12 +101,12 @@ public class CustomAnnotationsTest extends AbstractProdWebServerTest {
 
   @Target(TYPE)
   @Retention(RUNTIME)
-  static @interface DummyShallNotPass {
+  @interface DummyShallNotPass {
   }
 
   @Target(METHOD)
   @Retention(RUNTIME)
-  static @interface Header {
+  @interface Header {
     String key();
 
     String value();

@@ -25,7 +25,7 @@ public interface CacheEntry extends Serializable {
 
   byte[] toBytes();
 
-  public static CacheEntry fromFile(File file) throws IOException {
+  static CacheEntry fromFile(File file) throws IOException {
     byte[] data = Files.readAllBytes(file.toPath());
 
     return new CacheEntry() {
@@ -41,7 +41,7 @@ public interface CacheEntry extends Serializable {
     };
   }
 
-  public static CacheEntry fromString(String content) {
+  static CacheEntry fromString(String content) {
     return new CacheEntry() {
       @Override
       public String content() {
@@ -55,7 +55,7 @@ public interface CacheEntry extends Serializable {
     };
   }
 
-  public static CacheEntry noCache(String content) {
+  static CacheEntry noCache(String content) {
     return new CacheEntry() {
       @Override
       public String content() {

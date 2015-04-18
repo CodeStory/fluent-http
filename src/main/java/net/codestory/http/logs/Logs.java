@@ -81,7 +81,7 @@ public class Logs {
     LOG.error("Unable to configure routes properly", e);
   }
 
-  private static interface LogsImplementation {
+  private interface LogsImplementation {
     void info(String message);
 
     void info(String message, Object argument);

@@ -65,7 +65,7 @@ public class InputStreams {
   }
 
   @FunctionalInterface
-  private static interface ForBytes<T> {
+  private interface ForBytes<T> {
     T apply(ByteArrayOutputStream bytes) throws IOException;
   }
 }
