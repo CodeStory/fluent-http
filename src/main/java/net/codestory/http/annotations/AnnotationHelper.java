@@ -29,11 +29,11 @@ public class AnnotationHelper {
   }
 
   public static void parseAnnotations(String urlPrefix, Class<?> resourceType, MethodAnnotationCallback callback) {
-    Class<?> type = unwrapIfItsAMockType(resourceType);
+    Class<?> targetType = unwrapIfItsAMockType(resourceType);
 
-    String classPrefix = ofNullable(type.getAnnotation(Prefix.class)).map(Prefix::value).orElse("");
+    String classPrefix = ofNullable(targetType.getAnnotation(Prefix.class)).map(Prefix::value).orElse("");
 
-    for (Method method : type.getMethods()) {
+    for (Method method : targetType.getMethods()) {
       of(method.getAnnotationsByType(Get.class)).forEach(get -> callback.onMethod(GET, url(urlPrefix, classPrefix, get.value()), method));
       of(method.getAnnotationsByType(Post.class)).forEach(post -> callback.onMethod(POST, url(urlPrefix, classPrefix, post.value()), method));
       of(method.getAnnotationsByType(Put.class)).forEach(put -> callback.onMethod(PUT, url(urlPrefix, classPrefix, put.value()), method));
