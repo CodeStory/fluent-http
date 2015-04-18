@@ -22,6 +22,7 @@ import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 
+// https://developer.apple.com/library/mac/documentation/Darwin/Reference/FSEvents_Ref/
 public interface CarbonAPI extends Library {
   CarbonAPI INSTANCE = (CarbonAPI) Native.loadLibrary("Carbon", CarbonAPI.class);
 
@@ -29,13 +30,18 @@ public interface CarbonAPI extends Library {
 
   PointerByReference CFStringCreateWithCharacters(Void alloc, char[] chars, NativeLong numChars);
 
+  // FSEvents
   PointerByReference FSEventStreamCreate(Pointer v, FSEventStreamCallback callback, Pointer context, PointerByReference pathsToWatch, long sinceWhen, double latency, int flags);
 
-  boolean FSEventStreamStart(PointerByReference streamRef);
+  void FSEventStreamScheduleWithRunLoop(PointerByReference fsEventStreamRef, PointerByReference runLoop, PointerByReference runLoopMode);
 
-  void FSEventStreamStop(PointerByReference streamRef);
+  boolean FSEventStreamStart(PointerByReference fsEventStreamRef);
 
-  void FSEventStreamScheduleWithRunLoop(PointerByReference streamRef, PointerByReference runLoop, PointerByReference runLoopMode);
+  void FSEventStreamStop(PointerByReference fsEventStreamRef);
+
+  void FSEventStreamInvalidate(PointerByReference fsEventStreamRef);
+
+  void FSEventStreamRelease(PointerByReference fsEventStreamRef);
 
   PointerByReference CFRunLoopGetCurrent();
 
@@ -50,6 +56,6 @@ public interface CarbonAPI extends Library {
   }
 
   interface FSEventStreamCallback extends Callback {
-    void invoke(PointerByReference streamRef, Pointer clientCallBackInfo, NativeLong numEvents, Pointer eventPaths, Pointer eventFlags, Pointer eventIds);
+    void invoke(PointerByReference fsEventStreamRef, Pointer clientCallBackInfo, NativeLong numEvents, Pointer eventPaths, Pointer eventFlags, Pointer eventIds);
   }
 }

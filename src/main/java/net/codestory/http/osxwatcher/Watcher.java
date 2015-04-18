@@ -81,6 +81,8 @@ public class Watcher {
     public void stop() {
       CarbonAPI.INSTANCE.CFRunLoopStop(runLoop);
       CarbonAPI.INSTANCE.FSEventStreamStop(stream);
+      CarbonAPI.INSTANCE.FSEventStreamInvalidate(stream);
+      CarbonAPI.INSTANCE.FSEventStreamRelease(stream);
     }
 
     @Override
