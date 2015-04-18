@@ -19,10 +19,6 @@ import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-import net.codestory.http.compilers.CompilerFacade;
-import net.codestory.http.io.Resources;
-import net.codestory.http.misc.Env;
-
 import org.junit.Test;
 
 import com.github.jknack.handlebars.Context;
@@ -32,10 +28,6 @@ import com.github.jknack.handlebars.TagType;
 import com.github.jknack.handlebars.Template;
 
 public class WebjarHelperSourceTest {
-  static Env env = Env.prod();
-  static Resources resources = new Resources(env);
-  static CompilerFacade compilers = new CompilerFacade(env, resources);
-
   static WebjarHelperSource webjarHelper = new WebjarHelperSource(true);
 
   @Test
