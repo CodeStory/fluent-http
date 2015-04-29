@@ -58,7 +58,7 @@ public class ClasspathScanner {
     Set<URL> result = new LinkedHashSet<>();
 
     try {
-      Enumeration<URL> urls = ClasspathScanner.class.getClassLoader().getResources(name);
+      Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources(name);
       while (urls.hasMoreElements()) {
         URL url = urls.nextElement();
         String externalForm = url.toExternalForm().replace('\\', '/');
