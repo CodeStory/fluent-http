@@ -15,13 +15,13 @@
  */
 package net.codestory.http.io;
 
+import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
+
 import java.io.*;
 import java.lang.annotation.Annotation;
 import java.net.*;
 import java.util.*;
 import java.util.function.Predicate;
-
-import static net.codestory.http.io.Strings.substringBeforeLast;
 
 public class ClasspathScanner {
   private static final String DOT_CLASS = ".class";
@@ -31,22 +31,10 @@ public class ClasspathScanner {
   }
 
   public Set<Class<?>> getTypesAnnotatedWith(String packageToScan, Class<? extends Annotation> annotation) {
-    String prefix = packageToScan.replace('.', '/');
-
     Set<Class<?>> classes = new LinkedHashSet<>();
 
-    for (String classFile : listPaths(prefix, path -> path.endsWith(DOT_CLASS))) {
-      String className = substringBeforeLast(classFile.replace('/', '.'), DOT_CLASS);
-
-      try {
-        Class<?> type = Class.forName(className);
-        if (type.isAnnotationPresent(annotation)) {
-          classes.add(type);
-        }
-      } catch (Throwable e) {
-        // Ignore
-      }
-    }
+    FastClasspathScanner scanner = new FastClasspathScanner(packageToScan);
+    scanner.matchClassesWithAnnotation(annotation, classes::add).scan();
 
     return classes;
   }
