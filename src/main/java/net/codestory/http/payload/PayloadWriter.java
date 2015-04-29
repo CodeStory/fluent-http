@@ -58,6 +58,7 @@ import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.compilers.SourceFile;
 import net.codestory.http.convert.TypeConvert;
 import net.codestory.http.errors.ErrorPage;
+import net.codestory.http.errors.ErrorPayload;
 import net.codestory.http.errors.HttpException;
 import net.codestory.http.io.InputStreams;
 import net.codestory.http.io.Resources;
@@ -97,7 +98,9 @@ public class PayloadWriter {
 
   protected void writeAndCloseSync(Payload payload) throws IOException {
     if (payload.isError() && (payload.rawContent() == null)) {
-      payload = errorPage(payload, null);
+      payload = errorPage(payload.code(), null)
+          .withHeaders(payload.headers())
+          .withCookies(payload.cookies());
     }
 
     write(payload);
@@ -233,10 +236,10 @@ public class PayloadWriter {
         String jsonOrPlainString = (item instanceof String) ? (String) item : TypeConvert.toJson(item);
 
         printStream
-          .append("data: ")
-          .append(jsonOrPlainString.replaceAll("[\n]", "\ndata: "))
-          .append("\n\n")
-          .flush();
+            .append("data: ")
+            .append(jsonOrPlainString.replaceAll("[\n]", "\ndata: "))
+            .append("\n\n")
+            .flush();
       });
     }
   }
@@ -469,11 +472,6 @@ public class PayloadWriter {
     return forModelAndView(ModelAndView.of(Resources.toUnixString(path)));
   }
 
-  protected Payload errorPage(Payload payload, Throwable e) {
-    Throwable shownError = env.prodMode() ? null : e;
-    return new ErrorPage(payload, shownError).payload();
-  }
-
   protected Payload errorPage(Throwable e) {
     int code = INTERNAL_SERVER_ERROR;
     if (e instanceof HttpException) {
@@ -482,6 +480,23 @@ public class PayloadWriter {
       code = NOT_FOUND;
     }
 
-    return errorPage(new Payload(code), e);
+    return errorPage(code, e);
+  }
+
+  protected Payload errorPage(int errorCode, Throwable e) {
+    if ("text/html".equals(request.header("Accept", "text/html"))) {
+      return errorPageHtml(errorCode, e);
+    }
+    return errorAsJson(errorCode, e);
+  }
+
+  protected Payload errorPageHtml(int errorCode, Throwable e) {
+    Throwable shownError = env.prodMode() ? null : e;
+    return new ErrorPage(errorCode, shownError).payload();
+  }
+
+  protected Payload errorAsJson(int errorCode, Throwable e) {
+    return new Payload("application/json;charset=UTF-8", new ErrorPayload(e), errorCode);
+
   }
 }

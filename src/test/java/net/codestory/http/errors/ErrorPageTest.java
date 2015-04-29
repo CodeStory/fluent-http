@@ -77,6 +77,17 @@ public class ErrorPageTest extends AbstractProdWebServerTest {
   }
 
   @Test
+  public void negociate_for_error_as_json() {
+    configure(routes -> routes
+        .get("/", () -> {
+          throw new RuntimeException("BUG");
+        })
+    );
+
+    get("/").withHeader("Accept", "application/json").should().respond(500).haveType("application/json").contain("{\"error\":\"java.lang.RuntimeException: BUG\"}");
+  }
+
+  @Test
   public void not_found_if_null() {
     configure(routes -> routes
         .get("/hello/:name", (context, name) -> {
@@ -144,8 +155,8 @@ public class ErrorPageTest extends AbstractProdWebServerTest {
           public PayloadWriter createPayloadWriter(Request request, Response response, Env env, Site site, Resources resources, CompilerFacade compilers) {
             return new PayloadWriter(request, response, env, site, resources, compilers) {
               @Override
-              protected Payload errorPage(Payload payload, Throwable e) {
-                return payload;
+              protected Payload errorPage(int errorCode, Throwable e) {
+                return new Payload(errorCode);
               }
             };
           }
