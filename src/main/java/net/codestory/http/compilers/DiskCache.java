@@ -21,6 +21,9 @@ import java.util.function.*;
 
 import net.codestory.http.logs.*;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.Files.newBufferedWriter;
+
 public class DiskCache {
   private final File root;
 
@@ -56,8 +59,9 @@ public class DiskCache {
     }
 
     File tmpFile = new File(file.getAbsolutePath() + ".tmp");
-    try (Writer writer = new FileWriter(file)) {
-      writer.write(data);
+
+    try (Writer writer = newBufferedWriter(tmpFile.toPath(), UTF_8)) {
+      writer.append(data);
     }
 
     tmpFile.renameTo(file);
