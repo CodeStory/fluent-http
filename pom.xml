@@ -356,6 +356,16 @@
       <version>4.1.6.RELEASE</version>
       <optional>true</optional>
     </dependency>
+    <dependency>
+      <groupId>com.sun.jersey.contribs</groupId>
+      <artifactId>jersey-simple-server</artifactId>
+      <version>1.19</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.jersey</groupId>
+      <artifactId>jersey-server</artifactId>
+      <version>1.19</version>
+    </dependency>
 
     <!-- Test dependencies -->
     <dependency>
