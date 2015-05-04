@@ -21,9 +21,13 @@ import static java.util.Collections.singletonMap;
 import static net.codestory.http.io.Strings.replaceLast;
 
 public class CoffeeSourceMapCompiler implements Compiler {
-  private final NashornCompiler nashornCompiler = NashornCompiler.get(
-    "META-INF/resources/webjars/coffee-script/1.8.0/coffee-script.min.js",
-    "coffee-script/toSourceMap.js");
+  private final NashornCompiler nashornCompiler;
+
+  public CoffeeSourceMapCompiler() {
+    this.nashornCompiler = NashornCompiler.get(
+      "META-INF/resources/webjars/coffee-script/1.8.0/coffee-script.min.js",
+      "coffee-script/toSourceMap.js");
+  }
 
   @Override
   public String compile(SourceFile sourceFile) {

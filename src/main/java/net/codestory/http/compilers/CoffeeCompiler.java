@@ -20,13 +20,13 @@ import java.util.*;
 import static java.util.Collections.singletonMap;
 
 public class CoffeeCompiler implements Compiler {
-  private final NashornCompiler nashornCompiler = NashornCompiler.get(
-      "META-INF/resources/webjars/coffee-script/1.8.0/coffee-script.min.js",
-      "coffee-script/toJs.js");
-
+  private final NashornCompiler nashornCompiler;
   private final boolean sourceMaps;
 
   public CoffeeCompiler(boolean prodMode) {
+    this.nashornCompiler = NashornCompiler.get(
+        "META-INF/resources/webjars/coffee-script/1.8.0/coffee-script.min.js",
+        "coffee-script/toJs.js");
     this.sourceMaps = !prodMode;
   }
 
