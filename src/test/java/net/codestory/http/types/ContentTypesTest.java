@@ -48,6 +48,8 @@ public class ContentTypesTest {
     assertThat(get("script.coffee")).isEqualTo("application/javascript;charset=UTF-8");
     assertThat(get("script.litcoffee")).isEqualTo("application/javascript;charset=UTF-8");
     assertThat(get("favicon.ico")).isEqualTo("image/x-icon");
+    assertThat(get("video.mp4")).isEqualTo("video/mp4");
+    assertThat(get("video.mp3")).isEqualTo("audio/mpeg");
     assertThat(get("unknown")).isEqualTo("text/plain;charset=UTF-8");
   }
 }

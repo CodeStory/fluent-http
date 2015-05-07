@@ -77,6 +77,10 @@ public class ContentTypes {
         return "application/x-font-woff";
       case ".ico":
         return "image/x-icon";
+      case ".mp4":
+        return "video/mp4";
+      case ".mp3":
+        return "audio/mpeg";
       default:
         return "text/plain;charset=UTF-8";
     }
