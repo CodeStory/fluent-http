@@ -497,6 +497,5 @@ public class PayloadWriter {
 
   protected Payload errorAsJson(int errorCode, Throwable e) {
     return new Payload("application/json;charset=UTF-8", new ErrorPayload(e), errorCode);
-
   }
 }
