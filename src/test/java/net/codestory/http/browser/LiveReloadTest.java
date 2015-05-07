@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.livereload;
+package net.codestory.http.browser;
 
 import net.codestory.http.WebServer;
 import net.codestory.http.misc.Env;
