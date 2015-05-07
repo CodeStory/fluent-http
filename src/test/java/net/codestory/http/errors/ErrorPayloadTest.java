@@ -15,10 +15,22 @@
  */
 package net.codestory.http.errors;
 
-public class ErrorPayload {
-  public final String error;
+import org.junit.Test;
 
-  public ErrorPayload(Throwable e) {
-    error = (e == null) ? "" : e.toString();
+import static org.assertj.core.api.Assertions.assertThat;
+
+public class ErrorPayloadTest {
+  @Test
+  public void error_message() {
+    ErrorPayload payload = new ErrorPayload(new RuntimeException("BUG"));
+
+    assertThat(payload.error).isEqualTo("java.lang.RuntimeException: BUG");
+  }
+
+  @Test
+  public void no_error() {
+    ErrorPayload payload = new ErrorPayload(null);
+
+    assertThat(payload.error).isEmpty();
   }
 }

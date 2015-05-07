@@ -13,12 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.errors;
+package net.codestory.http.browser;
 
-public class ErrorPayload {
-  public final String error;
+import net.codestory.http.testhelpers.AbstractProdWebServerTest;
+import net.codestory.simplelenium.FluentTest;
+import net.codestory.simplelenium.rules.TakeSnapshot;
+import org.junit.Rule;
+import org.junit.Test;
 
-  public ErrorPayload(Throwable e) {
-    error = (e == null) ? "" : e.toString();
+public class ErrorPageTest extends AbstractProdWebServerTest {
+  @Rule
+  public final TakeSnapshot takeSnapshot = new TakeSnapshot();
+
+  @Test
+  public void page_not_found() {
+    String baseUrl = "http://localhost:" + port();
+
+    new FluentTest(baseUrl)
+      .goTo("/unknown")
+      .find("h1").should().contain("Page not found");
   }
 }

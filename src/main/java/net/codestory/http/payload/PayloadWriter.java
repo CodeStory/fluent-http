@@ -484,9 +484,15 @@ public class PayloadWriter {
   }
 
   protected Payload errorPage(int errorCode, Throwable e) {
-    if ("text/html".equals(request.header("Accept", "text/html"))) {
-      return errorPageHtml(errorCode, e);
+    String defaultAcceptedType = "text/html";
+    String acceptedTyped = request.header("Accept", defaultAcceptedType);
+
+    for (String acceptedType : acceptedTyped.split("[,]")) {
+      if ("text/html".equals(acceptedType)) {
+        return errorPageHtml(errorCode, e);
+      }
     }
+
     return errorAsJson(errorCode, e);
   }
 
