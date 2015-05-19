@@ -690,6 +690,8 @@ new Webserver().startSSL(9443, Arrays.asList(
                         );
 ```
 
+Note that, as of now, we only accept key file in `PKCS#8` format in a `.der` binary file.
+
 ## Errors
 
 You have probably noticed, fluent-http comes with pre-packaged, kitten-ready" 404 & 500 error pages.
