@@ -690,7 +690,7 @@ new Webserver().startSSL(9443, Arrays.asList(
                         );
 ```
 
-Note that, as of now, we only accept key file in `PKCS#8` format in a `.der` binary file.
+Note that, as of now, we only accept `rsa` key file in `PKCS#8` format in a `.der` binary file.
 
 ## Errors
 
