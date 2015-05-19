@@ -315,8 +315,7 @@ bootstrapAssets: [
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  [[#each bootstrapAssets]]
-  [[webjar .]][[/each]]
+  [[webjar bootstrapAssets]]
 </head>
 </html>
 ```
