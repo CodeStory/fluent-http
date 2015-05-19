@@ -675,13 +675,19 @@ new Webserver().startSSL(9443, Paths.get("server.crt"), Paths.get("server.der"))
 It is also possible to use a TLS certificate chain with intermediate CA certificates:
 
 ```java
-new Webserver().startSSL(9443, Arrays.asList(Paths.get("server.crt"), Paths.get("subCA.crt")), Paths.get("server.der"));
+new Webserver().startSSL(9443, Arrays.asList(Paths.get("server.crt"), Paths.get("subCA.crt")),
+                              Paths.get("server.der")
+                        );
 ```
 
 When an authentication with a client certificate is required, it is possible to specify a list of accepted trust anchor certificates:
 
 ```java
-new Webserver().startSSL(9443, Arrays.asList(Paths.get("server.crt"), Paths.get("subCA.crt")), Paths.get("server.der"), Arrays.asList(Paths.get("trustAnchor.crt")));
+new Webserver().startSSL(9443, Arrays.asList(
+                              Paths.get("server.crt"), Paths.get("subCA.crt")),
+                              Paths.get("server.der"), 
+                              Arrays.asList(Paths.get("trustAnchor.crt"))
+                        );
 ```
 
 ## Errors
