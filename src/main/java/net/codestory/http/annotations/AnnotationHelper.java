@@ -45,7 +45,7 @@ public class AnnotationHelper {
 
   // Hack to support Mockito Spies
   private static Class<?> unwrapIfItsAMockType(Class<?> type) {
-    return type.getName().contains("EnhancerByMockito") ? type.getSuperclass() : type;
+    return type.getName().contains("EnhancerByMockito") || type.getName().contains("$MockitoMock$") ? type.getSuperclass() : type;
   }
 
   private static String url(String resourcePrefix, String classPrefix, String uri) {

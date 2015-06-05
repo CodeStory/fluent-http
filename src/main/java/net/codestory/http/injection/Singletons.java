@@ -33,7 +33,7 @@ public class Singletons implements IocAdapter {
       Class<?> type = beanToRegister.getClass();
 
       // Hack to support Mockito Spies
-      if (type.getName().contains("EnhancerByMockito")) {
+      if (type.getName().contains("EnhancerByMockito") || type.getName().contains("$MockitoMock$")) {
         type = type.getSuperclass();
       }
 
