@@ -199,7 +199,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>1.3.2</version>
+        <version>1.4.0</version>
         <configuration>
           <mainClass>net.codestory.http.WebServer</mainClass>
         </configuration>
