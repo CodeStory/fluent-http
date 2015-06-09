@@ -21,12 +21,10 @@ import java.util.*;
 import com.github.jknack.handlebars.*;
 
 public class EachValueHelperSource {
-  public CharSequence each_value(Object context, Options options) throws IOException {
+  public CharSequence each_value(Object context, Object param, Options options) throws IOException {
     if (context == null) {
       return "";
     }
-
-    Object param = options.param(0);
 
     return (param instanceof Iterable<?>)
       ? iterableContext(context, (Iterable<?>) param, options)
