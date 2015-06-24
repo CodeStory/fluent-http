@@ -35,6 +35,13 @@ public class HttpExceptionTest {
   }
 
   @Test
+  public void unauthorized() {
+    HttpException error = new UnauthorizedException();
+
+    assertThat(error.code()).isEqualTo(401);
+  }
+
+  @Test
   public void bad_request() {
     HttpException error = new BadRequestException();
 
