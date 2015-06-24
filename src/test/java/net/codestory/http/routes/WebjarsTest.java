@@ -18,17 +18,17 @@ package net.codestory.http.routes;
 import net.codestory.http.testhelpers.AbstractProdWebServerTest;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.contrib.java.lang.system.StandardErrorStreamLog;
-import org.junit.contrib.java.lang.system.StandardOutputStreamLog;
+import org.junit.contrib.java.lang.system.SystemErrRule;
+import org.junit.contrib.java.lang.system.SystemOutRule;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class WebjarsTest extends AbstractProdWebServerTest {
   @Rule
-  public final StandardOutputStreamLog stdout = new StandardOutputStreamLog();
+  public final SystemOutRule stdout = new SystemOutRule().enableLog();
 
   @Rule
-  public final StandardErrorStreamLog stderr = new StandardErrorStreamLog();
+  public final SystemErrRule stderr = new SystemErrRule().enableLog();
 
   @Test
   public void webjar_css() {
