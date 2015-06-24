@@ -71,7 +71,7 @@ Not too bad for a one-liner, right?
 
 ## More routes
 
-Adding more routes is not hard either. It's based on Java 8 Lambdas.
+Adding more routes is not hard either. It's based on Java 8 Lambdas:
 
 ```java
 new WebServer().configure(routes -> routes
