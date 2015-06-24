@@ -16,6 +16,8 @@
 package net.codestory.http;
 
 import net.codestory.http.annotations.Post;
+import net.codestory.http.constants.HttpStatus;
+import net.codestory.http.payload.Payload;
 import net.codestory.http.testhelpers.AbstractProdWebServerTest;
 import org.junit.Test;
 
@@ -28,7 +30,16 @@ public class PostTest extends AbstractProdWebServerTest {
         .post("/post", () -> "Done")
     );
 
-    post("/post").should().contain("Done");
+    post("/post").should().contain("Done").respond(200);
+  }
+
+  @Test
+  public void post_created() {
+    configure(routes -> routes
+        .post("/post", () -> new Payload("Done").withCode(HttpStatus.CREATED))
+    );
+
+    post("/post").should().contain("Done").respond(201);
   }
 
   @Test
