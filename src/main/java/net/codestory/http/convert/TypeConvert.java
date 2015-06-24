@@ -36,7 +36,7 @@ public class TypeConvert {
   private static ObjectMapper createDefaultObjectMapper() {
     return new ObjectMapper()
       .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
-      .registerModule(new JSR310Module())
+      .registerModule(new JavaTimeModule())
       .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
       .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
   }
