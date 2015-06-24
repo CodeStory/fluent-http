@@ -38,11 +38,11 @@ public class ErrorPage {
     return new Payload("text/html", ModelAndView.of(filename, "ERROR", error), errorCode);
   }
 
-  private String filename() {
+  protected String filename() {
     return (errorCode == NOT_FOUND) ? "404.html" : "500.html";
   }
 
-  private static String toString(Throwable error) {
+  protected String toString(Throwable error) {
     if (error == null) {
       return "";
     }
