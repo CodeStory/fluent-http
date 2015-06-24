@@ -18,13 +18,13 @@ package net.codestory.http.routes;
 import net.codestory.http.testhelpers.AbstractDevWebServerTest;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.contrib.java.lang.system.StandardErrorStreamLog;
+import org.junit.contrib.java.lang.system.SystemErrRule;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class WebjarsInDevTest extends AbstractDevWebServerTest {
   @Rule
-  public final StandardErrorStreamLog stderr = new StandardErrorStreamLog();
+  public final SystemErrRule stderr = new SystemErrRule().enableLog();
 
   @Test
   public void webjar_css() {
