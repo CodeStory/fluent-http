@@ -142,8 +142,8 @@ public class PersonResource {
   }
 
   @Put("/:id")
-  public void update(String id, Person person) {
-    // Do something
+  public Payload update(String id, Person person) {
+    return new Payload(201);
   }
 
   @Get("/:id")
