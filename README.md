@@ -175,6 +175,17 @@ that your favourite DI framework can be plugged in also.
 routes.add(CalculationResource.class);
 ```
 
+## Header parameters
+
+Resources can read values from header parameters. To do this, use `context.header("headerName")`:
+
+````java
+@Get("tokenFromHeader")
+public User user(Context context) {
+    return new Payload(context.header("token")).withCode(HttpStatus.OK);
+}
+````
+
 ## Sample projects
 
 Before we take an in-depth look at fluent-http, you can go take a look
