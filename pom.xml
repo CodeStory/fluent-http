@@ -353,7 +353,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
-      <version>4.1.6.RELEASE</version>
+      <version>4.1.7.RELEASE</version>
       <optional>true</optional>
     </dependency>
 
