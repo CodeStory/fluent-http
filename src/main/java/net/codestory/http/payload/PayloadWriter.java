@@ -452,7 +452,7 @@ public class PayloadWriter {
   }
 
   protected byte[] forPath(Path path) throws IOException {
-    if (compilers.supportsTemplating(path)) {
+    if (supportsTemplating(path)) {
       return forTemplatePath(path);
     }
 
@@ -461,11 +461,15 @@ public class PayloadWriter {
 
   protected byte[] forSourceFile(SourceFile sourceFile) throws IOException {
     Path path = sourceFile.getPath();
-    if (compilers.supportsTemplating(path)) {
+    if (supportsTemplating(path)) {
       return forTemplatePath(path);
     }
 
     return compilers.compile(sourceFile).toBytes();
+  }
+
+  protected boolean supportsTemplating(Path path) {
+    return compilers.supportsTemplating(path);
   }
 
   protected byte[] forTemplatePath(Path path) {
