@@ -52,6 +52,31 @@ public class FilterTest extends AbstractProdWebServerTest {
   }
 
   @Test
+  public void filter_before() {
+    configure(routes -> routes
+        .get("/", "NOT FILTERED")
+        .filter((uri, context, nextFilter) -> {
+          return new Payload("REPLACED PAYLOAD");
+        })
+    );
+
+    get("/").should().contain("REPLACED PAYLOAD");
+  }
+
+  @Test
+  public void filter_after() {
+    configure(routes -> routes
+        .get("/", "HELLO")
+        .filter((uri, context, nextFilter) -> {
+          Payload payload = nextFilter.get();
+          return payload.withHeader("key", "value");
+        })
+    );
+
+    get("/").should().contain("HELLO").haveHeader("key", "value");
+  }
+
+  @Test
   public void etag() {
     configure(routes -> routes
         .get("/", "Hello World")
