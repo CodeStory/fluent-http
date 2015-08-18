@@ -56,6 +56,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     return new Env();
   }
 
+  @SuppressWarnings("unchecked")
   public T configure(Configuration configuration) {
     this.routesProvider = env.prodMode()
         ? RoutesProvider.fixed(env, configuration)
@@ -108,6 +109,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     return startWithContext(port, context, authReq);
   }
 
+  @SuppressWarnings("unchecked")
   protected T startWithContext(int port, SSLContext context, boolean authReq) {
     if (routesProvider == null) {
       configure(NO_ROUTE);

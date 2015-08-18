@@ -39,6 +39,7 @@ public enum PrimitiveDefaultValues {
     map.put(type, value);
   }
 
+  @SuppressWarnings("unchecked")
   public <T> T get(Class<T> type) {
     return (T) defaults.get(type);
   }

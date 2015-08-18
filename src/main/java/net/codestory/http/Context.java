@@ -101,6 +101,7 @@ public class Context {
     return currentUser;
   }
 
+  @SuppressWarnings("unchecked")
   public <T> T extract(Class<T> type) throws IOException {
     return (T) extract((Type) type);
   }

@@ -153,6 +153,7 @@ public class Site {
     return page.getOrDefault("category", "").toString().trim();
   }
 
+  @SuppressWarnings("unchecked")
   private static String[] tags(Map<String, Object> page) {
     Object tags = page.getOrDefault("tags", "");
     if (tags instanceof List<?>) {

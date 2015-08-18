@@ -45,6 +45,7 @@ class SimpleWebSocketSession implements WebSocketSession, Unwrappable {
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public Map<Object, Object> getAttributes() {
     return session.getAttributes();
   }
@@ -80,6 +81,7 @@ class SimpleWebSocketSession implements WebSocketSession, Unwrappable {
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public <T> T unwrap(Class<T> type) {
     return type.isInstance(session) ? (T) session : null;
   }
