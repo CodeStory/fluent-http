@@ -17,6 +17,7 @@ package net.codestory.http.markdown;
 
 import static java.util.Arrays.*;
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.*;
 
@@ -36,14 +37,14 @@ public class FormulaPluginTest {
 
   @Test
   public void to_formula_url() {
-    String html = applyPlugin(asList("1+2"), emptyMap());
+    String html = applyPlugin(singletonList("1+2"), emptyMap());
 
     assertThat(html).isEqualTo("<img src=\"http://latex.codecogs.com/png.download?1%2B2\" />");
   }
 
   @Test
   public void to_gif() {
-    String html = applyPlugin(asList("2+3"), singletonMap("type", "gif"));
+    String html = applyPlugin(singletonList("2+3"), singletonMap("type", "gif"));
 
     assertThat(html).isEqualTo("<img src=\"http://latex.codecogs.com/gif.download?2%2B3\" />");
   }

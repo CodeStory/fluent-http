@@ -35,6 +35,7 @@ import java.security.cert.CertificateFactory;
 import java.util.Random;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SSLTest {
@@ -79,7 +80,7 @@ public class SSLTest {
     Path pathTrustAnchors = resource("certificates/root.crt");
     Path pathClientCertificate = resource("certificates/client.pfx");
 
-    webServer.startSSL(randomPort(), asList(pathEECertificate, pathSubCACertificate), pathPrivateKey, asList(pathTrustAnchors));
+    webServer.startSSL(randomPort(), asList(pathEECertificate, pathSubCACertificate), pathPrivateKey, singletonList(pathTrustAnchors));
 
     httpGet(webServer, getSocketFactory(pathTrustAnchors, pathClientCertificate));
   }
@@ -91,7 +92,7 @@ public class SSLTest {
     Path pathPrivateKey = resource("certificates/ee.der");
     Path pathTrustAnchors = resource("certificates/root.crt");
 
-    webServer.startSSL(randomPort(), asList(pathEECertificate, pathSubCACertificate), pathPrivateKey, asList(pathTrustAnchors));
+    webServer.startSSL(randomPort(), asList(pathEECertificate, pathSubCACertificate), pathPrivateKey, singletonList(pathTrustAnchors));
 
     httpGet(webServer, getSocketFactory(pathTrustAnchors));
   }

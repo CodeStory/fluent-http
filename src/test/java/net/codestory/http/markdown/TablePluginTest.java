@@ -17,6 +17,7 @@ package net.codestory.http.markdown;
 
 import static java.util.Arrays.*;
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.*;
 
@@ -36,14 +37,14 @@ public class TablePluginTest {
 
   @Test
   public void empty() {
-    String html = applyPlugin(asList(""), emptyMap());
+    String html = applyPlugin(singletonList(""), emptyMap());
 
     assertThat(html).isEqualTo("<table>\n</table>\n");
   }
 
   @Test
   public void header() {
-    String html = applyPlugin(asList("H1|H2|H3"), emptyMap());
+    String html = applyPlugin(singletonList("H1|H2|H3"), emptyMap());
 
     assertThat(html).isEqualTo("<table>\n" +
       "<tr><th>H1</th><th>H2</th><th>H3</th></tr>\n" +
@@ -63,7 +64,7 @@ public class TablePluginTest {
 
   @Test
   public void id() {
-    String html = applyPlugin(asList(""), singletonMap("id", "AN_ID"));
+    String html = applyPlugin(singletonList(""), singletonMap("id", "AN_ID"));
 
     assertThat(html).isEqualTo("<table id=\"AN_ID\">\n</table>\n");
   }
