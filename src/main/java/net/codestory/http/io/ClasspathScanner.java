@@ -33,8 +33,9 @@ public class ClasspathScanner {
   public Set<Class<?>> getTypesAnnotatedWith(String packageToScan, Class<? extends Annotation> annotation) {
     Set<Class<?>> classes = new LinkedHashSet<>();
 
-    FastClasspathScanner scanner = new FastClasspathScanner(packageToScan);
-    scanner.matchClassesWithAnnotation(annotation, classes::add).scan();
+    new FastClasspathScanner(packageToScan)
+      .matchClassesWithAnnotation(annotation, classes::add)
+      .scan();
 
     return classes;
   }
