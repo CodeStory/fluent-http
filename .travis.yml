@@ -6,4 +6,4 @@ services:
   - docker
 
 script:
-  - docker run -ti -v $(pwd):/root/sources -v $HOME/.m2:/root/.m2 -w /root/sources maven:3.3.3-jdk-8 mvn clean install
+  - docker run -it -v $(pwd):/root/sources -w /root/sources maven:3.3.3-jdk-8 mvn clean install
