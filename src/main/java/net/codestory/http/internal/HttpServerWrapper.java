@@ -20,7 +20,7 @@ import java.io.*;
 import javax.net.ssl.*;
 
 public interface HttpServerWrapper {
-  void start(int port, SSLContext context, boolean authReq) throws IOException;
+  int start(int port, SSLContext context, boolean authReq) throws IOException;
 
   void stop() throws IOException;
 }

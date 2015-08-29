@@ -32,7 +32,6 @@ import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import java.util.Random;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -53,7 +52,7 @@ public class SSLTest {
     Path pathCertificate = resource("certificates/server.crt");
     Path pathPrivateKey = resource("certificates/server.der");
 
-    webServer.startSSL(randomPort(), pathCertificate, pathPrivateKey);
+    webServer.startSSL(0, pathCertificate, pathPrivateKey);
   }
 
   @Test
@@ -63,7 +62,7 @@ public class SSLTest {
     Path pathRootCACertificate = resource("certificates/root.crt");
     Path pathPrivateKey = resource("certificates/ee.der");
 
-    webServer.startSSL(randomPort(), asList(pathEECertificate, pathSubCACertificate), pathPrivateKey);
+    webServer.startSSL(0, asList(pathEECertificate, pathSubCACertificate), pathPrivateKey);
 
     HttpsURLConnection conn = httpGet(webServer, getSocketFactory(pathRootCACertificate));
 
@@ -80,7 +79,7 @@ public class SSLTest {
     Path pathTrustAnchors = resource("certificates/root.crt");
     Path pathClientCertificate = resource("certificates/client.pfx");
 
-    webServer.startSSL(randomPort(), asList(pathEECertificate, pathSubCACertificate), pathPrivateKey, singletonList(pathTrustAnchors));
+    webServer.startSSL(0, asList(pathEECertificate, pathSubCACertificate), pathPrivateKey, singletonList(pathTrustAnchors));
 
     httpGet(webServer, getSocketFactory(pathTrustAnchors, pathClientCertificate));
   }
@@ -92,7 +91,7 @@ public class SSLTest {
     Path pathPrivateKey = resource("certificates/ee.der");
     Path pathTrustAnchors = resource("certificates/root.crt");
 
-    webServer.startSSL(randomPort(), asList(pathEECertificate, pathSubCACertificate), pathPrivateKey, singletonList(pathTrustAnchors));
+    webServer.startSSL(0, asList(pathEECertificate, pathSubCACertificate), pathPrivateKey, singletonList(pathTrustAnchors));
 
     httpGet(webServer, getSocketFactory(pathTrustAnchors));
   }
@@ -104,10 +103,6 @@ public class SSLTest {
     conn.setRequestMethod("GET");
     conn.getResponseCode();
     return conn;
-  }
-
-  private static int randomPort() {
-    return 8183 + new Random().nextInt(1000);
   }
 
   private static Path resource(String name) throws URISyntaxException {

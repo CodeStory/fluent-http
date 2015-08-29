@@ -60,12 +60,15 @@ public class SimpleServerWrapper implements HttpServerWrapper, Container, Servic
   }
 
   @Override
-  public void start(int port, SSLContext context, boolean authReq) throws IOException {
+  public int start(int port, SSLContext context, boolean authReq) throws IOException {
     DirectRouter router = new DirectRouter(this);
     RouterContainer routerContainer = new RouterContainer(this, router, webSocketThreads);
     ContainerSocketProcessor processor = new ContainerSocketProcessor(routerContainer, count, select);
+
     socketConnection = new SocketConnection(authReq ? new AuthRequiredServer(processor) : processor);
-    socketConnection.connect(new InetSocketAddress(port), context);
+
+    InetSocketAddress actualAddress = (InetSocketAddress) socketConnection.connect(new InetSocketAddress(port), context);
+    return actualAddress.getPort();
   }
 
   @Override

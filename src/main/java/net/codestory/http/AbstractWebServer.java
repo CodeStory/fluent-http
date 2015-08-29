@@ -36,8 +36,6 @@ import javax.net.ssl.*;
 public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
   protected static final int PORT_8080 = 8080;
   protected static final int RANDOM_PORT_START_RETRY = 30;
-  protected static final int RANDOM_PORTS_LOWER_BOUND = 8183;
-  protected static final int RANDOM_PORTS_COUNT = 50000;
 
   protected final HttpServerWrapper server;
   protected final Env env;
@@ -65,11 +63,9 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
   }
 
   public T startOnRandomPort() {
-    Random random = new Random();
     for (int i = 0; i < RANDOM_PORT_START_RETRY; i++) {
       try {
-        int randomPort = RANDOM_PORTS_LOWER_BOUND + random.nextInt(RANDOM_PORTS_COUNT);
-        return start(randomPort);
+        return start(0);
       } catch (IllegalStateException e) {
         if (!e.getMessage().contains("Port already in use")) {
           Logs.unableToBindServer(e);
@@ -115,12 +111,12 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
       configure(NO_ROUTE);
     }
 
-    this.port = env.overriddenPort(port);
+    int thePort = (port == 0) ? 0 : env.overriddenPort(port);
 
     try {
       Logs.mode(env.prodMode());
 
-      server.start(this.port, context, authReq);
+      this.port = server.start(thePort, context, authReq);
 
       Logs.started(this.port);
     } catch (RuntimeException e) {
