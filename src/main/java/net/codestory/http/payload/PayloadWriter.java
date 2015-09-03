@@ -501,8 +501,7 @@ public class PayloadWriter {
   }
 
   protected Payload errorPageHtml(int errorCode, Throwable e) {
-    Throwable shownError = env.prodMode() ? null : e;
-    return new ErrorPage(errorCode, shownError).payload();
+    return new ErrorPage(errorCode, e).payload();
   }
 
   protected Payload errorAsJson(int errorCode, Throwable e) {
