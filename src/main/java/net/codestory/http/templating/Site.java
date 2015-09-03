@@ -54,7 +54,7 @@ public class Site {
     data = memoize(() -> getResourceList()
         .stream()
         .filter(path -> path.startsWith("_data/"))
-        .collect(toMap(path -> nameWithoutExtension(path), path -> readYaml(path)))
+        .collect(toMap((String path) -> nameWithoutExtension(path), path -> readYaml(path)))
     );
 
     pages = memoize(() -> getResourceList()
