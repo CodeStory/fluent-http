@@ -45,8 +45,12 @@ public class Logs {
     LOG.error(e.getMessage());
   }
 
+  public static void unableToApplyRoute(String method, String uri) {
+    LOG.error("Unable to " + method + " " + uri);
+  }
+
   public static void unexpectedError(Throwable e) {
-    LOG.error(e.getMessage());
+    LOG.error("Unexpected error:", e);
   }
 
   public static void unableToServeErrorPage(Throwable e) {

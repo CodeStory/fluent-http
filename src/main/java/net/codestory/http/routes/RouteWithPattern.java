@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 import net.codestory.http.Context;
+import net.codestory.http.logs.Logs;
 
 class RouteWithPattern implements Route {
   private final String method;
@@ -50,8 +51,13 @@ class RouteWithPattern implements Route {
 
   @Override
   public Object body(Context context) throws Exception {
-    String[] parameters = uriParser.params(context.uri(), context.request().query());
-    return route.body(context, parameters);
+    try {
+      String[] parameters = uriParser.params(context.uri(), context.request().query());
+      return route.body(context, parameters);
+    } catch (Exception e) {
+      Logs.unableToApplyRoute(context.method(), context.uri());
+      throw e;
+    }
   }
 
   @Override
