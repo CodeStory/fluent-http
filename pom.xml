@@ -76,10 +76,8 @@
             <version>1.5.3</version>
             <configuration>
               <file>README.md</file>
-              <token>(?m)&lt;artifactId&gt;http&lt;/artifactId&gt;\s*&lt;version&gt;(\d|.)*&lt;/version&gt;</token>
-              <value>
-  &lt;artifactId&gt;http&lt;/artifactId&gt;
-  &lt;version&gt;${project.rel.net.code-story:http}&lt;/version&gt;</value>
+              <token><![CDATA[(?m)(<groupId>${project.groupId}</groupId>\s*<artifactId>${project.artifactId}</artifactId>\s*<version>)(\d|.)*(</version>)]]></token>
+              <value>$1${project.version}$3</value>
             </configuration>
           </plugin>
           <plugin>
@@ -88,16 +86,6 @@
             <configuration>
               <includes>README.md</includes>
               <message>update version in the README.md</message>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>properties-maven-plugin</artifactId>
-            <version>1.0-alpha-2</version>
-            <configuration>
-              <files>
-                <file>${basedir}/release.properties</file>
-              </files>
             </configuration>
           </plugin>
         </plugins>
@@ -193,7 +181,7 @@
         <configuration>
           <releaseProfiles>release</releaseProfiles>
           <arguments>-Psonatype-oss-release,readmeVersion</arguments>
-          <completionGoals>properties:read-project-properties replacer:replace scm:checkin</completionGoals>
+          <preparationGoals>replacer:replace scm:checkin</preparationGoals>
         </configuration>
       </plugin>
       <plugin>
