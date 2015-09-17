@@ -35,9 +35,6 @@ import org.simpleframework.transport.connect.SocketConnection;
 import javax.net.ssl.SSLContext;
 
 public class SimpleServerWrapper implements HttpServerWrapper, Container, Service {
-  private static final int DEFAULT_SELECT_THREADS = 1;
-  private static final int DEFAULT_COUNT_THREADS = 8;
-  private static final int DEFAULT_WEBSOCKET_THREADS = 10;
 
   private final Handler httpHandler;
   private final WebSocketHandler webSocketHandler;
@@ -46,10 +43,6 @@ public class SimpleServerWrapper implements HttpServerWrapper, Container, Servic
   private final int webSocketThreads;
 
   private SocketConnection socketConnection;
-
-  public SimpleServerWrapper(Handler httpHandler, WebSocketHandler webSocketHandler) {
-    this(httpHandler, webSocketHandler, DEFAULT_COUNT_THREADS, DEFAULT_SELECT_THREADS, DEFAULT_WEBSOCKET_THREADS);
-  }
 
   public SimpleServerWrapper(Handler httpHandler, WebSocketHandler webSocketHandler, int count, int select, int webSocketThreads) {
     this.httpHandler = httpHandler;
