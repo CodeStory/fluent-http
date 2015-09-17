@@ -43,12 +43,13 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
   protected RoutesProvider routesProvider;
   protected int port = -1;
 
-  protected AbstractWebServer() {
-    this.server = createHttpServer(this::handleHttp, this::handleWebSocket);
+  protected AbstractWebServer(int count, int select, int websocketThreads) {
+    this.server = createHttpServer(this::handleHttp, this::handleWebSocket, count, select, websocketThreads);
     this.env = createEnv();
   }
 
-  protected abstract HttpServerWrapper createHttpServer(Handler httpHandler, WebSocketHandler webSocketHandler);
+  protected abstract HttpServerWrapper createHttpServer(Handler httpHandler, WebSocketHandler webSocketHandler,
+                                                        int count, int select, int websocketThreads);
 
   protected Env createEnv() {
     return new Env();

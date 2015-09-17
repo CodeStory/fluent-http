@@ -26,8 +26,26 @@ public class WebServer extends AbstractWebServer<WebServer> {
       .start();
   }
 
+  private static final int DEFAULT_SELECT_THREADS = 1;
+  private static final int DEFAULT_COUNT_THREADS = 8;
+  private static final int DEFAULT_WEBSOCKET_THREADS = 10;
+
+  public WebServer() {
+    this(DEFAULT_SELECT_THREADS, DEFAULT_COUNT_THREADS, DEFAULT_WEBSOCKET_THREADS);
+  }
+
+  /**
+   * @param countThreads     the number of threads used for each pool (default is 8)
+   * @param selectThreads    the number of selector threads to use (default is 1)
+   * @param websocketThreads the number of threads to use in router selecter (default is 10)
+   */
+  public WebServer(int countThreads, int selectThreads, int websocketThreads) {
+    super(countThreads, selectThreads, websocketThreads);
+  }
+
   @Override
-  protected HttpServerWrapper createHttpServer(Handler httpHandler, WebSocketHandler webSocketHandler) {
-    return new SimpleServerWrapper(httpHandler, webSocketHandler);
+  protected HttpServerWrapper createHttpServer(Handler httpHandler, WebSocketHandler webSocketHandler,
+                                               int count, int select, int websocketThreads) {
+    return new SimpleServerWrapper(httpHandler, webSocketHandler, count, select, websocketThreads);
   }
 }
