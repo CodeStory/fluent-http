@@ -16,10 +16,6 @@
 package net.codestory.http.samples;
 
 import net.codestory.http.WebServer;
-import net.codestory.http.internal.Handler;
-import net.codestory.http.internal.HttpServerWrapper;
-import net.codestory.http.internal.SimpleServerWrapper;
-import net.codestory.http.websockets.WebSocketHandler;
 
 /**
  * This is how one can configure the threads of the underlying
@@ -27,15 +23,10 @@ import net.codestory.http.websockets.WebSocketHandler;
  */
 public class ThreadConfigurationSample {
   public static void main(String[] args) {
-    new WebServer() {
-      @Override
-      protected HttpServerWrapper createHttpServer(Handler httpHandler, WebSocketHandler webSocketHandler) {
-        int count = 2;
-        int select = 2;
-        int webSocketThreads = 1;
-
-        return new SimpleServerWrapper(httpHandler, webSocketHandler, count, select, webSocketThreads);
-      }
-    }.start();
+    new WebServer()
+      .withSelectThreads(2)
+      .withThreadCount(8)
+      .withWebSocketThreads(1)
+      .start();
   }
 }

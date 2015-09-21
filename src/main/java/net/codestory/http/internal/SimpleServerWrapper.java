@@ -15,11 +15,7 @@
  */
 package net.codestory.http.internal;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-
 import net.codestory.http.websockets.WebSocketHandler;
-
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import org.simpleframework.http.core.Container;
@@ -33,33 +29,27 @@ import org.simpleframework.transport.SocketProcessor;
 import org.simpleframework.transport.connect.SocketConnection;
 
 import javax.net.ssl.SSLContext;
+import java.io.IOException;
+import java.net.InetSocketAddress;
 
 public class SimpleServerWrapper implements HttpServerWrapper, Container, Service {
-  private static final int DEFAULT_SELECT_THREADS = 1;
-  private static final int DEFAULT_COUNT_THREADS = 8;
-  private static final int DEFAULT_WEBSOCKET_THREADS = 10;
-
   private final Handler httpHandler;
   private final WebSocketHandler webSocketHandler;
-  private final int countThreads;
+  private final int threadCount;
   private final int selectThreads;
   private final int webSocketThreads;
 
   private SocketConnection socketConnection;
 
-  public SimpleServerWrapper(Handler httpHandler, WebSocketHandler webSocketHandler) {
-    this(httpHandler, webSocketHandler, DEFAULT_COUNT_THREADS, DEFAULT_SELECT_THREADS, DEFAULT_WEBSOCKET_THREADS);
-  }
-
   /**
-   * @param countThreads     the number of threads used for each pool (default is 8).
-   * @param selectThreads    the number of selector threads to use (default is 1).
-   * @param webSocketThreads the number of threads to use in router selector (default is 10).
+   * @param threadCount     the number of threads used for each pool.
+   * @param selectThreads    the number of selector threads to use.
+   * @param webSocketThreads the number of threads to use in router selector.
    */
-  public SimpleServerWrapper(Handler httpHandler, WebSocketHandler webSocketHandler, int countThreads, int selectThreads, int webSocketThreads) {
+  public SimpleServerWrapper(Handler httpHandler, WebSocketHandler webSocketHandler, int threadCount, int selectThreads, int webSocketThreads) {
     this.httpHandler = httpHandler;
     this.webSocketHandler = webSocketHandler;
-    this.countThreads = countThreads;
+    this.threadCount = threadCount;
     this.selectThreads = selectThreads;
     this.webSocketThreads = webSocketThreads;
   }
@@ -68,7 +58,7 @@ public class SimpleServerWrapper implements HttpServerWrapper, Container, Servic
   public int start(int port, SSLContext context, boolean authReq) throws IOException {
     DirectRouter router = new DirectRouter(this);
     RouterContainer routerContainer = new RouterContainer(this, router, webSocketThreads);
-    ContainerSocketProcessor processor = new ContainerSocketProcessor(routerContainer, countThreads, selectThreads);
+    ContainerSocketProcessor processor = new ContainerSocketProcessor(routerContainer, threadCount, selectThreads);
 
     socketConnection = new SocketConnection(authReq ? new AuthRequiredServer(processor) : processor);
 
