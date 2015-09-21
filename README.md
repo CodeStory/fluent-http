@@ -915,6 +915,7 @@ If you're paranoid and run fluent-http under `nobody` user make sure `nobody` ca
 ### Code Samples
 
 * Configure the threads of the underlying `SimpleHttpServer`: [ThreadConfigurationSample.java](src/test/java/net/codestory/http/samples/ThreadConfigurationSample.java)
+or [AnotherThreadConfigurationSample.java](src/test/java/net/codestory/http/samples/AnotherThreadConfigurationSample.java)
 
 # Participate to the project
 
