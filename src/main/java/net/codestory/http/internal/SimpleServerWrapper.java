@@ -41,8 +41,8 @@ public class SimpleServerWrapper implements HttpServerWrapper, Container, Servic
 
   private final Handler httpHandler;
   private final WebSocketHandler webSocketHandler;
-  private final int count;
-  private final int select;
+  private final int countThreads;
+  private final int selectThreads;
   private final int webSocketThreads;
 
   private SocketConnection socketConnection;
@@ -51,11 +51,16 @@ public class SimpleServerWrapper implements HttpServerWrapper, Container, Servic
     this(httpHandler, webSocketHandler, DEFAULT_COUNT_THREADS, DEFAULT_SELECT_THREADS, DEFAULT_WEBSOCKET_THREADS);
   }
 
-  public SimpleServerWrapper(Handler httpHandler, WebSocketHandler webSocketHandler, int count, int select, int webSocketThreads) {
+  /**
+   * @param countThreads     the number of threads used for each pool (default is 8).
+   * @param selectThreads    the number of selector threads to use (default is 1).
+   * @param webSocketThreads the number of threads to use in router selector (default is 10).
+   */
+  public SimpleServerWrapper(Handler httpHandler, WebSocketHandler webSocketHandler, int countThreads, int selectThreads, int webSocketThreads) {
     this.httpHandler = httpHandler;
     this.webSocketHandler = webSocketHandler;
-    this.count = count;
-    this.select = select;
+    this.countThreads = countThreads;
+    this.selectThreads = selectThreads;
     this.webSocketThreads = webSocketThreads;
   }
 
@@ -63,7 +68,7 @@ public class SimpleServerWrapper implements HttpServerWrapper, Container, Servic
   public int start(int port, SSLContext context, boolean authReq) throws IOException {
     DirectRouter router = new DirectRouter(this);
     RouterContainer routerContainer = new RouterContainer(this, router, webSocketThreads);
-    ContainerSocketProcessor processor = new ContainerSocketProcessor(routerContainer, count, select);
+    ContainerSocketProcessor processor = new ContainerSocketProcessor(routerContainer, countThreads, selectThreads);
 
     socketConnection = new SocketConnection(authReq ? new AuthRequiredServer(processor) : processor);
 

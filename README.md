@@ -912,6 +912,10 @@ This directory is by default stored in your "user home" in a `.code-story` direc
 If you don't want it to be here you can `-Duser.home=/foo/bar` as you see fit.
 If you're paranoid and run fluent-http under `nobody` user make sure `nobody` can read/write this directory.
 
+### Code Samples
+
+* Configure the threads of the underlying `SimpleHttpServer`: [ThreadConfigurationSample.java](src/test/java/net/codestory/http/samples/ThreadConfigurationSample.java)
+
 # Participate to the project
 
 ## Generate missing licenses
