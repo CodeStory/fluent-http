@@ -17,10 +17,12 @@ package net.codestory.http;
 
 import static java.util.Collections.singletonList;
 import static net.codestory.http.Configuration.*;
+import static net.codestory.http.misc.MemoizingSupplier.memoize;
 
 import java.net.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.function.Supplier;
 
 import net.codestory.http.internal.*;
 import net.codestory.http.logs.*;
@@ -37,14 +39,14 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
   protected static final int PORT_8080 = 8080;
   protected static final int RANDOM_PORT_START_RETRY = 30;
 
-  protected final HttpServerWrapper server;
+  protected final Supplier<HttpServerWrapper> server;
   protected final Env env;
 
   protected RoutesProvider routesProvider;
   protected int port = -1;
 
   protected AbstractWebServer() {
-    this.server = createHttpServer(this::handleHttp, this::handleWebSocket);
+    this.server = memoize(() -> createHttpServer(this::handleHttp, this::handleWebSocket));
     this.env = createEnv();
   }
 
@@ -116,7 +118,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
     try {
       Logs.mode(env.prodMode());
 
-      this.port = server.start(thePort, context, authReq);
+      this.port = server.get().start(thePort, context, authReq);
 
       Logs.started(this.port);
     } catch (RuntimeException e) {
@@ -169,7 +171,7 @@ public abstract class AbstractWebServer<T extends AbstractWebServer<T>> {
   public void stop() {
     try {
       env.folderWatcher().stop();
-      server.stop();
+      server.get().stop();
     } catch (Exception e) {
       throw new IllegalStateException("Unable to stop the web server", e);
     }
