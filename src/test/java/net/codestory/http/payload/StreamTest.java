@@ -18,10 +18,13 @@ package net.codestory.http.payload;
 import net.codestory.http.testhelpers.AbstractProdWebServerTest;
 import org.junit.Test;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Arrays.asList;
 import static java.util.stream.IntStream.range;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class StreamTest extends AbstractProdWebServerTest {
   @Test
@@ -31,6 +34,18 @@ public class StreamTest extends AbstractProdWebServerTest {
     );
 
     get("/events").should().contain("data: MESSAGE1\n\n" + "data: MESSAGE2\n\n" + "data: MESSAGE3\n\n");
+  }
+
+  @Test
+  public void close_server_sent_events_at_the_end() {
+    Runnable closeAction = mock(Runnable.class);
+
+    configure(routes -> routes
+        .get("/events", asList("MESSAGE1", "MESSAGE2").stream().onClose(closeAction))
+    );
+
+    get("/events").should().contain("data: MESSAGE1\n\n" + "data: MESSAGE2\n\n");
+    verify(closeAction).run();
   }
 
   @Test
