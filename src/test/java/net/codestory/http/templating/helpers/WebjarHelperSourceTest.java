@@ -34,42 +34,42 @@ public class WebjarHelperSourceTest {
   public void css() {
     CharSequence script = webjarHelper.webjar("bootstrap.css", null);
 
-    assertThat(script.toString()).isEqualTo("<link rel=\"stylesheet\" href=\"/webjars/bootstrap/3.3.5/css/bootstrap.min.css\">");
+    assertThat(script).hasToString("<link rel=\"stylesheet\" href=\"/webjars/bootstrap/3.3.5/css/bootstrap.min.css\">");
   }
 
   @Test
   public void script() {
     CharSequence script = webjarHelper.webjar("angular.js", null);
 
-    assertThat(script.toString()).isEqualTo("<script src=\"/webjars/angularjs/1.4.1/angular.min.js\"></script>");
+    assertThat(script).hasToString("<script src=\"/webjars/angularjs/1.4.1/angular.min.js\"></script>");
   }
 
   @Test
   public void script_with_defer_tag() {
     CharSequence script = webjarHelper.webjar("angular.js", options("defer", null));
 
-    assertThat(script.toString()).isEqualTo("<script src=\"/webjars/angularjs/1.4.1/angular.min.js\" defer></script>");
+    assertThat(script).hasToString("<script src=\"/webjars/angularjs/1.4.1/angular.min.js\" defer></script>");
   }
 
   @Test
   public void script_with_async_tag() {
     CharSequence script = webjarHelper.webjar("angular.js", options("async", null));
 
-    assertThat(script.toString()).isEqualTo("<script src=\"/webjars/angularjs/1.4.1/angular.min.js\" async></script>");
+    assertThat(script).hasToString("<script src=\"/webjars/angularjs/1.4.1/angular.min.js\" async></script>");
   }
 
   @Test
   public void unknown_css() {
     CharSequence script = webjarHelper.webjar("unknown.css", null);
 
-    assertThat(script.toString()).isEqualTo("<link rel=\"stylesheet\" href=\"unknown.css\">");
+    assertThat(script).hasToString("<link rel=\"stylesheet\" href=\"unknown.css\">");
   }
 
   @Test
   public void unknown_script() {
     CharSequence script = webjarHelper.webjar("unknown.js", null);
 
-    assertThat(script.toString()).isEqualTo("<script src=\"unknown.js\"></script>");
+    assertThat(script).hasToString("<script src=\"unknown.js\"></script>");
   }
 
   static Options options(String key, String value) {

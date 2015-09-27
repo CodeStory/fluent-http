@@ -73,7 +73,7 @@ public class TypeConvertTest {
 
     assertThat(human.name).isEqualTo("jack");
     assertThat(human.age).isEqualTo(31);
-    assertThat(human.birthDate).isEqualTo(LocalDate.parse("1980-01-01"));
+    assertThat(human.birthDate).isEqualTo("1980-01-01");
   }
 
   static class Human {

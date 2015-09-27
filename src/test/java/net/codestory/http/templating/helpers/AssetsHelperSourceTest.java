@@ -43,56 +43,56 @@ public class AssetsHelperSourceTest {
   public void script() {
     CharSequence script = assetsHelper.script("js/script.js", null);
 
-    assertThat(script.toString()).isEqualTo("<script src=\"js/script.js?1ae2bed766fa2ed618a9b9048ba41fe094d3f117\"></script>");
+    assertThat(script).hasToString("<script src=\"js/script.js?1ae2bed766fa2ed618a9b9048ba41fe094d3f117\"></script>");
   }
 
   @Test
   public void script_without_extension() {
     CharSequence script = assetsHelper.script("js/script", null);
 
-    assertThat(script.toString()).isEqualTo("<script src=\"js/script.js?1ae2bed766fa2ed618a9b9048ba41fe094d3f117\"></script>");
+    assertThat(script).hasToString("<script src=\"js/script.js?1ae2bed766fa2ed618a9b9048ba41fe094d3f117\"></script>");
   }
 
   @Test
   public void script_with_async_tag() {
     CharSequence script = assetsHelper.script("js/script.js", options("async", null));
 
-    assertThat(script.toString()).isEqualTo("<script src=\"js/script.js?1ae2bed766fa2ed618a9b9048ba41fe094d3f117\" async></script>");
+    assertThat(script).hasToString("<script src=\"js/script.js?1ae2bed766fa2ed618a9b9048ba41fe094d3f117\" async></script>");
   }
 
   @Test
   public void script_with_defer_tag() {
     CharSequence script = assetsHelper.script("js/script.js", options("defer", null));
 
-    assertThat(script.toString()).isEqualTo("<script src=\"js/script.js?1ae2bed766fa2ed618a9b9048ba41fe094d3f117\" defer></script>");
+    assertThat(script).hasToString("<script src=\"js/script.js?1ae2bed766fa2ed618a9b9048ba41fe094d3f117\" defer></script>");
   }
 
   @Test
   public void coffee_script() {
     CharSequence script = assetsHelper.script("js/anotherscript", null);
 
-    assertThat(script.toString()).isEqualTo("<script src=\"js/anotherscript.js?a72b9bd02a15f1307e6f60ac502675a8a24e8581\"></script>");
+    assertThat(script).hasToString("<script src=\"js/anotherscript.js?a72b9bd02a15f1307e6f60ac502675a8a24e8581\"></script>");
   }
 
   @Test
   public void literate_coffee_script() {
     CharSequence script = assetsHelper.script("js/literate", null);
 
-    assertThat(script.toString()).isEqualTo("<script src=\"js/literate.js?186398dc8855a3a68030391d7c81e9aa683d478b\"></script>");
+    assertThat(script).hasToString("<script src=\"js/literate.js?186398dc8855a3a68030391d7c81e9aa683d478b\"></script>");
   }
 
   @Test
   public void unknown_script() {
     CharSequence script = assetsHelper.script("unknown.js", null);
 
-    assertThat(script.toString()).isEqualTo("<script src=\"unknown.js\"></script>");
+    assertThat(script).hasToString("<script src=\"unknown.js\"></script>");
   }
 
   @Test
   public void multiple_scripts() {
     CharSequence script = assetsHelper.script(asList("js/script", "js/anotherscript"), null);
 
-    assertThat(script.toString()).isEqualTo(
+    assertThat(script).hasToString(
       "<script src=\"js/script.js?1ae2bed766fa2ed618a9b9048ba41fe094d3f117\"></script>\n" +
         "<script src=\"js/anotherscript.js?a72b9bd02a15f1307e6f60ac502675a8a24e8581\"></script>"
     );
@@ -102,42 +102,42 @@ public class AssetsHelperSourceTest {
   public void css() {
     CharSequence css = assetsHelper.css("assets/style.css", null);
 
-    assertThat(css.toString()).isEqualTo("<link rel=\"stylesheet\" href=\"assets/style.css?80fa881ffa6af083a80845467622c6185949a47b\">");
+    assertThat(css).hasToString("<link rel=\"stylesheet\" href=\"assets/style.css?80fa881ffa6af083a80845467622c6185949a47b\">");
   }
 
   @Test
   public void css_without_extension() {
     CharSequence css = assetsHelper.css("assets/style", null);
 
-    assertThat(css.toString()).isEqualTo("<link rel=\"stylesheet\" href=\"assets/style.css?80fa881ffa6af083a80845467622c6185949a47b\">");
+    assertThat(css).hasToString("<link rel=\"stylesheet\" href=\"assets/style.css?80fa881ffa6af083a80845467622c6185949a47b\">");
   }
 
   @Test
   public void css_with_media_tag() {
     CharSequence css = assetsHelper.css("assets/style.css", options("media", "screen"));
 
-    assertThat(css.toString()).isEqualTo("<link rel=\"stylesheet\" href=\"assets/style.css?80fa881ffa6af083a80845467622c6185949a47b\" media=\"screen\">");
+    assertThat(css).hasToString("<link rel=\"stylesheet\" href=\"assets/style.css?80fa881ffa6af083a80845467622c6185949a47b\" media=\"screen\">");
   }
 
   @Test
   public void less() {
     CharSequence css = assetsHelper.css("assets/anotherstyle", null);
 
-    assertThat(css.toString()).isEqualTo("<link rel=\"stylesheet\" href=\"assets/anotherstyle.css?dcec144afa669dc921a4c9069d4c7d96fe28a833\">");
+    assertThat(css).hasToString("<link rel=\"stylesheet\" href=\"assets/anotherstyle.css?dcec144afa669dc921a4c9069d4c7d96fe28a833\">");
   }
 
   @Test
   public void unknown_css() {
     CharSequence script = assetsHelper.css("unknown.css", null);
 
-    assertThat(script.toString()).isEqualTo("<link rel=\"stylesheet\" href=\"unknown.css\">");
+    assertThat(script).hasToString("<link rel=\"stylesheet\" href=\"unknown.css\">");
   }
 
   @Test
   public void multiple_css() {
     CharSequence css = assetsHelper.css(asList("assets/style", "assets/anotherstyle"), null);
 
-    assertThat(css.toString()).isEqualTo(
+    assertThat(css).hasToString(
       "<link rel=\"stylesheet\" href=\"assets/style.css?80fa881ffa6af083a80845467622c6185949a47b\">\n" +
         "<link rel=\"stylesheet\" href=\"assets/anotherstyle.css?dcec144afa669dc921a4c9069d4c7d96fe28a833\">"
     );

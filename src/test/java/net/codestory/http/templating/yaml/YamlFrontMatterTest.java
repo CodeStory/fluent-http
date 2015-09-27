@@ -34,7 +34,7 @@ public class YamlFrontMatterTest {
   public void should_read_empty_file() {
     YamlFrontMatter parsed = parse("empty", "");
 
-    assertThat((Object) parsed.getPath()).isEqualTo(Paths.get("empty"));
+    assertThat(parsed.getPath()).isEqualTo(Paths.get("empty"));
     assertThat(parsed.getContent()).isEmpty();
     assertThat(parsed.getVariables())
       .hasSize(3)
@@ -49,7 +49,7 @@ public class YamlFrontMatterTest {
       "CONTENT"
     );
 
-    assertThat((Object) parsed.getPath()).isEqualTo(Paths.get("folder/file.md"));
+    assertThat(parsed.getPath()).isEqualTo(Paths.get("folder/file.md"));
     assertThat(parsed.getContent()).isEqualTo("CONTENT");
     assertThat(parsed.getVariables())
       .hasSize(3)

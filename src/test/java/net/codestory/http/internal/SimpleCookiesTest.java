@@ -109,9 +109,7 @@ public class SimpleCookiesTest {
 
     Iterator<net.codestory.http.Cookie> iterator = cookies.iterator();
 
-    assertThat(iterator.next().name()).isEqualTo("name1");
-    assertThat(iterator.next().name()).isEqualTo("name2");
-    assertThat(iterator.hasNext()).isFalse();
+    assertThat(iterator).extracting(cookie -> cookie.name()).containsExactly("name1", "name2");
   }
 
   @Test

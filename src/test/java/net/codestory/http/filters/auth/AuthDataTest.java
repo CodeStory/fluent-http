@@ -33,9 +33,6 @@ public class AuthDataTest {
     String json = TypeConvert.toJson(authData);
     AuthData clone = TypeConvert.fromJson(json, AuthData.class);
 
-    assertThat(clone.login).isEqualTo(authData.login);
-    assertThat(clone.roles).isEqualTo(authData.roles);
-    assertThat(clone.redirectAfterLogin).isEqualTo(authData.redirectAfterLogin);
-    assertThat(clone.sessionId).isEqualTo(authData.sessionId);
+    assertThat(clone).isEqualToComparingFieldByField(authData);
   }
 }
