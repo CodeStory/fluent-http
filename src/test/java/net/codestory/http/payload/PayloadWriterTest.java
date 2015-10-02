@@ -112,13 +112,13 @@ public class PayloadWriterTest {
   }
 
   @Test
-  public void interrupted_connection_ie_IOException_when_writing_to_output_stream_should_invoke_close_handler_on_stream() throws IOException {
+  public void should_close_stream_on_interrupted_connection() throws IOException {
     Runnable closeHandler = mock(Runnable.class);
     doThrow(IOException.class).when(outputStream).write(any(byte[].class), anyInt(), anyInt());
 
-    writer.writeEventStream(new Payload(Stream.iterate(1, (i) -> i + 1)
+    writer.writeEventStream(new Payload(Stream.iterate(1, i -> i + 1)
       .peek(i -> {
-        if (i > 1) throw new RuntimeException("stop this stream because it should never goes here");
+        if (i > 1) throw new RuntimeException("It should never reach that point");
       })
       .onClose(closeHandler)));
 
