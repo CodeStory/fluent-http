@@ -232,15 +232,16 @@ public class PayloadWriter {
     PrintStream printStream = new PrintStream(response.outputStream());
 
     try (Stream<?> stream = (Stream<?>) payload.rawContent()) {
-      stream.forEach(item -> {
+      stream.map(item -> {
         String jsonOrPlainString = (item instanceof String) ? (String) item : TypeConvert.toJson(item);
 
         printStream
             .append("data: ")
             .append(jsonOrPlainString.replaceAll("[\n]", "\ndata: "))
-            .append("\n\n")
-            .flush();
-      });
+            .append("\n\n");
+        return printStream.checkError();
+      }).filter(ioExceptionHasOccurred -> ioExceptionHasOccurred)
+        .findFirst();
     }
   }
 

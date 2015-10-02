@@ -33,6 +33,7 @@ import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyList;
@@ -108,6 +109,20 @@ public class PayloadWriterTest {
     ArgumentCaptor<byte[]> bytesCaptor = ArgumentCaptor.forClass(byte[].class);
     verify(outputStream).write(bytesCaptor.capture(), eq(0), eq(5));
     assertThat(bytesCaptor.getValue()).startsWith((byte) 'H', (byte) 'e', (byte) 'l', (byte) 'l', (byte) 'o');
+  }
+
+  @Test
+  public void interrupted_connection_ie_IOException_when_writing_to_output_stream_should_invoke_close_handler_on_stream() throws IOException {
+    Runnable closeHandler = mock(Runnable.class);
+    doThrow(IOException.class).when(outputStream).write(any(byte[].class), anyInt(), anyInt());
+
+    writer.writeEventStream(new Payload(Stream.iterate(1, (i) -> i + 1)
+      .peek(i -> {
+        if (i > 1) throw new RuntimeException("stop this stream because it should never goes here");
+      })
+      .onClose(closeHandler)));
+
+    verify(closeHandler).run();
   }
 
   @Test
