@@ -20,18 +20,6 @@ public class Strings {
     // Static utility class
   }
 
-  public static int countMatches(String in, String what) {
-    int count = 0;
-
-    int index = in.indexOf(what);
-    while (index != -1) {
-      count++;
-      index = in.indexOf(what, index + what.length());
-    }
-
-    return count;
-  }
-
   public static int countMatches(CharSequence in, char what) {
     int count = 0;
 

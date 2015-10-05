@@ -21,14 +21,6 @@ import org.junit.*;
 
 public class StringsTest {
   @Test
-  public void count_matches() {
-    assertThat(Strings.countMatches("123456789", "0")).isZero();
-    assertThat(Strings.countMatches("123456789", "1")).isEqualTo(1);
-    assertThat(Strings.countMatches("111111111", "1")).isEqualTo(9);
-    assertThat(Strings.countMatches("111111111", "11")).isEqualTo(4);
-  }
-
-  @Test
   public void count_char_matches() {
     assertThat(Strings.countMatches("123456789", '0')).isZero();
     assertThat(Strings.countMatches("123456789", '1')).isEqualTo(1);
