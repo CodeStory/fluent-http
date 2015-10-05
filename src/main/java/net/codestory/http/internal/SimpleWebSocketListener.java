@@ -61,5 +61,4 @@ class SimpleWebSocketListener implements FrameListener {
       throw new IllegalStateException("Unable to handle close", e);
     }
   }
-
 }
