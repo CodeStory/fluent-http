@@ -108,7 +108,7 @@ public class ErrorPageTest extends AbstractProdWebServerTest {
         })
     );
 
-    get("/error").should().respond(500).haveType("text/html").contain("An error occurred on the server").haveHeader("reason", "NASTY BUG");
+    get("/error").should().respond(500).haveType("text/html").contain("An error occurred on the server");//.haveHeader("reason", "NASTY BUG");
   }
 
   @Test
@@ -141,7 +141,7 @@ public class ErrorPageTest extends AbstractProdWebServerTest {
         })
     );
 
-    get("/not_found").should().respond(500).haveType("text/html").contain("A nice custom error page: NASTY BUG");
+    get("/not_found").should().respond(500).haveType("text/html").contain("A nice custom error page: NASTY BUG");//.haveHeader("reason", "NASTY BUG");
   }
 
   @Test
