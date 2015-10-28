@@ -30,7 +30,7 @@ public class OsxWatchService implements WatchServiceFacade {
 
   @Override
   public void onChange(FolderChangeListener listener) {
-    watcher = new Watcher(folder.toFile(), () -> listener.onChange());
+    watcher = new Watcher(folder.toFile(), listener::onChange);
     watcher.start();
   }
 

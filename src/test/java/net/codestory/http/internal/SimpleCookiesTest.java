@@ -109,7 +109,7 @@ public class SimpleCookiesTest {
 
     Iterator<net.codestory.http.Cookie> iterator = cookies.iterator();
 
-    assertThat(iterator).extracting(cookie -> cookie.name()).containsExactly("name1", "name2");
+    assertThat(iterator).extracting(net.codestory.http.Cookie::name).containsExactly("name1", "name2");
   }
 
   @Test

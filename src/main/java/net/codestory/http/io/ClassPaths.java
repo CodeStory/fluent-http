@@ -37,6 +37,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
 public class ClassPaths {
   private ClassPaths() {
@@ -155,7 +156,7 @@ public class ClassPaths {
   }
 
   private static List<String> forJarFile(JarFile jarFile) {
-    return jarFile.stream().filter(entry -> !entry.isDirectory()).map(entry -> entry.getName()).collect(toList());
+    return jarFile.stream().filter(entry -> !entry.isDirectory()).map(ZipEntry::getName).collect(toList());
   }
 
   private static List<String> forSystemDir(File file) throws IOException {

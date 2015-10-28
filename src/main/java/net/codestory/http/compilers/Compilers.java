@@ -47,8 +47,8 @@ public class Compilers {
     register(() -> new CoffeeCompiler(prodMode), ".js", ".coffee");
     register(() -> new CoffeeCompiler(prodMode), ".js", ".litcoffee");
     if (!prodMode) {
-      register(() -> new CoffeeSourceMapCompiler(), ".coffee.map", ".coffee.map");
-      register(() -> new CoffeeSourceMapCompiler(), ".litcoffee.map", ".litcoffee.map");
+      register(CoffeeSourceMapCompiler::new, ".coffee.map", ".coffee.map");
+      register(CoffeeSourceMapCompiler::new, ".litcoffee.map", ".litcoffee.map");
     }
   }
 

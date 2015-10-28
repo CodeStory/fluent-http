@@ -72,7 +72,7 @@ public final class NashornCompiler {
 
   public static NashornCompiler get(String... scriptPaths) {
     String script = readScripts(scriptPaths);
-    return CACHE_BY_SCRIPT.computeIfAbsent(script, s -> new NashornCompiler(s));
+    return CACHE_BY_SCRIPT.computeIfAbsent(script, NashornCompiler::new);
   }
 
   private static String readScripts(String... scriptPaths) {
@@ -95,7 +95,7 @@ public final class NashornCompiler {
     bindings.put("__filename", filename);
     bindings.put("__sourcename", sourceName);
     bindings.put("__source", source);
-    options.forEach((name, value) -> bindings.put(name, value));
+    options.forEach(bindings::put);
 
     try {
       return compiledScript.eval(bindings).toString();

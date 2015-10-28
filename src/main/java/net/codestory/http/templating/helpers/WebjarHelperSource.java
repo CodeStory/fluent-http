@@ -30,7 +30,7 @@ public class WebjarHelperSource {
 
   public WebjarHelperSource(boolean prodMode) {
     this.webJarUrlFinder = new WebJarUrlFinder(prodMode);
-    this.fullPathForUri = prodMode ? new Cache<>(uri -> fullPathForUri(uri)) : uri -> fullPathForUri(uri);
+    this.fullPathForUri = prodMode ? new Cache<>(this::fullPathForUri) : this::fullPathForUri;
   }
 
   // Handler entry point

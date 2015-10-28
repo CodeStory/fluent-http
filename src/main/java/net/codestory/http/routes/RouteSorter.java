@@ -47,9 +47,9 @@ public class RouteSorter {
   public Route[] getSortedRoutes() {
     List<Route> sorted = new ArrayList<>();
 
-    userRoutes.values().stream().sorted((left, right) -> left.uriParser().compareTo(right.uriParser())).forEach(route -> sorted.add(route));
-    staticRoutes.forEach(route -> sorted.add(route));
-    catchAllRoutes.values().stream().sorted((left, right) -> right.getMethod().compareTo(left.getMethod())).forEach(route -> sorted.add(route));
+    userRoutes.values().stream().sorted((left, right) -> left.uriParser().compareTo(right.uriParser())).forEach(sorted::add);
+    staticRoutes.forEach(sorted::add);
+    catchAllRoutes.values().stream().sorted((left, right) -> right.getMethod().compareTo(left.getMethod())).forEach(sorted::add);
 
     return sorted.toArray(new Route[sorted.size()]);
   }

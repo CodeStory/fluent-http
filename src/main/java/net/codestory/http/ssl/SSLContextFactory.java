@@ -40,7 +40,7 @@ public class SSLContextFactory {
   public SSLContext create(List<Path> pathCertificates, Path pathPrivateKey, List<Path> pathTrustAnchors) throws GeneralSecurityException, IOException {
     X509Certificate[] chain = pathCertificates
       .stream()
-      .map(path -> generateCertificateFromDER(path))
+      .map(SSLContextFactory::generateCertificateFromDER)
       .toArray(X509Certificate[]::new);
 
     RSAPrivateKey key = generatePrivateKeyFromDER(pathPrivateKey);

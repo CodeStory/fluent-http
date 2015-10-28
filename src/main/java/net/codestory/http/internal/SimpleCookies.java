@@ -32,7 +32,7 @@ class SimpleCookies implements Cookies {
 
   @Override
   public Iterator<Cookie> iterator() {
-    return request.getCookies().stream().<Cookie>map(cookie -> new SimpleCookie(cookie)).iterator();
+    return request.getCookies().stream().<Cookie>map(SimpleCookie::new).iterator();
   }
 
   @Override
@@ -55,7 +55,7 @@ class SimpleCookies implements Cookies {
   //
   @Override
   public Map<String, String> keyValues() {
-    return request.getCookies().stream().collect(toMap(cookie -> cookie.getName(), cookie -> cookie.getValue()));
+    return request.getCookies().stream().collect(toMap(org.simpleframework.http.Cookie::getName, org.simpleframework.http.Cookie::getValue));
   }
 
   @Override

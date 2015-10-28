@@ -33,7 +33,7 @@ public class WebServerPerfTest {
 
       assertThat(servers).hasSize(50);
 
-      servers.parallelStream().forEach(server -> server.stop());
+      servers.parallelStream().forEach(AbstractWebServer::stop);
     }
   }
 }

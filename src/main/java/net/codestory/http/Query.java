@@ -31,7 +31,7 @@ public interface Query extends Unwrappable {
   }
 
   default Map<String, String> keyValues() {
-    return keys().stream().collect(Collectors.toMap(key -> key, key -> get(key)));
+    return keys().stream().collect(Collectors.toMap(key -> key, this::get));
   }
 
   default int getInteger(String name) {

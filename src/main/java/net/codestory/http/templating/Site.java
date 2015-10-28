@@ -54,13 +54,13 @@ public class Site {
     data = memoize(() -> getResourceList()
         .stream()
         .filter(path -> path.startsWith("_data/"))
-        .collect(toMap((String path) -> nameWithoutExtension(path), path -> readYaml(path)))
+        .collect(toMap(Site::nameWithoutExtension, this::readYaml))
     );
 
     pages = memoize(() -> getResourceList()
         .stream()
         .filter(path -> !path.startsWith("_"))
-        .map(path -> pathToMap(path))
+        .map(this::pathToMap)
         .collect(toList())
     );
 
@@ -74,7 +74,7 @@ public class Site {
       return pagesPerTag;
     });
 
-    categories = memoize(() -> getPages().stream().collect(groupingBy((Map<String, Object> page) -> Site.category(page), TreeMap::new, toList())));
+    categories = memoize(() -> getPages().stream().collect(groupingBy(Site::category, TreeMap::new, toList())));
   }
 
   private static Set<String> list(Env env) {
