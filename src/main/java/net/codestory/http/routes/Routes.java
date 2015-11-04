@@ -106,6 +106,20 @@ public interface Routes extends Serializable {
 
   Routes put(String uriPattern, FourParamsRoute route);
 
+  Routes anyPatch(NoParamRouteWithContext route);
+
+  Routes patch(String uriPattern, NoParamRoute route);
+
+  Routes patch(String uriPattern, NoParamRouteWithContext route);
+
+  Routes patch(String uriPattern, OneParamRoute route);
+
+  Routes patch(String uriPattern, TwoParamsRoute route);
+
+  Routes patch(String uriPattern, ThreeParamsRoute route);
+
+  Routes patch(String uriPattern, FourParamsRoute route);
+
   Routes anyOptions(NoParamRouteWithContext route);
 
   Routes options(String uriPattern, Object payload);

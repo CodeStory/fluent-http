@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package net.codestory.http.constants;
+package net.codestory.http.annotations;
 
-public abstract class Methods {
-  public static final String GET = "GET";
-  public static final String POST = "POST";
-  public static final String PUT = "PUT";
-  public static final String PATCH = "PATCH";
-  public static final String DELETE = "DELETE";
-  public static final String HEAD = "HEAD";
-  public static final String OPTIONS = "OPTIONS";
-  public static final String TRACE = "TRACE";
-  public static final String CONNECT = "CONNECT";
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-  private Methods() {
-    // Do not allow subclassing
-  }
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+@Documented
+@Target(METHOD)
+@Retention(RUNTIME)
+public @interface Patches {
+  Patch[] value();
 }

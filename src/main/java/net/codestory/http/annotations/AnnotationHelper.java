@@ -15,13 +15,13 @@
  */
 package net.codestory.http.annotations;
 
-import static java.util.Optional.*;
+import net.codestory.http.misc.UrlConcat;
+
+import java.lang.reflect.Method;
+
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Stream.of;
 import static net.codestory.http.constants.Methods.*;
-
-import java.lang.reflect.*;
-
-import net.codestory.http.misc.*;
 
 public class AnnotationHelper {
   private AnnotationHelper() {
@@ -36,6 +36,7 @@ public class AnnotationHelper {
     for (Method method : targetType.getMethods()) {
       of(method.getAnnotationsByType(Get.class)).forEach(get -> callback.onMethod(GET, url(urlPrefix, classPrefix, get.value()), method));
       of(method.getAnnotationsByType(Post.class)).forEach(post -> callback.onMethod(POST, url(urlPrefix, classPrefix, post.value()), method));
+      of(method.getAnnotationsByType(Patch.class)).forEach(patch -> callback.onMethod(PATCH, url(urlPrefix, classPrefix, patch.value()), method));
       of(method.getAnnotationsByType(Put.class)).forEach(put -> callback.onMethod(PUT, url(urlPrefix, classPrefix, put.value()), method));
       of(method.getAnnotationsByType(Delete.class)).forEach(delete -> callback.onMethod(DELETE, url(urlPrefix, classPrefix, delete.value()), method));
       of(method.getAnnotationsByType(Head.class)).forEach(head -> callback.onMethod(HEAD, url(urlPrefix, classPrefix, head.value()), method));

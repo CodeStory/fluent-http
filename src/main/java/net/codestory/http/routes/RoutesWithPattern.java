@@ -195,6 +195,36 @@ public class RoutesWithPattern {
     return this;
   }
 
+  public RoutesWithPattern patch(NoParamRoute route) {
+    routes.put(currentUriPattern, route);
+    return this;
+  }
+
+  public RoutesWithPattern patch(NoParamRouteWithContext route) {
+    routes.put(currentUriPattern, route);
+    return this;
+  }
+
+  public RoutesWithPattern patch(OneParamRoute route) {
+    routes.put(currentUriPattern, route);
+    return this;
+  }
+
+  public RoutesWithPattern patch(TwoParamsRoute route) {
+    routes.put(currentUriPattern, route);
+    return this;
+  }
+
+  public RoutesWithPattern patch(ThreeParamsRoute route) {
+    routes.put(currentUriPattern, route);
+    return this;
+  }
+
+  public RoutesWithPattern patch(FourParamsRoute route) {
+    routes.put(currentUriPattern, route);
+    return this;
+  }
+
   public RoutesWithPattern delete(NoParamRoute route) {
     routes.delete(currentUriPattern, route);
     return this;
