@@ -134,7 +134,10 @@ public class PayloadWriter {
         Logs.unexpectedError(e);
       }
 
-      Payload errorPage = errorPage(e).withHeader("reason", e.getMessage());
+      Payload errorPage = errorPage(e);
+      if (!env.prodMode()) {
+        errorPage = errorPage.withHeader("reason", e.getMessage());
+      }
       writeAndCloseSync(errorPage);
     } catch (IOException error) {
       Logs.unableToServeErrorPage(error);
