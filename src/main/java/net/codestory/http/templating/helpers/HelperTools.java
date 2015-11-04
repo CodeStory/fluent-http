@@ -37,7 +37,7 @@ public class HelperTools {
   public static List<Object> contextAsList(Object context) {
     if (context instanceof Iterable<?>) {
       List<Object> list = new ArrayList<>();
-      ((Iterable<?>) context).forEach(value -> list.add(value));
+      ((Iterable<?>) context).forEach(list::add);
       return list;
     }
 

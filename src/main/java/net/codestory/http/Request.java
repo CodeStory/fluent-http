@@ -97,7 +97,7 @@ public interface Request extends Unwrappable {
   }
 
   default Map<String, List<String>> headers() {
-    return headerNames().stream().collect(toMap(name -> name, name -> headers(name)));
+    return headerNames().stream().collect(toMap(name -> name, this::headers));
   }
 
   // Support forwarding

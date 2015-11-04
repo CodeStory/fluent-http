@@ -27,16 +27,16 @@ public class MasterFolderWatch {
   private final List<FolderChangeListener> listeners = new CopyOnWriteArrayList<>();
 
   public MasterFolderWatch(Env env) {
-    FolderChangeListener notifyListeners = () -> listeners.forEach(listener -> listener.onChange());
+    FolderChangeListener notifyListeners = () -> listeners.forEach(FolderChangeListener::onChange);
     this.classesWatchers = env.foldersToWatch().stream().map(path -> new FolderWatcher(path, notifyListeners)).collect(toList());
   }
 
   public void ensureStarted() {
-    classesWatchers.forEach(watcher -> watcher.ensureStarted());
+    classesWatchers.forEach(FolderWatcher::ensureStarted);
   }
 
   public void stop() {
-    classesWatchers.forEach(watcher -> watcher.stop());
+    classesWatchers.forEach(FolderWatcher::stop);
   }
 
   public void addListener(FolderChangeListener listener) {

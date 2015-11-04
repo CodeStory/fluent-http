@@ -45,7 +45,7 @@ public class CompilerFacade implements CompilersConfiguration {
     this.compilers = memoize(() -> createCompilers(env, resources));
     this.templatingEngine = memoize(() -> createHandlebarsCompiler(env, resources));
     this.viewCompiler = memoize(() -> createViewCompiler(resources));
-    this.markdownCompiler = memoize(() -> createMarkdownCompiler());
+    this.markdownCompiler = memoize(this::createMarkdownCompiler);
   }
 
   // Creation

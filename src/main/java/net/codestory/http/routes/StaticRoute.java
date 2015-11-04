@@ -38,9 +38,9 @@ class StaticRoute implements Route {
 
   StaticRoute(boolean cached, Resources resources, CompilerFacade compilers) {
     if (cached) {
-      this.findPath = new Cache<>(uri -> findPath(uri));
+      this.findPath = new Cache<>(this::findPath);
     } else {
-      this.findPath = uri -> findPath(uri);
+      this.findPath = this::findPath;
     }
     this.resources = resources;
     this.compilers = compilers;

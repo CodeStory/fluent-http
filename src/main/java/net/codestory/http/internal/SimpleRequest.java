@@ -92,7 +92,7 @@ class SimpleRequest implements Request {
 
   @Override
   public List<Part> parts() {
-    return request.getParts().stream().map(part -> new SimplePart(part)).collect(toList());
+    return request.getParts().stream().map(SimplePart::new).collect(toList());
   }
 
   @Override

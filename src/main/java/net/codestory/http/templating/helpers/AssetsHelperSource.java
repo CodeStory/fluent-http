@@ -34,7 +34,7 @@ public class AssetsHelperSource {
   public AssetsHelperSource(boolean prodMode, Resources resources, CompilerFacade compilers) {
     this.resources = resources;
     this.compilers = compilers;
-    this.urlSupplier = prodMode ? new Cache<>(path -> uriWithSha1(path)) : path -> uriWithSha1(path);
+    this.urlSupplier = prodMode ? new Cache<>(this::uriWithSha1) : this::uriWithSha1;
   }
 
   // Handler entry points

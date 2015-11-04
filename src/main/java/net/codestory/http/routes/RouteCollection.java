@@ -574,9 +574,9 @@ public class RouteCollection implements Routes {
 
   protected boolean isAuthorized(Roles roles, User user) {
     if (roles.allMatch()) {
-      return of(roles.value()).allMatch(role -> user.isInRole(role));
+      return of(roles.value()).allMatch(user::isInRole);
     } else {
-      return of(roles.value()).anyMatch(role -> user.isInRole(role));
+      return of(roles.value()).anyMatch(user::isInRole);
     }
   }
 
