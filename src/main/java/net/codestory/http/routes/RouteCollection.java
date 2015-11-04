@@ -386,6 +386,42 @@ public class RouteCollection implements Routes {
   }
 
   @Override
+  public Routes patch(String uriPattern, NoParamRoute route) {
+    add(PATCH, checkParametersCount(uriPattern, 0), route);
+    return this;
+  }
+
+  @Override
+  public Routes patch(String uriPattern, NoParamRouteWithContext route) {
+    add(PATCH, checkParametersCount(uriPattern, 0), route);
+    return this;
+  }
+
+  @Override
+  public Routes patch(String uriPattern, OneParamRoute route) {
+    add(PATCH, checkParametersCount(uriPattern, 1), route);
+    return this;
+  }
+
+  @Override
+  public Routes patch(String uriPattern, TwoParamsRoute route) {
+    add(PATCH, checkParametersCount(uriPattern, 2), route);
+    return this;
+  }
+
+  @Override
+  public Routes patch(String uriPattern, ThreeParamsRoute route) {
+    add(PATCH, checkParametersCount(uriPattern, 3), route);
+    return this;
+  }
+
+  @Override
+  public Routes patch(String uriPattern, FourParamsRoute route) {
+    add(PATCH, checkParametersCount(uriPattern, 4), route);
+    return this;
+  }
+
+  @Override
   public RouteCollection delete(String uriPattern, NoParamRoute route) {
     add(DELETE, checkParametersCount(uriPattern, 0), route);
     return this;
@@ -442,6 +478,12 @@ public class RouteCollection implements Routes {
   @Override
   public Routes anyPut(NoParamRouteWithContext route) {
     routes.addCatchAllRoute(new CatchAllRoute(PUT, route));
+    return this;
+  }
+
+  @Override
+  public Routes anyPatch(NoParamRouteWithContext route) {
+    routes.addCatchAllRoute(new CatchAllRoute(PATCH, route));
     return this;
   }
 
