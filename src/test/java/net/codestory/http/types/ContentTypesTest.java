@@ -24,6 +24,7 @@ public class ContentTypesTest {
   @Test
   public void content_type_from_extension() {
     assertThat(get("index.html")).isEqualTo("text/html;charset=UTF-8");
+    assertThat(get("index.htm")).isEqualTo("text/html;charset=UTF-8");
     assertThat(get("file.json")).isEqualTo("application/json;charset=UTF-8");
     assertThat(get("data.xml")).isEqualTo("application/xml;charset=UTF-8");
     assertThat(get("style.css")).isEqualTo("text/css;charset=UTF-8");
