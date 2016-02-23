@@ -38,6 +38,7 @@ public class ContentTypes {
   public static String get(String filename) {
     switch (extension(filename)) {
       case ".html":
+      case ".htm":
       case ".md":
       case ".markdown":
       case ".jade":
