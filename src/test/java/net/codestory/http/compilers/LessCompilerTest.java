@@ -83,7 +83,7 @@ public class LessCompilerTest {
     thrown.expect(CompilerException.class);
     thrown.expectMessage(
       "Unable to compile less invalid.less: 1 error(s) occurred:\n" +
-        "ERROR 1:10 no viable alternative at input '<EOF>' in ruleset (which started at 1:1)\n" +
+        "ERROR invalid.less 1:10 no viable alternative at input '<EOF>' in ruleset (which started at 1:1)\n" +
         " 1: body body\n");
 
     compile("invalid.less", "body body");

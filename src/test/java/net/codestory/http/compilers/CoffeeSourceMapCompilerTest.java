@@ -40,7 +40,7 @@ public class CoffeeSourceMapCompilerTest {
       "  \"polka.coffee.source\"\n" +
       " ],\n" +
       " \"names\": [],\n" +
-      " \"mappings\": \"AAAA,IAAA,UAAA;;AAAA,CAAA,GAAE,CAAA,GAAE,CAAJ,CAAA;;AAAA,CACA,GAAE,CADF,CAAA;;AAAA,CAEA,GAAE,CAAC,CAAA,GAAE,CAAH,CAAA,GAAM,CAFR,CAAA\"\n" +
+      " \"mappings\": \"AAAA,IAAA;;AAAA,CAAA,GAAE,CAAA,GAAE;;AACJ,CAAA,GAAE;;AACF,CAAA,GAAE,CAAC,CAAA,GAAE,CAAH,CAAA,GAAM\"\n" +
       "}");
   }
 }

@@ -25,7 +25,7 @@ public class CoffeeCompiler implements Compiler {
 
   public CoffeeCompiler(boolean prodMode) {
     this.nashornCompiler = NashornCompiler.get(
-        "META-INF/resources/webjars/coffee-script/1.8.0/coffee-script.min.js",
+        "META-INF/resources/webjars/coffee-script/1.11.0/coffee-script.min.js",
         "coffee-script/toJs.js");
     this.sourceMaps = !prodMode;
   }

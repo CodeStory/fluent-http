@@ -82,7 +82,7 @@
           </plugin>
           <plugin>
             <artifactId>maven-scm-plugin</artifactId>
-            <version>1.9.4</version>
+            <version>1.9.5</version>
             <configuration>
               <includes>README.md</includes>
               <message>update version in the README.md</message>
@@ -98,11 +98,11 @@
       <plugins>
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
-          <version>2.6.1</version>
+          <version>3.0.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.3</version>
+          <version>3.5.1</version>
         </plugin>
         <plugin>
           <artifactId>maven-deploy-plugin</artifactId>
@@ -114,27 +114,27 @@
         </plugin>
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>2.6</version>
+          <version>3.0.2</version>
         </plugin>
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>2.7</version>
+          <version>3.0.1</version>
         </plugin>
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.4</version>
+          <version>3.5.1</version>
         </plugin>
         <plugin>
           <artifactId>maven-source-plugin</artifactId>
-          <version>2.4</version>
+          <version>3.0.1</version>
         </plugin>
         <plugin>
           <artifactId>maven-release-plugin</artifactId>
-          <version>2.5.2</version>
+          <version>2.5.3</version>
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.18.1</version>
+          <version>2.19.1</version>
         </plugin>
         <plugin>
           <artifactId>maven-enforcer-plugin</artifactId>
@@ -172,7 +172,7 @@
       <plugin>
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
-        <version>1.6.5</version>
+        <version>1.6.7</version>
         <extensions>true</extensions>
         <configuration>
           <serverId>ossrh</serverId>
@@ -191,7 +191,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>1.4.0</version>
+        <version>1.5.0</version>
         <configuration>
           <mainClass>net.codestory.http.WebServer</mainClass>
         </configuration>
@@ -282,7 +282,7 @@
     <dependency>
       <groupId>net.java.dev.jna</groupId>
       <artifactId>jna</artifactId>
-      <version>4.2.0</version>
+      <version>4.2.1</version>
     </dependency>
     <dependency>
       <groupId>org.simpleframework</groupId>
@@ -292,7 +292,7 @@
     <dependency>
       <groupId>com.github.sommeri</groupId>
       <artifactId>less4j</artifactId>
-      <version>1.14.0</version>
+      <version>1.17.2</version>
     </dependency>
     <dependency>
       <groupId>com.github.jknack</groupId>
@@ -312,12 +312,12 @@
     <dependency>
       <groupId>org.commonjava.googlecode.markdown4j</groupId>
       <artifactId>markdown4j</artifactId>
-      <version>2.2-cj-1.0</version>
+      <version>2.2-cj-1.1</version>
     </dependency>
     <dependency>
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
-      <version>1.16</version>
+      <version>1.17</version>
     </dependency>
     <dependency>
       <groupId>io.github.lukehutch</groupId>
@@ -327,49 +327,54 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.6.2</version>
+      <version>2.8.5</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
-      <version>2.6.2</version>
+      <version>2.8.5</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>2.8.5</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.12</version>
+      <version>1.7.21</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
-      <version>1.7.12</version>
+      <version>1.7.21</version>
     </dependency>
     <dependency>
       <groupId>org.webjars</groupId>
       <artifactId>webjars-locator</artifactId>
-      <version>0.28</version>
+      <version>0.32</version>
     </dependency>
     <dependency>
       <groupId>org.webjars</groupId>
       <artifactId>coffee-script</artifactId>
-      <version>1.8.0</version>
+      <version>1.11.0</version>
     </dependency>
 
     <!-- Used by dependencies -->
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>2.4</version>
+      <version>2.5</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.4</version>
+      <version>3.5</version>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>18.0</version>
+      <version>20.0</version>
     </dependency>
     <dependency>
       <groupId>commons-logging</groupId>
@@ -387,7 +392,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
-      <version>4.2.1.RELEASE</version>
+      <version>4.3.4.RELEASE</version>
       <optional>true</optional>
     </dependency>
 
@@ -401,19 +406,19 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>2.0.31-beta</version>
+      <version>2.2.22</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-      <version>3.2.0</version>
+      <version>3.6.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>net.code-story</groupId>
       <artifactId>fluent-rest-test</artifactId>
-      <version>1.5</version>
+      <version>1.6</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -425,19 +430,19 @@
     <dependency>
       <groupId>org.webjars</groupId>
       <artifactId>angularjs</artifactId>
-      <version>1.4.1</version>
+      <version>1.5.8</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.github.stefanbirkner</groupId>
       <artifactId>system-rules</artifactId>
-      <version>1.12.1</version>
+      <version>1.16.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>net.code-story</groupId>
       <artifactId>simplelenium</artifactId>
-      <version>2.1</version>
+      <version>2.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
