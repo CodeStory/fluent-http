@@ -63,6 +63,26 @@
               </execution>
             </executions>
           </plugin>
+          <plugin>
+            <groupId>com.google.code.maven-replacer-plugin</groupId>
+            <artifactId>replacer</artifactId>
+            <version>1.5.3</version>
+            <executions>
+              <execution>
+                <phase>prepare-package</phase>
+                <goals>
+                  <goal>replace</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <file>README.md</file>
+              <token>(?m)&lt;artifactId&gt;http&lt;/artifactId&gt;\s*&lt;version&gt;(\d|.)*&lt;/version&gt;</token>
+              <value>
+  &lt;artifactId&gt;http&lt;/artifactId&gt;
+  &lt;version&gt;${project.version}&lt;/version&gt;</value>
+            </configuration>
+          </plugin>
         </plugins>
       </build>
     </profile>
