@@ -26,6 +26,7 @@ public class TemplatingInDevTest extends AbstractDevWebServerTest {
   public void google_analytics_in_dev_mode() {
     configure(NO_ROUTE);
 
-    get("/indexGoogleAnalytics.html").should().contain("<body>\n</body>\n\n</html>");
+    String content = String.format("<body>%1$s</body>%1$s%1$s</html>", System.lineSeparator());
+    get("/indexGoogleAnalytics.html").should().contain(content);
   }
 }

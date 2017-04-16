@@ -87,7 +87,7 @@ public class ViewCompilerTest {
   public void layout_decorator() {
     assertThat(render("pageYaml.html")).contains("PREFIX_LAYOUT<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_LAYOUT");
     assertThat(render("pageYamlWithMarkdownLayout.html")).contains("<em>TITLE</em>: PREFIX_MD<div>_PREFIX_TEXT_SUFFIX_</div>SUFFIX_MD");
-    assertThat(render("markdownWithLayout.md")).startsWith("<!DOCTYPE html>").contains("<p>Hello World</p>").endsWith("</html>\n");
+    assertThat(render("markdownWithLayout.md")).startsWith("<!DOCTYPE html>").contains("<p>Hello World</p>").endsWith("</html>" + System.lineSeparator());
   }
 
   @Test
