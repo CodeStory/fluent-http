@@ -15,10 +15,12 @@
  */
 package net.codestory.http.routes;
 
-import java.util.*;
+import net.codestory.http.Query;
+import net.codestory.http.io.Strings;
 
-import net.codestory.http.*;
-import net.codestory.http.io.*;
+import java.util.Objects;
+
+import static java.util.Arrays.asList;
 
 public class UriParser implements Comparable<UriParser> {
   private final String uriPattern;
@@ -39,13 +41,13 @@ public class UriParser implements Comparable<UriParser> {
 
   public String[] params(String uri, Query query) {
     String[] uriParts = parts(uri);
-
     String[] params = new String[paramsCount];
 
     int index = 0;
-    for (int i = 0; i < uriParts.length; i++) {
+    for (int i = 0; i < patternParts.length; i++) {
       if (patternParts[i].startsWith(":")) {
-        params[index++] = uriParts[i];
+        params[index++] = (i == patternParts.length - 1) ?
+          String.join("/", asList(uriParts).subList(i, uriParts.length)) : uriParts[i];
       }
     }
     for (int i = 0; i < queryParamsParts.length; i++) {
@@ -59,7 +61,7 @@ public class UriParser implements Comparable<UriParser> {
 
   public boolean matches(String uri) {
     String[] uriParts = parts(stripQueryParams(uri));
-    if (patternParts.length != uriParts.length) {
+    if (patternParts.length != uriParts.length && !endsWithParameter(uriPattern)) {
       return false;
     }
 
@@ -70,7 +72,11 @@ public class UriParser implements Comparable<UriParser> {
     }
 
     int lastPart = patternParts.length - 1;
-    return !(patternParts[lastPart].startsWith(":") && uriParts[lastPart].isEmpty());
+    return lastPart < uriParts.length && !(patternParts[lastPart].startsWith(":") && uriParts[lastPart].isEmpty());
+  }
+
+  private static boolean endsWithParameter(String uriPattern) {
+    return uriPattern.lastIndexOf("/") == uriPattern.lastIndexOf(":") - 1;
   }
 
   private static String[] parts(String uri) {

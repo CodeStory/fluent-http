@@ -103,6 +103,17 @@ public class UriParserTest {
     assertThat(new UriParser("/foo")).isLessThanOrEqualTo(new UriParser("/foo/bar/qix"));
   }
 
+  @Test
+  public void test_last_param_matches_end_uri() {
+    assertThat(new UriParser("/directory/:directory").matches("/directory/to/my/resource")).isTrue();
+    assertThat(new UriParser("/directory/:directory").params("/directory/to/my/resource", null)).containsExactly("to/my/resource");
+    assertThat(new UriParser("/with/:param/in/:url").params("/with/param/in/the/middle/of/url", null)).containsExactly("param", "the/middle/of/url");
+
+    assertThat(new UriParser("/end/:empty").matches("/end")).isFalse();
+    assertThat(new UriParser("/end/:empty").matches("/end/")).isFalse();
+    assertThat(new UriParser("/end/:empty").params("/end/", null)).containsExactly("");
+  }
+
   private static Query query(String key, String value) {
     Query query = mock(Query.class);
     when(query.get(key)).thenReturn(value);
