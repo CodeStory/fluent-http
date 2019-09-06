@@ -49,51 +49,49 @@ public class SSLTest {
 
   @Test
   public void start_server() throws URISyntaxException {
-    Path pathCertificate = resource("certificates/server.crt");
-    Path pathPrivateKey = resource("certificates/server.der");
+    Path pathCertificate = resource("certificates/localhost.crt");
+    Path pathPrivateKey = resource("certificates/localhost.der");
 
     webServer.startSSL(0, pathCertificate, pathPrivateKey);
   }
 
   @Test
   public void certificate_chain() throws Exception {
-    Path pathEECertificate = resource("certificates/ee.crt");
-    Path pathSubCACertificate = resource("certificates/sub.crt");
-    Path pathRootCACertificate = resource("certificates/root.crt");
-    Path pathPrivateKey = resource("certificates/ee.der");
+    Path pathHostCertificate = resource("certificates/localhost.crt");
+    Path pathSubCACertificate = resource("certificates/subCA.crt");
+    Path pathRootCACertificate = resource("certificates/rootCA.crt");
+    Path pathPrivateKey = resource("certificates/localhost.der");
 
-    webServer.startSSL(0, asList(pathEECertificate, pathSubCACertificate), pathPrivateKey);
+    webServer.startSSL(0, asList(pathHostCertificate, pathSubCACertificate), pathPrivateKey);
 
     HttpsURLConnection conn = httpGet(webServer, getSocketFactory(pathRootCACertificate));
 
     assertThat(conn.getServerCertificates()).hasSize(2);
-    assertThat(conn.getServerCertificates()[0].getEncoded()).isEqualTo(getCertificateFromPath(pathEECertificate).getEncoded());
+    assertThat(conn.getServerCertificates()[0].getEncoded()).isEqualTo(getCertificateFromPath(pathHostCertificate).getEncoded());
     assertThat(conn.getServerCertificates()[1].getEncoded()).isEqualTo(getCertificateFromPath(pathSubCACertificate).getEncoded());
   }
 
   @Test
   public void client_auth() throws Exception {
-    Path pathEECertificate = resource("certificates/ee.crt");
-    Path pathSubCACertificate = resource("certificates/sub.crt");
-    Path pathPrivateKey = resource("certificates/ee.der");
-    Path pathTrustAnchors = resource("certificates/root.crt");
-    Path pathClientCertificate = resource("certificates/client.pfx");
+    Path pathHostCertificate = resource("certificates/localhost.crt");
+    Path pathSubCACertificate = resource("certificates/subCA.crt");
+    Path pathPrivateKey = resource("certificates/localhost.der");
+    Path pathClientCertificate = resource("certificates/localhost.pfx");
 
-    webServer.startSSL(0, asList(pathEECertificate, pathSubCACertificate), pathPrivateKey, singletonList(pathTrustAnchors));
+    webServer.startSSL(0, asList(pathHostCertificate, pathSubCACertificate), pathPrivateKey, singletonList(pathSubCACertificate));
 
-    httpGet(webServer, getSocketFactory(pathTrustAnchors, pathClientCertificate));
+    httpGet(webServer, getSocketFactory(resource("certificates/rootCA.crt"), pathClientCertificate));
   }
 
-  @Test(expected = Exception.class)
+  @Test(expected = SSLHandshakeException.class)
   public void client_auth_failure() throws Exception {
-    Path pathEECertificate = resource("certificates/ee.crt");
-    Path pathSubCACertificate = resource("certificates/sub.crt");
-    Path pathPrivateKey = resource("certificates/ee.der");
-    Path pathTrustAnchors = resource("certificates/root.crt");
+    Path pathHostCertificate = resource("certificates/localhost.crt");
+    Path pathSubCACertificate = resource("certificates/subCA.crt");
+    Path pathPrivateKey = resource("certificates/localhost.der");
 
-    webServer.startSSL(0, asList(pathEECertificate, pathSubCACertificate), pathPrivateKey, singletonList(pathTrustAnchors));
+    webServer.startSSL(0, asList(pathHostCertificate, pathSubCACertificate), pathPrivateKey, singletonList(pathSubCACertificate));
 
-    httpGet(webServer, getSocketFactory(pathTrustAnchors));
+    httpGet(webServer, getSocketFactory(resource("certificates/rootCA.crt")));
   }
 
   private HttpsURLConnection httpGet(WebServer webServer, SSLSocketFactory socketFactory) throws IOException {
@@ -114,7 +112,6 @@ public class SSLTest {
   }
 
   private static SSLSocketFactory getSocketFactory(Path caCertificate, Path clientCertificate) throws Exception {
-//    System.setProperty("https.protocols", "SSLv3");
     SSLContext ctx = SSLContext.getInstance("TLS");
 
     KeyStore ts = KeyStore.getInstance("JKS");
