@@ -9,14 +9,23 @@ os: Windows Server 2012
 environment:
   JAVA_HOME: C:\Program Files\Java\jdk1.8.0
 
-cache:
-  - C:\bin\apache-maven-3.2.5
-  - C:\Users\appveyor\.m2\repository
-
 install:
-  - cmd: set PATH=%PATH%;C:\bin\apache-maven-3.2.5\bin
-  - cmd: set MVN_VERSION=3.2.5
-  - cmd: IF NOT exist "C:\bin\apache-maven-%MVN_VERSION%\bin\*.*" (echo Maven %MVN_VERSION% not installed, so install it & cinst maven -Version %MVN_VERSION%) ELSE (echo  Maven %MVN_VERSION% already installed)
+  - ps: |
+      Add-Type -AssemblyName System.IO.Compression.FileSystem
+      if (!(Test-Path -Path "C:\maven" )) {
+        (new-object System.Net.WebClient).DownloadFile(
+          'http://www.us.apache.org/dist/maven/maven-3/3.2.5/binaries/apache-maven-3.2.5-bin.zip',
+          'C:\maven-bin.zip'
+        )
+        [System.IO.Compression.ZipFile]::ExtractToDirectory("C:\maven-bin.zip", "C:\maven")
+      }
+  - cmd: SET PATH=C:\maven\apache-maven-3.2.5\bin;%JAVA_HOME%\bin;%PATH
+  - cmd: SET MAVEN_OPTS=-XX:MaxPermSize=2g -Xmx4g
+  - cmd: SET JAVA_OPTS=-XX:MaxPermSize=2g -Xmx4g
+
+cache:
+  - C:\maven\
+  - C:\Users\appveyor\.m2
 
 build_script:
-  - cmd: mvn clean verify
+  - mvn clean verify
