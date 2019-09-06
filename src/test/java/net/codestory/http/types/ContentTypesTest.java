@@ -15,10 +15,10 @@
  */
 package net.codestory.http.types;
 
-import static net.codestory.http.types.ContentTypes.*;
-import static org.assertj.core.api.Assertions.*;
+import org.junit.Test;
 
-import org.junit.*;
+import static net.codestory.http.types.ContentTypes.get;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ContentTypesTest {
   @Test
@@ -29,7 +29,7 @@ public class ContentTypesTest {
     assertThat(get("data.xml")).isEqualTo("application/xml;charset=UTF-8");
     assertThat(get("style.css")).isEqualTo("text/css;charset=UTF-8");
     assertThat(get("style.less")).isEqualTo("text/css;charset=UTF-8");
-    assertThat(get("style.css.map")).isEqualTo("text/plain;charset=UTF-8");
+    assertThat(get("style.css.map")).isEqualTo("application/json;charset=UTF-8");
     assertThat(get("text.md")).isEqualTo("text/html;charset=UTF-8");
     assertThat(get("text.markdown")).isEqualTo("text/html;charset=UTF-8");
     assertThat(get("text.txt")).isEqualTo("text/plain;charset=UTF-8");
@@ -51,6 +51,6 @@ public class ContentTypesTest {
     assertThat(get("favicon.ico")).isEqualTo("image/x-icon");
     assertThat(get("video.mp4")).isEqualTo("video/mp4");
     assertThat(get("video.mp3")).isEqualTo("audio/mpeg");
-    assertThat(get("unknown")).isEqualTo("text/plain;charset=UTF-8");
+    assertThat(get("unknown")).isEqualTo("application/octet-stream");
   }
 }

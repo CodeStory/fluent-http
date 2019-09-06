@@ -46,8 +46,11 @@ public class UriParser implements Comparable<UriParser> {
     int index = 0;
     for (int i = 0; i < patternParts.length; i++) {
       if (patternParts[i].startsWith(":")) {
-        params[index++] = (i == patternParts.length - 1) ?
-          String.join("/", asList(uriParts).subList(i, uriParts.length)) : uriParts[i];
+        if (i == patternParts.length - 1 && patternParts[i].startsWith(":") && patternParts[i].endsWith(":"))
+          params[index++] = String.join("/", asList(uriParts).subList(i, uriParts.length));
+        else {
+          params[index++] = uriParts[i];
+        }
       }
     }
     for (int i = 0; i < queryParamsParts.length; i++) {
@@ -61,7 +64,7 @@ public class UriParser implements Comparable<UriParser> {
 
   public boolean matches(String uri) {
     String[] uriParts = parts(stripQueryParams(uri));
-    if (patternParts.length != uriParts.length && !endsWithParameter(uriPattern)) {
+    if (patternParts.length != uriParts.length && !endsWithGreedyParameter(uriPattern)) {
       return false;
     }
 
@@ -75,8 +78,12 @@ public class UriParser implements Comparable<UriParser> {
     return lastPart < uriParts.length && !(patternParts[lastPart].startsWith(":") && uriParts[lastPart].isEmpty());
   }
 
-  private static boolean endsWithParameter(String uriPattern) {
-    return uriPattern.lastIndexOf("/") == uriPattern.lastIndexOf(":") - 1;
+  private static boolean endsWithGreedyParameter(String uriPattern) {
+    return uriPattern.lastIndexOf("/") == removeLastChar(uriPattern).lastIndexOf(":") - 1 && uriPattern.endsWith(":");
+  }
+
+  private static String removeLastChar(String str) {
+    return str.substring(0, str.length() - 1);
   }
 
   private static String[] parts(String uri) {
@@ -98,7 +105,8 @@ public class UriParser implements Comparable<UriParser> {
   }
 
   public static int paramsCount(String uriPattern) {
-    return Strings.countMatches(uriPattern, ':');
+    int nbColons = Strings.countMatches(uriPattern, ':');
+    return uriPattern.endsWith(":") ? nbColons - 1:nbColons;
   }
 
   @Override
@@ -124,12 +132,14 @@ public class UriParser implements Comparable<UriParser> {
     }
     int index = 0;
     for (String part : patternParts) {
-      boolean hasPart1ADash = part.startsWith(":");
-      boolean hasPart2ADash = other.patternParts[index].startsWith(":");
-      if (hasPart1ADash && !hasPart2ADash) {
+      boolean hasPart1AColon = part.startsWith(":");
+      boolean hasPart2AColon = other.patternParts[index].startsWith(":");
+      boolean hasPart1ADoubleColon = hasPart1AColon && part.endsWith(":");
+      boolean hasPart2ADoubleColon = hasPart2AColon && other.patternParts[index].endsWith(":");
+      if (hasPart1AColon && !hasPart2AColon || hasPart1ADoubleColon && !hasPart2ADoubleColon) {
         return 1;
       }
-      if (hasPart2ADash && !hasPart1ADash) {
+      if (hasPart2AColon && !hasPart1AColon || !hasPart1ADoubleColon && hasPart2ADoubleColon) {
         return -1;
       }
       index++;

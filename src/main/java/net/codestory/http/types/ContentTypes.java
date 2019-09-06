@@ -15,9 +15,9 @@
  */
 package net.codestory.http.types;
 
-import static java.util.Arrays.*;
+import java.util.List;
 
-import java.util.*;
+import static java.util.Arrays.asList;
 
 public class ContentTypes {
   public static final List<String> SIMPLE_HTTP_REQUEST_CONTENT_TYPE_VALUES = asList(
@@ -37,6 +37,8 @@ public class ContentTypes {
 
   public static String get(String filename) {
     switch (extension(filename)) {
+      case ".txt":
+        return "text/plain;charset=UTF-8";
       case ".html":
       case ".htm":
       case ".md":
@@ -45,6 +47,7 @@ public class ContentTypes {
         return "text/html;charset=UTF-8";
       case ".xml":
         return "application/xml;charset=UTF-8";
+      case ".map":
       case ".json":
         return "application/json;charset=UTF-8";
       case ".css":
@@ -83,7 +86,7 @@ public class ContentTypes {
       case ".mp3":
         return "audio/mpeg";
       default:
-        return "text/plain;charset=UTF-8";
+        return "application/octet-stream";
     }
   }
 }

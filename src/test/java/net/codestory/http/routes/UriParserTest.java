@@ -62,6 +62,7 @@ public class UriParserTest {
     assertThat(UriParser.paramsCount("/hello")).isZero();
     assertThat(UriParser.paramsCount("/hello/:name")).isEqualTo(1);
     assertThat(UriParser.paramsCount("/hello/:name/:message")).isEqualTo(2);
+    assertThat(UriParser.paramsCount("/hello/:url:")).isEqualTo(1);
     assertThat(UriParser.paramsCount("/hello/:name/:message?opt=:option&lang=:language")).isEqualTo(4);
   }
 
@@ -94,6 +95,7 @@ public class UriParserTest {
     assertThat(new UriParser("/foo/:param/:param/qix")).isGreaterThan(new UriParser("/foo/:param/bar/:param"));
     assertThat(new UriParser("/foo/bar/:qix")).isGreaterThan(new UriParser("/foo/bar/bar/:qix"));
     assertThat(new UriParser("/foo/bar/qix")).isGreaterThanOrEqualTo(new UriParser("/foo"));
+    assertThat(new UriParser("/end/:param:")).isGreaterThan(new UriParser("/end/:param"));
 
     assertThat(new UriParser("/foo")).isLessThan(new UriParser("/:param"));
     assertThat(new UriParser("/foo/bar")).isLessThan(new UriParser("/foo/:param"));
@@ -101,17 +103,25 @@ public class UriParserTest {
     assertThat(new UriParser("/foo/:param/bar/:param")).isLessThan(new UriParser("/foo/:param/:param/qix"));
     assertThat(new UriParser("/foo/bar/bar/:qix")).isLessThan(new UriParser("/foo/bar/:qix"));
     assertThat(new UriParser("/foo")).isLessThanOrEqualTo(new UriParser("/foo/bar/qix"));
+    assertThat(new UriParser("/end/:param")).isLessThan(new UriParser("/end/:param:"));
   }
 
   @Test
-  public void test_last_param_matches_end_uri() {
-    assertThat(new UriParser("/directory/:directory").matches("/directory/to/my/resource")).isTrue();
-    assertThat(new UriParser("/directory/:directory").params("/directory/to/my/resource", null)).containsExactly("to/my/resource");
-    assertThat(new UriParser("/with/:param/in/:url").params("/with/param/in/the/middle/of/url", null)).containsExactly("param", "the/middle/of/url");
+  public void test_last_param_matches_end_uri_with_two_colons() {
+    assertThat(new UriParser("/directory/:directory:").matches("/directory/to/my/resource")).isTrue();
+    assertThat(new UriParser("/directory/:directory:").params("/directory/to/my/resource", null)).containsExactly("to/my/resource");
+    assertThat(new UriParser("/with/:param/in/:url:").params("/with/param/in/the/middle/of/url", null)).containsExactly("param", "the/middle/of/url");
 
-    assertThat(new UriParser("/end/:empty").matches("/end")).isFalse();
-    assertThat(new UriParser("/end/:empty").matches("/end/")).isFalse();
-    assertThat(new UriParser("/end/:empty").params("/end/", null)).containsExactly("");
+    assertThat(new UriParser("/end/:empty:").matches("/end")).isFalse();
+    assertThat(new UriParser("/end/:empty:").matches("/end/")).isFalse();
+    assertThat(new UriParser("/end/:empty:").params("/end/", null)).containsExactly("");
+  }
+
+  @Test
+  public void test_last_parameter_is_non_greedy() {
+    assertThat(new UriParser("/simple/colon/:id").matches("/simple/colon/matches/only/one/path/parameter")).isFalse();
+    assertThat(new UriParser("/simple/colon/:id").matches("/simple/colon/my_id")).isTrue();
+    assertThat(new UriParser("/simple/colon/:id").params("/simple/colons/my_id", null)).containsExactly("my_id");
   }
 
   private static Query query(String key, String value) {
