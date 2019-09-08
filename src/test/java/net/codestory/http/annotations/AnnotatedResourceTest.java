@@ -24,6 +24,10 @@ import net.codestory.http.testhelpers.*;
 
 import org.junit.*;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+
 public class AnnotatedResourceTest extends AbstractProdWebServerTest {
   @Test
   public void annotated_resources() {
@@ -43,7 +47,11 @@ public class AnnotatedResourceTest extends AbstractProdWebServerTest {
   }
 
   @Test
-  public void resources_class() {
+  public void resources_class() throws IOException {
+    Files.list(new File("C:/Users").toPath()).forEach(System.out::println);
+    Files.list(new File("C:/Users/appveyor").toPath()).forEach(System.out::println);
+    Files.list(new File("C:/Users/appveyor/.phantomjstest").toPath()).forEach(System.out::println);
+
     configure(routes -> routes
         .add(MyResource.class)
     );
