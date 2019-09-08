@@ -15,18 +15,17 @@
  */
 package net.codestory.http.annotations;
 
-import net.codestory.http.*;
-import net.codestory.http.errors.*;
+import net.codestory.http.Context;
+import net.codestory.http.Cookies;
+import net.codestory.http.Request;
+import net.codestory.http.Response;
+import net.codestory.http.errors.NotFoundException;
 import net.codestory.http.filters.basic.BasicAuthFilter;
 import net.codestory.http.security.UsersList;
-import net.codestory.http.templating.*;
-import net.codestory.http.testhelpers.*;
-
-import org.junit.*;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
+import net.codestory.http.templating.Model;
+import net.codestory.http.templating.ModelAndView;
+import net.codestory.http.testhelpers.AbstractProdWebServerTest;
+import org.junit.Test;
 
 public class AnnotatedResourceTest extends AbstractProdWebServerTest {
   @Test
@@ -47,11 +46,7 @@ public class AnnotatedResourceTest extends AbstractProdWebServerTest {
   }
 
   @Test
-  public void resources_class() throws IOException {
-    Files.list(new File("C:/Users").toPath()).forEach(System.out::println);
-    Files.list(new File("C:/Users/appveyor").toPath()).forEach(System.out::println);
-    Files.list(new File("C:/Users/appveyor/.phantomjstest").toPath()).forEach(System.out::println);
-
+  public void resources_class() {
     configure(routes -> routes
         .add(MyResource.class)
     );
