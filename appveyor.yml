@@ -19,17 +19,8 @@ install:
         )
         [System.IO.Compression.ZipFile]::ExtractToDirectory("C:\maven-bin.zip", "C:\maven")
       }
-  - ps: |
-      Add-Type -AssemblyName System.IO.Compression.FileSystem
-      if (!(Test-Path -Path "C:\phantomjs" )) {
-        (new-object System.Net.WebClient).DownloadFile(
-          'https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-windows.zip',
-          'C:\phantomjs-bin.zip'
-        )
-        [System.IO.Compression.ZipFile]::ExtractToDirectory("C:\phantomjs-bin.zip", "C:\phantomjs")
-      }
   - cmd: SET M2_HOME=C:\maven\apache-maven-3.2.5
-  - cmd: SET PATH=C:\maven\apache-maven-3.2.5\bin;%JAVA_HOME%\bin;C:\phantomjs\phantomjs-2.1.1-windows\bin;%PATH
+  - cmd: SET PATH=C:\maven\apache-maven-3.2.5\bin;%JAVA_HOME%\bin;%PATH
   - cmd: SET MAVEN_OPTS=-XX:MaxPermSize=2g -Xmx4g
   - cmd: SET JAVA_OPTS=-XX:MaxPermSize=2g -Xmx4g
 
