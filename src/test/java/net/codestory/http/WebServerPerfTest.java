@@ -17,9 +17,6 @@ package net.codestory.http;
 
 import org.junit.Test;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,11 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class WebServerPerfTest {
   @Test
-  public void launch_lots_of_servers_without_port_conflict_nor_thread_leak() throws IOException {
-    Files.list(new File("C:/Users").toPath()).forEach(System.out::println);
-    Files.list(new File("C:/Users/appveyor").toPath()).forEach(System.out::println);
-    Files.list(new File("C:/Users/appveyor/.phantomjstest").toPath()).forEach(System.out::println);
-
+  public void launch_lots_of_servers_without_port_conflict_nor_thread_leak() {
     for (int j = 0; j < 10; j++) {
       List<WebServer> servers = new ArrayList<>();
 
