@@ -60,6 +60,10 @@ public class LiveReloadTest extends SeleniumTest {
 
   @Test
   public void change_file_and_refresh() throws IOException {
+    Files.list(new File("C:/Users").toPath()).forEach(System.out::println);
+    Files.list(new File("C:/Users/appveyor").toPath()).forEach(System.out::println);
+    Files.list(new File("C:/Users/appveyor/.phantomjstest").toPath()).forEach(System.out::println);
+
     File app = temp.newFolder("app");
     File index = new File(app, "changing.html");
 
