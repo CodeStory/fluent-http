@@ -66,6 +66,17 @@ public class CatchAllTest extends AbstractProdWebServerTest {
   }
 
   @Test
+  public void catch_all_patch() {
+    configure(routes -> routes
+        .anyPatch((context) -> "Hello")
+    );
+
+    patch("/").should().contain("Hello");
+    patch("/any").should().contain("Hello");
+    post("/route").should().respond(405);
+  }
+
+  @Test
   public void catch_all_options() {
     configure(routes -> routes
         .anyOptions((context) -> "Hello")

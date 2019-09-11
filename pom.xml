@@ -45,6 +45,13 @@
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
   </properties>
 
+  <repositories>
+      <repository>
+          <id>jitpack.io</id>
+          <url>https://jitpack.io</url>
+      </repository>
+  </repositories>
+
   <profiles>
     <profile>
       <id>release</id>
@@ -416,10 +423,10 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>net.code-story</groupId>
-      <artifactId>fluent-rest-test</artifactId>
-      <version>1.6</version>
-      <scope>test</scope>
+        <groupId>com.github.CodeStory</groupId>
+        <artifactId>fluent-rest-test</artifactId>
+        <version>d5b4cf0</version>
+        <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.webjars</groupId>
