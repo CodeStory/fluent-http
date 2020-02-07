@@ -15,11 +15,14 @@
  */
 package net.codestory.http.io;
 
-import static java.nio.file.FileVisitResult.*;
+import java.io.IOException;
+import java.io.Serializable;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 
-import java.io.*;
-import java.nio.file.*;
-import java.nio.file.attribute.*;
+import static java.nio.file.FileVisitResult.CONTINUE;
 
 @FunctionalInterface
 public interface FileVisitor extends Serializable {
@@ -29,7 +32,7 @@ public interface FileVisitor extends Serializable {
     return new SimpleFileVisitor<Path>() {
       @Override
       public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-        visitor.accept(file);
+        if (!attrs.isSymbolicLink()) visitor.accept(file);
         return CONTINUE;
       }
     };

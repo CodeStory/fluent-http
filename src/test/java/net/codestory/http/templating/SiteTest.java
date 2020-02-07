@@ -15,16 +15,21 @@
  */
 package net.codestory.http.templating;
 
-import static org.assertj.core.api.Assertions.*;
-
-import java.util.*;
-
 import net.codestory.http.io.Resources;
-import net.codestory.http.misc.*;
+import net.codestory.http.misc.Env;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
-import org.junit.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class SiteTest {
+  @Rule public TemporaryFolder folder = new TemporaryFolder();
   static Env env = Env.prod();
   static Site site = new Site(env, new Resources(env));
 
@@ -33,6 +38,20 @@ public class SiteTest {
     List<Map<String, Object>> pages = site.getPages();
 
     assertThat(pages).hasSize(35);
+  }
+
+  @Test
+  public void pages_with_directory_symlink() throws IOException {
+    folder.newFolder("app", "target_folder").toPath().resolve("file.txt").toFile().createNewFile();
+    Files.createSymbolicLink(
+      folder.getRoot().toPath().resolve("app").resolve("symlink"),
+      folder.getRoot().toPath().resolve("app").resolve("target_folder")
+    );
+    Env dev = Env.dev(folder.getRoot());
+
+    List<Map<String, Object>> pages = new Site(dev, new Resources(dev)).getPages();
+
+    assertThat(pages).hasSize(1);
   }
 
   @Test

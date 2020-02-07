@@ -15,8 +15,7 @@
  */
 package net.codestory.http.misc;
 
-import static net.codestory.http.io.ClassPaths.classpathFolders;
-import static net.codestory.http.misc.MemoizingSupplier.memoize;
+import net.codestory.http.reload.MasterFolderWatch;
 
 import java.io.File;
 import java.io.Serializable;
@@ -25,7 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import net.codestory.http.reload.MasterFolderWatch;
+import static net.codestory.http.io.ClassPaths.classpathFolders;
+import static net.codestory.http.misc.MemoizingSupplier.memoize;
 
 public class Env implements Serializable {
   private final File workingDir;
@@ -72,6 +72,8 @@ public class Env implements Serializable {
   public static Env dev() {
     return new Env(new File("."), false, true, true, false, true, true, true);
   }
+
+  public static Env dev(File workingDir) { return new Env(workingDir, false, false, true, false, true, true, true);}
 
   public Env withWorkingDir(File newWorkingDir) {
     return new Env(newWorkingDir, prodMode, classPath, filesystem, gzip, liveReloadServer, injectLiveReloadScript, diskCache);
