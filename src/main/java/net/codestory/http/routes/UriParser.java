@@ -69,7 +69,7 @@ public class UriParser implements Comparable<UriParser> {
     }
 
     for (int i = 0; i < patternParts.length; i++) {
-      if (!patternParts[i].startsWith(":") && !patternParts[i].equals(uriParts[i])) {
+      if (!patternParts[i].startsWith(":") && !(i < uriParts.length && patternParts[i].equals(uriParts[i]))) {
         return false;
       }
     }

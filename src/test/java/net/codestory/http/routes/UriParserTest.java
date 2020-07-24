@@ -112,6 +112,7 @@ public class UriParserTest {
     assertThat(new UriParser("/directory/:directory:").params("/directory/to/my/resource", null)).containsExactly("to/my/resource");
     assertThat(new UriParser("/with/:param/in/:url:").params("/with/param/in/the/middle/of/url", null)).containsExactly("param", "the/middle/of/url");
 
+    assertThat(new UriParser("/url/but/:param/and/:greedy:").matches("/url/but/shorter")).isFalse();
     assertThat(new UriParser("/end/:empty:").matches("/end")).isFalse();
     assertThat(new UriParser("/end/:empty:").matches("/end/")).isFalse();
     assertThat(new UriParser("/end/:empty:").params("/end/", null)).containsExactly("");
