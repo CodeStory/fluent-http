@@ -15,18 +15,18 @@
  */
 package net.codestory.http.testhelpers;
 
+import net.codestory.http.Configuration;
+import net.codestory.http.WebServer;
+import net.codestory.http.misc.Env;
+import org.junit.rules.ExternalResource;
+
+import java.util.function.Supplier;
+
 import static net.codestory.http.Configuration.NO_ROUTE;
-import static net.codestory.http.misc.MemoizingSupplier.*;
-
-import java.util.function.*;
-
-import net.codestory.http.*;
-import net.codestory.http.misc.*;
-
-import org.junit.rules.*;
+import static net.codestory.http.misc.MemoizingSupplier.memoize;
 
 public class ProdWebServerRule extends ExternalResource {
-  private static Supplier<WebServer> server = memoize(() -> new WebServer() {
+  private final Supplier<WebServer> server = memoize(() -> new WebServer() {
     @Override
     protected Env createEnv() {
       return Env.prod();
