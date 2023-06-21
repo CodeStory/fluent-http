@@ -15,15 +15,16 @@
  */
 package net.codestory.http.injection;
 
-import static org.mockito.Mockito.*;
-
-import net.codestory.http.routes.*;
-
+import com.google.inject.AbstractModule;
+import com.google.inject.Injector;
+import net.codestory.http.routes.Routes;
 import net.codestory.http.testhelpers.AbstractProdWebServerTest;
 import net.codestory.rest.FluentRestTest;
-import org.junit.*;
+import org.junit.Test;
 
-import com.google.inject.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 
 public class GuiceTest extends AbstractProdWebServerTest implements FluentRestTest {
   @Test
@@ -41,7 +42,7 @@ public class GuiceTest extends AbstractProdWebServerTest implements FluentRestTe
   }
 
   static class MyAppConfiguration extends AbstractGuiceConfiguration {
-    MyAppConfiguration(Module... modules) {
+    MyAppConfiguration(com.google.inject.Module... modules) {
       super(modules);
     }
 

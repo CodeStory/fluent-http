@@ -24,7 +24,7 @@ public class GuiceConfiguration implements Configuration {
   private final Configuration configuration;
   private final Injector injector;
 
-  protected GuiceConfiguration(Module module, Configuration configuration) {
+  protected GuiceConfiguration(com.google.inject.Module module, Configuration configuration) {
     this.configuration = configuration;
     this.injector = Guice.createInjector(module);
     onCreateInjector(this.injector);

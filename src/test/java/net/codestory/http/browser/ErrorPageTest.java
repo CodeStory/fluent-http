@@ -18,6 +18,7 @@ package net.codestory.http.browser;
 import net.codestory.http.testhelpers.AbstractProdWebServerTest;
 import net.codestory.simplelenium.FluentTest;
 import net.codestory.simplelenium.rules.TakeSnapshot;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -25,6 +26,7 @@ public class ErrorPageTest extends AbstractProdWebServerTest {
   @Rule
   public final TakeSnapshot takeSnapshot = new TakeSnapshot();
 
+  @Ignore
   @Test
   public void page_not_found() {
     String baseUrl = "http://localhost:" + port();

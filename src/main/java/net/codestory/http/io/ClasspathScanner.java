@@ -15,12 +15,17 @@
  */
 package net.codestory.http.io;
 
-import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
+import io.github.classgraph.ClassInfoList;
+import io.github.classgraph.ScanResult;
 
-import java.io.*;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.net.*;
-import java.util.*;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.function.Predicate;
 
 public class ClasspathScanner {
@@ -32,11 +37,10 @@ public class ClasspathScanner {
 
   public Set<Class<?>> getTypesAnnotatedWith(String packageToScan, Class<? extends Annotation> annotation) {
     Set<Class<?>> classes = new LinkedHashSet<>();
-
-    new FastClasspathScanner(packageToScan)
-      .matchClassesWithAnnotation(annotation, classes::add)
-      .scan();
-
+    try (ScanResult scanResult = new ClassGraph().enableAnnotationInfo().acceptPackages(packageToScan).scan()) {
+      ClassInfoList classInfoList = scanResult.getClassesWithAnnotation(annotation);
+      classInfoList.stream().map(ClassInfo::loadClass).forEach(classes::add);
+    }
     return classes;
   }
 
