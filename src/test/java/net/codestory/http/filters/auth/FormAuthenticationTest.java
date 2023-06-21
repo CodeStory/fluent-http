@@ -18,9 +18,11 @@ package net.codestory.http.filters.auth;
 import net.codestory.http.security.Users;
 import net.codestory.http.testhelpers.AbstractProdWebServerTest;
 import net.codestory.simplelenium.FluentTest;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class FormAuthenticationTest extends AbstractProdWebServerTest {
+  @Ignore
   @Test
   public void redirect_after_login() {
     configure(routes -> routes

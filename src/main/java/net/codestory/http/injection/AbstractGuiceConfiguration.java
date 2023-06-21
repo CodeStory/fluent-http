@@ -15,15 +15,16 @@
  */
 package net.codestory.http.injection;
 
-import net.codestory.http.*;
-import net.codestory.http.routes.*;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import net.codestory.http.Configuration;
+import net.codestory.http.routes.Routes;
 
-import com.google.inject.*;
 
 public abstract class AbstractGuiceConfiguration implements Configuration {
   private final Injector injector;
 
-  protected AbstractGuiceConfiguration(Module... modules) {
+  protected AbstractGuiceConfiguration(com.google.inject.Module... modules) {
     injector = Guice.createInjector(modules);
     onCreate(injector);
   }

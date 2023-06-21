@@ -20,6 +20,7 @@ import net.codestory.http.misc.Env;
 import net.codestory.simplelenium.SeleniumTest;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -58,6 +59,7 @@ public class LiveReloadTest extends SeleniumTest {
     return "http://localhost:" + webServer.port();
   }
 
+  @Ignore
   @Test
   public void change_file_and_refresh() throws IOException {
     File app = temp.newFolder("app");

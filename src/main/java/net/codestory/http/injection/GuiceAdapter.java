@@ -15,7 +15,9 @@
  */
 package net.codestory.http.injection;
 
-import com.google.inject.*;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 public class GuiceAdapter implements IocAdapter {
   private final Injector injector;
@@ -24,7 +26,7 @@ public class GuiceAdapter implements IocAdapter {
     this.injector = injector;
   }
 
-  public GuiceAdapter(Module... modules) {
+  public GuiceAdapter(com.google.inject.Module... modules) {
     this(Guice.createInjector(modules));
   }
 

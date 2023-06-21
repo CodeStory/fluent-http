@@ -15,19 +15,26 @@
  */
 package net.codestory.http.compilers;
 
-import static java.nio.charset.StandardCharsets.*;
-import static javax.script.ScriptContext.*;
+import net.codestory.http.io.InputStreams;
+import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory;
+import org.openjdk.nashorn.internal.runtime.options.Options;
 
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
-import java.util.concurrent.*;
+import javax.script.Bindings;
+import javax.script.Compilable;
+import javax.script.CompiledScript;
+import javax.script.ScriptEngine;
+import javax.script.ScriptException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
-import net.codestory.http.io.*;
-
-import javax.script.*;
-import jdk.nashorn.api.scripting.*;
-import jdk.nashorn.internal.runtime.options.*;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static javax.script.ScriptContext.ENGINE_SCOPE;
 
 public final class NashornCompiler {
   private static final ConcurrentMap<String, NashornCompiler> CACHE_BY_SCRIPT = new ConcurrentHashMap<>();

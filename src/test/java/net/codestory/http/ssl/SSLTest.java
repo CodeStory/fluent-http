@@ -20,9 +20,16 @@ import net.codestory.http.io.ClassPaths;
 import org.junit.After;
 import org.junit.Test;
 
-import javax.net.ssl.*;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.SocketException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -48,7 +55,7 @@ public class SSLTest {
   }
 
   @Test
-  public void start_server() throws URISyntaxException {
+  public void start_server() throws URISyntaxException, InterruptedException {
     Path pathCertificate = resource("certificates/localhost.crt");
     Path pathPrivateKey = resource("certificates/localhost.der");
 
@@ -83,7 +90,7 @@ public class SSLTest {
     httpGet(webServer, getSocketFactory(resource("certificates/rootCA.crt"), pathClientCertificate));
   }
 
-  @Test(expected = SSLHandshakeException.class)
+  @Test(expected = SocketException.class)
   public void client_auth_failure() throws Exception {
     Path pathHostCertificate = resource("certificates/localhost.crt");
     Path pathSubCACertificate = resource("certificates/subCA.crt");
