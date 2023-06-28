@@ -23,13 +23,11 @@ makes it a pleasure to use:
 
 ## Build status
 
-- Linux: [![Build Status](https://api.travis-ci.org/CodeStory/fluent-http.png)](https://travis-ci.org/CodeStory/fluent-http)
-
-- Windows: [![Build status](https://ci.appveyor.com/api/projects/status/bv4lnbafr0dnrckx/branch/master)](https://ci.appveyor.com/project/dgageot/fluent-http)
+- Linux: [![Java CI](https://github.com/CodeStory/fluent-http/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/CodeStory/fluent-http/actions/workflows/ci.yml)
 
 ## Environment
 
-- `java-1.8`
+- `java-11`
 
 ## Maven
 
