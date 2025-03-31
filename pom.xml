@@ -44,7 +44,8 @@
     <maven.compiler.target>11</maven.compiler.target>
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
 
-    <jackson.version>2.15.1</jackson.version>
+    <jackson.version>2.15.2</jackson.version>
+    <slf4j.version>2.0.12</slf4j.version>
   </properties>
 
   <repositories>
@@ -306,7 +307,7 @@
     <dependency>
       <groupId>com.github.jknack</groupId>
       <artifactId>handlebars</artifactId>
-      <version>2.2.3</version>
+      <version>4.2.1</version>
       <exclusions>
         <exclusion>
           <groupId>org.mozilla</groupId>
@@ -331,7 +332,7 @@
     <dependency>
       <groupId>io.github.classgraph</groupId>
       <artifactId>classgraph</artifactId>
-      <version>4.8.160</version>
+      <version>4.8.168</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
     <dependency>
@@ -352,12 +353,12 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.21</version>
+      <version>${slf4j.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
-      <version>1.7.21</version>
+      <version>${slf4j.version}</version>
     </dependency>
     <dependency>
       <groupId>org.webjars</groupId>
@@ -384,7 +385,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.8.1</version>
+      <version>3.13.0</version>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>
