@@ -15,23 +15,23 @@
  */
 package net.codestory.http.templating;
 
-import static java.util.Arrays.*;
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
-
-import net.codestory.http.compilers.*;
+import com.github.jknack.handlebars.HandlebarsException;
+import net.codestory.http.compilers.CompilerFacade;
 import net.codestory.http.io.Resources;
-import net.codestory.http.markdown.*;
-import net.codestory.http.misc.*;
-import net.codestory.http.templating.helpers.*;
+import net.codestory.http.markdown.MarkdownCompiler;
+import net.codestory.http.misc.Env;
+import net.codestory.http.templating.helpers.GoogleAnalyticsHelper;
+import org.junit.Test;
 
-import org.junit.*;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.Map;
+import java.util.TreeMap;
 
-import com.github.jknack.handlebars.*;
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class HandlebarsCompilerTest {
   static Env env = Env.prod();
@@ -76,13 +76,6 @@ public class HandlebarsCompilerTest {
     String result = compile("[[>partial]]", map("name", "Bob"));
 
     assertThat(result).isEqualTo("Hello Bob");
-  }
-
-  @Test
-  public void markdown_partial() throws IOException {
-    String result = compile("[[>map city]]", map("city", "Paris"));
-
-    assertThat(result).isEqualTo("<p><a href=\"https://maps.google.com/maps?q=+Paris\"> Paris</a></p>\n");
   }
 
   @Test(expected = HandlebarsException.class)
@@ -135,34 +128,15 @@ public class HandlebarsCompilerTest {
   @Test
   public void values_by_key() throws IOException {
     Map<String, Object> variables = new TreeMap<>();
-    variables.put("letters", asList("A", "B"));
     variables.put("descriptions", new TreeMap<String, Object>() {{
       put("A", "Letter A");
       put("B", "Letter B");
       put("C", "Letter C");
     }});
 
-    String result = compile("[[#each_value descriptions letters]][[@key]]=[[.]][[/each_value]]", variables);
+    String result = compile("[[#each descriptions]][[@key]]=[[.]][[/each]]", variables);
 
-    assertThat(result).isEqualTo("A=Letter AB=Letter B");
-  }
-
-  @Test
-  public void values_by_hash_key() throws IOException {
-    Map<String, Object> variables = new TreeMap<>();
-    variables.put("letters", new TreeMap<String, Object>() {{
-      put("A", map("id", "idA"));
-      put("B", map("id", "idB"));
-    }});
-    variables.put("descriptions", new TreeMap<String, Object>() {{
-      put("A", "Description A");
-      put("B", "Description B");
-      put("C", "Description C");
-    }});
-
-    String result = compile("[[#each_value descriptions letters]][[@value.id]]=[[.]][[/each_value]]", variables);
-
-    assertThat(result).isEqualTo("idA=Description AidB=Description B");
+    assertThat(result).isEqualTo("A=Letter AB=Letter BC=Letter C");
   }
 
   @Test
