@@ -15,7 +15,6 @@
  */
 package net.codestory.http.misc;
 
-import com.google.common.annotations.VisibleForTesting;
 import net.codestory.http.reload.MasterFolderWatch;
 
 import java.io.File;
@@ -173,18 +172,13 @@ public class Env implements Serializable {
     return diskCache;
   }
 
-  @VisibleForTesting
-  private static String getenv(String envVar) {
-    return System.getenv(envVar);
-  }
-
   private static String get(String propertyName) {
-    String env = getenv(propertyName);
+    String env = System.getenv(propertyName);
     return (env != null) ? env : System.getProperty(propertyName);
   }
 
   private static String get(String propertyName, String defaultValue) {
-    String env = getenv(propertyName);
+    String env = System.getenv(propertyName);
     return (env != null) ? env : System.getProperty(propertyName, defaultValue);
   }
 
