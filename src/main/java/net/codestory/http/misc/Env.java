@@ -15,6 +15,7 @@
  */
 package net.codestory.http.misc;
 
+import com.google.common.annotations.VisibleForTesting;
 import net.codestory.http.reload.MasterFolderWatch;
 
 import java.io.File;
@@ -37,6 +38,7 @@ public class Env implements Serializable {
   private final boolean injectLiveReloadScript;
   private final boolean diskCache;
   private final Supplier<MasterFolderWatch> folderWatch;
+  private final String appFolder;
 
   public Env() {
     this(
@@ -47,11 +49,12 @@ public class Env implements Serializable {
       !getBoolean("http.disable.gzip", false),
       getBoolean("http.livereload.server", true),
       getBoolean("http.livereload.script", true),
-      getBoolean("http.cache.disk", true)
+      getBoolean("http.cache.disk", true),
+      get("APP_FOLDER", "app")
     );
   }
 
-  private Env(File workingDir, boolean prodMode, boolean classPath, boolean filesystem, boolean gzip, boolean liveReloadServer, boolean injectLiveReloadScript, boolean diskCache) {
+  private Env(File workingDir, boolean prodMode, boolean classPath, boolean filesystem, boolean gzip, boolean liveReloadServer, boolean injectLiveReloadScript, boolean diskCache, String appFolder) {
     this.workingDir = workingDir;
     this.prodMode = prodMode;
     this.classPath = classPath;
@@ -61,50 +64,55 @@ public class Env implements Serializable {
     this.injectLiveReloadScript = injectLiveReloadScript;
     this.diskCache = diskCache;
     this.folderWatch = memoize(() -> new MasterFolderWatch(this));
+    this.appFolder = appFolder;
   }
 
   // helper factories
 
   public static Env prod() {
-    return new Env(new File("."), true, true, true, true, false, false, true);
+    return new Env(new File("."), true, true, true, true, false, false, true, "app");
   }
 
   public static Env dev() {
-    return new Env(new File("."), false, true, true, false, true, true, true);
+    return new Env(new File("."), false, true, true, false, true, true, true, "app");
   }
 
-  public static Env dev(File workingDir) { return new Env(workingDir, false, false, true, false, true, true, true);}
+  public static Env dev(File workingDir) { return new Env(workingDir, false, false, true, false, true, true, true, "app");}
 
   public Env withWorkingDir(File newWorkingDir) {
-    return new Env(newWorkingDir, prodMode, classPath, filesystem, gzip, liveReloadServer, injectLiveReloadScript, diskCache);
+    return new Env(newWorkingDir, prodMode, classPath, filesystem, gzip, liveReloadServer, injectLiveReloadScript, diskCache, appFolder);
   }
 
   public Env withProdMode(boolean newProdMode) {
-    return new Env(workingDir, newProdMode, classPath, filesystem, gzip, liveReloadServer, injectLiveReloadScript, diskCache);
+    return new Env(workingDir, newProdMode, classPath, filesystem, gzip, liveReloadServer, injectLiveReloadScript, diskCache, appFolder);
   }
 
   public Env withClassPath(boolean shouldScanCassPath) {
-    return new Env(workingDir, prodMode, shouldScanCassPath, filesystem, gzip, liveReloadServer, injectLiveReloadScript, diskCache);
+    return new Env(workingDir, prodMode, shouldScanCassPath, filesystem, gzip, liveReloadServer, injectLiveReloadScript, diskCache, appFolder);
   }
 
   public Env withFilesystem(boolean shouldScanFilesystem) {
-    return new Env(workingDir, prodMode, classPath, shouldScanFilesystem, gzip, liveReloadServer, injectLiveReloadScript, diskCache);
+    return new Env(workingDir, prodMode, classPath, shouldScanFilesystem, gzip, liveReloadServer, injectLiveReloadScript, diskCache, appFolder);
   }
 
   public Env withGzip(boolean shouldGzipResponse) {
-    return new Env(workingDir, prodMode, classPath, filesystem, shouldGzipResponse, liveReloadServer, injectLiveReloadScript, diskCache);
+    return new Env(workingDir, prodMode, classPath, filesystem, shouldGzipResponse, liveReloadServer, injectLiveReloadScript, diskCache, appFolder);
   }
 
   public Env withLiveReloadServer(boolean shouldStartLiveReloadServer) {
-    return new Env(workingDir, prodMode, classPath, filesystem, gzip, shouldStartLiveReloadServer, injectLiveReloadScript, diskCache);
+    return new Env(workingDir, prodMode, classPath, filesystem, gzip, shouldStartLiveReloadServer, injectLiveReloadScript, diskCache, appFolder);
   }
 
   public Env withInjectLiveReloadScript(boolean shouldInjectLiveReloadScript) {
-    return new Env(workingDir, prodMode, classPath, filesystem, gzip, liveReloadServer, shouldInjectLiveReloadScript, diskCache);
+    return new Env(workingDir, prodMode, classPath, filesystem, gzip, liveReloadServer, shouldInjectLiveReloadScript, diskCache, appFolder);
   }
 
   public Env withDiskCache(boolean shouldUseDiskCache) {
-    return new Env(workingDir, prodMode, classPath, filesystem, gzip, liveReloadServer, injectLiveReloadScript, shouldUseDiskCache);
+    return new Env(workingDir, prodMode, classPath, filesystem, gzip, liveReloadServer, injectLiveReloadScript, shouldUseDiskCache, appFolder);
+  }
+
+  public Env withAppFolder(String shouldAppFolder) {
+    return new Env(workingDir, prodMode, classPath, filesystem, gzip, liveReloadServer, injectLiveReloadScript, diskCache, shouldAppFolder);
   }
 
   //
@@ -118,7 +126,7 @@ public class Env implements Serializable {
   }
 
   public String appFolder() {
-    return "app";
+    return appFolder;
   }
 
   public List<Path> foldersToWatch() {
@@ -165,9 +173,19 @@ public class Env implements Serializable {
     return diskCache;
   }
 
+  @VisibleForTesting
+  private static String getenv(String envVar) {
+    return System.getenv(envVar);
+  }
+
   private static String get(String propertyName) {
-    String env = System.getenv(propertyName);
+    String env = getenv(propertyName);
     return (env != null) ? env : System.getProperty(propertyName);
+  }
+
+  private static String get(String propertyName, String defaultValue) {
+    String env = getenv(propertyName);
+    return (env != null) ? env : System.getProperty(propertyName, defaultValue);
   }
 
   private static boolean getBoolean(String propertyName, boolean defaultValue) {

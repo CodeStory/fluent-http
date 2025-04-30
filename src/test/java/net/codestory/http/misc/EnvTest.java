@@ -128,6 +128,30 @@ public class EnvTest {
   }
 
   @Test
+  public void with_app_folder() {
+    Env env = Env.prod().withAppFolder("app/public");
+
+    assertThat(env.prodMode()).isTrue();
+    assertThat(env.classPath()).isTrue();
+    assertThat(env.filesystem()).isTrue();
+    assertThat(env.gzip()).isTrue();
+    assertThat(env.workingDir()).isEqualTo(new File("."));
+    assertThat(env.appFolder()).isEqualTo("app/public");
+    assertThat(env.injectLiveReloadScript()).isFalse();
+    assertThat(env.liveReloadServer()).isFalse();
+    assertThat(env.diskCache()).isTrue();
+  }
+
+  @Test
+  public void with_app_folder_system_property() {
+    System.setProperty("APP_FOLDER", "app/public");
+    Env env = new Env();
+    assertThat(env.appFolder()).isEqualTo("app/public");
+    // tear down system property
+    System.clearProperty("APP_FOLDER");
+  }
+
+  @Test
   public void injectLiveReloadScript() {
     Env env = Env.prod().withInjectLiveReloadScript(true);
 
