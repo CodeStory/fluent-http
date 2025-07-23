@@ -55,7 +55,6 @@ public class ContentTypes {
         return "text/css;charset=UTF-8";
       case ".js":
       case ".mjs":
-      case ".cjs":
       case ".coffee":
       case ".litcoffee":
         return "application/javascript;charset=UTF-8";
