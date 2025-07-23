@@ -45,10 +45,10 @@ public class ContentTypesTest {
     assertThat(get("font.ttf")).isEqualTo("application/x-font-ttf");
     assertThat(get("font.woff")).isEqualTo("application/x-font-woff");
     assertThat(get("font.woff2")).isEqualTo("application/x-font-woff");
-    assertThat(get("script.js")).isEqualTo("application/javascript;charset=UTF-8");
-    assertThat(get("script.mjs")).isEqualTo("application/javascript;charset=UTF-8");
-    assertThat(get("script.coffee")).isEqualTo("application/javascript;charset=UTF-8");
-    assertThat(get("script.litcoffee")).isEqualTo("application/javascript;charset=UTF-8");
+    assertThat(get("script.js")).isEqualTo("text/javascript;charset=UTF-8");
+    assertThat(get("script.mjs")).isEqualTo("text/javascript;charset=UTF-8");
+    assertThat(get("script.coffee")).isEqualTo("text/javascript;charset=UTF-8");
+    assertThat(get("script.litcoffee")).isEqualTo("text/javascript;charset=UTF-8");
     assertThat(get("favicon.ico")).isEqualTo("image/x-icon");
     assertThat(get("video.mp4")).isEqualTo("video/mp4");
     assertThat(get("video.mp3")).isEqualTo("audio/mpeg");
