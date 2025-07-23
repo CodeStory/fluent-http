@@ -57,7 +57,7 @@ public class ContentTypes {
       case ".mjs":
       case ".coffee":
       case ".litcoffee":
-        return "application/javascript;charset=UTF-8";
+        return "text/javascript;charset=UTF-8";
       case ".zip":
         return "application/zip";
       case ".gz":
