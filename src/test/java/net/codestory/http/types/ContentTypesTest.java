@@ -46,6 +46,8 @@ public class ContentTypesTest {
     assertThat(get("font.woff")).isEqualTo("application/x-font-woff");
     assertThat(get("font.woff2")).isEqualTo("application/x-font-woff");
     assertThat(get("script.js")).isEqualTo("application/javascript;charset=UTF-8");
+    assertThat(get("script.mjs")).isEqualTo("application/javascript;charset=UTF-8");
+    assertThat(get("script.cjs")).isEqualTo("application/javascript;charset=UTF-8");
     assertThat(get("script.coffee")).isEqualTo("application/javascript;charset=UTF-8");
     assertThat(get("script.litcoffee")).isEqualTo("application/javascript;charset=UTF-8");
     assertThat(get("favicon.ico")).isEqualTo("image/x-icon");
