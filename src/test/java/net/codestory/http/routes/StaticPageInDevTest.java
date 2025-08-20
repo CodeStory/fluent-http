@@ -21,9 +21,9 @@ import org.junit.Test;
 public class StaticPageInDevTest extends AbstractDevWebServerTest {
   @Test
   public void coffeescript_source() {
-    get("/js/script.coffee.source").should().haveType("application/javascript").contain("console.log 'Hello'");
-    get("/js/anotherscript.coffee.source").should().haveType("application/javascript").contain("console.log 'foobar'");
-    get("/js/literate.litcoffee.source").should().haveType("application/javascript").contain("This is a literate coffee source with lots of comments");
+    get("/js/script.coffee.source").should().haveType("text/javascript;charset=UTF-8").contain("console.log 'Hello'");
+    get("/js/anotherscript.coffee.source").should().haveType("text/javascript;charset=UTF-8").contain("console.log 'foobar'");
+    get("/js/literate.litcoffee.source").should().haveType("text/javascript;charset=UTF-8").contain("This is a literate coffee source with lots of comments");
   }
 
   @Test

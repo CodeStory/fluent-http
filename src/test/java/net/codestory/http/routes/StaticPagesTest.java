@@ -39,21 +39,21 @@ public class StaticPagesTest extends AbstractProdWebServerTest {
 
   @Test
   public void javascript() {
-    get("/js/script.js").should().haveType("application/javascript").contain("console.log('Hello');");
+    get("/js/script.js").should().haveType("text/javascript;charset=UTF-8").contain("console.log('Hello');");
   }
 
   @Test
   public void coffeescript() {
-    get("/js/script.coffee").should().haveType("application/javascript").contain("console.log('Hello');");
-    get("/js/script.js").should().haveType("application/javascript").contain("console.log('Hello');");
-    get("/js/anotherscript.js").should().haveType("application/javascript").contain("console.log('foobar');");
+    get("/js/script.coffee").should().haveType("text/javascript;charset=UTF-8").contain("console.log('Hello');");
+    get("/js/script.js").should().haveType("text/javascript;charset=UTF-8").contain("console.log('Hello');");
+    get("/js/anotherscript.js").should().haveType("text/javascript;charset=UTF-8").contain("console.log('foobar');");
     get("/js/non-existing.js").should().respond(404);
     get("/js/non-existing.coffee").should().respond(404);
   }
 
   @Test
   public void literate_coffees() {
-    get("/js/literate.js").should().haveType("application/javascript").contain("console.log('Hello');");
+    get("/js/literate.js").should().haveType("text/javascript;charset=UTF-8").contain("console.log('Hello');");
   }
 
   @Test
