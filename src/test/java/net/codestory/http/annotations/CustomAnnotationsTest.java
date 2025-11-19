@@ -24,6 +24,7 @@ import org.junit.Test;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.lang.reflect.Method;
 import java.util.function.*;
 
 import static java.lang.annotation.ElementType.METHOD;
@@ -40,7 +41,7 @@ public class CustomAnnotationsTest extends AbstractProdWebServerTest {
 
     configure(routes -> routes
         .filter(new BasicAuthFilter("/", "realm", users))
-        .registerAroundAnnotation(DummyShallNotPass.class, (annotation, context, payloadSupplier) -> "dummy".equals(context.currentUser().name()) ? Payload.forbidden() : payloadSupplier.apply(context))
+        .registerAroundAnnotation(DummyShallNotPass.class, (annotation, context, payloadSupplier,method) -> "dummy".equals(context.currentUser().name()) ? Payload.forbidden() : payloadSupplier.apply(context))
         .add(new MyResource())
     );
 
@@ -87,7 +88,7 @@ public class CustomAnnotationsTest extends AbstractProdWebServerTest {
 
   public static class ShallNotPass implements ApplyAroundAnnotation<DummyShallNotPass> {
     @Override
-    public Payload apply(DummyShallNotPass annotation, Context context, Function<Context, Payload> payloadSupplier) {
+    public Payload apply(DummyShallNotPass annotation, Context context, Function<Context, Payload> payloadSupplier, Method method) {
       return "dummy".equals(context.currentUser().name()) ? Payload.forbidden() : payloadSupplier.apply(context);
     }
   }

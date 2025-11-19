@@ -603,7 +603,7 @@ public class RouteCollection implements Routes {
   protected MethodAnnotationsFactory createMethodAnnotationsFactory() {
     MethodAnnotationsFactory factory = new MethodAnnotationsFactory();
 
-    factory.registerAroundAnnotation(Roles.class, () -> (roles, context, payloadSupplier) -> isAuthorized(roles, context.currentUser()) ? payloadSupplier.apply(context) : Payload.forbidden());
+    factory.registerAroundAnnotation(Roles.class, () -> (roles, context, payloadSupplier, method) -> isAuthorized(roles, context.currentUser()) ? payloadSupplier.apply(context) : Payload.forbidden());
     factory.registerAfterAnnotation(AllowOrigin.class, () -> (origin, context, payload) -> payload.withAllowOrigin(origin.value()));
     factory.registerAfterAnnotation(AllowMethods.class, () -> (methods, context, payload) -> payload.withAllowMethods(methods.value()));
     factory.registerAfterAnnotation(AllowCredentials.class, () -> (credentials, context, payload) -> payload.withAllowCredentials(credentials.value()));
