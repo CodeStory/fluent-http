@@ -15,17 +15,14 @@
  */
 package net.codestory.http.routes;
 
-import net.codestory.http.Context;
-import net.codestory.http.annotations.MethodAnnotations;
-import net.codestory.http.annotations.Produces;
-import net.codestory.http.convert.TypeConvert;
-import net.codestory.http.payload.Payload;
+import java.io.*;
+import java.lang.reflect.*;
+import java.util.function.*;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.function.Supplier;
+import net.codestory.http.*;
+import net.codestory.http.annotations.*;
+import net.codestory.http.convert.*;
+import net.codestory.http.payload.*;
 
 class ReflectionRoute implements AnyRoute {
   private final Supplier<Object> resource;
@@ -62,8 +59,6 @@ class ReflectionRoute implements AnyRoute {
       }
     });
   }
-
-  public Method javaMethod() {return method;}
 
   static Object[] convert(Context context, String[] pathParameters, Type... types) throws IOException {
     Object[] converted = new Object[types.length];
