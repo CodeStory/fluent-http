@@ -44,8 +44,19 @@
     <maven.compiler.target>11</maven.compiler.target>
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
 
+    <jna.version>5.12.1</jna.version>
+    <simple-http.version>6.0.1</simple-http.version>
+    <less4j.version>1.17.2</less4j.version>
+    <handlebars.version>4.2.1</handlebars.version>
+    <markdown4j.version>2.2-cj-1.1</markdown4j.version>
+    <snakeyaml.version>1.33</snakeyaml.version>
+    <classgraph.version>4.8.154</classgraph.version>
     <jackson.version>2.15.2</jackson.version>
     <slf4j.version>2.0.12</slf4j.version>
+    <webjars.version>0.46</webjars.version>
+    <coffee-script.version>1.11.0</coffee-script.version>
+    <nashorn-core.version>15.3</nashorn-core.version>
+    <mockito.version>4.11.0</mockito.version>
   </properties>
 
   <repositories>
@@ -209,7 +220,7 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <argLine>-Xmx2G</argLine>
+          <argLine>--add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED -Xmx2G</argLine>
           <systemProperties>
             <java.awt.headless>true</java.awt.headless>
           </systemProperties>
@@ -292,22 +303,22 @@
     <dependency>
       <groupId>net.java.dev.jna</groupId>
       <artifactId>jna</artifactId>
-      <version>4.2.1</version>
+      <version>${jna.version}</version>
     </dependency>
     <dependency>
       <groupId>org.simpleframework</groupId>
       <artifactId>simple-http</artifactId>
-      <version>6.0.1</version>
+      <version>${simple-http.version}</version>
     </dependency>
     <dependency>
       <groupId>com.github.sommeri</groupId>
       <artifactId>less4j</artifactId>
-      <version>1.17.2</version>
+      <version>${less4j.version}</version>
     </dependency>
     <dependency>
       <groupId>com.github.jknack</groupId>
       <artifactId>handlebars</artifactId>
-      <version>4.2.1</version>
+      <version>${handlebars.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.mozilla</groupId>
@@ -322,17 +333,17 @@
     <dependency>
       <groupId>org.commonjava.googlecode.markdown4j</groupId>
       <artifactId>markdown4j</artifactId>
-      <version>2.2-cj-1.1</version>
+      <version>${markdown4j.version}</version>
     </dependency>
     <dependency>
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
-      <version>2.0</version>
+      <version>${snakeyaml.version}</version>
     </dependency>
     <dependency>
       <groupId>io.github.classgraph</groupId>
       <artifactId>classgraph</artifactId>
-      <version>4.8.168</version>
+      <version>${classgraph.version}</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
     <dependency>
@@ -363,17 +374,17 @@
     <dependency>
       <groupId>org.webjars</groupId>
       <artifactId>webjars-locator</artifactId>
-      <version>0.52</version>
+      <version>${webjars.version}</version>
     </dependency>
     <dependency>
       <groupId>org.webjars</groupId>
       <artifactId>coffee-script</artifactId>
-      <version>1.11.0</version>
+      <version>${coffee-script.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openjdk.nashorn</groupId>
       <artifactId>nashorn-core</artifactId>
-      <version>15.4</version>
+      <version>${nashorn-core.version}</version>
     </dependency>
 
     <!-- Used by dependencies -->
@@ -422,7 +433,13 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>2.2.22</version>
+      <version>${mockito.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-inline</artifactId>
+      <version>${mockito.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
