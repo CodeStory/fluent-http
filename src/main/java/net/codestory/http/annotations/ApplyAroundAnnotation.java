@@ -19,10 +19,9 @@ import net.codestory.http.Context;
 import net.codestory.http.payload.Payload;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.util.function.*;
 
 @FunctionalInterface
 public interface ApplyAroundAnnotation<T extends Annotation> {
-  Payload apply(T annotation, Context context, Function<Context, Payload> payloadSupplier, Method method);
+  Payload apply(T annotation, Context context, Function<Context, Payload> payloadSupplier);
 }
