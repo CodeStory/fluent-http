@@ -18,6 +18,9 @@ package net.codestory.http.routes;
 import net.codestory.http.Query;
 import net.codestory.http.io.Strings;
 
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import static java.util.Arrays.asList;
@@ -43,16 +46,7 @@ public class UriParser implements Comparable<UriParser> {
     String[] uriParts = parts(uri);
     String[] params = new String[paramsCount];
 
-    int index = 0;
-    for (int i = 0; i < patternParts.length; i++) {
-      if (patternParts[i].startsWith(":")) {
-        if (i == patternParts.length - 1 && patternParts[i].startsWith(":") && patternParts[i].endsWith(":"))
-          params[index++] = String.join("/", asList(uriParts).subList(i, uriParts.length));
-        else {
-          params[index++] = uriParts[i];
-        }
-      }
-    }
+    int index = addPathParams(uriParts, params);
     for (int i = 0; i < queryParamsParts.length; i++) {
       if (queryParamsParts[i].startsWith(":")) {
         params[index++] = query.get(queryParamsParts[i - 1]);
@@ -60,6 +54,57 @@ public class UriParser implements Comparable<UriParser> {
     }
 
     return params;
+  }
+
+  private int addPathParams(String[] uriParts, String[] params) {
+    int index = 0;
+    for (int i = 0; i < patternParts.length; i++) {
+      if (patternParts[i].startsWith(":")) {
+          params[index++] = paramValue(uriParts, i);
+      }
+    }
+    return index;
+  }
+
+  private String paramValue(String[] uriParts, int i) {
+    if (isGreedy(i)) {
+        return String.join("/", asList(uriParts).subList(i, uriParts.length));
+    }
+    return uriParts[i];
+  }
+
+  private boolean isGreedy(int i) {
+    return i == patternParts.length - 1 && patternParts[i].endsWith(":");
+  }
+
+  /**
+   * Utility to pair names and values into a map.
+   */
+  public static Map<String, String> toNameValueMap(String[] names, String[] values) {
+    Map<String, String> map = new LinkedHashMap<>();
+    for (int i = 0; i < names.length && i < values.length; i++) {
+      map.put(names[i], values[i]);
+    }
+    return map;
+  }
+
+  /**
+   * Returns the names of the path parameters in the pattern (e.g. ["index"] for /foo/:index)
+   */
+  public String[] paramNames() {
+    return Arrays.stream(patternParts)
+      .filter(part -> part.startsWith(":"))
+      .map(part -> part.substring(1))
+      .toArray(String[]::new);
+  }
+
+  /**
+   * Returns a map of param name to value for the given uri and query.
+   */
+  public Map<String, String> paramsMap(String uri, Query query) {
+    String[] names = paramNames();
+    String[] values = params(uri, query);
+    return toNameValueMap(names, values);
   }
 
   public boolean matches(String uri) {
