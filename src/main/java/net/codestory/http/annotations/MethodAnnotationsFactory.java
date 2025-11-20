@@ -49,7 +49,7 @@ public class MethodAnnotationsFactory {
   private <T extends Annotation> void addAroundOperationIfNecessary(Class<T> annotationType, Supplier<? extends ApplyAroundAnnotation<? extends Annotation>> apply, Method method, MethodAnnotations methodAnnotations) {
     T annotation = findAnnotationOnMethodOrClass(annotationType, method);
     if (annotation != null) {
-      methodAnnotations.addAroundOperation((context, payloadSupplier) -> ((ApplyAroundAnnotation<T>) apply.get()).apply(annotation, context, payloadSupplier, method));
+      methodAnnotations.addAroundOperation((context, payloadSupplier) -> ((ApplyAroundAnnotation<T>) apply.get()).apply(annotation, context, payloadSupplier));
     }
   }
 
