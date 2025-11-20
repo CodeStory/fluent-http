@@ -15,15 +15,20 @@
  */
 package net.codestory.http;
 
-import java.io.*;
-import java.lang.reflect.*;
-import java.util.*;
-
-import net.codestory.http.forms.*;
-import net.codestory.http.injection.*;
+import net.codestory.http.forms.Form;
+import net.codestory.http.injection.IocAdapter;
 import net.codestory.http.misc.Env;
-import net.codestory.http.security.*;
-import net.codestory.http.templating.*;
+import net.codestory.http.security.User;
+import net.codestory.http.templating.Site;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class Context {
   private final Request request;
@@ -32,6 +37,8 @@ public class Context {
   private final Env env;
   private final Site site;
   private User currentUser;
+
+  private Map<String, String> pathParams;
 
   public Context(Request request, Response response, IocAdapter iocAdapter, Env env, Site site) {
     this.request = request;
@@ -99,6 +106,26 @@ public class Context {
 
   public User currentUser() {
     return currentUser;
+  }
+
+  // Set path params for this context (used by router).
+  public void setPathParams(Map<String, String> pathParams) {
+    this.pathParams = pathParams;
+  }
+
+  // Get all path parameters as a map.
+  public Map<String, String> pathParams() {
+    return pathParams != null ? Collections.unmodifiableMap(pathParams) : Collections.emptyMap();
+  }
+
+  // Get a specific path parameter by name.
+  public String pathParam(String name) {
+    return pathParams != null ? pathParams.get(name) : null;
+  }
+
+  // Get all path parameter names.
+  public Set<String> pathParamNames() {
+    return pathParams != null ? Collections.unmodifiableSet(pathParams.keySet()) : Collections.emptySet();
   }
 
   @SuppressWarnings("unchecked")

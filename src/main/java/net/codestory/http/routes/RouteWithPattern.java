@@ -19,6 +19,7 @@ import static net.codestory.http.constants.Methods.GET;
 import static net.codestory.http.constants.Methods.HEAD;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
 
 import net.codestory.http.Context;
@@ -53,6 +54,7 @@ class RouteWithPattern implements Route {
   public Object body(Context context) throws Exception {
     try {
       String[] parameters = uriParser.params(context.uri(), context.request().query());
+      context.setPathParams(uriParser.paramsMap(context.uri(), context.request().query()));
       return route.body(context, parameters);
     } catch (Exception e) {
       Logs.unableToApplyRoute(context.method(), context.uri());
