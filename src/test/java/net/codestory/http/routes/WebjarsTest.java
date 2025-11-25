@@ -32,12 +32,12 @@ public class WebjarsTest extends AbstractProdWebServerTest {
 
   @Test
   public void webjar_css() {
-    get("/webjars/bootstrap/3.3.5/css/bootstrap.min.css").should().respond(200).haveType("text/css").contain("Bootstrap v3.3.5");
+    get("/webjars/bootstrap/3.4.1/css/bootstrap.min.css").should().respond(200).haveType("text/css").contain("Bootstrap v3.4.1");
   }
 
   @Test
   public void webjar_js() {
-    get("/webjars/bootstrap/3.3.5/js/bootstrap.min.js").should().respond(200).haveType("text/javascript;charset=UTF-8").contain("Bootstrap v3.3.5");
+    get("/webjars/bootstrap/3.4.1/js/bootstrap.min.js").should().respond(200).haveType("text/javascript;charset=UTF-8").contain("Bootstrap v3.4.1");
   }
 
   @Test

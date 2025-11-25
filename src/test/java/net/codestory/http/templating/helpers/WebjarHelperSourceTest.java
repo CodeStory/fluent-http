@@ -15,17 +15,16 @@
  */
 package net.codestory.http.templating.helpers;
 
-import static java.util.Collections.singletonMap;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-
-import org.junit.Test;
-
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Options;
 import com.github.jknack.handlebars.TagType;
 import com.github.jknack.handlebars.Template;
+import org.junit.Test;
+
+import static java.util.Collections.singletonMap;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 public class WebjarHelperSourceTest {
   static WebjarHelperSource webjarHelper = new WebjarHelperSource(true);
@@ -34,7 +33,7 @@ public class WebjarHelperSourceTest {
   public void css() {
     CharSequence script = webjarHelper.webjar("bootstrap.css", null);
 
-    assertThat(script).hasToString("<link rel=\"stylesheet\" href=\"/webjars/bootstrap/3.3.5/css/bootstrap.min.css\">");
+    assertThat(script).hasToString("<link rel=\"stylesheet\" href=\"/webjars/bootstrap/3.4.1/css/bootstrap.min.css\">");
   }
 
   @Test

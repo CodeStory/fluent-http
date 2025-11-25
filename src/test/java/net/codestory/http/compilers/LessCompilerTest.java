@@ -15,14 +15,15 @@
  */
 package net.codestory.http.compilers;
 
-import static org.assertj.core.api.Assertions.*;
-
-import java.nio.file.*;
-
 import net.codestory.http.io.Resources;
 import net.codestory.http.misc.Env;
-import org.junit.*;
-import org.junit.rules.*;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
+import java.nio.file.Paths;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class LessCompilerTest {
   static Resources resources = new Resources(Env.prod());
@@ -73,7 +74,7 @@ public class LessCompilerTest {
 
   @Test
   public void import_less_from_webjar() {
-    String css = compile("style.less", "@import '/webjars/bootstrap/3.3.5/less/bootstrap.less';");
+    String css = compile("style.less", "@import '/webjars/bootstrap/3.4.1/less/bootstrap.less';");
 
     assertThat(css).isNotEmpty().doesNotContain("@import");
   }
