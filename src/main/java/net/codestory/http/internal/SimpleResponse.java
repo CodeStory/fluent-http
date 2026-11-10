@@ -21,6 +21,7 @@ import java.util.*;
 
 import net.codestory.http.Cookie;
 import net.codestory.http.Response;
+import net.codestory.http.SameSite;
 
 import org.simpleframework.http.*;
 
@@ -59,6 +60,7 @@ class SimpleResponse implements Response {
   @Override
   public void setCookie(Cookie newCookie) {
     CookieDate cookieDate = new CookieDate();
+    SameSite sameSite = newCookie.sameSite();
     org.simpleframework.http.Cookie cookie = new org.simpleframework.http.Cookie(newCookie.name(), newCookie.value(), newCookie.path(), newCookie.isNew()) {
       @Override
       public String toString() {
@@ -68,7 +70,8 @@ class SimpleResponse implements Response {
           (getExpiry() < 0 ? "" : "; expires=" + cookieDate.format(getExpiry())) +
           (getExpiry() < 0 ? "" : "; max-age=" + getExpiry()) +
           (isSecure() ? "; secure" : "") +
-          (isProtected() ? "; httponly" : "");
+          (isProtected() ? "; httponly" : "") +
+          (sameSite == null ? "" : "; samesite=" + sameSite);
       }
     };
     cookie.setExpiry(newCookie.expiry());

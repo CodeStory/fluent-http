@@ -69,6 +69,15 @@ public class CookiesTest extends AbstractProdWebServerTest {
   }
 
   @Test
+  public void same_site_cookie() {
+    configure(routes -> routes
+        .get("/set", () -> new Payload("").withCookie(new NewCookie("key", "value").setSameSite(SameSite.LAX)))
+    );
+
+    get("/set").should().haveHeader("Set-Cookie", "key=value; version=1; path=/; samesite=Lax");
+  }
+
+  @Test
   public void cookies_list() {
     configure(routes -> routes
         .get("/set", () -> new Payload("").withCookies(asList(new NewCookie("key1", "value1"), new NewCookie("key2", "value2"))))
