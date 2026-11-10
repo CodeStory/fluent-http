@@ -17,6 +17,8 @@ package net.codestory.http.filters.auth;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.security.SecureRandom;
+
 import net.codestory.http.security.*;
 
 import org.junit.*;
@@ -68,5 +70,10 @@ public class CookieAuthFilterTest {
     filter = new CookieAuthFilter("/", Users.singleUser("", ""));
 
     assertThat(filter.matches("/robots.txt", null)).isFalse();
+  }
+
+  @Test
+  public void session_ids_use_secure_random() {
+    assertThat(CookieAuthFilter.RANDOM).isInstanceOf(SecureRandom.class);
   }
 }
