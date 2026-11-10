@@ -26,6 +26,7 @@ import net.codestory.http.security.SessionIdStore;
 import net.codestory.http.security.User;
 import net.codestory.http.security.Users;
 
+import java.security.SecureRandom;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -41,7 +42,7 @@ import static net.codestory.http.payload.Payload.seeOther;
 public class CookieAuthFilter implements Filter {
   protected static final String[] DEFAULT_EXCLUDE = {".less", ".css", ".map", ".js", ".coffee", ".ico", ".jpeg", ".jpg", ".gif", ".png", ".svg", ".eot", ".ttf", ".woff", "woff2", "robots.txt"};
 
-  protected static final Random RANDOM = new Random();
+  protected static final Random RANDOM = new SecureRandom();
   protected static final int ONE_DAY = (int) TimeUnit.DAYS.toSeconds(1L);
 
   protected final String uriPrefix;
