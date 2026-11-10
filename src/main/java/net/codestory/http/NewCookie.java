@@ -20,6 +20,7 @@ public class NewCookie implements Cookie {
   private String value;
   private String path;
   private String domain;
+  private SameSite sameSite;
   private boolean secure;
   private boolean httpOnly;
   private boolean created;
@@ -124,6 +125,16 @@ public class NewCookie implements Cookie {
 
   public NewCookie setDomain(String domain) {
     this.domain = domain;
+    return this;
+  }
+
+  @Override
+  public SameSite sameSite() {
+    return sameSite;
+  }
+
+  public NewCookie setSameSite(SameSite sameSite) {
+    this.sameSite = sameSite;
     return this;
   }
 

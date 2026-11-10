@@ -35,6 +35,10 @@ public interface Cookie extends Unwrappable {
   String path();
 
   String domain();
+
+  default SameSite sameSite() {
+    return null;
+  }
 }
 
 
